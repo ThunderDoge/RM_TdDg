@@ -23,11 +23,27 @@ void RoboInit()
 	bsp_spi_Icm20602Init();
 	app_imu_Init();
 	taskEXIT_CRITICAL();
-	bsp_dbus_Init();
+//	bsp_dbus_Init();
 	bsp_can_Init();
 	
 	manager::CANSelect(&hcan1,&hcan2);
 }
+/**
+ * @brief  主任务
+ * @details  
+ */
+void task_Main(void* param)
+{
+	while (1)
+	{
+		app_imu_So3thread();
+        Self.Handle();
+		ModeSelect();
+		manager::CANSend();	
+	}
+}
+
+//Aborted code following
 
 //电机控制用PID和电机类
 // Motor_t DJI_3508(8192,19);
@@ -72,19 +88,3 @@ void RoboInit()
 
 
  
-/**
- * @brief  主任务
- * @details  
- */
-void task_Main(void* param)
-{
-	while (1)
-	{
-		app_imu_So3thread();
-        Self.Handle();
-		ModeSelect();
-
-		manager::CANSend();	
-	}
-	
-}

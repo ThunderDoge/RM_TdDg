@@ -1,11 +1,16 @@
 #include "SentryChassisLogic.hpp"
 
-GlobalModeName GlobalMode;
+GlobalModeName GlobalMode;  
 GlobalModeName LastGlobalMode;
 CommandSourceName CommandSource;
+GlobalModeName RecvCMD;
+GlobalModeName GetGlobalMode(){
+    return GlobalMode;
+}
 
 void ModeSelect(void)
 {
+	GlobalMode = RecvCMD;
     switch (GlobalMode)
     {
     case MODE_VIISON_SHOOTING_TEST:
