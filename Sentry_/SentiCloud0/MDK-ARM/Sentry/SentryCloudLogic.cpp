@@ -11,6 +11,9 @@
 GlobalModeName GlobalMode;
 GlobalModeName LastGlobalMode;
 CommandSourceName CommandSource;
+		float pitch;
+		float yaw;
+
 /**
   * @brief  ÊÓ¾õ¿ØÖÆÔÆÌ¨
   */
@@ -18,8 +21,8 @@ void VisionControl(void)
 {
 	if(bsp_vision_Rec_Data.Ready_flag)
 	{
-		float pitch;
-		float yaw;
+//		float pitch;
+//		float yaw;
 		switch (bsp_vision_Rec_Data.Function_word)
 		{
 			case CMD_GIMBAL_RELATIVE_CONTROL:
