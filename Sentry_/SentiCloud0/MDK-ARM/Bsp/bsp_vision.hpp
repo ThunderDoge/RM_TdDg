@@ -42,6 +42,7 @@ enum __bsp_vision_Functionwords
     CMD_GIMBAL_ABSOLUTE_CONTROL = 0x02, //控制云台绝对角度
     CMD_SHOOT = 0x03,                   //射击指令
     CMD_CHASSIS_CONTROL = 0X04,         //底盘控制
+	CMD_CHASSIS_LOACTION_CONTROL = 0X05,	//底盘控制路程
 
     //电控发给视觉的
     CMD_GET_MCU_STATE = 0x11, //获取电控控制信息
@@ -70,6 +71,8 @@ typedef struct __vision_data
     //底盘数据
     float Vx; //底盘X轴速度
     float Vy; //底盘Y轴速度
+	float Px; //底盘X轴路程
+	float Py; //底盘Y轴路程
     //云台数据
     float Yaw;          //Yaw轴角度
     float Pitch;        //Pitch轴角度

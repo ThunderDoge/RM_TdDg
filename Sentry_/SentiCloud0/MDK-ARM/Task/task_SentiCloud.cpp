@@ -25,6 +25,8 @@ void Cloud_Init(void)
     manager::CANSelect(&hcan1, &hcan2);
     app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。
 }
+uint32_t testT;
+uint32_t testDt;
 /**
   * @brief  主任务
   * @details  
@@ -40,6 +42,10 @@ void Cloud_Init(void)
         app_imu_So3thread();
 		Self.Handle();	//！！！必须在app_imu_So3thread之后调用。
         ModeSelect();
+		//
+//		testDt = HAL_GetTick() - testT;
+//		testT = HAL_GetTick();
+		//
         manager::CANSend();
         vTaskDelayUntil(&LastTick, 1);
     }
@@ -56,6 +62,7 @@ void task_CommuRoutine(void *param)
     while (1)
     {
 		CloudVisionRoutine();
+		CloudCanCommuRoutine();
 		vTaskDelayUntil(&LastTick,5);
     }
 }
