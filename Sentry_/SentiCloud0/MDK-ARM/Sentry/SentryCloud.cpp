@@ -13,7 +13,7 @@ Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
-SentryCloud Self(2, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x201);
+SentryCloud Self(1, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x201);
 
 SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t pitch_can_num, uint16_t pitch_can_id,

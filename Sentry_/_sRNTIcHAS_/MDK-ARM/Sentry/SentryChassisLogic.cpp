@@ -32,7 +32,7 @@ void VisionControl() //ÊÓ¾õµ÷ÊÔ
 			Self.MotorSpeed_Set(CanRecv.ChassisSpeed);
 			break;
 		case _SUPERIOR_CHASSIS_LOACATION_SET_:
-			Self.MotorSoftLocation_Set(CanRecv.ChassisLocation);
+			Self.MotorSoftLocation_Set(Self.MotorSoftLocation + CanRecv.ChassisLocation);
 			break;
 		default:
 			break;
