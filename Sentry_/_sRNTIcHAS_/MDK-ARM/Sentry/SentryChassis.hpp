@@ -32,8 +32,8 @@ public:
                   uint8_t down_feed_can_num, uint16_t down_feed_can_id,
                   uint8_t up_fric_can_num, uint16_t up_fric_can_id);
     //-------------------------PID变量
-    pid pidDriveSpeed;
-    pid pidDriveLocation;
+    pid DriveSpeed;
+    pid DriveLocation;
     //-------------------------电机变量
     softmotor DriveWheel;
     //-------------------------参数

@@ -33,12 +33,6 @@ void VisionControl(void)
 			case CMD_GIMBAL_ABSOLUTE_CONTROL:
 				Self.SetAngleTo(bsp_vision_Rec_Data.Pitch , bsp_vision_Rec_Data.Yaw);
 			break;
-			case CMD_CHASSIS_CONTROL:
-				CloudCanSend(&CAN_INTERBOARD,SUPERIOR_CHASSIS_MOVE, bsp_vision_Rec_Data.Vx,0.0f);
-				break;
-			case CMD_CHASSIS_LOACTION_CONTROL:
-				CloudCanSend(&CAN_INTERBOARD,SUPERIOR_CHASSIS_SET_LOACTION,bsp_vision_Rec_Data.Px,0.0f);
-				break;
 			default:
 			break;
 		}
@@ -68,7 +62,7 @@ void ManualShoot()
   */
 void ManualChassis() //ÊÖ¶¯µ×ÅÌ
 {
-    CloudCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
+    CloudCanSend(&hcan1, SUPERIOR_CHASSIS_MOVE,
                  (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
                  0);
 }

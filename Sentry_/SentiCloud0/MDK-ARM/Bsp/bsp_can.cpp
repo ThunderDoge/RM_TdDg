@@ -118,6 +118,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 	{
 		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//获取CAN报文
 		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//电机信息更新
-//		CanRxCpltCallBack_CommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
+		CanRxCpltCallBack_CommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
 	}
 }

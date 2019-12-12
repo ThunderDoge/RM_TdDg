@@ -72,19 +72,18 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, SENTRY_CAN_ID command_
 void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 {
     CanRecv.RecvId = RxHead->StdId;
-	CanRecv.Ready_Flag =1;	//先行标记CAN接收就绪。看switch结尾处
     switch (RxHead->StdId)
     {
     case SUPERIOR_CHASSIS_MOVE:
         memcpy(&CanRecv.ChassisSpeed, Data, 4);
-//        memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
+        memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
         RecvCMD = MODE_VIISON_SHOOTING_TEST;
         CanRecv.SuperiorControlFlags =_SUPERIOR_CHASSIS_SPEED_SET_;
         CanRecv.Ready_Flag =1;
         break;
     case SUPERIOR_CHASSIS_SET_LOACTION:
-        memcpy(&CanRecv.ChassisLocation, Data, 4);
-//        memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
+        memcpy(&CanRecv.ChassisSpeed, Data, 4);
+        memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
         RecvCMD = MODE_VIISON_SHOOTING_TEST;
         CanRecv.SuperiorControlFlags =_SUPERIOR_CHASSIS_LOACATION_SET_;
         CanRecv.Ready_Flag =1;
@@ -95,27 +94,7 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
         CanRecv.SuperiorControlFlags =1;
         CanRecv.Ready_Flag =1;
         break;
-		
-	case UP_CLOUD_STATES:
-		memcpy(&CanRecv.UpCloudPitchYaw,Data,8);
-		break;
     default:
-		CanRecv.Ready_Flag =0;	//无效再标记CAN无效
         break;
-    }	
-	if(CanRecv.Ready_Flag)	//如果确实更新了
-		CanRecv.RecvUpdateTime = HAL_GetTick();		//更新时间戳
+    }
 }
-
-HAL_StatusTypeDef ChassisCanCommuRoutine(void)
-{
-	return SentryCanSend(&CAN_INTERBOARD,CHASSIS_STATES,Self.MotorSpeed,Self.MotorSoftLocation);
-}
-
-
-
-
-
-
-
-

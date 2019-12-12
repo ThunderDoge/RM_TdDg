@@ -85,7 +85,3 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
         break;
     }
 }
-HAL_StatusTypeDef CloudCanCommuRoutine(void)
-{
-	return CloudCanSend(&CAN_INTERBOARD,UP_CLOUD_STATES,Self.RealPitch,Self.RealYaw);
-}

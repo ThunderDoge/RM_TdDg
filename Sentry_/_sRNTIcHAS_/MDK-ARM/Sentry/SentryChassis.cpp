@@ -18,9 +18,9 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
                              uint8_t down_feed_can_num,
                              uint16_t down_feed_can_id, uint8_t up_fric_can_num,
                              uint16_t up_fric_can_id)
-    : pidDriveSpeed(0.25, 0, 0, 1000, 16000, 100, 300),
-      pidDriveLocation(0, 0, 0, 1000, 1000, 10, 200),
-      DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation){};
+    : DriveSpeed(0.25, 0, 0, 1000, 16000, 100, 300),
+      DriveLocation(0, 0, 0, 1000, 1000, 10, 200),
+      DriveWheel(2, 0x203, &DJI_3508, &DriveSpeed, &DriveLocation){};
 
 void SentryChassis::Handle()
 {
