@@ -11,9 +11,9 @@
 #define __SENTRY_HPP_
 
 // #include "SentryCloud.hpp"
-#include "SentryCanCommu.hpp"
 // #include "SentryCloudLogic.hpp"
 // #include "SentryCloudVision.hpp"
+#include "SentryCanCommu.hpp"
 #include "SentryChassis.hpp"
 #include "SentryChassisLogic.hpp"
 
