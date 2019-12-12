@@ -87,6 +87,15 @@ void CMD_CHASSIS_CONTROL_Analysis()
     memcpy(&bsp_vision_Rec_Data.Vy, Vision_Rxbuffer + Array_index + 6, 4);
 }
 /**
+  * @brief  底盘路程控制
+  */
+void CMD_CHASSIS_LOACTION_CONTROL_Analysis()
+{
+	bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
+	memcpy(&bsp_vision_Rec_Data.Px , Vision_Rxbuffer + Array_index + 2,4);
+    memcpy(&bsp_vision_Rec_Data.Py, Vision_Rxbuffer + Array_index + 6, 4);
+}	
+/**
 * @brief  视觉串口解析函数
 * @details  对缓冲池中数据进行一次遍历并解析数据
 * @param  NULL
@@ -114,6 +123,7 @@ static uint8_t bsp_vision_Analysis(void)
             }
 
             //帧头帧尾正确，和校验正确，开始解析
+			bsp_vision_Rec_Data.Ready_flag = 1;	//标记数据就绪
             switch (Vision_Rxbuffer[Array_index + Function_word])
             {
             case CMD_GIMBAL_RELATIVE_CONTROL: //控制云台相对角度，数据解析
@@ -132,7 +142,12 @@ static uint8_t bsp_vision_Analysis(void)
                 bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
                 CMD_CHASSIS_CONTROL_Analysis();
                 break;
+			case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
+                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
+				CMD_CHASSIS_LOACTION_CONTROL_Analysis();
+				break;
             default:
+				bsp_vision_Rec_Data.Ready_flag = 0;	//没解析到，取消标记数据就绪
                 break;
             }
             //运行到这里就表示解析已经成功，一帧数据已经完备

@@ -14,6 +14,8 @@
 #include "SentryChassisLogic.hpp"
 #include <string.h>
 
+#define CAN_INTERBOARD hcan2
+
 enum SENTRY_CAN_ID:uint32_t  //∞Âº‰Õ®—∂ID∫≈
 {
     UP_CLOUD_STATES = 0X101U,
@@ -31,22 +33,25 @@ enum SuperiorControlFlag_for_Chassis
 {
     _SUPERIOR_CHASSIS_SPEED_SET_ = 0X01,
     _SUPERIOR_CHASSIS_LOACATION_SET_ = 0X02,
+	_SUPERIOR_OFFLINE_ =0,
 };
 
 struct CanCommuRecv_t
 {
-	
     uint32_t RecvId;
     uint8_t Ready_Flag;
     uint8_t SuperiorControlFlags;
     uint8_t UpCloudStates;
     uint8_t DownCloudStates;
+	float UpCloudPitchYaw[2];
+	float DownCloudPitchYaw[2];
     float SuperCon_Relative_Pitch;
     float SuperCon_Relative_Yaw;
     float SuperCon_Absolute_Pitch;
     float SuperCon_Absolute_yaw;
     float ChassisSpeed;
     float ChassisLocation;
+	uint32_t RecvUpdateTime;
 };
 
 extern CanCommuRecv_t CanRecv;
@@ -54,5 +59,5 @@ extern CanCommuRecv_t CanRecv;
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,uint8_t*  ptrData);
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,float argu1,float argu2);
 void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef* _hcan, CAN_RxHeaderTypeDef* RxHead,uint8_t* Data);
-
+HAL_StatusTypeDef ChassisCanCommuRoutine(void);
 #endif // __SENTRY_CLOUD_CAN_COMMU_HPP_
