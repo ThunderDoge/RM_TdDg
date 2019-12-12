@@ -14,18 +14,18 @@
 #include "SentryChassisLogic.hpp"
 #include <string.h>
 
-enum SENTRY_CAN_ID:uint32_t  //板间通讯ID号
+enum SENTRY_CAN_ID  //板间通讯ID号
 {
-    UP_CLOUD_STATES = 0X101U,
-    DOWN_CLOUD_STATES = 0X102U,
-    CHASSIS_STATES = 0X103U,
-    SUPERIOR_UP_RELATIVE_CMD = 0X111U,
-    SUPERIOR_UP_ABSOLUTE_CMD = 0X112U,
-    SUPERIOR_DOWN_RELATIVE_CMD = 0X121U,
-    SUPERIOR_DOWN_ABSOLUTE_CMD = 0X122U,
-    SUPERIOR_CHASSIS_MOVE = 0X130U,
-    SUPERIOR_CHASSIS_SET_LOACTION = 0X131U,
-    SUPERIOR_SAFE = 0x1A0U,
+    UP_CLOUD_STATES = 0X101,
+    DOWN_CLOUD_STATES = 0X102,
+    CHASSIS_STATES = 0X103,
+    SUPERIOR_UP_RELATIVE_CMD = 0X111,
+    SUPERIOR_UP_ABSOLUTE_CMD = 0X112,
+    SUPERIOR_DOWN_RELATIVE_CMD = 0X121,
+    SUPERIOR_DOWN_ABSOLUTE_CMD = 0X122,
+    SUPERIOR_CHASSIS_MOVE = 0X130,
+    SUPERIOR_CHASSIS_SET_LOACTION = 0X131
+    SUPERIOR_SAFE = 0x1A0
 };
 enum SuperiorControlFlag_for_Chassis
 {
@@ -35,8 +35,7 @@ enum SuperiorControlFlag_for_Chassis
 
 struct CanCommuRecv_t
 {
-	
-    uint32_t RecvId;
+    SENTRY_CAN_ID RecvId;
     uint8_t Ready_Flag;
     uint8_t SuperiorControlFlags;
     uint8_t UpCloudStates;

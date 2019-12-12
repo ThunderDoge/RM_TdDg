@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F4xx/Include; ../Drivers/CMSIS/Include; .\App; .\Bsp; .\Motor; .\Task; .\Sentry; ../Middlewares/Third_Party/FreeRTOS/Source/include; ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS; ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\App;.\Bsp;.\Motor;.\Task;.\Sentry</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,14 +403,14 @@
               <FilePath>../Src/gpio.c</FilePath>
             </File>
             <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/adc.c</FilePath>
-            </File>
-            <File>
               <FileName>can.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/can.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/dma.c</FilePath>
             </File>
             <File>
               <FileName>freertos.c</FileName>
@@ -418,19 +418,9 @@
               <FilePath>../Src/freertos.c</FilePath>
             </File>
             <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/i2c.c</FilePath>
-            </File>
-            <File>
               <FileName>spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Src/tim.c</FilePath>
             </File>
             <File>
               <FileName>usart.c</FileName>
@@ -458,29 +448,9 @@
           <GroupName>Drivers/STM32F4xx_HAL_Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4xx_hal_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_hal_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_i2c_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal_spi.c</FileName>
@@ -722,6 +692,11 @@
           <GroupName>bsp</GroupName>
           <Files>
             <File>
+              <FileName>bsp_dbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bsp\bsp_dbus.c</FilePath>
+            </File>
+            <File>
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Bsp\bsp_spi.c</FilePath>
@@ -747,44 +722,14 @@
           <GroupName>motor</GroupName>
           <Files>
             <File>
-              <FileName>app_AmmoFeed.cpp</FileName>
+              <FileName>Car_Driver.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\app_AmmoFeed.cpp</FilePath>
+              <FilePath>.\Motor\Car_Driver.cpp</FilePath>
             </File>
             <File>
-              <FileName>bsp_motor.cpp</FileName>
+              <FileName>universe.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_motor.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_universe.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_universe.cpp</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Sentry</GroupName>
-          <Files>
-            <File>
-              <FileName>Sentry.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Sentry\Sentry.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>SentryCanCommu.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryCanCommu.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>SentryChassis.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryChassis.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>SentryChassisLogic.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryChassisLogic.cpp</FilePath>
+              <FilePath>.\Motor\universe.cpp</FilePath>
             </File>
           </Files>
         </Group>

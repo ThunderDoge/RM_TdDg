@@ -16,7 +16,7 @@
 #include "bsp_spi.h"
 #include "app_imu.h"
 #include "app_math.h"
-//#include "bsp_dbus.h"
+#include "bsp_dbus.h"
 #include "bsp_can.hpp"
 #include "Sentry.hpp"
 

@@ -5,7 +5,7 @@
 
 enum GlobalModeName
 {
-    MODE_SAFE=1,
+    MODE_SAFE,
     MODE_MANUAL_SHOOTING_TEST,
     MODE_VIISON_SHOOTING_TEST,
     MODE_KEYBOARD_TEST,
@@ -19,9 +19,8 @@ enum CommandSourceName
 	CMDSRC_SELF,
 };
 
-GlobalModeName GetGlobalMode();
+extern GlobalModeName GlobalMode;
 extern CommandSourceName CommandSource;
-extern GlobalModeName RecvCMD;
 
 void ModeSelect(void);
 void VisionControl();   //ÊÓ¾õµ÷ÊÔ

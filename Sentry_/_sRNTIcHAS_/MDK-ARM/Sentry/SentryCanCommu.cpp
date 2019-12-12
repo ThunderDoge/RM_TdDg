@@ -77,19 +77,19 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
     case SUPERIOR_CHASSIS_MOVE:
         memcpy(&CanRecv.ChassisSpeed, Data, 4);
         memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
-        RecvCMD = MODE_VIISON_SHOOTING_TEST;
+        GlobalMode = MODE_VIISON_SHOOTING_TEST;
         CanRecv.SuperiorControlFlags =_SUPERIOR_CHASSIS_SPEED_SET_;
         CanRecv.Ready_Flag =1;
         break;
     case SUPERIOR_CHASSIS_SET_LOACTION:
         memcpy(&CanRecv.ChassisSpeed, Data, 4);
         memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
-        RecvCMD = MODE_VIISON_SHOOTING_TEST;
+        GlobalMode = MODE_VIISON_SHOOTING_TEST;
         CanRecv.SuperiorControlFlags =_SUPERIOR_CHASSIS_LOACATION_SET_;
         CanRecv.Ready_Flag =1;
         break;
     case SUPERIOR_SAFE:
-        RecvCMD = MODE_SAFE;     //调节到安全模式
+        GlobalMode = MODE_SAFE;     //调节到安全模式
         CommandSource = CMDSRC_CAN; //指令源为CAN通信
         CanRecv.SuperiorControlFlags =1;
         CanRecv.Ready_Flag =1;
