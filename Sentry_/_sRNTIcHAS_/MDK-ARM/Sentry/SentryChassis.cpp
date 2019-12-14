@@ -1,9 +1,5 @@
 #include "SentryChassis.hpp"
 
-//测试用
-pid pidPower(0,0,0,2000,10000,10,10);
-float TargetPower;
-
 //电机类型
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
@@ -53,9 +49,7 @@ void SentryChassis::Safe_Set()
     Mode = SENTRY_SAFE;
 }
 void SentryChassis::MotorSpeed_Set(float speed_motor_rpm){
-//    DriveWheel.Speed_Set(speed_motor_rpm);
-TargetPower = speed_motor_rpm* 30 / 10000;
-    DriveWheel.Speed_Set(pidPower.pid_run(TargetPower - Self.DrivePower));
+    DriveWheel.Speed_Set(speed_motor_rpm);
 }
 void SentryChassis::MotorSoftLocation_Set(float location_motor_soft){
     DriveWheel.Angle_Set(location_motor_soft);
