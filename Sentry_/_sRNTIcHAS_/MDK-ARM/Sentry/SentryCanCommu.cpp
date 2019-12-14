@@ -84,15 +84,24 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
         break;
     case SUPERIOR_CHASSIS_SET_LOACTION:
         memcpy(&CanRecv.ChassisLocation, Data, 4);
-//        memcpy(&CanRecv.ChassisLocation, Data + 4, 4);
         RecvCMD = MODE_VIISON_SHOOTING_TEST;
         CanRecv.SuperiorControlFlags =_SUPERIOR_CHASSIS_LOACATION_SET_;
         CanRecv.Ready_Flag =1;
         break;
+	case SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED:
+        memcpy(&CanRecv.ChassisLocation, Data, 4);
+        memcpy(&CanRecv.ChassisSpeedLimit, Data + 4, 4);
+		RecvCMD = MODE_VIISON_SHOOTING_TEST;
+		CanRecv.SuperiorControlFlags = _SUPERIOR_CHASSIS_LOACATION_SET_SPEED_LIMIT_;
+		CanRecv.Ready_Flag =1;
+		break;
+	case UP_FEED:
+		CanRecv.UpFeedSpeed = *((float*)Data);
+		Self.FeedUp.Freefire_Set(CanRecv.UpFeedSpeed);
     case SUPERIOR_SAFE:
         RecvCMD = MODE_SAFE;     //调节到安全模式
         CommandSource = CMDSRC_CAN; //指令源为CAN通信
-        CanRecv.SuperiorControlFlags =1;
+        CanRecv.SuperiorControlFlags =_SUPERIOR_OFFLINE_;
         CanRecv.Ready_Flag =1;
         break;
 		
@@ -103,8 +112,12 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
 		CanRecv.Ready_Flag =0;	//无效再标记CAN无效
         break;
     }	
-	if(CanRecv.Ready_Flag)	//如果确实更新了
+	if(CanRecv.Ready_Flag){	//如果确实更新了
 		CanRecv.RecvUpdateTime = HAL_GetTick();		//更新时间戳
+		}
+	if(CanRecv.SuperiorControlFlags != _SUPERIOR_OFFLINE_){
+		CanRecv.SuperiorUpdateTime = HAL_GetTick();	//更新时间戳
+		}
 }
 
 HAL_StatusTypeDef ChassisCanCommuRoutine(void)

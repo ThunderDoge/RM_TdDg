@@ -49,6 +49,7 @@
 "_srntichas_\app_math.o"
 "_srntichas_\bsp_spi.o"
 "_srntichas_\bsp_can.o"
+"_srntichas_\bsp_current.o"
 "_srntichas_\task_sentcha.o"
 "_srntichas_\app_ammofeed.o"
 "_srntichas_\bsp_motor.o"

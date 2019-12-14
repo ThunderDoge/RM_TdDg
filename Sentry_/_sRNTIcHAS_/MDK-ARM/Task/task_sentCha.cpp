@@ -25,6 +25,7 @@ void RoboInit()
 	taskEXIT_CRITICAL();
 //	bsp_dbus_Init();
 	bsp_can_Init();
+	bsp_Current_Init();
 	
 	manager::CANSelect(&hcan1,&hcan2);
 }
@@ -34,12 +35,15 @@ void RoboInit()
  */
 void task_Main(void* param)
 {
+			TickType_t LastTick = xTaskGetTickCount();
 	while (1)
 	{
+		bsp_Current_Read();
 		app_imu_So3thread();
         Self.Handle();
 		ModeSelect();
 		manager::CANSend();	
+		vTaskDelayUntil(&LastTick,1);
 	}
 }
 

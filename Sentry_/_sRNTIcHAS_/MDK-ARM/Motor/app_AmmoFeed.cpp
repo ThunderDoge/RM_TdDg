@@ -1,13 +1,45 @@
 #include "app_AmmoFeed.hpp"
 #define SIGN(x) ((x)>0?1:((x)<0?-1:0))
 
+void AmmoFeed::PR_Handle(void)
+{
+	static uint8_t last_mode;
+if(!
+		BlockedReaction())//堵转时运行堵转处理
+	{
+	if(AmmoFeed_mode != last_mode)
+	{
+		softTargetAngle = SoftAngle;
+	}
+	switch(AmmoFeed_mode)
+	{
+		case AMMOFEED_FREEFIRE:
+			Freefire();
+			break;
+		case AMMOFEED_BURST:
+			Burst();
+			break;
+		case AMMOFEED_FREEONCE:
+			FreeOnce();
+			break;
+		default:
+			Safe_Set();
+			break;
+	}
+	}
+	last_mode = AmmoFeed_mode;
+}
+
+
 uint8_t AmmoFeed::BlockedReaction(void)
 {
+	if(block == NULL)
+		return 0;
 	if(block->IsBlock)
 	{
 		if( !IsBlockInHandle )	//堵转，未处理
 		{	//正常堵转处理程序
-			softTargetAngle = RealAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//设定反转角度
+			softTargetAngle = SoftAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//设定反转角度
 			Angle_Set(softTargetAngle);
 			block->Clear_BlockFlag();	//清楚堵转标志
 			IsBlockInHandle = 1;	//立起处理标志
@@ -22,7 +54,7 @@ uint8_t AmmoFeed::BlockedReaction(void)
 	{
 		if(IsBlockInHandle)	//未堵转，在处理。
 		{
-			if( fabs(RealAngle - softTargetAngle) <=3 )	
+			if( fabs(SoftAngle - softTargetAngle) <=3 )	
 			{
 				IsBlockInHandle = 0;	//达到角度后返回正常
 			}
@@ -37,138 +69,154 @@ uint8_t AmmoFeed::BlockedReaction(void)
 	return 1;
 }
 
-void AmmoFeed::SpeedRun(void)
+/** 
+    * @brief 按步数运行的函数
+*/
+void AmmoFeed::PositionRun(void)
 {
-	if( BlockedReaction() )
-	{ ;	}
-	else
+	static int16_t Step_Overflow;
+	static uint32_t rammerStepTime = 0;
+	if(( (HAL_GetTick() - rammerStepTime) > rammingDiscreDelay ) ) 
 	{
-		Speed_Set(rammingContiSpeed);
+		if(rammerStepLeft > 0)//如果存在步数
+		{
+			softTargetAngle += ( SIGN(ramDir) * 360.0f/feeder_division) ;		//设定反转角度，方向由用户设定的变量 ramDir 决定
+			rammerStepLeft-- ;
+			rammerStepTime = HAL_GetTick();
+		}
+		else if(rammerStepLeft == 0)//如果步数为0
+		{
+			Step_Overflow = (int16_t)floorf((softTargetAngle - SoftAngle)/(360.0f/feeder_division)/SIGN(ramDir));
+			if(Step_Overflow<=0)Step_Overflow = 0;
+			softTargetAngle -= ( SIGN(ramDir) * 360.0f/feeder_division)*Step_Overflow;
+		}
 	}
+	Angle_Set(softTargetAngle);
+	motor::CANSend();
+}
+/** 
+* @brief  自由开火模式配置函数
+* @param[in]   期望速度
+* @retval  
+* @par 日志 
+*
+*/
+void AmmoFeed::Freefire_Set(int32_t FreeSpeed)
+{
+	AmmoFeed_mode = AMMOFEED_FREEFIRE;
+	rammingContiSpeed = FreeSpeed;
+}
+/** 
+* @brief  N连发模式配置函数
+* @param[in]   DiscreDelay 每走一步间隔时间   trig N连发的触发条件 
+* @retval   
+* @par 日志 
+*
+*/
+void AmmoFeed::Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t* trig)
+{
+	AmmoFeed_mode = AMMOFEED_BURST;
+	BurstShootCnt = ShootCnt;
+	rammingDiscreDelay = DiscreDelay;
+	trigger = trig;
+}
+/** 
+* @brief  单步连发模式配置函数
+* @param[in]   DiscreDelay 每走一步间隔时间   trig 连发的触发条件 
+* @retval   
+* @par 日志 
+*
+*/
+void AmmoFeed::FreeOnce_Set(int32_t	DiscreDelay,int16_t* trig)
+{
+	AmmoFeed_mode = AMMOFEED_FREEONCE;
+	rammingDiscreDelay = DiscreDelay;
+	trigger = trig;
+}
+
+/** 
+    * @brief 自由开火模式
+*/
+void AmmoFeed::Freefire(void)
+{
+	Speed_Set(rammingContiSpeed);
 	softTargetAngle = RealAngle;
 	motor::CANSend();
 }
 
-void AmmoFeed::LocationRun(void)
-{
-	if( BlockedReaction() )
-	{;}
-	else
-	{
-		if( fabs(RealAngle - softTargetAngle ) <= 360.0f/feeder_division/3 && ( (HAL_GetTick() - rammerStepTime) > rammingDiscreDelay ) )
-		{
-			if(rammerStepLeft > 0)
-			{
-				softTargetAngle += ( SIGN(ramDir) * 360.0f/feeder_division) ;		//设定反转角度，方向由用户设定的变量 ramDir 决定
-				rammerStepLeft-- ;
-				rammerStepTime = HAL_GetTick();
-			}
-			if(rammerStepLeft == 0)
-			{;}
-//			if(rammerStepLeft < -1)	//无穷模式
-//			{
-//				softTargetAngle += ( SIGN(ramDir) * 360.0f/feeder_division) ;		//设定反转角度，方向由用户设定的变量 ramDir 决定
-//				rammerStepTime = HAL_GetTick();
-//			}
-		}
-		else
-		{;}
-		Angle_Set(softTargetAngle);
-	}
-	motor::CANSend();
-}
 
-void AmmoFeed::Freefire(void)
-{
-	feed_mode = AMMOFEED_FREEFIRE;
-	rammerStepLeft+=500;
-	LocationRun();
-}
-
-void AmmoFeed::Once(void)
-{
-	feed_mode = AMMOFEED_ONCE;
-	rammerStepLeft++;
-	LocationRun();
-}
-
-void AmmoFeed::Burst(void)
-{
-	feed_mode = AMMOFEED_BURST;
-	rammerStepLeft += BurstShootCnt;
-	LocationRun();
-}
-void AmmoFeed::Stop(void)
-{
-	feed_mode = AMMOFEED_STOP;
-	Speed_Set(0);
-}
-uint32_t t;
-void AmmoFeed::FreeAndOnceManage(uint8_t trigger)
+/** 
+    * @brief 单步连发模式
+*/
+void AmmoFeed::FreeOnce(void)
 {
 	static uint8_t act_flag=0;
 	static uint32_t act_time_stamp;
 	static uint8_t once_flag = 0;
-	if( trigger )
+
+	if( *trigger>200 )
 	{
-		if( act_flag == 0 ){
-			act_flag= 1;	
+		if( act_flag == 0 )
+		{
+			act_flag= 1;
 			act_time_stamp = HAL_GetTick();
 		}
 	}
 	else
-	{	act_flag = 0;	}
+	{	
+		act_flag = 0;	
+	}
 	
 	if(act_flag)
 	{
-		if( (t=HAL_GetTick()-act_time_stamp) > freefire_trig_time )	//连发触发计时
-		{ Freefire(); }
+		if((HAL_GetTick()-act_time_stamp)>freeonce_trig_time)
+		{
+			rammerStepLeft++;			
+		}
 		else
 		{
-			if(once_flag==0)	//单次射击
+			if(once_flag == 0)
 			{
-				Once(); 
-				once_flag =1;
+				once_flag = 1;
 			}
-			LocationRun();
 		}
 	}
 	else
 	{
-		Angle_Set(softTargetAngle);//锁定电机在softTargetAngle
-		once_flag = 0;//清空标志
-		rammerStepLeft = 0;//ONCE的原理是增加步数。清空步数防止下次触发直接动
+		if(once_flag == 1)
+		{
+			rammerStepLeft = 1;//单次发射，就给予一个步数
+			once_flag = 0;
+		}
+		else
+		{
+			rammerStepLeft = 0;//不发射时把步数清零
+		}
 	}
-	motor::CANSend();
+	PositionRun();//按步数进行拨弹
 }
 
-/**
- * @brief  BURST模式管理函数
- * @param[in]  trigger 扳机标志，1为触发
- */
 
-void AmmoFeed::BurstManage(uint8_t trigger)
+/** 
+    * @brief N连发模式
+*/
+void AmmoFeed::Burst(void)
 {
 	static uint8_t burst_flag =0;	//单次BURST标志位
-
-	if( trigger )	//当扳机触发
+	
+	if( *trigger>200 )	//当扳机触发
 	{
 		if(burst_flag == 0)	//若标志位未立
 		{	
-			Burst();
+			rammerStepLeft = BurstShootCnt;
 			burst_flag = 1;	//立标志，开启BURST
 		}
-		else
-		{;}
-		 LocationRun();		//Burst在LocationRun模式下才能运行
 	}
 	else
 	{
-		burst_flag = 0;		//清空标志
-		Angle_Set( softTargetAngle);	//锁定电机在softTargetAngle
-		rammerStepLeft = 0;		//BURST的原理是增加步数。清空步数防止下次触发直接动
+		burst_flag = 0;
 	}
-	motor::CANSend();
+	PositionRun();
 }
 
 

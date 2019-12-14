@@ -26,8 +26,11 @@ enum SENTRY_CAN_ID:uint32_t  //∞Âº‰Õ®—∂ID∫≈
     SUPERIOR_UP_ABSOLUTE_CMD = 0X112U,
     SUPERIOR_DOWN_RELATIVE_CMD = 0X121U,
     SUPERIOR_DOWN_ABSOLUTE_CMD = 0X122U,
+	UP_FEED = 0X113U,
+	DOWN_FEED = 0X123U,
     SUPERIOR_CHASSIS_MOVE = 0X130U,
     SUPERIOR_CHASSIS_SET_LOACTION = 0X131U,
+	SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED = 0X132U,
     SUPERIOR_SAFE = 0x1A0U,
 };
 
@@ -46,6 +49,7 @@ struct CanCommuRecv_t
     float SuperCon_Absolute_yaw;
     float ChassisSpeed;
     float ChassisLocation;
+	float ChassisSpeedLimit;
 	uint32_t RecvUpdateTime;
 };
 

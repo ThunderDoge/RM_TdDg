@@ -4,6 +4,9 @@
 #include "app_AmmoFeed.hpp"
 #include "app_imu.h"
 #include "bsp_motor.hpp"
+#include "bsp_current.h"
+
+extern float SpeedMax;
 
 enum PillarActionStateName:int8_t
 {
@@ -26,7 +29,6 @@ class SentryChassis
 public:
 
     SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
-                  uint8_t up_yaw_can_num, uint16_t up_yaw_can_id,
                   uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
                   uint8_t up_feed_can_num, uint16_t up_feed_can_id,
                   uint8_t down_feed_can_num, uint16_t down_feed_can_id,
@@ -34,14 +36,24 @@ public:
     //-------------------------PID变量
     pid pidDriveSpeed;
     pid pidDriveLocation;
+	pid FricSpeed;
+	pid FricLocation;
+	pid FeedUpSpeed;
+	pid FeedUpLocation;
+	pid FeedDownSpeed;
+	pid FeedDownLocation;
     //-------------------------电机变量
     softmotor DriveWheel;
+	motor Fric;
+	AmmoFeed FeedUp;
+	AmmoFeed FeedDown;
     //-------------------------参数
     int Mode;
     float MotorSpeed;   //电机反馈速度，单位rpm
     float MotorSoftLocation;    //电机软路程，单位是角度
     float RealSpeed;    //真正的速度，单位mm/s
     float RealPosition; //真正的距离，单位mm
+	float DrivePower;	//驱动轮功率，单位W
     //-------------------------操作函数
     void Handle();      //更新函数
     void Safe_Set();    //安全模式

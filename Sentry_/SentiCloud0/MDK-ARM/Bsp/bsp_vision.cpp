@@ -95,6 +95,12 @@ void CMD_CHASSIS_LOACTION_CONTROL_Analysis()
 	memcpy(&bsp_vision_Rec_Data.Px , Vision_Rxbuffer + Array_index + 2,4);
     memcpy(&bsp_vision_Rec_Data.Py, Vision_Rxbuffer + Array_index + 6, 4);
 }	
+void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis()
+{
+	bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+	memcpy(&bsp_vision_Rec_Data.Px , Vision_Rxbuffer + Array_index + 2,4);
+	memcpy(&bsp_vision_Rec_Data.SpeedLimit,Vision_Rxbuffer + Array_index + 6, 4);
+}
 /**
 * @brief  视觉串口解析函数
 * @details  对缓冲池中数据进行一次遍历并解析数据
@@ -145,6 +151,10 @@ static uint8_t bsp_vision_Analysis(void)
 			case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
                 bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
 				CMD_CHASSIS_LOACTION_CONTROL_Analysis();
+				break;
+			case CMD_CHASSIS_LOCATION_LIMIT_SPEED:	//底盘控制路程带限速
+				bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+				CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis();
 				break;
             default:
 				bsp_vision_Rec_Data.Ready_flag = 0;	//没解析到，取消标记数据就绪

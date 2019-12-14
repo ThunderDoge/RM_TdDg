@@ -18,6 +18,7 @@
 #include "app_math.h"
 //#include "bsp_dbus.h"
 #include "bsp_can.hpp"
+#include "bsp_current.h"
 #include "Sentry.hpp"
 
 void TaskStarter(void);

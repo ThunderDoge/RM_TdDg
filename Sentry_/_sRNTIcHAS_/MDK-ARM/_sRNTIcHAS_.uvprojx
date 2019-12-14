@@ -731,6 +731,11 @@
               <FileType>8</FileType>
               <FilePath>.\Bsp\bsp_can.cpp</FilePath>
             </File>
+            <File>
+              <FileName>bsp_current.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bsp\bsp_current.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
