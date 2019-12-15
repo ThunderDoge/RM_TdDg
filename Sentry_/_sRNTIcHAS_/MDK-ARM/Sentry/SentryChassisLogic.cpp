@@ -6,6 +6,8 @@
 pid pidPower(1, 0, 0, 1000, 10000, 10, 10);
 float PowerOut;
 float TargetPower = 1;
+float FeedFricSpd = 3500;
+float FeedUpSpd = 3000;
 #endif // DEBUG
 
 GlobalModeName GlobalMode;
@@ -36,6 +38,10 @@ void ModeSelect(void)
 		if(PowerOut<0) PowerOut = 0;
         Self.MotorSpeed_Set(PowerOut);
     }
+	{
+		Self.FeedUp.Freefire_Set(FeedUpSpd);
+		Self.Fric.Speed_Set(-FeedFricSpd);
+	}
 #endif
 }
 

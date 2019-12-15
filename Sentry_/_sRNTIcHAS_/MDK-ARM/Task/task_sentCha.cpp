@@ -42,7 +42,7 @@ void task_Main(void* param)
 		app_imu_So3thread();
         Self.Handle();
 		ModeSelect();
-		manager::CANSend();	
+//		manager::CANSend();	
 		vTaskDelayUntil(&LastTick,1);
 	}
 }

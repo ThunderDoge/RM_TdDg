@@ -4,14 +4,14 @@
     <Project>
         <Configuration>
             <JLink>
-                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="1" SamplingPeriod="100" SerialNo="0" JTAG_IRPre="-1" JTAG_DRPre="-1" IP="localhost" TargetDevice="GD32F405RG" TargetInterface="SWD" InterfaceSpeed="4000" />
+                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="1" SamplingPeriod="100" SerialNo="0" JTAG_IRPre="-1" JTAG_DRPre="-1" IP="" TargetDevice="GD32F405RG" TargetInterface="SWD" InterfaceSpeed="4000" />
             </JLink>
-            <ScriptFile Name="unspecified" />
+            <ScriptFile Name="D:\RM_TdDg_PrivLib\Sentry_\_sRNTIcHAS_\MDK-ARM\_sRNTIcHAS_\sENTRYcHASSIS.jscope\unspecified" />
             <ElfFile Name="D:\RM_TdDg_PrivLib\Sentry_\_sRNTIcHAS_\MDK-ARM\_sRNTIcHAS_\_sRNTIcHAS_.axf" />
             <DataFile Name="" />
             <RawFile Name="" />
             <Scope>
-                <Options TimeResolutionUs="200000" />
+                <Options TimeResolutionUs="100000" />
             </Scope>
         </Configuration>
         <Windows>
@@ -20,13 +20,19 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="DrivePower" Address="0x2000A6F0" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="0" YMaxSampled="9" YAvgSampled="3" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="180" IsAutoConfig="0" YResolution="2" MaxValue="2" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="DrivePower" Address="0x2000A6F0" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="0" YMaxSampled="6" YAvgSampled="3" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="180" IsAutoConfig="0" YResolution="1" MaxValue="2" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="PowerOut" Address="0x20000170" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="0" YMaxSampled="4540" YAvgSampled="2186" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="PowerOut" Address="0x20000170" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="2013" YMaxSampled="3489" YAvgSampled="2444" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="1000" MaxValue="10000" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="TargetPower" Address="0x20000174" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="0" YMaxSampled="3" YAvgSampled="2" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="180" IsAutoConfig="0" YResolution="2" MaxValue="10" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="TargetPower" Address="0x20000174" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="3" YMaxSampled="3" YAvgSampled="3" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="180" IsAutoConfig="0" YResolution="1" MaxValue="10" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
+            </Symbol>
+            <Symbol>
+                <Options Name="bsp_CurrentRead[1]" Address="0x2000A13E" Type="short" TypeID="11" Size="2" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="22" YMaxSampled="305" YAvgSampled="130" Offset="16" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="200" MaxValue="400" File="Bsp\bsp_current.c" Scope="0" DrawStyle="0" />
+            </Symbol>
+            <Symbol>
+                <Options Name="bsp_VoltageRead[1]" Address="0x2000A148" Type="short" TypeID="11" Size="2" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="22892" YMaxSampled="22952" YAvgSampled="22930" Offset="18" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Bsp\bsp_current.c" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>
