@@ -30,8 +30,8 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
 	  FeedUp(up_feed_can_num,up_feed_can_id,&DJI_2006,7,-1,&FeedUpSpeed,&FeedUpLocation),
 	  FeedDown(down_feed_can_num,down_feed_can_id,&DJI_2006,7,-1,&FeedDownSpeed,&FeedDownLocation)
 	  {
-		FeedUp.Enable_Block(5000,200,5);
-		FeedDown.Enable_Block(5000,200,5);
+		FeedUp.Enable_Block(4000,200,5);
+		FeedDown.Enable_Block(4000,200,5);
 	  };
 
 void SentryChassis::Handle()

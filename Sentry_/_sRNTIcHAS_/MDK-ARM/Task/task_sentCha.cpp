@@ -12,6 +12,7 @@ void TaskStarter(void)
 {
 	RoboInit();
 	xTaskCreate(task_Main,"task_Main",512,NULL,4,NULL);
+	xTaskCreate(task_Commu,"task_Commu",512,NULL,4,NULL);
 }
 /**
   * @brief  统一初始化程序
@@ -26,6 +27,7 @@ void RoboInit()
 //	bsp_dbus_Init();
 	bsp_can_Init();
 	bsp_Current_Init();
+	bsp_ADC_Sensor_Init();
 	
 	manager::CANSelect(&hcan1,&hcan2);
 }
@@ -44,6 +46,17 @@ void task_Main(void* param)
 		ModeSelect();
 //		manager::CANSend();	
 		vTaskDelayUntil(&LastTick,1);
+	}
+}
+void task_Commu(void* param)
+{
+			TickType_t LastTick = xTaskGetTickCount();
+
+	while(1)
+	{
+		ChassisCanCommuRoutine();
+				vTaskDelayUntil(&LastTick,5);
+
 	}
 }
 

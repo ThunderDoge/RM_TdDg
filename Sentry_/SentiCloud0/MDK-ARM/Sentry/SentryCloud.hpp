@@ -57,6 +57,7 @@ public:
     //Public ״̬
     int Mode;
     float RealYaw;
+	float MechanicYaw;
     float RealPitch;
     float TargetYaw;
     float TargetPitch;

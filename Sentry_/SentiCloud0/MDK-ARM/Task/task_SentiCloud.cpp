@@ -21,6 +21,7 @@ void Cloud_Init(void)
 
     bsp_can_Init();  //CAN总线初始化函数
     bsp_dbus_Init(); //DBUS初始化
+	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	bsp_vision_Init();
     manager::CANSelect(&hcan1, &hcan2);
     app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。

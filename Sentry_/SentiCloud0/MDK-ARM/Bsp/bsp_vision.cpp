@@ -12,34 +12,39 @@
 //与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 #include "bsp_vision.hpp"
 #include "usart.h"
+//#define DEBUG
+#ifdef DEBUG
+		uint8_t m = 1;
+		float f1 = 12.5f , f2 = 25.2;
+#endif
 
 bsp_vision_data bsp_vision_Rec_Data, bsp_vision_Send_Data;    //视觉串口解析到的数据,视觉串口发送的数据
-static uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0}; //串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
+uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0}; //串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
 static int8_t Array_index = 0;                                //缓冲区数据检测用指针
 /**
   * @brief 数据帧类成员函数
   */
 void VisionFrame::pack()
 {
-	int sum=0,i=0;
-	for(i=0;i<Sum_check;i++)
-	{
-		sum += Frame[i];
-	}
-	sum += FRAME_END_DATA;
-	Frame[Sum_check] = sum;
+    int sum = 0, i = 0;
+    for (i = 0; i < Sum_check; i++)
+    {
+        sum += Frame[i];
+    }
+    sum += FRAME_END_DATA;
+    Frame[Sum_check] = sum;
 }
 int8_t VisionFrame::load(uint8_t *ptrData, size_t size)
 {
-	if((load_iter+size)< Sum_check)
-	{
-		memcpy(ptrData+load_iter, ptrData, size);
-		return 0;
-	}
-	else
-	{
-		return -1;
-	}
+    if ((load_iter + size) < Sum_check)
+    {
+        memcpy(ptrData + load_iter, ptrData, size);
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
 }
 /**
   * @brief  云台相对角度控制
@@ -91,15 +96,15 @@ void CMD_CHASSIS_CONTROL_Analysis()
   */
 void CMD_CHASSIS_LOACTION_CONTROL_Analysis()
 {
-	bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
-	memcpy(&bsp_vision_Rec_Data.Px , Vision_Rxbuffer + Array_index + 2,4);
+    bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
+    memcpy(&bsp_vision_Rec_Data.Px, Vision_Rxbuffer + Array_index + 2, 4);
     memcpy(&bsp_vision_Rec_Data.Py, Vision_Rxbuffer + Array_index + 6, 4);
-}	
+}
 void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis()
 {
-	bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
-	memcpy(&bsp_vision_Rec_Data.Px , Vision_Rxbuffer + Array_index + 2,4);
-	memcpy(&bsp_vision_Rec_Data.SpeedLimit,Vision_Rxbuffer + Array_index + 6, 4);
+    bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+    memcpy(&bsp_vision_Rec_Data.Px, Vision_Rxbuffer + Array_index + 2, 4);
+    memcpy(&bsp_vision_Rec_Data.SpeedLimit, Vision_Rxbuffer + Array_index + 6, 4);
 }
 /**
 * @brief  视觉串口解析函数
@@ -129,13 +134,13 @@ static uint8_t bsp_vision_Analysis(void)
             }
 
             //帧头帧尾正确，和校验正确，开始解析
-			bsp_vision_Rec_Data.Ready_flag = 1;	//标记数据就绪
+            bsp_vision_Rec_Data.Ready_flag = 1; //标记数据就绪
             switch (Vision_Rxbuffer[Array_index + Function_word])
             {
             case CMD_GIMBAL_RELATIVE_CONTROL: //控制云台相对角度，数据解析
                 bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
-                CMD_GIMBAL_RELATIVE_CONTROL_Analysis(); 
-				break;
+                CMD_GIMBAL_RELATIVE_CONTROL_Analysis();
+                break;
             case CMD_GIMBAL_ABSOLUTE_CONTROL: //控制云台绝对角度，数据解析
                 bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
                 CMD_GIMBAL_ABSOLUTE_CONTROL_Analysis();
@@ -148,16 +153,16 @@ static uint8_t bsp_vision_Analysis(void)
                 bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
                 CMD_CHASSIS_CONTROL_Analysis();
                 break;
-			case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
+            case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
                 bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
-				CMD_CHASSIS_LOACTION_CONTROL_Analysis();
-				break;
-			case CMD_CHASSIS_LOCATION_LIMIT_SPEED:	//底盘控制路程带限速
-				bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
-				CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis();
-				break;
+                CMD_CHASSIS_LOACTION_CONTROL_Analysis();
+                break;
+            case CMD_CHASSIS_LOCATION_LIMIT_SPEED: //底盘控制路程带限速
+                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+                CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis();
+                break;
             default:
-				bsp_vision_Rec_Data.Ready_flag = 0;	//没解析到，取消标记数据就绪
+                bsp_vision_Rec_Data.Ready_flag = 0; //没解析到，取消标记数据就绪
                 break;
             }
             //运行到这里就表示解析已经成功，一帧数据已经完备
@@ -215,7 +220,7 @@ void bsp_vision_It(void)
 * @param  uint8_t _Functionword 功能字列表
 * @retval  HAL_StatusTypeDef HAL_OK 发送成功 HAL_ERROR发送失败
 */
-static uint8_t Vision_Txbuffer[18] = {0}; //发送用数组
+uint8_t Vision_Txbuffer[18] = {0}; //发送用数组
 HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
 {
     int16_t _check_sum = 0;         //和校验用变量
@@ -226,10 +231,17 @@ HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
 
     switch (_Functionword)
     {
-    case CMD_GET_MCU_STATE:                                                 //给视觉发心跳包
-        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Cloud_mode, 1);   //控制模式
+    case CMD_GET_MCU_STATE:         
+	//给视觉发心跳包
+#ifndef DEBUG
+		memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Cloud_mode, 1);   //控制模式
         memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.Pitch, 4);        //Pitch轴数据
         memcpy(Vision_Txbuffer + 7, &bsp_vision_Send_Data.Yaw, 4);          //Yaw轴数据
+#else
+		memcpy(Vision_Txbuffer + 2, &m, 1);   //控制模式
+        memcpy(Vision_Txbuffer + 3, &f1, 4);        //Pitch轴数据
+        memcpy(Vision_Txbuffer + 7, &f2, 4);          //Yaw轴数据
+#endif
         memcpy(Vision_Txbuffer + 11, &bsp_vision_Send_Data.Shoot_speed, 4); //射速
         memcpy(Vision_Txbuffer + 15, &bsp_vision_Send_Data.Shoot_freq, 1);  //射频
         break;
@@ -241,6 +253,10 @@ HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
             memcpy(Vision_Txbuffer + 5, &bsp_vision_Send_Data.CAN2_motorlist, 2); //CAN2电机数据
         }
         break;
+    case STA_CHASSIS:
+        Vision_Txbuffer[2] = 0;
+        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.pillar_flag, 1);
+        memcpy(Vision_Txbuffer + 4, &bsp_vision_Send_Data.Px, 4);
     default:
         break;
     }
@@ -257,10 +273,7 @@ HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
 /**
   * @brief  发送数据帧类型
   */
-HAL_StatusTypeDef bsp_vision_SendData(VisionFrame& frame)
+HAL_StatusTypeDef bsp_vision_SendData(VisionFrame &frame)
 {
-    return HAL_UART_Transmit_DMA(&BSP_VISION_UART,frame.Frame,18);
+    return HAL_UART_Transmit_DMA(&BSP_VISION_UART, frame.Frame, 18);
 }
-
-
-

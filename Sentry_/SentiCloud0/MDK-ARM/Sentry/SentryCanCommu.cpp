@@ -81,11 +81,19 @@ void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef
         GlobalMode = MODE_SAFE;     //调节到安全模式
         CommandSource = CMDSRC_CAN; //指令源为CAN通信
         break;
+    case CHASSIS_PILLAR:
+        {
+            CloudCanRecv.pillar_close_flag = 0;
+            if(Data[0])
+                CloudCanRecv.pillar_close_flag = 1;
+            if(Data[1])
+                CloudCanRecv.pillar_close_flag = 2;
+        }
     default:
         break;
     }
 }
 HAL_StatusTypeDef CloudCanCommuRoutine(void)
 {
-	return CloudCanSend(&CAN_INTERBOARD,UP_CLOUD_STATES,Self.RealPitch,Self.RealYaw);
+    return CloudCanSend(&CAN_INTERBOARD, UP_CLOUD_STATES, Self.RealPitch, Self.MechanicYaw);
 }

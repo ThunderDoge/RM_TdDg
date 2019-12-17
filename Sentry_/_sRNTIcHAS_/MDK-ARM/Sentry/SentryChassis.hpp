@@ -5,6 +5,8 @@
 #include "app_imu.h"
 #include "bsp_motor.hpp"
 #include "bsp_current.h"
+#include "bsp_adc_deal.h"
+
 
 extern float SpeedMax;
 

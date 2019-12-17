@@ -178,16 +178,6 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Vision_Rxbuffer</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>bsp_vision_Rec_Data</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
           <ItemText>Vision_Txbuffer</ItemText>
         </Ww>
       </WatchWindow1>
@@ -195,12 +185,12 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>pitch</ItemText>
+          <ItemText>CloudCanRecv</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>yaw</ItemText>
+          <ItemText>bsp_vision_Rec_Data</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

@@ -1,13 +1,40 @@
 #include "SentryChassisLogic.hpp"
-#define DEBUG
+
+uint8_t control_mode;
+uint8_t pillar_close_flag;
+float location_on_rail;
+// void ChassisSendInfoHandle(void)
+// {
+//     control_mode = 0;
+//     if (bsp_ADC1_Sharp_Distance[0] <= 13.0f)
+//         pillar_close_flag = 1;
+//     else if (bsp_ADC1_Sharp_Distance[1] <= 13.0f)
+//         pillar_close_flag = 2;
+//     else
+//         pillar_close_flag = 0;
+//     location_on_rail = Self.MotorSoftLocation;
+// }
+// void ChassisSendInfoCanTx(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
+// {
+//     if(RxHead->StdId) == can_commu_id
+// 	{
+	
+//     }
+// }
+//GlobalModeAgent ChassisSendInfo(0, 0X13, CHASSIS_STATES,
+//ChassisSendInfoHandle,ChassisSendInfoCanTx );
+
+//#define DEBUG
 
 #ifdef DEBUG
 
 pid pidPower(1, 0, 0, 1000, 10000, 10, 10);
 float PowerOut;
 float TargetPower = 1;
-float FeedFricSpd = 3500;
-float FeedUpSpd = 3000;
+float FeedFricSpd = 0;
+float FeedUpSpd = 0;
+float FeedUpRealSpd = 0;
+float FeedUpRealCrr;
 #endif // DEBUG
 
 GlobalModeName GlobalMode;
@@ -35,13 +62,16 @@ void ModeSelect(void)
 #else
     {
         PowerOut += pidPower.pid_run(TargetPower - fabs(Self.DrivePower));
-		if(PowerOut<0) PowerOut = 0;
+        if (PowerOut < 0)
+            PowerOut = 0;
         Self.MotorSpeed_Set(PowerOut);
     }
-	{
-		Self.FeedUp.Freefire_Set(FeedUpSpd);
-		Self.Fric.Speed_Set(-FeedFricSpd);
-	}
+    {
+        Self.FeedUp.Freefire_Set(FeedUpSpd);
+        Self.Fric.Speed_Set(-FeedFricSpd);
+        FeedUpRealSpd = Self.FeedUp.RealSpeed;
+        FeedUpRealCrr = Self.FeedUp.RealCurrent;
+    }
 #endif
 }
 

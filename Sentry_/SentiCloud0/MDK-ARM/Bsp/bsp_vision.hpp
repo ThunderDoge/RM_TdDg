@@ -47,7 +47,8 @@ enum __bsp_vision_Functionwords
 
     //电控发给视觉的
     CMD_GET_MCU_STATE = 0x11, //获取电控控制信息
-    ROBOT_ERR = 0X12
+    ROBOT_ERR = 0X12,
+    STA_CHASSIS = 0X13,
 };
 
 //ROBOT_ERR 的错误码列表
@@ -75,6 +76,7 @@ typedef struct __vision_data
 	float Px; //底盘X轴路程
 	float Py; //底盘Y轴路程
 	float SpeedLimit;	//底盘限速
+    uint8_t pillar_flag;
     //云台数据
     float Yaw;          //Yaw轴角度
     float Pitch;        //Pitch轴角度

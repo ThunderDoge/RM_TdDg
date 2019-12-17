@@ -7,18 +7,24 @@
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
   */
 #include "SentryCloudVision.hpp"
+#define DEBUG
+
 
 void CloudVisionRoutine(void)
 {
 	bsp_vision_Send_Data.Pitch  = Self.RealPitch;
-	bsp_vision_Send_Data.Yaw    = Self.RealYaw;
-//		bsp_vision_Send_Data.Pitch  = 10.0;
-//	bsp_vision_Send_Data.Yaw    = 25.5;
+	bsp_vision_Send_Data.Yaw    = Self.MechanicYaw;
 
 	bsp_vision_Send_Data.Ready_flag = 1;
 	bsp_vision_SendData((uint8_t)CMD_GET_MCU_STATE);
+	#ifndef DEBUG
+    bsp_vision_Send_Data.pillar_flag = CloudCanRecv.pillar_close_flag;
+    bsp_vision_Send_Data.Px = CloudCanRecv.ChassisLocation;
+    bsp_vision_SendData((uint8_t)STA_CHASSIS);
+	#endif
+	
 }
-
+#undef DEBUG 
 
 
 

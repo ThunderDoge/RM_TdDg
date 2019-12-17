@@ -22,6 +22,7 @@ enum SENTRY_CAN_ID:uint32_t  //板间通讯ID号
     UP_CLOUD_STATES = 0X101U,
     DOWN_CLOUD_STATES = 0X102U,
     CHASSIS_STATES = 0X103U,
+	CHASSIS_PILLAR = 0X104U,
     SUPERIOR_UP_RELATIVE_CMD = 0X111U,
     SUPERIOR_UP_ABSOLUTE_CMD = 0X112U,
     SUPERIOR_DOWN_RELATIVE_CMD = 0X121U,
@@ -41,16 +42,23 @@ struct CanCommuRecv_t
     uint8_t SuperiorControlFlags;
     uint8_t UpCloudStates;
     uint8_t DownCloudStates;
-	float UpCloudPitchYaw[2];
-	float DownCloudPitchYaw[2];
+    float UpCloudPitchYaw[2];
+    float UpFeedSpeed;
+    float DownFeedSpeed;
+    float DownCloudPitchYaw[2];
     float SuperCon_Relative_Pitch;
     float SuperCon_Relative_Yaw;
     float SuperCon_Absolute_Pitch;
     float SuperCon_Absolute_yaw;
     float ChassisSpeed;
     float ChassisLocation;
-	float ChassisSpeedLimit;
-	uint32_t RecvUpdateTime;
+    float ChassisSpeedLimit;
+    uint32_t SuperiorUpdateTime;
+    uint32_t RecvUpdateTime;
+    //底盘信息
+    uint8_t chassis_control_mode;
+    uint8_t pillar_close_flag;
+    float location_on_rail;
 };
 
 extern CanCommuRecv_t CloudCanRecv;

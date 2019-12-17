@@ -58,6 +58,7 @@ typedef struct rc_rec
 }bsp_dbus_RC_Data;
 
 extern bsp_dbus_RC_Data bsp_dbus_Data;
+extern int16_t Dbus_CHx_StaticOffset[4];
 
 //条件编译声明，如果使用信号量将多对外提供一个解析函数作为接口
 #ifdef	BSP_DBUS_USE_SIGNAL

@@ -18,6 +18,7 @@
 
 bsp_dbus_RC_Data bsp_dbus_Data; //Dbus解算数据
 static uint8_t Dbus_Rxbuffer[BSP_DBUS_BUFFER_SIZE]={0}; //Dbus接收数据缓存数组
+int16_t Dbus_CHx_StaticOffset[4]={0};	//遥控器处于松手状态时的偏移。默认为0.修改此值会让结算出来的bsp_dbus_Data值修正。
 
 /**
 * @brief  Dbus总线初始化
@@ -115,10 +116,10 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 		bsp_dbus_Data.Keys = ((int16_t)Dbus_Rxbuffer[14] | (int16_t)Dbus_Rxbuffer[15]<<8);
 		
 		//自定义处理By ThunderDoge 2019/11/23
-		bsp_dbus_Data.CH_0 -= 1024;
-		bsp_dbus_Data.CH_1 -= 1024;
-		bsp_dbus_Data.CH_2 -= 1024;
-		bsp_dbus_Data.CH_3 -= 1024;
+		bsp_dbus_Data.CH_0 -= 1024+Dbus_CHx_StaticOffset[0];
+		bsp_dbus_Data.CH_1 -= 1024+Dbus_CHx_StaticOffset[1];
+		bsp_dbus_Data.CH_2 -= 1024+Dbus_CHx_StaticOffset[2];
+		bsp_dbus_Data.CH_3 -= 1024+Dbus_CHx_StaticOffset[3];
 	}
 #endif
 
