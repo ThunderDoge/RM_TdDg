@@ -1,3 +1,16 @@
+# Key To Hold
+! *.uvprojx
+! *.ioc
+# Keil Library
+**/Drivers/
+# Project Files
+! **/MDK-ARM/App/
+! **/MDK-ARM/Bsp/
+! **/MDK-ARM/Motor/
+! **/MDK-ARM/Sentry/
+! **/MDK-ARM/Task
+**/MDK-ARM/
+
 # Prerequisites
 *.d
 
@@ -43,10 +56,17 @@
 *.pdb
 
 # Kernel Module Compile Results
+*.s
 *.mod*
 *.cmd
+*.crf
+*.mxproject
+
 .tmp_versions/
 modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+
