@@ -24,17 +24,19 @@ float location_on_rail;
 //GlobalModeAgent ChassisSendInfo(0, 0X13, CHASSIS_STATES,
 //ChassisSendInfoHandle,ChassisSendInfoCanTx );
 
-//#define DEBUG
-
+#define DEBUG
+/
 #ifdef DEBUG
 
 pid pidPower(1, 0, 0, 1000, 10000, 10, 10);
 float PowerOut;
-float TargetPower = 1;
+float TargetPower = 0;
 float FeedFricSpd = 0;
 float FeedUpSpd = 0;
 float FeedUpRealSpd = 0;
 float FeedUpRealCrr;
+int16_t trig = 1;
+int16_t dictT = 100;
 #endif // DEBUG
 
 GlobalModeName GlobalMode;
@@ -68,6 +70,8 @@ void ModeSelect(void)
     }
     {
         Self.FeedUp.Freefire_Set(FeedUpSpd);
+		if(trig >300)
+			Self.FeedUp.FreeOnce_Set(dictT,&trig);
         Self.Fric.Speed_Set(-FeedFricSpd);
         FeedUpRealSpd = Self.FeedUp.RealSpeed;
         FeedUpRealCrr = Self.FeedUp.RealCurrent;

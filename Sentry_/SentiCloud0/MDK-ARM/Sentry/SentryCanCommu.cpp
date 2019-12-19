@@ -9,7 +9,6 @@
 #include "SentryCanCommu.hpp"
 #include <cstring>
 //全局CAN接收变量
-CanCommuRecv_t CloudCanRecv;
 /**
   * @brief  自定义CAN发送函数，由bsp_can
   * @details  
@@ -18,7 +17,7 @@ CanCommuRecv_t CloudCanRecv;
   * @param[in]  ptrData 待发送数据 长度8字节
   * @retval  
   */
-HAL_StatusTypeDef CloudCanSend(CAN_HandleTypeDef *_hcan, SENTRY_CAN_ID command_id, uint8_t *ptrData)
+HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, uint8_t *ptrData)
 {
     uint32_t MailBox;
     CAN_TxHeaderTypeDef bsp_can_Tx;
@@ -26,15 +25,6 @@ HAL_StatusTypeDef CloudCanSend(CAN_HandleTypeDef *_hcan, SENTRY_CAN_ID command_i
 
     //将传入的数据转换为标准CAN帧数据
     uint8_t Data[8];
-    // Data[0] = (uint8_t)((*(Can_Send_Data+0)>>8));
-    // Data[1] = (uint8_t)(*(Can_Send_Data+0)) & 0XFF;
-    // Data[2] = (uint8_t)((*(Can_Send_Data+1)>>8));
-    // Data[3] = (uint8_t)(*(Can_Send_Data+1)) & 0XFF;
-    // Data[4] = (uint8_t)((*(Can_Send_Data+2)>>8));
-    // Data[5] = (uint8_t)(*(Can_Send_Data+2)) & 0XFF;
-    // Data[6] = (uint8_t)((*(Can_Send_Data+3)>>8));
-    // Data[7] = (uint8_t)(*(Can_Send_Data+3)) & 0XFF;
-    //去你妈的大小头，memcpy好
     if (ptrData != NULL)
     {
         memcpy(&Data, ptrData, 8);
@@ -63,37 +53,9 @@ HAL_StatusTypeDef CloudCanSend(CAN_HandleTypeDef *_hcan, SENTRY_CAN_ID command_i
   * @param[in]  
   * @retval  
   */
-HAL_StatusTypeDef CloudCanSend(CAN_HandleTypeDef *_hcan, SENTRY_CAN_ID command_id, float argu1, float argu2)
+HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, float argu1, float argu2)
 {
     float toSend[2] = {argu1, argu2};
-    return CloudCanSend(_hcan, command_id, (uint8_t *)toSend);
+    return SentryCanSend(_hcan, command_id, (uint8_t *)toSend);
 }
 
-void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
-{
-    switch (RxHead->StdId)
-    {
-    case CHASSIS_STATES:
-        memcpy(&CloudCanRecv.ChassisSpeed, Data, 4);
-        memcpy(&CloudCanRecv.ChassisLocation, Data + 4, 4);
-        break;
-    case SUPERIOR_SAFE:
-        GlobalMode = MODE_SAFE;     //调节到安全模式
-        CommandSource = CMDSRC_CAN; //指令源为CAN通信
-        break;
-    case CHASSIS_PILLAR:
-        {
-            CloudCanRecv.pillar_close_flag = 0;
-            if(Data[0])
-                CloudCanRecv.pillar_close_flag = 1;
-            if(Data[1])
-                CloudCanRecv.pillar_close_flag = 2;
-        }
-    default:
-        break;
-    }
-}
-HAL_StatusTypeDef CloudCanCommuRoutine(void)
-{
-    return CloudCanSend(&CAN_INTERBOARD, UP_CLOUD_STATES, Self.RealPitch, Self.MechanicYaw);
-}

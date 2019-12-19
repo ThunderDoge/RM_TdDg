@@ -49,7 +49,7 @@ public:
 
     motor FricLeftMotor;
     motor FricRightMotor;
-    AmmoFeed Feed2nd;
++74    AmmoFeed Feed2nd;
     //陀螺仪数据经过旋转计算，储存在这里。周期性更新。
     float RotatedImuAngle[3];   //Roll,Pitch,Yaw
     float RotatedImuAngleRate[3];   //Roll,Pitch,Yaw

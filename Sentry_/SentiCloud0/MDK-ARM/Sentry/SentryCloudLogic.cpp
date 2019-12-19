@@ -19,33 +19,29 @@ GlobalModeClass GlobalSafeMode((uint32_t)MODE_SAFE, (uint8_t)0, (uint32_t)SUPERI
   */
     void VisionControl(void)
 {
-    if (bsp_vision_Rec_Data.Ready_flag)
-    {
         		float pitch;
         		float yaw;
-        switch (bsp_vision_Rec_Data.Function_word)
+        switch (VisionInfo.Function_word)
         {
         case CMD_GIMBAL_RELATIVE_CONTROL:
-            pitch = Self.RealPitch + bsp_vision_Rec_Data.Pitch;
-            yaw = Self.RealYaw + bsp_vision_Rec_Data.Yaw;
+            pitch = Self.RealPitch + VisionInfo.Pitch;
+            yaw = Self.RealYaw + VisionInfo.Yaw;
             Self.SetAngleTo(pitch, yaw);
             break;
         case CMD_GIMBAL_ABSOLUTE_CONTROL:
-            Self.SetAngleTo(bsp_vision_Rec_Data.Pitch, bsp_vision_Rec_Data.Yaw);
+            Self.SetAngleTo(VisionInfo.Pitch, VisionInfo.Yaw);
             break;
         case CMD_CHASSIS_CONTROL:
-            CloudCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE, bsp_vision_Rec_Data.Vx, 0.0f);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE, VisionInfo.Vx, 0.0f);
             break;
         case CMD_CHASSIS_LOACTION_CONTROL:
-            CloudCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION, bsp_vision_Rec_Data.Px, 0.0f);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION, VisionInfo.Px, 0.0f);
             break;
         case CMD_CHASSIS_LOCATION_LIMIT_SPEED:
-            CloudCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, bsp_vision_Rec_Data.Px, bsp_vision_Rec_Data.SpeedLimit);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, VisionInfo.Px, VisionInfo.SpeedLimit);
         default:
             break;
         }
-        bsp_vision_Rec_Data.Ready_flag = 0;
-    }
 }
 /**
   * @brief  遥控器测试云台
@@ -70,7 +66,7 @@ void ManualShoot()
   */
 void ManualChassis() //手动底盘
 {
-    CloudCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
+    SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
                  (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
                  0);
 }
@@ -80,7 +76,7 @@ void ManualChassis() //手动底盘
 float feed_speed;
 void ManualFeed()
 {
-	CloudCanSend(&CAN_INTERBOARD,UP_FEED,feed_speed,0.0f);
+	SentryCanSend(&CAN_INTERBOARD,UP_FEED,feed_speed,0.0f);
 }
 
 /**
@@ -90,9 +86,9 @@ void GlobalSafe() //安全模式
 {
     Self.Safe_Set();
     uint8_t data[8] = {0};
-    CloudCanSend(&hcan2, SUPERIOR_SAFE, &data[0]);
-    // CloudCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,uint8_t*  ptrData);
-    // CloudCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,float argu1,float argu2);
+    SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]);
+    // SentryCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,uint8_t*  ptrData);
+    // SentryCanSend(CAN_HandleTypeDef* _hcan,SENTRY_CAN_ID command_id,float argu1,float argu2);
 }
 /**
   * @brief  模式选择函数，控制逻辑源于此

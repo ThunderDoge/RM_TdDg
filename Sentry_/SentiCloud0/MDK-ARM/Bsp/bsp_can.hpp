@@ -3,6 +3,7 @@
 #include "stm32f4xx.h"
 //#include "app_motor.h"
 #include "can.h"
+#include "SentryCommu.hpp"
 
 
 //条件编译开关宏定义，不需要开启的就注释掉相关宏定义

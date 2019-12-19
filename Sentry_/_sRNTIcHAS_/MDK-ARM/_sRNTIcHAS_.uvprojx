@@ -801,6 +801,11 @@
               <FileType>8</FileType>
               <FilePath>.\Sentry\SentryChassisLogic.cpp</FilePath>
             </File>
+            <File>
+              <FileName>SentryCommu.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCommu.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
