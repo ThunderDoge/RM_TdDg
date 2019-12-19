@@ -3,7 +3,7 @@
 <title>Static Call Graph - [SentiCloud0\SentiCloud0.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image SentiCloud0\SentiCloud0.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Dec 19 22:49:25 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Dec 19 23:01:02 2019
 <BR><P>
 <H3>Maximum Stack Usage =        356 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1906,12 +1906,8 @@ Global Symbols
 <LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ManualShoot()
 </UL>
 
-<P><STRONG><a name="[14b]"></a>SentryCloud::Handle()</STRONG> (Thumb, 188 bytes, Stack size 8 bytes, sentrycloud.o(i._ZN11SentryCloud6HandleEv))
-<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = SentryCloud::Handle() &rArr; manager::CANSend() &rArr; bsp_can_Sendmessage(__CAN_HandleTypeDef*, short, short*) &rArr; HAL_CAN_AddTxMessage
-</UL>
-<BR>[Calls]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manager::CANSend()
-</UL>
-<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Main(void*)
+<P><STRONG><a name="[14b]"></a>SentryCloud::Handle()</STRONG> (Thumb, 180 bytes, Stack size 0 bytes, sentrycloud.o(i._ZN11SentryCloud6HandleEv))
+<BR><BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Main(void*)
 </UL>
 
 <P><STRONG><a name="[110]"></a>SentryCloud::Safe_Set()</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, sentrycloud.o(i._ZN11SentryCloud8Safe_SetEv))
@@ -2158,8 +2154,7 @@ Global Symbols
 <LI><a href="#[169]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::Handle()
 <LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
-<BR>[Called By]<UL><LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SentryCloud::Handle()
-<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Main(void*)
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Main(void*)
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SentryCloud::Safe_Set()
 </UL>
 

@@ -10,13 +10,10 @@
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
-// #include "SentryCloud.hpp"
-// #include "SentryCloudLogic.hpp"
-// #include "SentryCloudVision.hpp"
-#include "SentryCanCommu.hpp"
 #include "SentryChassis.hpp"
+#include "SentryCanCommu.hpp"
 #include "SentryChassisLogic.hpp"
-
-
+//#include "SentryCloudVision.hpp"
+#include "SentryCommu.hpp"
 
 #endif // __SENTRY_HPP_

@@ -64,6 +64,7 @@ void bsp_can_Init(void)
 		HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING); /*开启中断*/
 	#endif
 }
+void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);
 
 /**
 * @brief  CAN发送数据
@@ -116,6 +117,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 	{
 		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//获取CAN报文
 		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);
-        CanRxCpltCallBack_CommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);
+        CanRxCpltCallBack_ChassisCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);
 	}
 }
+
+

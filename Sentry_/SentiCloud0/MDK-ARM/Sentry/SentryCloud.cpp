@@ -52,7 +52,7 @@ void SentryCloud::Handle()
 	RealYaw = YawMotor.RealAngle;
 	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
 	RealPitch = - PitchMotor.RealAngle;	//注意负号
-    manager::CANSend();
+//    manager::CANSend();
 }
 
 void SentryCloud::SetAngleTo(float pitch, float yaw)

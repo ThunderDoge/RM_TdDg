@@ -46,12 +46,23 @@ void SentryChassis::Handle()
 void SentryChassis::Safe_Set()
 {
     DriveWheel.Speed_Set(0);
-    Mode = SENTRY_SAFE;
+    Mode = _chassis_save;
 }
 void SentryChassis::MotorSpeed_Set(float speed_motor_rpm){
+    pidDriveLocation.PIDMax = SpeedMax;
     DriveWheel.Speed_Set(speed_motor_rpm);
+    Mode = _chassis_speed;
 }
 void SentryChassis::MotorSoftLocation_Set(float location_motor_soft){
+    pidDriveLocation.PIDMax = SpeedMax;
     DriveWheel.Angle_Set(location_motor_soft);
+    Mode = _chassis_location;
+}
+void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft,float speed_motor_rpm_limit)
+{
+    LastMode = Mode;
+    pidDriveLocation.PIDMax = speed_motor_rpm_limit;
+    DriveWheel.Angle_Set(location_motor_soft);
+    Mode = _chassis_location_limit_speed;
 }
 

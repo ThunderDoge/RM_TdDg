@@ -488,7 +488,7 @@ ARM Macro Assembler    Page 8
   185 00000000                 IMPORT           SystemInit
   186 00000000                 IMPORT           __main
   187 00000000         
-  188 00000000 4809    5       LDR              R0, =SystemInit
+  188 00000000 4809    55      LDR              R0, =SystemInit
   189 00000002 4780            BLX              R0
   190 00000004 4809            LDR              R0, =__main
   191 00000006 4700            BX               R0

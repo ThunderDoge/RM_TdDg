@@ -48,6 +48,8 @@ void task_Main(void* param)
 		vTaskDelayUntil(&LastTick,1);
 	}
 }
+
+void ChassisCanCommuRoutine(void);	//声明一下，不想处理诡异的包含了
 void task_Commu(void* param)
 {
 			TickType_t LastTick = xTaskGetTickCount();
@@ -55,7 +57,7 @@ void task_Commu(void* param)
 	while(1)
 	{
 		ChassisCanCommuRoutine();
-				vTaskDelayUntil(&LastTick,5);
+		vTaskDelayUntil(&LastTick,5);
 
 	}
 }

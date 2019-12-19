@@ -60,6 +60,7 @@
 "_srntichas_\sentrycancommu.o"
 "_srntichas_\sentrychassis.o"
 "_srntichas_\sentrychassislogic.o"
+"_srntichas_\sentrycommu.o"
 --strict --scatter "_sRNTIcHAS_\_sRNTIcHAS_.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
