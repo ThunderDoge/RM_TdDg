@@ -1,7 +1,7 @@
 #ifndef __TASK_SENTI_CLOUD_H_
 #define __TASK_SENTI_CLOUD_H_
 
-#include "can.h"
+//#include "can.h"
 #include "cmsis_os.h"
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"

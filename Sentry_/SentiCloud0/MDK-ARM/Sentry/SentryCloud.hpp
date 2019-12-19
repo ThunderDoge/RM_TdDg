@@ -10,8 +10,8 @@
 #define __SENTRY_CLOUD_HPP_
 
 
-#include "bsp_motor.hpp"
-#include "bsp_vision.hpp"
+//#include "bsp_motor.hpp"
+//#include "bsp_vision.hpp"
 #include "app_imu.h"
 #include "app_AmmoFeed.hpp"
 
@@ -49,7 +49,7 @@ public:
 
     motor FricLeftMotor;
     motor FricRightMotor;
-+74    AmmoFeed Feed2nd;
+    AmmoFeed Feed2nd;
     //陀螺仪数据经过旋转计算，储存在这里。周期性更新。
     float RotatedImuAngle[3];   //Roll,Pitch,Yaw
     float RotatedImuAngleRate[3];   //Roll,Pitch,Yaw

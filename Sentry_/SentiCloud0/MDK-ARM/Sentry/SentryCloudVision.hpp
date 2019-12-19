@@ -12,6 +12,7 @@
 #include "bsp_vision.hpp"
 #include "SentryCanCommu.hpp"
 #include "SentryCloud.hpp"
+#include "SentryCommu.hpp"
 
 void CloudVisionRoutine(void);
 

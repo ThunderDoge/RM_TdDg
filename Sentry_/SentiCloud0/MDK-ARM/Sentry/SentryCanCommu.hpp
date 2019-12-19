@@ -20,6 +20,4 @@
 
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, uint8_t *ptrData);
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, float argu1, float argu2);
-void CanRxCpltCallBack_CommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);
-HAL_StatusTypeDef CloudCanCommuRoutine(void);
 #endif // __SENTRY_CLOUD_CAN_COMMU_HPP_

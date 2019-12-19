@@ -1,4 +1,5 @@
 /**
+  * @file:
   * @brief    RM2020 哨兵工程
   * @details  
   * @author   
@@ -26,8 +27,6 @@ void Cloud_Init(void)
     manager::CANSelect(&hcan1, &hcan2);
     app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。
 }
-uint32_t testT;
-uint32_t testDt;
 /**
   * @brief  主任务
   * @details  
@@ -62,7 +61,7 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-		CloudVisionRoutine();
+		CloudVisonTxRoutine();
 		CloudCanCommuRoutine();
 		vTaskDelayUntil(&LastTick,5);
     }

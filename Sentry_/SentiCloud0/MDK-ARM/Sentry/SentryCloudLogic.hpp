@@ -9,11 +9,12 @@
 #ifndef __SENTRY_CLOUD_LOGIC_HPP
 #define __SENTRY_CLOUD_LOGIC_HPP
 
-#include "SentryCanCommu.hpp"
-#include "SentryCloud.hpp"
-#include "bsp_dbus.h"
-#include "bsp_vision.hpp"
-
+//#include "SentryCanCommu.hpp"
+//#include "SentryCloud.hpp"
+//#include "SentryCommu.hpp"
+//#include "bsp_dbus.h"
+//#include "bsp_vision.hpp"
+#include "Sentry.hpp"
 // class GlobalModeClass
 // {
 // public:

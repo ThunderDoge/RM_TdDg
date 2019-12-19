@@ -11,15 +11,16 @@
 */
 //与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 #include "bsp_vision.hpp"
+//#include "SentryCommu.hpp"
 //#define DEBUG
 #ifdef DEBUG
-		uint8_t m = 1;
-		float f1 = 12.5f , f2 = 25.2;
+uint8_t m = 1;
+float f1 = 12.5f, f2 = 25.2;
 #endif
 
-bsp_vision_data bsp_vision_Rec_Data, bsp_vision_Send_Data;    //视觉串口解析到的数据,视觉串口发送的数据
-uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0}; //串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
-static int8_t Array_index = 0;                                //缓冲区数据检测用指针
+bsp_vision_data bsp_vision_Rec_Data, bsp_vision_Send_Data; //视觉串口解析到的数据,视觉串口发送的数据
+uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     //串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
+static int8_t Array_index = 0;                             //缓冲区数据检测用指针
 /**
   * @brief 数据帧类成员函数
   */
@@ -105,6 +106,9 @@ static int8_t Array_index = 0;                                //缓冲区数据检测用
 //    memcpy(&bsp_vision_Rec_Data.Px, Vision_Rxbuffer + Array_index + 2, 4);
 //    memcpy(&bsp_vision_Rec_Data.SpeedLimit, Vision_Rxbuffer + Array_index + 6, 4);
 //}
+
+extern void SentryVisionUartRxAll(uint8_t* Vision_Rxbuffer);
+
 /**
 * @brief  视觉串口解析函数
 * @details  对缓冲池中数据进行一次遍历并解析数据
@@ -134,37 +138,37 @@ static uint8_t bsp_vision_Analysis(void)
 
             //帧头帧尾正确，和校验正确，开始解析
             bsp_vision_Rec_Data.Ready_flag = 1; //标记数据就绪
-//            switch (Vision_Rxbuffer[Array_index + Function_word])
-//            {
-//            case CMD_GIMBAL_RELATIVE_CONTROL: //控制云台相对角度，数据解析
-//                bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
-//                CMD_GIMBAL_RELATIVE_CONTROL_Analysis();
-//                break;
-//            case CMD_GIMBAL_ABSOLUTE_CONTROL: //控制云台绝对角度，数据解析
-//                bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
-//                CMD_GIMBAL_ABSOLUTE_CONTROL_Analysis();
-//                break;
-//            case CMD_SHOOT: //射击指令
-//                bsp_vision_Rec_Data.Function_word = CMD_SHOOT;
-//                CMD_SHOOT_Analysis();
-//                break;
-//            case CMD_CHASSIS_CONTROL: //底盘控制
-//                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
-//                CMD_CHASSIS_CONTROL_Analysis();
-//                break;
-//            case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
-//                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
-//                CMD_CHASSIS_LOACTION_CONTROL_Analysis();
-//                break;
-//            case CMD_CHASSIS_LOCATION_LIMIT_SPEED: //底盘控制路程带限速
-//                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
-//                CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis();
-//                break;
-//            default:
-//                bsp_vision_Rec_Data.Ready_flag = 0; //没解析到，取消标记数据就绪
-//                break;
-//            }
-			SentryVisionUartRxAll(Vision_Rxbuffer+Array_index);
+                                                //            switch (Vision_Rxbuffer[Array_index + Function_word])
+                                                //            {
+                                                //            case CMD_GIMBAL_RELATIVE_CONTROL: //控制云台相对角度，数据解析
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
+                                                //                CMD_GIMBAL_RELATIVE_CONTROL_Analysis();
+                                                //                break;
+                                                //            case CMD_GIMBAL_ABSOLUTE_CONTROL: //控制云台绝对角度，数据解析
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
+                                                //                CMD_GIMBAL_ABSOLUTE_CONTROL_Analysis();
+                                                //                break;
+                                                //            case CMD_SHOOT: //射击指令
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_SHOOT;
+                                                //                CMD_SHOOT_Analysis();
+                                                //                break;
+                                                //            case CMD_CHASSIS_CONTROL: //底盘控制
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
+                                                //                CMD_CHASSIS_CONTROL_Analysis();
+                                                //                break;
+                                                //            case CMD_CHASSIS_LOACTION_CONTROL: //底盘路程控制
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
+                                                //                CMD_CHASSIS_LOACTION_CONTROL_Analysis();
+                                                //                break;
+                                                //            case CMD_CHASSIS_LOCATION_LIMIT_SPEED: //底盘控制路程带限速
+                                                //                bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+                                                //                CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis();
+                                                //                break;
+                                                //            default:
+                                                //                bsp_vision_Rec_Data.Ready_flag = 0; //没解析到，取消标记数据就绪
+                                                //                break;
+                                                //            }
+            SentryVisionUartRxAll(Vision_Rxbuffer + Array_index);
             //运行到这里就表示解析已经成功，一帧数据已经完备
             Array_index += 18; //数据帧一帧长度为18，所以移动18位
             return 1;          //处理完一帧，移动18位继续检测
@@ -221,45 +225,68 @@ void bsp_vision_It(void)
 * @retval  HAL_StatusTypeDef HAL_OK 发送成功 HAL_ERROR发送失败
 */
 uint8_t Vision_Txbuffer[18] = {0}; //发送用数组
-HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
+//HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
+//{
+//    int16_t _check_sum = 0;         //和校验用变量
+//    memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
+//    Vision_Txbuffer[Frame_header] = FRAME_HEADER_DATA;
+//    Vision_Txbuffer[Frame_end] = FRAME_END_DATA;
+//    Vision_Txbuffer[Function_word] = _Functionword;
+
+//    switch (_Functionword)
+//    {
+//    case CMD_GET_MCU_STATE:
+//        //给视觉发心跳包
+//#ifndef DEBUG
+//        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Cloud_mode, 1); //控制模式
+//        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.Pitch, 4);      //Pitch轴数据
+//        memcpy(Vision_Txbuffer + 7, &bsp_vision_Send_Data.Yaw, 4);        //Yaw轴数据
+//#else
+//        memcpy(Vision_Txbuffer + 2, &m, 1);  //控制模式
+//        memcpy(Vision_Txbuffer + 3, &f1, 4); //Pitch轴数据
+//        memcpy(Vision_Txbuffer + 7, &f2, 4); //Yaw轴数据
+//#endif
+//        memcpy(Vision_Txbuffer + 11, &bsp_vision_Send_Data.Shoot_speed, 4); //射速
+//        memcpy(Vision_Txbuffer + 15, &bsp_vision_Send_Data.Shoot_freq, 1);  //射频
+//        break;
+//    case ROBOT_ERR:
+//        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Error_code, 1); //日志系统错误代码
+//        if (bsp_vision_Send_Data.Error_code == MOTOR_OFFLINE_CNT)         //0x04的时候要额外发两个在线列表数据
+//        {
+//            memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.CAN1_motorlist, 2); //CAN1电机数据
+//            memcpy(Vision_Txbuffer + 5, &bsp_vision_Send_Data.CAN2_motorlist, 2); //CAN2电机数据
+//        }
+//        break;
+//    case STA_CHASSIS:
+//        Vision_Txbuffer[2] = 0;
+//        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.pillar_flag, 1);
+//        memcpy(Vision_Txbuffer + 4, &bsp_vision_Send_Data.Px, 4);
+//    default:
+//        break;
+//    }
+//    for (int i = 0; i < 18; i++)
+//    {
+//        if (i != Sum_check)
+//            _check_sum += Vision_Txbuffer[i];
+//    }
+//    _check_sum = _check_sum & 0xff;
+//    Vision_Txbuffer[Sum_check] = _check_sum;
+
+//    return HAL_UART_Transmit_DMA(&BSP_VISION_UART, Vision_Txbuffer, 18);
+//}
+void bsp_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata){
+    Vision_Txbuffer[loaction_at_buffdata+2] = u8data;
+}
+void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata){
+    *((float*)(Vision_Txbuffer+loaction_at_buffdata+2)) = fdata;
+}
+HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword)
 {
     int16_t _check_sum = 0;         //和校验用变量
-    memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
+    // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     Vision_Txbuffer[Frame_header] = FRAME_HEADER_DATA;
     Vision_Txbuffer[Frame_end] = FRAME_END_DATA;
     Vision_Txbuffer[Function_word] = _Functionword;
-
-    switch (_Functionword)
-    {
-    case CMD_GET_MCU_STATE:         
-	//给视觉发心跳包
-#ifndef DEBUG
-		memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Cloud_mode, 1);   //控制模式
-        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.Pitch, 4);        //Pitch轴数据
-        memcpy(Vision_Txbuffer + 7, &bsp_vision_Send_Data.Yaw, 4);          //Yaw轴数据
-#else
-		memcpy(Vision_Txbuffer + 2, &m, 1);   //控制模式
-        memcpy(Vision_Txbuffer + 3, &f1, 4);        //Pitch轴数据
-        memcpy(Vision_Txbuffer + 7, &f2, 4);          //Yaw轴数据
-#endif
-        memcpy(Vision_Txbuffer + 11, &bsp_vision_Send_Data.Shoot_speed, 4); //射速
-        memcpy(Vision_Txbuffer + 15, &bsp_vision_Send_Data.Shoot_freq, 1);  //射频
-        break;
-    case ROBOT_ERR:
-        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Error_code, 1); //日志系统错误代码
-        if (bsp_vision_Send_Data.Error_code == MOTOR_OFFLINE_CNT)         //0x04的时候要额外发两个在线列表数据
-        {
-            memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.CAN1_motorlist, 2); //CAN1电机数据
-            memcpy(Vision_Txbuffer + 5, &bsp_vision_Send_Data.CAN2_motorlist, 2); //CAN2电机数据
-        }
-        break;
-    case STA_CHASSIS:
-        Vision_Txbuffer[2] = 0;
-        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.pillar_flag, 1);
-        memcpy(Vision_Txbuffer + 4, &bsp_vision_Send_Data.Px, 4);
-    default:
-        break;
-    }
     for (int i = 0; i < 18; i++)
     {
         if (i != Sum_check)
@@ -270,4 +297,3 @@ HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
 
     return HAL_UART_Transmit_DMA(&BSP_VISION_UART, Vision_Txbuffer, 18);
 }
-

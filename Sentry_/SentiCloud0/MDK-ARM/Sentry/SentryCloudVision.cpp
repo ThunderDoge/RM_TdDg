@@ -9,7 +9,6 @@
 #include "SentryCloudVision.hpp"
 #define DEBUG
 #ifndef DEBUG
-#include "cmsis_os.h"
 #endif
 
 void CloudVisionRoutine(void)

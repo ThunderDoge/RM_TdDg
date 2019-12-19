@@ -51,7 +51,6 @@
 "senticloud0\bsp_universe.o"
 "senticloud0\sentry.o"
 "senticloud0\sentrycloud.o"
-"senticloud0\sentrycloudvision.o"
 "senticloud0\sentrycloudlogic.o"
 "senticloud0\sentrycancommu.o"
 "senticloud0\sentrycommu.o"

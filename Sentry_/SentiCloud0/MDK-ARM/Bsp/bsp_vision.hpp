@@ -17,6 +17,7 @@
 #include "stm32f4xx.h"
 #include <string.h>
 #include "usart.h"
+//#include "SentryCommu.hpp"
 
 
 //外设相关宏定义,移植时如果修改了外设请在这里修改
@@ -52,7 +53,6 @@ enum __bsp_vision_Commom_Data
 //    ROBOT_ERR = 0X12,
 //    STA_CHASSIS = 0X13,
 };
-#include "SentryCommu.hpp"
 
 
 //ROBOT_ERR 的错误码列表
@@ -101,8 +101,13 @@ typedef struct __vision_data
 //视觉发送数据帧类
 
 extern bsp_vision_data bsp_vision_Send_Data, bsp_vision_Rec_Data; //串口发送，接收数组
+extern uint8_t Vision_Txbuffer[18];
 
 void bsp_vision_Init(void);                                   //视觉串口初始化
 void bsp_vision_It(void);                                     //视觉串口中断处理
 HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword); //视觉传口发送函数
+HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword);
+void bsp_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata);
+void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata);
+
 #endif

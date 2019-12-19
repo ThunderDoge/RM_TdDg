@@ -7,10 +7,12 @@
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
 #include "SentryCloudLogic.hpp"
-
+#include "SentryCommu.hpp"
 GlobalModeName GlobalMode;
 GlobalModeName LastGlobalMode;
 CommandSourceName CommandSource;
+
+extern Sentry_vision_data VisionRx,VisionTx;
 
 GlobalModeClass GlobalSafeMode((uint32_t)MODE_SAFE, (uint8_t)0, (uint32_t)SUPERIOR_SAFE);
 
@@ -21,24 +23,24 @@ GlobalModeClass GlobalSafeMode((uint32_t)MODE_SAFE, (uint8_t)0, (uint32_t)SUPERI
 {
         		float pitch;
         		float yaw;
-        switch (VisionInfo.Function_word)
+        switch (VisionRx.Function_word)
         {
         case CMD_GIMBAL_RELATIVE_CONTROL:
-            pitch = Self.RealPitch + VisionInfo.Pitch;
-            yaw = Self.RealYaw + VisionInfo.Yaw;
+            pitch = Self.RealPitch + VisionRx.Pitch;
+            yaw = Self.RealYaw + VisionRx.Yaw;
             Self.SetAngleTo(pitch, yaw);
             break;
         case CMD_GIMBAL_ABSOLUTE_CONTROL:
-            Self.SetAngleTo(VisionInfo.Pitch, VisionInfo.Yaw);
+            Self.SetAngleTo(VisionRx.Pitch, VisionRx.Yaw);
             break;
         case CMD_CHASSIS_CONTROL:
-            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE, VisionInfo.Vx, 0.0f);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE, VisionRx.Vx, 0.0f);
             break;
         case CMD_CHASSIS_LOACTION_CONTROL:
-            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION, VisionInfo.Px, 0.0f);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION, VisionRx.Px, 0.0f);
             break;
         case CMD_CHASSIS_LOCATION_LIMIT_SPEED:
-            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, VisionInfo.Px, VisionInfo.SpeedLimit);
+            SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, VisionRx.Px, VisionRx.SpeedLimit);
         default:
             break;
         }

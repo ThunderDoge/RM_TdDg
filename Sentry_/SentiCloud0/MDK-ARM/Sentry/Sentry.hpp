@@ -14,5 +14,6 @@
 #include "SentryCanCommu.hpp"
 #include "SentryCloudLogic.hpp"
 #include "SentryCloudVision.hpp"
+#include "SentryCommu.hpp"
 
 #endif // __SENTRY_HPP_
