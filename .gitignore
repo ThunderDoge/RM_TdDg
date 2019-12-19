@@ -4,7 +4,7 @@
 # Keil Library
 **/Drivers/
 # Project Files
-**/MDK-ARM/
+# **/MDK-ARM/
 ! **/MDK-ARM/App/
 ! **/MDK-ARM/Bsp/
 ! **/MDK-ARM/Motor/
@@ -61,6 +61,8 @@
 *.cmd
 *.crf
 *.mxproject
+*.axf
+*.log
 
 .tmp_versions/
 modules.order
