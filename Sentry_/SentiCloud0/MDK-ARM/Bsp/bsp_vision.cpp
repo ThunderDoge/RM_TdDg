@@ -278,7 +278,8 @@ void bsp_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata){
     Vision_Txbuffer[loaction_at_buffdata+2] = u8data;
 }
 void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata){
-    *((float*)(Vision_Txbuffer+loaction_at_buffdata+2)) = fdata;
+//    *((float*)(&Vision_Txbuffer[loaction_at_buffdata+2])) = fdata;	This cause HardFault
+	memcpy(Vision_Txbuffer+loaction_at_buffdata+2, &fdata , 4);
 }
 HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword)
 {
