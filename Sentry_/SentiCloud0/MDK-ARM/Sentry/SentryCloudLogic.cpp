@@ -44,6 +44,7 @@ extern Sentry_vision_data VisionRx,VisionTx;
         // default:
         //     break;
         // }
+		GlobalMode = MODE_VIISON_SHOOTING_TEST;
         VisionRxHandle();
 }
 /**
@@ -69,9 +70,7 @@ void ManualShoot()
   */
 void ManualChassis() //ÊÖ¶¯µ×ÅÌ
 {
-    SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
-                 (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
-                 0);
+	GlobalMode = MODE_MANUAL_CHASSIS_MOVE;
 }
 /**
   * @brief  Ò£¿ØÆ÷²âÊÔ²¦µ¯

@@ -69,8 +69,8 @@ public:
     int LastMode;
     float MotorSpeed;   //电机反馈速度，单位rpm
     float MotorSoftLocation;    //电机软路程，单位是角度
-    float RealSpeed;    //真正的速度，单位mm/s
-    float RealPosition; //真正的距离，单位mm
+//    float RealSpeed;    //真正的速度，单位mm/s
+//    float RealPosition; //真正的距离，单位mm
 	float DrivePower;	//驱动轮功率，单位W
     //-------------------------操作函数
     void Handle();      //更新函数

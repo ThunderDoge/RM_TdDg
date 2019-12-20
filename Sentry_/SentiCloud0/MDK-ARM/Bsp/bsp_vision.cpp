@@ -281,6 +281,7 @@ void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata){
 //    *((float*)(&Vision_Txbuffer[loaction_at_buffdata+2])) = fdata;	This cause HardFault
 	memcpy(Vision_Txbuffer+loaction_at_buffdata+2, &fdata , 4);
 }
+HAL_UART_StateTypeDef s1;
 HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword)
 {
     int16_t _check_sum = 0;         //和校验用变量
@@ -295,6 +296,17 @@ HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword)
     }
     _check_sum = _check_sum & 0xff;
     Vision_Txbuffer[Sum_check] = _check_sum;
+	//Check if UART Ready;
+//	while(HAL_UART_GetState(&BSP_VISION_UART) == HAL_UART_STATE_BUSY_TX || 
+//	HAL_UART_GetState(&BSP_VISION_UART) == HAL_UART_STATE_BUSY_TX_RX)
+//	{
+//		s1 = HAL_UART_GetState(&BSP_VISION_UART);
+//#ifdef INC_FREERTOS_H
+//	vTaskDelay(1);
+////#else
+////	HAL_Delay(1);
+//#endif
+//	}
 
     return HAL_UART_Transmit_DMA(&BSP_VISION_UART, Vision_Txbuffer, 18);
 }

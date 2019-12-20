@@ -370,8 +370,8 @@ void CloudCanCommuRoutine(void)
 #ifdef CHASSIS_COMMU
 void ChassisCanCommuRoutine(void)
 {
-    CanRx.Chassis_SpeedLocation[0] = Self.RealSpeed;
-    CanRx.Chassis_SpeedLocation[1] = Self.RealPosition;
+    CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
+    CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
     CHASSIS_STATES_CanTx();
 }
 //CAN信息底盘托管控制程序

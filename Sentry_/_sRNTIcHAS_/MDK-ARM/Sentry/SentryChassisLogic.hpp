@@ -2,6 +2,7 @@
 #define __SENTRY_CHASSIS_LOGIC_H_
 #include "SentryChassis.hpp"
 #include "SentryCanCommu.hpp"
+#include "SentryCommu.hpp"
 #include "bsp_adc_deal.h"
 
 enum GlobalModeName

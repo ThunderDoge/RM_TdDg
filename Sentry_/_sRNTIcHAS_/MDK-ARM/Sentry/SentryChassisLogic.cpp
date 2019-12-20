@@ -51,7 +51,10 @@ GlobalModeName GetGlobalMode()
 void ModeSelect(void)
 {
 #ifndef DEBUG
-    GlobalMode = RecvCMD;
+//    GlobalMode = RecvCMD;
+	if((CanRx.SuperCon_ChassisMode != _chassis_save) && (HAL_GetTick()-CanRx.RecvUpdateTime) <1000 )
+		GlobalMode = MODE_VIISON_SHOOTING_TEST;
+	
     switch (GlobalMode)
     {
     case MODE_VIISON_SHOOTING_TEST:

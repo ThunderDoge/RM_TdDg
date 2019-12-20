@@ -17,6 +17,7 @@
 #include "bsp_vision.hpp"
 #include "bsp_can.hpp"
 #include "SentryCanCommu.hpp"
+#include "cmsis_os.h"
 enum SENTRY_CAN_ID : uint32_t //∞Âº‰Õ®—∂ID∫≈
 {
     UP_CLOUD_STATES = 0X101U,
