@@ -32,7 +32,9 @@ void DOWN_CLOUD_STATES_CanTx()
 void CHASSIS_STATES_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == CHASSIS_STATES)
-        memcpy(&CanRx.Chassis_SpeedLocation, ptrData, 4);
+	{
+        memcpy(&CanRx.Chassis_SpeedLocation, ptrData, 8);	//直接复制两个浮点数进入数组即可
+	}
 }
 void CHASSIS_STATES_CanTx()
 {
@@ -202,7 +204,7 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 6, 4);
         memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1); //云台模式解析
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1); //射击模式
-        VisionRx.cloud_ctrl_mode = relative_cloud;             //数据就绪
+        VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
     }
 }
 /**
@@ -285,6 +287,11 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 //视觉串口发送函数
 void CMD_GET_MCU_STATE_Tx()
 {
+	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	{
+//		vTaskDelay(1);
+	}
+
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     bsp_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
     bsp_vision_load_to_txbuffer(VisionTx.Pitch, 1);
@@ -295,16 +302,27 @@ void CMD_GET_MCU_STATE_Tx()
 }
 void ROBOT_ERR_Tx()
 {
+    	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	{
+//		vTaskDelay(1);
+	}
+
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     bsp_vision_load_to_txbuffer(VisionTx.Error_code, 0U);
     bsp_vision_SendTxbuffer(ROBOT_ERR);
 }
 void STA_CHASSIS_Tx()
 {
+    		while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	{
+//		vTaskDelay(1);
+	}
+
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     bsp_vision_load_to_txbuffer(VisionTx.chassis_mode, 0U);
     bsp_vision_load_to_txbuffer(VisionTx.pillar_flag, 1U);
-    bsp_vision_load_to_txbuffer(VisionTx.Px, 2);
+    bsp_vision_load_to_txbuffer(VisionTx.Vx, 2);
+	bsp_vision_load_to_txbuffer(VisionTx.Px, 6);
     bsp_vision_SendTxbuffer(STA_CHASSIS);
 }
 
@@ -322,7 +340,7 @@ void VisionRxHandle(void)
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //处理完成标志。因为一个命令只会处理一次，处理后置0
+    VisionRx.cloud_ctrl_mode = 0;    //处理完成标志。因为一个命令只会处理一次，处理后置0
 }
 void CloudVisonTxRoutine(void)
 {
@@ -358,10 +376,19 @@ void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeader
 #ifdef CLOUD_COMMMU
 void CloudCanCommuRoutine(void)
 {
+    	if(GlobalMode ==  MODE_VIISON_SHOOTING_TEST)
+	{
     CanTx.SuperCon_ChassisMode = VisionRx.chassis_mode;
-    CanTx.Chassis_SpeedLocation[0] = VisionRx.Vx;
-    CanTx.Chassis_SpeedLocation[1] = VisionRx.Px;
+    CanTx.SuperCon_ChassisSpeedLocation[0] = VisionRx.Vx;
+    CanTx.SuperCon_ChassisSpeedLocation[1] = VisionRx.Px;
     CanTx.SuperiorControlFlags = 1;
+	}
+	if(GlobalMode == MODE_MANUAL_CHASSIS_MOVE)
+	{
+		CanTx.SuperCon_ChassisMode = _chassis_speed;
+		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 5000.0f / 660.0f;
+    CanTx.SuperiorControlFlags = 1;
+    }
     SUPERIOR_CHASSIS_MOVE_CanTx();
     SUPERIOR_CHASSIS_SET_LOACTION_CanTx();
     SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx(); //

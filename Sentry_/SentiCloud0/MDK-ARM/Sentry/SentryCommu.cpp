@@ -2,7 +2,9 @@
 
 // Infomation Storage
 CanCommuRecv_t CanInfo, CanRx, CanTx;
+#ifdef USE_VISION
 Sentry_vision_data VisionRx, VisionTx;
+#endif
 
 // CAN TxRx Functions
 //状态广播
@@ -116,7 +118,10 @@ void DOWN_FEED_CanTx()
 void SUPERIOR_CHASSIS_MOVE_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_MOVE)
+    {
         memcpy(&CanRx.SuperCon_ChassisSpeedLocation, ptrData, 8);
+        CanRx.SuperCon_ChassisMode = _chassis_speed;
+    }
 }
 void SUPERIOR_CHASSIS_MOVE_CanTx()
 {
@@ -129,7 +134,10 @@ void SUPERIOR_CHASSIS_MOVE_CanTx()
 void SUPERIOR_CHASSIS_SET_LOACTION_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_SET_LOACTION)
+    {
         memcpy(&CanRx.SuperCon_ChassisSpeedLocation, ptrData, 8);
+        CanRx.SuperCon_ChassisMode = _chassis_location;
+    }
 }
 void SUPERIOR_CHASSIS_SET_LOACTION_CanTx()
 {
@@ -142,7 +150,10 @@ void SUPERIOR_CHASSIS_SET_LOACTION_CanTx()
 void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED)
+    {
         memcpy(&CanRx.SuperCon_ChassisSpeedLocation, ptrData, 8);
+        CanRx.SuperCon_ChassisMode = _chassis_location_limit_speed;
+    }
 }
 void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx()
 {
@@ -155,7 +166,10 @@ void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx()
 void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_SAFE)
+    {
         CanRx.SuperiorControlFlags = 0;
+        CanRx.SuperCon_ChassisMode = _chassis_save;
+    }
 }
 void SUPERIOR_SAFE_CanTx()
 {
@@ -171,9 +185,10 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
         SUPERIOR_CHASSIS_SET_LOACTION_CanRx(StdId, ptrData);
         SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanRx(StdId, ptrData);
         SUPERIOR_SAFE_CanRx(StdId, ptrData);
+        CanRx.RecvUpdateTime = HAL_GetTick(); //Update Timestamp
     }
 }
-
+#ifdef USE_VISION
 //VisionUart TxRx Functions 视觉串口函数
 //VisionUart Recv 视觉串口接收函数
 /**
@@ -343,16 +358,13 @@ void CloudVisonTxRoutine(void)
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
 
     CMD_GET_MCU_STATE_Tx();
-////    ROBOT_ERR_Tx();
-	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
-	{
-//		vTaskDelay(1);
-	}
+    ROBOT_ERR_Tx();
     STA_CHASSIS_Tx();
 }
+#endif
 void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 {
-    //  
+    // 上云台不需要接收自己的信息
     // UP_CLOUD_STATES_CanRx();
     DOWN_CLOUD_STATES_CanRx(RxHead->StdId, Data);
     CHASSIS_STATES_CanRx(RxHead->StdId, Data);
@@ -361,6 +373,7 @@ void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeader
 {
     CHASSIS_SUPERIOR_ALL_CanRx(RxHead->StdId, Data);
 }
+#ifdef CLOUD_COMMU
 void CloudCanCommuRoutine(void)
 {
 	if(GlobalMode ==  MODE_VIISON_SHOOTING_TEST)
@@ -379,5 +392,30 @@ void CloudCanCommuRoutine(void)
 	SUPERIOR_CHASSIS_MOVE_CanTx();
     SUPERIOR_CHASSIS_SET_LOACTION_CanTx();
     SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx(); //
-
 }
+#endif
+#ifdef CHASSIS_COMMU
+void ChassisCanCommuRoutine(void)
+{
+    CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
+    CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
+    CHASSIS_STATES_CanTx();
+}
+//CAN信息底盘托管控制程序
+void ChassisCanRxHandle(void)
+{
+	switch (CanRx.SuperCon_ChassisMode)
+	{
+	case _chassis_speed:
+        Self.MotorSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[0]);
+        break;
+    case _chassis_location:
+        Self.MotorSoftLocation_Set(CanRx.SuperCon_ChassisSpeedLocation[1]);
+        break;
+    case _chassis_location_limit_speed:
+        Self.MotorSoftLocation_LimitSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[1],
+		CanRx.Chassis_SpeedLimit);
+		break;
+	}
+}
+#endif
