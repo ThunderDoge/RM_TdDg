@@ -21,8 +21,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
 
-    : PitchSpeed(-9.5, 0, 0, 2000, 30000, 10, 10, 500), 
-	  PitchPosition(-16, -0.5, 0, 5000, 10000, 10, 10, 50),
+    : PitchSpeed(-8, 0, -15, 2000, 30000, 10, 10, 500), 
+	  PitchPosition(-10, -0.5, 0, 5000, 10000, 10, 10, 50),
       PitchGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),

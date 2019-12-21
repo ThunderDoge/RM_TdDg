@@ -20,6 +20,7 @@
 //#include "bsp_dbus.h"
 #include "bsp_can.hpp"
 #include "bsp_current.h"
+#include "bsp_encoder.hpp"
 #include "Sentry.hpp"
 
 void TaskStarter(void);
