@@ -11,7 +11,7 @@
             <DataFile Name="" />
             <RawFile Name="" />
             <Scope>
-                <Options TimeResolutionUs="50000" />
+                <Options TimeResolutionUs="200000" />
             </Scope>
         </Configuration>
         <Windows>
@@ -20,34 +20,10 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="Pout" Address="0x2000A4A0" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-69476" YMaxSampled="-2147483648" YAvgSampled="-2147483648" Offset="4" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1000" MaxValue="2000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="TargetYaw" Address="0x2000A9AC" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-2147483648" YMaxSampled="75" YAvgSampled="-30697356" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="20" MaxValue="100" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="Iout" Address="0x2000A4A4" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="8" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="2" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="Dout" Address="0x2000A4A8" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="12" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="2" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="PIDout" Address="0x2000A4B0" Type="float" TypeID="1" Size="4" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="-30000" YMaxSampled="99844" YAvgSampled="158" Offset="16" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="50000" MaxValue="100000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="CurrentError" Address="0x2000A4B4" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="-6947" YMaxSampled="10802" YAvgSampled="15" Offset="20" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="10000" MaxValue="20000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="Pout" Address="0x2000A508" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="191" GraphColorBlue="255" YMinSampled="-5730" YMaxSampled="18540" YAvgSampled="17" Offset="24" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="100" MaxValue="200" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="Iout" Address="0x2000A50C" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="100" GraphColorBlue="0" YMinSampled="-108" YMaxSampled="0" YAvgSampled="0" Offset="28" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="2" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="Dout" Address="0x2000A510" Type="float" TypeID="1" Size="4" GraphColorRed="205" GraphColorGreen="133" GraphColorBlue="63" YMinSampled="-1" YMaxSampled="1" YAvgSampled="0" Offset="32" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="2" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="PIDout" Address="0x2000A518" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-5730" YMaxSampled="10000" YAvgSampled="17" Offset="36" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="CurrentError" Address="0x2000A51C" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2147483648" YMaxSampled="913" YAvgSampled="-2147483648" Offset="40" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="100" MaxValue="1000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="TargetPitch" Address="0x2000A9B0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2147483648" YMaxSampled="-2147483648" YAvgSampled="-2147483648" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="370" IsAutoConfig="0" YResolution="10" MaxValue="100" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

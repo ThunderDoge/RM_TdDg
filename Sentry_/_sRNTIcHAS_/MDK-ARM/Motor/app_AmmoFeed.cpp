@@ -1,5 +1,7 @@
 #include "app_AmmoFeed.hpp"
+#ifndef SIGN
 #define SIGN(x) ((x)>0?1:((x)<0?-1:0))
+#endif
 
 void AmmoFeed::PR_Handle(void)
 {

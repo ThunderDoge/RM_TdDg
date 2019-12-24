@@ -27,6 +27,7 @@ void RoboInit()
 //	bsp_dbus_Init();
 	bsp_can_Init();
 	bsp_Current_Init();
+	bsp_encoder_Init(2048);
 	bsp_ADC_Sensor_Init();
 	
 	manager::CANSelect(&hcan1,&hcan2);
@@ -37,10 +38,12 @@ void RoboInit()
  */
 void task_Main(void* param)
 {
-			TickType_t LastTick = xTaskGetTickCount();
+	bsp_encoder_SetValue(0);
+	TickType_t LastTick = xTaskGetTickCount();
 	while (1)
 	{
 		bsp_Current_Read();
+		bsp_encoder_Handle();
 		app_imu_So3thread();
         Self.Handle();
 		ModeSelect();
@@ -49,10 +52,10 @@ void task_Main(void* param)
 	}
 }
 
-void ChassisCanCommuRoutine(void);	//声明一下，不想处理诡异的包含了
+void ChassisCanCommuRoutine(void);	//声明一下，避免麻烦的文件包含
 void task_Commu(void* param)
 {
-			TickType_t LastTick = xTaskGetTickCount();
+	TickType_t LastTick = xTaskGetTickCount();
 
 	while(1)
 	{

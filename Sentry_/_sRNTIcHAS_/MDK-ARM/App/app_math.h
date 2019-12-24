@@ -8,6 +8,7 @@
 #define Threshold_2     30      //阈值2用于一阶带参滤波器，计数值大于此值时，增大参数，增强滤波跟随
 
 #define APP_MATH_ABS(x) (x>0?x:-x)
+#define SIGN(x) (x>0?1:-1)
 
 typedef struct
 {
