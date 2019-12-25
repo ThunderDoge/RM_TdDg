@@ -15,6 +15,16 @@
 #include "app_imu.h"
 #include "app_AmmoFeed.hpp"
 
+#ifndef __CLOUD_MODE_DEF
+#define __CLOUD_MODE_DEF
+enum _cloud_ctrl_mode:uint8_t
+{
+    absolute_cloud = 0x01,
+    relative_cloud = 0x02,
+    save_cloud = 0x00,
+};
+#endif
+
 
 class SentryCloud   //云台电机集合
 {
@@ -66,6 +76,7 @@ public:
     void Safe_Set();    //安全模式
     void SetAngleTo(float pitch, float yaw);    //机械角度设定
     // void SetSoftAngleTo(float soft_pitch, float soft_yaw);  //软角度设定-未实现
+	void LazerSwitchCmd(int OnOrOff);
 
 private:
     static const float RotationMatrix[3][3];

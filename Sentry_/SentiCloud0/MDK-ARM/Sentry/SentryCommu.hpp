@@ -129,12 +129,17 @@ struct Sentry_vision_data
 };
 #endif
 #ifdef CLOUD_COMMU
+
+#ifndef __CLOUD_MODE_DEF
+#define __CLOUD_MODE_DEF
 enum _cloud_ctrl_mode:uint8_t
 {
     absolute_cloud = 0x01,
     relative_cloud = 0x02,
     save_cloud = 0x00,
 };
+#endif
+
 #endif
 
 #ifndef __CHASSIS_MODE_DEF

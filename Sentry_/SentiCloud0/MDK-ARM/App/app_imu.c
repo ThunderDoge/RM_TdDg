@@ -7,8 +7,20 @@
 * @par Copyright (c):  RM2020电控
 *  
 * @par 日志
-* 2019年11月17日  1.0  Asn  1.移植上届mpu9250算法到icm20602上(其实早就移植了，但没上传·v·)
-*														2.修改了mahony算法中的PI控制器参数，以适应icm20602芯片
+*	2019.11.17 Asn V1.0 移植mpu9250库
+
+*						 Asn V1.1 更改mahony算法的PI控制参数
+
+*						 Asn V1.2 发现之前陀螺仪硬件滤波参数有错误，已修正
+
+*	2019.11.28 Asn V2.0 现已加入磁力计，并优化了算法，加快了初始化收敛速度
+
+*						 Asn V2.1 正式更名app_filter为app_math，并把limit和invsqrt移进去
+
+*	2019.12.6  Asn V2.2 优化PI控制器参数，并加入误差预处理，当加速度模量过大或过小都舍弃误差
+
+*	2019.12.11 Asn V2.3 增加了soft角度解算条件，避免一开始收敛过程中累积圈数，增加了条件编译，解决不用磁力计的警告
+* 2019.12.24 Asn V2.4 更改了加速度计滤波参数
 */  
 #include "app_imu.h"
 #include "app_math.h"
@@ -24,7 +36,7 @@ float so3_comp_params_Kp = 2.0f ;            //< 四元数校正PI参数
 float so3_comp_params_Ki = 0.05f; 
 float so3_comp_params_mKp = 1.6f; 
 #else
-float so3_comp_params_Kp = 3.0f ;            //< 四元数校正PI参数
+float so3_comp_params_Kp = 2.35f ;            //< 四元数校正PI参数
 float so3_comp_params_Ki = 0.05f; 
 #endif
 uint16_t Zero_Threshold[3] = {100,100,100};  //< 用于零点校正，判断数据是否为静止数据------------------------> 100足够大了，最好看一下原始数据，看看够不够（其实有点大）<--------------------建议更改，提升自检要求
@@ -41,13 +53,13 @@ static float app_imu_OffsetVal[3];
 /* 变量宏定义 */
 #define SAMPLE_FREQUENCY 1000     //采样频率
 #define GYRO_CUT_OFF_FREQUENCY 40    //截止频率，这里要根据情况和需求更改  !!!!!!!!!!!!!!往届有把截止频率改的特别小的（10左右），底盘实测收敛很慢，会造成超调，故改大。过大的话过滤高频噪声的能力差
-#define ACCE_CUT_OFF_FREQUENCY 5
+#define ACCE_CUT_OFF_FREQUENCY 20
 #define MAG_CUT_OFF_FREQUENCY  20
 #define SELF_TEST_T  5           //自检时间，单位秒
 #define G 9.80665f                           //< 重力加速度
 #define TORADIAN   0.0174533f                //< 转换为弧度制，四元数的姿态解算需要使用 π/180
 #define TOANGLE    57.2957795f               //< 最后解算出来的弧度制转换为角度
-#define ACC_RESOLUTION  (2.0f*G/32768.0f)    //< 加速度计分辨率 m/s^2/LSb
+#define ACC_RESOLUTION  (16.0f*G/32768.0f)    //< 加速度计分辨率 m/s^2/LSb
 #define GYRO_RESOLUTION (2000.0f/32768.0f)   //< 陀螺仪分辨率   dps/LSb 
 #define MAG_RESOLUTION  0.3f*0.001f          //< 磁力计分辨率   uT/LSb
 /* 结构体 */
@@ -303,7 +315,9 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 {
     float halfex = 0.0f, halfey = 0.0f, halfez = 0.0f;
     float recipNorm;
-	static uint8_t reset_cnt = 0;
+#ifdef USE_MAG
+		static uint8_t reset_cnt = 0;
+#endif
     // Make filter converge to initial solution faster
     if (bFilterInit == 0){
 			NonlinearSO3AHRSinit(ax, ay, az, mx, my, mz);
@@ -340,7 +354,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 			float halfvx, halfvy, halfvz;
 			
 			recipNorm = app_math_Invsqrt(ax * ax + ay * ay + az * az);
-			//if((1/(0.75f*9.8f))>recipNorm>(1/(1.25f*9.8f))){
+			if((1/(0.75f*9.8f))>recipNorm>(1/(1.25f*9.8f))){
 				ax *= recipNorm;
 				ay *= recipNorm;
 				az *= recipNorm;
@@ -352,7 +366,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 				halfex += ay * halfvz - az * halfvy;
 				halfey += az * halfvx - ax * halfvz;
 				halfez += ax * halfvy - ay * halfvx;
-			//}
+			}
     }
     // Apply feedback only when valid data has been gathered from the accelerometer or magnetometer
     if (halfex != 0.0f && halfey != 0.0f && halfez != 0.0f){
@@ -513,9 +527,12 @@ void app_imu_So3thread(void)
     app_imu_data.Roll = euler[0] * TOANGLE;            // 绝对角
     app_imu_data.Pitch = euler[1] * TOANGLE;	
     app_imu_data.Yaw = -euler[2] * TOANGLE;
-    app_imu_data.soft.Roll = Soft_Angle(app_imu_data.Roll,0);   // 绝对路程角
-    app_imu_data.soft.Pitch = Soft_Angle(app_imu_data.Pitch,1);
-    app_imu_data.soft.Yaw = Soft_Angle(app_imu_data.Yaw,2);
+		if(app_imu_data.reset == 0)//避免初始化时收敛过程影响soft的累积圈数
+		{
+			app_imu_data.soft.Roll = Soft_Angle(app_imu_data.Roll,0);   // 绝对路程角
+			app_imu_data.soft.Pitch = Soft_Angle(app_imu_data.Pitch,1);
+			app_imu_data.soft.Yaw = Soft_Angle(app_imu_data.Yaw,2);
+		}
 		app_imu_data.integral.Roll += app_imu_data.Angle_Rate[0]*GYRO_RESOLUTION*dt;  // 相对积分角
 		app_imu_data.integral.Pitch += app_imu_data.Angle_Rate[1]*GYRO_RESOLUTION*dt;
 		app_imu_data.integral.Yaw += app_imu_data.Angle_Rate[2]*GYRO_RESOLUTION*dt;

@@ -42,6 +42,10 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 {};
 void SentryCloud::Handle()
 {
+	if(Mode != save_cloud){
+		LazerSwitchCmd(1);
+	}
+	
 	RotatedImuAngle[0] = app_imu_data.integral.Pitch;
     RotatedImuAngle[1] = app_imu_data.integral.Roll;
 	RotatedImuAngle[2] = -app_imu_data.integral.Yaw;
@@ -57,6 +61,7 @@ void SentryCloud::Handle()
 
 void SentryCloud::SetAngleTo(float pitch, float yaw)
 {
+	Mode = absolute_cloud;
     TargetPitch = pitch;
     TargetYaw = yaw;
     PitchMotor.Angle_Set(-TargetPitch);	//×¢Òâ¸ººÅ
@@ -65,10 +70,26 @@ void SentryCloud::SetAngleTo(float pitch, float yaw)
 
 void SentryCloud::Safe_Set()
 {
+	Mode = save_cloud;
     YawMotor.Safe_Set();
-    PitchMotor.Safe_Set();
+//    PitchMotor.Safe_Set();
+	PitchMotor.Speed_Set(0);
     FricLeftMotor.Safe_Set();
     FricRightMotor.Safe_Set();
     Feed2nd.Safe_Set();
     manager::CANSend();
+	LazerSwitchCmd(0);
 }
+
+void SentryCloud::LazerSwitchCmd( int NewState )
+{
+	if(NewState == 0)
+	{
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+	}
+}
+

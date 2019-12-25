@@ -144,9 +144,9 @@ HAL_StatusTypeDef bsp_spi_Icm20602Init(void)
 		HAL_Delay(10);
 		bsp_spi_writereg(MPU_RA_GYRO_CONFIG,(3 << 3));		//陀螺仪量程+-2000dps
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_1,0x00); 		//加速度计量程+-2g
+		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_1,0x11); 		//加速度计量程+-2g
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_2,0x06);			//加速度计滤波配置
+		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_2,0x04);			//加速度计滤波配置
 		HAL_Delay(10);
 		bsp_spi_writereg(MPU_RA_LP_CONFIG,0x00);					//关闭低功耗
 		HAL_Delay(10);

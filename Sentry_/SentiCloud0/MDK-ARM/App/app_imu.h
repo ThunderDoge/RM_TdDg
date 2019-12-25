@@ -5,6 +5,7 @@
 
 
 #define ZERO_SAMPLE_NUM  4000  //零点采样的数据量
+#define APP_MATH_ABS(x)   ((x)>0?(x):-(x))
 typedef struct
 {
 	struct{
