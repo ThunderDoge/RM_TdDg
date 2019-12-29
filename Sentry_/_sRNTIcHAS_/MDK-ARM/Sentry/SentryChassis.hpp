@@ -90,6 +90,9 @@ private:
     //功率计算用变量
     float TargetPowerInput = 0;
     float PowerOutput = 0;
+    uint32_t PwrUpdateTime = 0;
+    LPF2 lpf;
+
 
     void CanSendHandle(); //托管到CANSend的操作函数
 

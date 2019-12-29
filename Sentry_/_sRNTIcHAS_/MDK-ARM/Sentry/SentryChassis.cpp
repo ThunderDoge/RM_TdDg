@@ -46,6 +46,7 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
     FeedUp.Enable_Block(4000, 200, 5);
     FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
+    app_math_Lpf2set(&lpf , 1000.0f, 5.0f);
 };
 
 void SentryChassis::Handle()
@@ -83,6 +84,16 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
     DriveWheel.Angle_Set(location_motor_soft);
     Mode = _chassis_location_limit_speed;
 }
+#define DEBUG1
+//#define DEBUG2
+//#define DEBUG3
+#ifdef DEBUG1   
+float unfilted_pwr_in;
+#endif // DEBUG1    
+#ifdef DEBUG3
+float P1,P2,P_IdlePower,P_OverPower;
+float VeP1,P_Idle;
+#endif
 /**
   * @brief  底盘功率限制
   * @details  
@@ -91,20 +102,53 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
   */
 void SentryChassis::CanSendHandle()
 {
+	if(Mode != _chassis_save)
     if (LimitPower > 0)
     {   //只有大于0才会启动
-
-        TargetPowerInput = DriveWheel.TargetCurrent;
-        if (fabs(TargetPowerInput) > LimitPower)    //功率限幅在开头
+#ifdef DEBUG1
+        if(HAL_GetTick() - PwrUpdateTime > 0){
+        unfilted_pwr_in = (((float)DriveWheel.TargetCurrent) /819.2f) //目标电流
+                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //检测电压
+        TargetPowerInput = app_math_Lpf2apply(&lpf , unfilted_pwr_in);  //低通滤波防抖
+        }
+        if (fabs(TargetPowerInput) > LimitPower)    //功率限幅
         {
             TargetPowerInput = LimitPower* SIGN(TargetPowerInput);
         }
-        PowerOutput += pidPower.pid_run(TargetPowerInput - DrivePower);
-        if (SIGN(PowerOutput) != SIGN(TargetPowerInput) )
-        {
-            PowerOutput = 0;    //不允许功率反向，因为功率必须是正方向的
+//        if(SIGN(TargetPowerInput) * SIGN(PowerOutput) == -1)    //功率防反向
+//        {
+//            PowerOutput = 0;
+//        }
+        if(HAL_GetTick() - PwrUpdateTime > 0){      //防止积分频率不稳定
+            PowerOutput += pidPower.pid_run(TargetPowerInput - DrivePower);
+            PwrUpdateTime = HAL_GetTick();
         }
         DriveWheel.TargetCurrent = PowerOutput;
+#endif
+#ifdef DEBUG2
+        TargetPowerInput = (((float)DriveWheel.TargetCurrent) /819.2f) //目标电流
+                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //检测电压
+		if (fabs(TargetPowerInput) > LimitPower)    //功率限幅
+		{
+			DriveWheel.TargetCurrent *= (LimitPower/TargetPowerInput);
+		}
+#endif
+#ifdef DEBUG3
+    VeP1 = (DriveWheel.TargetSpeed - DriveWheel.RealSpeed)*P1;
+    P_Idle = LimitPower - DrivePower;
+    if(P_Idle>0){
+        P2 = P_Idle * P_IdlePower;
+        PowerOutput += VeP1 * P2;
+    }
+    else{
+        PowerOutput += P_Idle*P_OverPower;
+    }
+    DriveWheel.TargetCurrent = PowerOutput;
+#endif // DEBUG3
+
     }
     DriveWheel.InsertCurrent();
 }
+#undef DEBUG1
+#undef DEBUG2
+

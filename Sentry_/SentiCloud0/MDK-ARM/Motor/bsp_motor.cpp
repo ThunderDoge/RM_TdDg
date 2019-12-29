@@ -305,7 +305,7 @@ uint8_t manager::Is_Offline(void)
 *			 2019年11月30日 16:32:15 对电机ID进行一次拓展改动
 */
 WEAK void manager::CANUpdate(CAN_HandleTypeDef* _hcan, CAN_RxHeaderTypeDef* RxHead,uint8_t* Data)
-{
+ {
 	uint16_t id=RxHead->StdId;
 	if(_hcan==CanHandle1)
 	{

@@ -296,7 +296,7 @@ void CMD_GET_MCU_STATE_Tx()
     bsp_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
     bsp_vision_load_to_txbuffer(VisionTx.Pitch, 1);
     bsp_vision_load_to_txbuffer(VisionTx.Yaw, 5);
-    bsp_vision_load_to_txbuffer(VisionTx.Shoot_speed, 9U);
+    bsp_vision_load_to_txbuffer(VisionTx.YawSoft, 9U);
     bsp_vision_load_to_txbuffer(VisionTx.Shoot_mode, 13U);
     bsp_vision_SendTxbuffer(CMD_GET_MCU_STATE);
 }
@@ -347,7 +347,8 @@ void CloudVisonTxRoutine(void)
     VisionTx.Cloud_mode = 0;
     VisionTx.Shoot_mode = 0;
     VisionTx.Pitch = Self.RealPitch;
-    VisionTx.Yaw = Self.MechanicYaw;
+    VisionTx.YawSoft = Self.RealYaw;
+	VisionTx.Yaw = Self.MechanicYaw;
     VisionTx.Shoot_speed = 0;
 
     VisionTx.Error_code = 0;
@@ -386,7 +387,7 @@ void CloudCanCommuRoutine(void)
 	if(GlobalMode == MODE_MANUAL_CHASSIS_MOVE)
 	{
 		CanTx.SuperCon_ChassisMode = _chassis_speed;
-		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 5000.0f / 660.0f;
+		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 8000.0f / 660.0f;
 		CanTx.SuperiorControlFlags = 1;
 	}
 	SUPERIOR_CHASSIS_MOVE_CanTx();

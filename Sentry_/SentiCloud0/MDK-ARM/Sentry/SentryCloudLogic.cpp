@@ -76,9 +76,15 @@ void ManualChassis() //手动底盘
   * @brief  遥控器测试拨弹
   */
 float feed_speed;
+int32_t Shoot_Speed=5000;
 void ManualFeed()
 {
+	Self.shoot_flag = 1;
 	SentryCanSend(&CAN_INTERBOARD,UP_FEED,feed_speed,0.0f);
+	Self.FricLeftMotor.Speed_Set(-Shoot_Speed);
+	Self.FricRightMotor.Speed_Set(Shoot_Speed);
+	Self.Feed2nd.FreeOnce_Set(100,&bsp_dbus_Data.CH_0);
+	Self.Feed2nd.PR_Handle();
 }
 
 /**
@@ -99,7 +105,9 @@ void ModeSelect(void)
 {
     int mode = bsp_dbus_Data.S1 * 10 + bsp_dbus_Data.S2;
     LastGlobalMode = GlobalMode;
-
+	
+	Self.shoot_flag = 0;
+	
     switch (mode)
     {
     case 32: //中-下
@@ -115,11 +123,14 @@ void ModeSelect(void)
         GlobalMode = MODE_VIISON_SHOOTING_TEST;
         VisionControl();
         break;
-    // case 13:    //上-中
-    //     GlobalMode = MODE_AUTONOMOUS;
-    //     AutoMove();
-    //     break;
-	case 31:
+	case 31:	//中上
+         GlobalMode = MODE_VIISON_SHOOTING_TEST;
+		VisionControl();
+         ManualFeed();
+         break;
+     case 13:    //上-中
+
+		GlobalMode = MODE_FRIC_TEST;
 		ManualFeed();
 		break;
     case 22: //双下

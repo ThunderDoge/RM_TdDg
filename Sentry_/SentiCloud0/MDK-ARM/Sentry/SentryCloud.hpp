@@ -1,11 +1,11 @@
 /**
-  * @brief    
-  * @details  
-  * @author   
-  * @date     
-  * @version  
-  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  */
+ * @brief    哨兵云台电机控制集合 Sentry Cloud Motors Control
+ * @details     Encoding - GB2312
+ * @author   ThunderDoge
+ * @date     2019/12/1
+ * @version  v0.1-Develop
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
+ */
 #ifndef __SENTRY_CLOUD_HPP_
 #define __SENTRY_CLOUD_HPP_
 
@@ -66,6 +66,7 @@ public:
 
     //Public 状态
     int Mode;
+	int shoot_flag=0;
     float RealYaw;
 	float MechanicYaw;
     float RealPitch;

@@ -8,8 +8,8 @@
             </JLink>
             <ScriptFile Name="D:\RM_TdDg_PrivLib\Sentry_\_sRNTIcHAS_\MDK-ARM\_sRNTIcHAS_\sENTRYcHASSIS.jscope\unspecified" />
             <ElfFile Name="D:\RM_TdDg_PrivLib\Sentry_\_sRNTIcHAS_\MDK-ARM\_sRNTIcHAS_\_sRNTIcHAS_.axf" />
-            <DataFile Name="" />
-            <RawFile Name="" />
+            <DataFile Name="..\PULSE_STATIC_RES_WITH_INF_LOAD.csv" />
+            <RawFile Name="..\Data.jraw" />
             <Scope>
                 <Options TimeResolutionUs="500000" />
             </Scope>
@@ -20,16 +20,13 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="RealCurrent" Address="0x2000A5D4" Type="short" TypeID="11" Size="2" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-6512" YMaxSampled="3045" YAvgSampled="-52" Offset="4" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="PIDout" Address="0x2000A9DC" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-6" YMaxSampled="8005" YAvgSampled="2781" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="2000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="RealSpeed" Address="0x2000A5E2" Type="short" TypeID="11" Size="2" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-4516" YMaxSampled="549" YAvgSampled="-112" Offset="6" ShowInGraph="1" ACCoupling="0" YOffset="710" IsAutoConfig="0" YResolution="1000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="MotorSpeed" Address="0x2000AEB8" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-78" YMaxSampled="31" YAvgSampled="0" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="2000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="FeedUpRealCrr" Address="0x20000184" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="-5743" YMaxSampled="8595" YAvgSampled="103" Offset="8" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="FeedUpRealSpd" Address="0x20000180" Type="float" TypeID="1" Size="4" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="-5274" YMaxSampled="3054" YAvgSampled="34" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassisLogic.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="DrivePower" Address="0x2000AEC8" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="0" YMaxSampled="12" YAvgSampled="4" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="10" MaxValue="100" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

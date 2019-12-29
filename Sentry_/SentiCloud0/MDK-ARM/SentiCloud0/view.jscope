@@ -20,10 +20,10 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="TargetYaw" Address="0x2000A9AC" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-2147483648" YMaxSampled="75" YAvgSampled="-30697356" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="20" MaxValue="100" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="RealSpeed" Address="0x2000A8CE" Type="short" TypeID="11" Size="2" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-5118" YMaxSampled="8" YAvgSampled="-4834" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="550" IsAutoConfig="0" YResolution="2000" MaxValue="12200" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="TargetPitch" Address="0x2000A9B0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2147483648" YMaxSampled="-2147483648" YAvgSampled="-2147483648" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="370" IsAutoConfig="0" YResolution="10" MaxValue="100" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="RealSpeed" Address="0x2000A90A" Type="short" TypeID="11" Size="2" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-38" YMaxSampled="5106" YAvgSampled="4822" Offset="6" ShowInGraph="1" ACCoupling="0" YOffset="60" IsAutoConfig="0" YResolution="2000" MaxValue="13000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

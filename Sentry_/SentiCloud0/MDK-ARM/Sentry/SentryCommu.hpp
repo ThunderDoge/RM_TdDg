@@ -113,6 +113,7 @@ struct Sentry_vision_data
     uint8_t chassis_mode;
     //云台数据
     float Yaw;          //Yaw轴角度
+	float YawSoft;
     float Pitch;        //Pitch轴角度
     uint8_t Cloud_mode; //云台模式
     uint8_t cloud_ctrl_mode;

@@ -63,7 +63,9 @@ static void Current_InitAssi(uint8_t ID)
 
 	//1024次均值，140us一次采样，持续电流与电压模式
 	I2CTx[0] = 0x00;
-	I2CTx[1] = 0x4E;
+//	I2CTx[1] = 0x4E;
+//	To increase sampling rate
+	I2CTx[1] = 0x46;
 	I2CTx[2] = 0x07;
 
 	HAL_I2C_Master_Transmit(&INA226I2C, ID, &I2CTx[0], 3, bsp_current_TimeOut);

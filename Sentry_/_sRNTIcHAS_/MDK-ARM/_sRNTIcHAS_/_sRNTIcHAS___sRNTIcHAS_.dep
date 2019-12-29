@@ -1,6 +1,6 @@
 Dependencies for Project '_sRNTIcHAS_', Target '_sRNTIcHAS_': (DO NOT MODIFY !)
 F (startup_stm32f405xx.s)(0x5DFCC2A5)(--cpu Cortex-M4.fp -g --apcs=interwork -I ..\\Inc-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"--pd "__UVISION_VERSION SETA 528" --pd "_RTE_ SETA 1" --pd "STM32F405xx SETA 1"--list startup_stm32f405xx.lst --xref -o _srntichas_\startup_stm32f405xx.o --depend _srntichas_\startup_stm32f405xx.d)
-F (../Src/main.c)(0x5DFCC2A3)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\main.o --omf_browse _srntichas_\main.crf --depend _srntichas_\main.d)
+F (../Src/main.c)(0x5E0588BE)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\main.o --omf_browse _srntichas_\main.crf --depend _srntichas_\main.d)
 I (../Inc/main.h)(0x5DFCC2A3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x5C5BF325)
 I (../Inc/stm32f4xx_hal_conf.h)(0x5DFCC2A3)
@@ -275,14 +275,14 @@ I (.\Bsp\bsp_spi.h)(0x5DD8A248)
 I (.\Bsp\bsp_adc_deal.h)(0x5DF775A3)
 I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\App\app_imu.h)(0x5DE85948)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (.\Bsp\bsp_current.h)(0x5DF04D12)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
 I (.\Sentry\Sentry.hpp)(0x5DFB9233)
-I (.\Sentry\SentryChassis.hpp)(0x5E016448)
+I (.\Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (.\Motor\bsp_motor.hpp)(0x5E00E3A3)
 I (.\Motor\bsp_car_config.hpp)(0x5DE0784D)
@@ -1612,11 +1612,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x5C5BF36A)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x5C5BF375)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x5C5BF375)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x5C5BF37B)
-I (App\app_math.h)(0x5E00D463)
+I (App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (.\Bsp\bsp_spi.h)(0x5DD8A248)
 F (.\App\app_math.c)(0x5DF4571E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\app_math.o --omf_browse _srntichas_\app_math.crf --depend _srntichas_\app_math.d)
-I (App\app_math.h)(0x5E00D463)
+I (App\app_math.h)(0x5E06AFA1)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x5C5BF325)
 I (../Inc/stm32f4xx_hal_conf.h)(0x5DFCC2A3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x5C5BF352)
@@ -1738,7 +1738,7 @@ I (.\Motor\bsp_motor.hpp)(0x5E00E3A3)
 I (.\Motor\bsp_car_config.hpp)(0x5DE0784D)
 I (.\Sentry\SentryCanCommu.hpp)(0x5DFB91FF)
 I (.\Sentry\SentryChassisLogic.hpp)(0x5DFBAF12)
-I (.\Sentry\SentryChassis.hpp)(0x5E016448)
+I (.\Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -1765,11 +1765,11 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 I (.\Sentry\SentryCommu.hpp)(0x5E0163FD)
-F (.\Bsp\bsp_current.c)(0x5DF50011)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\bsp_current.o --omf_browse _srntichas_\bsp_current.crf --depend _srntichas_\bsp_current.d)
+F (.\Bsp\bsp_current.c)(0x5E029EDA)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\bsp_current.o --omf_browse _srntichas_\bsp_current.crf --depend _srntichas_\bsp_current.d)
 I (Bsp\bsp_current.h)(0x5DF04D12)
 I (../Inc/main.h)(0x5DFCC2A3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x5C5BF325)
@@ -1952,14 +1952,14 @@ I (.\Bsp\bsp_spi.h)(0x5DD8A248)
 I (.\Bsp\bsp_adc_deal.h)(0x5DF775A3)
 I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\App\app_imu.h)(0x5DE85948)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (.\Bsp\bsp_current.h)(0x5DF04D12)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
 I (.\Sentry\Sentry.hpp)(0x5DFB9233)
-I (.\Sentry\SentryChassis.hpp)(0x5E016448)
+I (.\Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (.\Motor\bsp_motor.hpp)(0x5E00E3A3)
 I (.\Motor\bsp_car_config.hpp)(0x5DE0784D)
@@ -2076,7 +2076,7 @@ I (../Inc/can.h)(0x5DFCC2A0)
 I (../Inc/main.h)(0x5DFCC2A3)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
-I (.\Sentry\SentryChassis.hpp)(0x5E016448)
+I (.\Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x5C5BF2BF)
@@ -2101,7 +2101,7 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 F (.\Motor\bsp_universe.cpp)(0x5DE07738)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\bsp_universe.o --omf_browse _srntichas_\bsp_universe.crf --depend _srntichas_\bsp_universe.d)
@@ -2153,7 +2153,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x5C5BF2BF
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\time.h)(0x5CEB79D6)
 F (.\Sentry\Sentry.cpp)(0x5DEEF1FA)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\sentry.o --omf_browse _srntichas_\sentry.crf --depend _srntichas_\sentry.d)
 I (Sentry\Sentry.hpp)(0x5DFB9233)
-I (Sentry\SentryChassis.hpp)(0x5E016448)
+I (Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -2221,7 +2221,7 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 I (Sentry\SentryCanCommu.hpp)(0x5DFB91FF)
@@ -2269,7 +2269,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x5C5BF375)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x5C5BF37B)
 I (.\Bsp\bsp_can.hpp)(0x5DDFBEE2)
 I (Sentry\SentryChassisLogic.hpp)(0x5DFBAF12)
-I (Sentry\SentryChassis.hpp)(0x5E016448)
+I (Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -2298,12 +2298,12 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 I (Sentry\SentryCommu.hpp)(0x5E0163FD)
-F (.\Sentry\SentryChassis.cpp)(0x5E0184D5)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\sentrychassis.o --omf_browse _srntichas_\sentrychassis.crf --depend _srntichas_\sentrychassis.d)
-I (Sentry\SentryChassis.hpp)(0x5E016448)
+F (.\Sentry\SentryChassis.cpp)(0x5E06C59D)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\sentrychassis.o --omf_browse _srntichas_\sentrychassis.crf --depend _srntichas_\sentrychassis.d)
+I (Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -2371,12 +2371,12 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 F (.\Sentry\SentryChassisLogic.cpp)(0x5DFDD44A)(--cpp -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I .\App -I .\Bsp -I .\Motor -I .\Task -I .\Sentry -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F --cpp11-I.\RTE\__sRNTIcHAS_-I"D:\Program Files\Keil_MDK5\ARM\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include"-I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include"-D__UVISION_VERSION="528" -D_RTE_ -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o _srntichas_\sentrychassislogic.o --omf_browse _srntichas_\sentrychassislogic.crf --depend _srntichas_\sentrychassislogic.d)
 I (Sentry\SentryChassisLogic.hpp)(0x5DFBAF12)
-I (Sentry\SentryChassis.hpp)(0x5E016448)
+I (Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -2444,7 +2444,7 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
 I (Sentry\SentryCanCommu.hpp)(0x5DFB91FF)
@@ -2492,7 +2492,7 @@ I (../Inc/can.h)(0x5DFCC2A0)
 I (../Inc/main.h)(0x5DFCC2A3)
 I (Sentry\SentryCanCommu.hpp)(0x5DFB91FF)
 I (Sentry\SentryChassisLogic.hpp)(0x5DFBAF12)
-I (Sentry\SentryChassis.hpp)(0x5E016448)
+I (Sentry\SentryChassis.hpp)(0x5E06B2EB)
 I (.\Motor\app_AmmoFeed.hpp)(0x5DE8EA11)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5C5BF2BF)
@@ -2521,6 +2521,6 @@ I (../Inc/adc.h)(0x5DFCC2A0)
 I (.\Bsp\bsp_encoder.hpp)(0x5E016FC7)
 I (../Inc/tim.h)(0x5DFCC2A2)
 I (.\Bsp\bsp_stddef.h)(0x5E016F2E)
-I (.\App\app_math.h)(0x5E00D463)
+I (.\App\app_math.h)(0x5E06AFA1)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cmath)(0x5CEB79DE)
 I (D:\Program Files\Keil_MDK5\ARM\ARMCC\include\cstring)(0x5CEB79E2)
