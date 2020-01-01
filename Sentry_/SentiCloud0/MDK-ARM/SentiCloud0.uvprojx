@@ -696,6 +696,11 @@
               <FileType>8</FileType>
               <FilePath>.\Bsp\bsp_vision.cpp</FilePath>
             </File>
+            <File>
+              <FileName>bsp_SC_RGB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bsp\bsp_SC_RGB.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
