@@ -37,7 +37,7 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
       FeedUpLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
       FeedDownSpeed(20, 0, 1, 1000, 7000),
       FeedDownLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-      pidPower(2,0.1, 0, 2500, 10000, 10, 10),
+      pidPower(1, 0, 0, 1000, 10000, 10, 10),
       DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation),
       Fric(up_fric_can_num, up_fric_can_id, &DJI_2006, &FricSpeed, &FricLocation),
       FeedUp(up_feed_can_num, up_feed_can_id, &DJI_2006, 7, -1, &FeedUpSpeed, &FeedUpLocation),
@@ -46,7 +46,7 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
     FeedUp.Enable_Block(4000, 200, 5);
     FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
-    app_math_Lpf2set(&lpf , 1000.0f, 10.0f);
+    app_math_Lpf2set(&lpf , 1000.0f, 5.0f);
 };
 
 void SentryChassis::Handle()
@@ -84,18 +84,15 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
     DriveWheel.Angle_Set(location_motor_soft);
     Mode = _chassis_location_limit_speed;
 }
-//#define DEBUG1
+#define DEBUG1
 //#define DEBUG2
 //#define DEBUG3
-#define DEBUG4
 #ifdef DEBUG1   
 float unfilted_pwr_in;
 #endif // DEBUG1    
 #ifdef DEBUG3
 float P1,P2,P_IdlePower,P_OverPower;
 float VeP1,P_Idle;
-#endif
-#ifdef DEBUG4
 #endif
 /**
   * @brief  底盘功率限制
@@ -148,17 +145,6 @@ void SentryChassis::CanSendHandle()
     }
     DriveWheel.TargetCurrent = PowerOutput;
 #endif // DEBUG3
-#ifdef DEBUG4
-	TargetPowerInput = DriveWheel.TargetCurrent - DriveWheel.RealCurrent;
-	TargetPowerInput = app_math_Lpf2apply(&lpf,TargetPowerInput);
-	PowerOutput = pidPower.pid_run(TargetPowerInput);
-	if(fabs(DrivePower) > LimitPower)
-	{
-		PowerOutput *= LimitPower/fabs(DrivePower); 
-	}
-    DriveWheel.TargetCurrent = PowerOutput;
-#endif	//DEBUG4
-
 
     }
     DriveWheel.InsertCurrent();

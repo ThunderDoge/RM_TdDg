@@ -3,7 +3,7 @@
 <title>Static Call Graph - [_sRNTIcHAS_\_sRNTIcHAS_.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image _sRNTIcHAS_\_sRNTIcHAS_.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Dec 30 10:03:37 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Dec 28 11:01:57 2019
 <BR><P>
 <H3>Maximum Stack Usage =        356 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -247,8 +247,8 @@ Global Symbols
 <P><STRONG><a name="[1e3]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C))
 
 <P><STRONG><a name="[7d]"></a>__rt_entry</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry.o(.ARM.Collect$$rtentry$$00000000))
-<BR><BR>[Called By]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<BR><BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
 <P><STRONG><a name="[1e4]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000002))
@@ -1027,6 +1027,7 @@ Global Symbols
 <LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CHASSIS_SUPERIOR_ALL_CanRx(unsigned, unsigned char*)
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::update(unsigned char*)
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pid::pid_run(float)
+<LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SentryChassis::CanSendHandle()
 <LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;block_type::Block_Check()
 </UL>
 
@@ -1789,14 +1790,14 @@ Global Symbols
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;[local to app_imu_c]::NonlinearSO3AHRSupdate(float, float, float, float, float, float, float, float, float, float, float, float, float)
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;[local to app_imu_c]::MPU_Read_Raw()
 <LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;[local to app_imu_c]::Soft_Angle(float, unsigned char)
-<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 <LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
+<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Main(void*)
 </UL>
 
-<P><STRONG><a name="[12b]"></a>ChassisCanRxHandle()</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, sentrycommu.o(i._Z18ChassisCanRxHandlev))
+<P><STRONG><a name="[12b]"></a>ChassisCanRxHandle()</STRONG> (Thumb, 88 bytes, Stack size 8 bytes, sentrycommu.o(i._Z18ChassisCanRxHandlev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = ChassisCanRxHandle() &rArr; SentryChassis::MotorSoftLocation_LimitSpeed_Set(float, float)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SentryChassis::MotorSoftLocation_LimitSpeed_Set(float, float)
@@ -1979,10 +1980,11 @@ Global Symbols
 
 <P><STRONG><a name="[1f9]"></a>str_Motor_t::str_Motor_t__sub_object(unsigned short, unsigned char)</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, sentrychassis.o(i._ZN11str_Motor_tC1Eth), UNUSED)
 
-<P><STRONG><a name="[155]"></a>SentryChassis::CanSendHandle()</STRONG> (Thumb, 186 bytes, Stack size 8 bytes, sentrychassis.o(i._ZN13SentryChassis13CanSendHandleEv))
+<P><STRONG><a name="[155]"></a>SentryChassis::CanSendHandle()</STRONG> (Thumb, 286 bytes, Stack size 8 bytes, sentrychassis.o(i._ZN13SentryChassis13CanSendHandleEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = SentryChassis::CanSendHandle() &rArr; pid::pid_run(float)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_math_Lpf2apply(LPF2*, float)
+<BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_math_Lpf2apply(LPF2*, float)
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::InsertCurrent()
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pid::pid_run(float)
 </UL>
@@ -2247,14 +2249,14 @@ Global Symbols
 <P><STRONG><a name="[75]"></a>softmotor::update(unsigned char*)</STRONG> (Thumb, 270 bytes, Stack size 72 bytes, bsp_motor.o(i._ZN9softmotor6updateEPh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = softmotor::update(unsigned char*) &rArr; __aeabi_dmul
 </UL>
-<BR>[Calls]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::update(unsigned char*)
-<LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2d
 <LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
 <LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
 <LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor::update(unsigned char*)
 </UL>
 <BR>[Address Reference Count : 2]<UL><LI> app_ammofeed.o(.constdata__ZTV8AmmoFeed)
 <LI> bsp_motor.o(.constdata__ZTV9softmotor)

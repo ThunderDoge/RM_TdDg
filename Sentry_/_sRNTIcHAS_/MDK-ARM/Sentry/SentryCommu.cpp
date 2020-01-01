@@ -404,7 +404,6 @@ void ChassisCanCommuRoutine(void)
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
 {
-	Self.Mode = CanRx.SuperCon_ChassisMode;
 	switch (CanRx.SuperCon_ChassisMode)
 	{
 	case _chassis_speed:
