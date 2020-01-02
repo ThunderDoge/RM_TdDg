@@ -77,3 +77,4 @@ dkms.conf
 ! **/MDK-ARM/Sentry/
 ! **/MDK-ARM/Task
 
+*.htm
