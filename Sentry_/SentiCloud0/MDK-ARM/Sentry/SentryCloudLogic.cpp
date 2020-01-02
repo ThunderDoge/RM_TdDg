@@ -76,15 +76,14 @@ void ManualChassis() //ÊÖ¶¯µ×ÅÌ
   * @brief  Ò£¿ØÆ÷²âÊÔ²¦µ¯
   */
 float feed_speed;
-int32_t Shoot_Speed=5000;
+int32_t Shoot_Speed=7000;
 void ManualFeed()
 {
 	Self.shoot_flag = 1;
 	SentryCanSend(&CAN_INTERBOARD,UP_FEED,feed_speed,0.0f);
 	Self.FricLeftMotor.Speed_Set(-Shoot_Speed);
 	Self.FricRightMotor.Speed_Set(Shoot_Speed);
-	Self.Feed2nd.FreeOnce_Set(100,&bsp_dbus_Data.CH_0);
-	Self.Feed2nd.PR_Handle();
+	Self.Feed2nd.Free_Once_Set(100,(bsp_dbus_Data.CH_0>200));
 }
 
 /**
@@ -141,6 +140,10 @@ void ModeSelect(void)
         GlobalSafe();
         break;
     }
+	if(Self.shoot_flag==0)
+	{
+		Self.Feed2nd.Safe_Set();
+	}
 }
 /**
   * @brief  

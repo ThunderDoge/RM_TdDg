@@ -80,3 +80,7 @@ dkms.conf
 ! **/MDK-ARM/Sentry/
 ! **/MDK-ARM/Task
 
+Sentry_/SentiCloud0/MDK-ARM/SentiCloud0/view.jscope
+*.uvoptx
+*.jscope
+*.dep
