@@ -56,6 +56,8 @@
 *.mxproject
 *.axf
 *.log
+*.htm
+
 
 .tmp_versions/
 modules.order
@@ -77,4 +79,3 @@ dkms.conf
 ! **/MDK-ARM/Sentry/
 ! **/MDK-ARM/Task
 
-*.htm
