@@ -3,13 +3,6 @@
 ! *.ioc
 # Keil Library
 **/Drivers/
-# Project Files
-# **/MDK-ARM/
-! **/MDK-ARM/App/
-! **/MDK-ARM/Bsp/
-! **/MDK-ARM/Motor/
-! **/MDK-ARM/Sentry/
-! **/MDK-ARM/Task
 
 # Prerequisites
 *.d
@@ -74,3 +67,13 @@ dkms.conf
 
 *.49997
 *.49997
+*.json
+
+# Project Files
+# **/MDK-ARM/
+! **/MDK-ARM/App/
+! **/MDK-ARM/Bsp/
+! **/MDK-ARM/Motor/
+! **/MDK-ARM/Sentry/
+! **/MDK-ARM/Task
+

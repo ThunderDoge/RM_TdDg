@@ -43,6 +43,7 @@
 "senticloud0\bsp_spi.o"
 "senticloud0\bsp_can.o"
 "senticloud0\bsp_vision.o"
+"senticloud0\bsp_sc_rgb.o"
 "senticloud0\app_math.o"
 "senticloud0\app_imu.o"
 "senticloud0\app_ammofeed.o"
