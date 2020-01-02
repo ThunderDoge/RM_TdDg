@@ -1,3 +1,5 @@
+*.htm
+
 # Key To Hold
 ! *.uvprojx
 ! *.ioc
@@ -56,7 +58,6 @@
 *.mxproject
 *.axf
 *.log
-*.htm
 
 
 .tmp_versions/
