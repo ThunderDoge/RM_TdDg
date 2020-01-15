@@ -30,7 +30,7 @@ float location_on_rail;
 
 #ifdef DEBUG
 
-pid pidPower(1, 0, 0, 1000, 10000, 10, 10);
+pid pidDriveCurrent(1, 0, 0, 1000, 10000, 10, 10);
 float PowerOut;
 float TargetPower = 1;
 float FeedFricSpd = 0;
@@ -63,7 +63,7 @@ void ModeSelect(void)
     }
 #else
     {
-        PowerOut += pidPower.pid_run(TargetPower - fabs(Self.DrivePower));
+        PowerOut += pidDriveCurrent.pid_run(TargetPower - fabs(Self.DrivePower));
         if (PowerOut < 0)
             PowerOut = 0;
         Self.MotorSpeed_Set(PowerOut);

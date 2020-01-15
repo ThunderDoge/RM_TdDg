@@ -37,7 +37,8 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
       FeedUpLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
       FeedDownSpeed(20, 0, 1, 1000, 7000),
       FeedDownLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-      pidPower(2,0.1, 0, 2500, 10000, 10, 10),
+      pidDriveCurrent(2,0.1, 0, 2500, 10000, 10, 10),
+      pidPowerFeedback(0,0,0,1000,10000,10,10),
       DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation),
       Fric(up_fric_can_num, up_fric_can_id, &DJI_2006, &FricSpeed, &FricLocation),
       FeedUp(up_feed_can_num, up_feed_can_id, &DJI_2006, 7, -1, &FeedUpSpeed, &FeedUpLocation),
@@ -88,6 +89,7 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
 //#define DEBUG2
 //#define DEBUG3
 #define DEBUG4
+
 #ifdef DEBUG1   
 float unfilted_pwr_in;
 #endif // DEBUG1    
@@ -97,6 +99,25 @@ float VeP1,P_Idle;
 #endif
 #ifdef DEBUG4
 #endif
+/**
+  * @brief  柴小龙式功率闭环
+  * @details  
+  *     G(s) = Cur(s)/( 1+Pfd(s)Cur(s) )
+  *     Targ    (+) -> Cur(s) -> C(s) -> Motor
+  *             ^                 |
+  *             |--- Pfd(s) ------+
+  * 
+  */
+float SentryChassis::PowerFeedbackSystem(float TargetCurInput,float PwrFeedbackInput)
+{
+    float pwr_exceed = PwrFeedbackInput-LimitPower; pwr_exceed>0? : pwr_exceed=0;   //计算超越功率
+    float ft = pidPowerFeedback.pid_run(pwr_exceed);
+    float et = TargetCurInput - ft;
+    float ct = pidDriveCurrent.pid_run(et);
+    return ct;
+    
+}
+
 /**
   * @brief  底盘功率限制
   * @details  
@@ -123,7 +144,7 @@ void SentryChassis::CanSendHandle()
 //            PowerOutput = 0;
 //        }
         if(HAL_GetTick() - PwrUpdateTime > 0){      //防止积分频率不稳定
-            PowerOutput += pidPower.pid_run(TargetPowerInput - DrivePower);
+            PowerOutput += pidDriveCurrent.pid_run(TargetPowerInput - DrivePower);
             PwrUpdateTime = HAL_GetTick();
         }
         DriveWheel.TargetCurrent = PowerOutput;
@@ -151,7 +172,7 @@ void SentryChassis::CanSendHandle()
 #ifdef DEBUG4
 	TargetPowerInput = DriveWheel.TargetCurrent - DriveWheel.RealCurrent;
 	TargetPowerInput = app_math_Lpf2apply(&lpf,TargetPowerInput);
-	PowerOutput = pidPower.pid_run(TargetPowerInput);
+	PowerOutput = pidDriveCurrent.pid_run(TargetPowerInput);
 	if(fabs(DrivePower) > LimitPower)
 	{
 		PowerOutput *= LimitPower/fabs(DrivePower); 

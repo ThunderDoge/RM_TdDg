@@ -61,7 +61,8 @@ public:
     pid FeedUpLocation;
     pid FeedDownSpeed;
     pid FeedDownLocation;
-    pid pidPower;
+    pid pidDriveCurrent;
+    pid pidPowerFeedback;
     //-------------------------电机变量
     softmotor DriveWheel;
     motor Fric;
@@ -95,6 +96,7 @@ private:
 
 
     void CanSendHandle(); //托管到CANSend的操作函数
+    float SentryChassis::PowerFeedbackSystem(float TargetCurInput,float PwrFeedbackInput);//柴小龙式功率闭环
 
     // int8_t PillarHit_Check();
     // int8_t PillarHit_Handle();

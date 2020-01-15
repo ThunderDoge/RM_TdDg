@@ -25,7 +25,6 @@ void Cloud_Init(void)
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	bsp_vision_Init();
     manager::CANSelect(&hcan1, &hcan2);
-    app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。
 }
 /**
   * @brief  主任务
@@ -36,6 +35,11 @@ void Cloud_Init(void)
     void
     task_Main(void *param)
 {
+	while(Self.PitchMotor.RealAngle == 0){;}
+    app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。
+	while(Self.YawMotor.RealAngle == 0){;}
+	app_imu_data.integral.Yaw = Self.YawMotor.RealAngle;
+
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
@@ -77,6 +81,7 @@ void TaskStarter(void)
     Cloud_Init();
     xTaskCreate(task_Main, "task_Main", 512, NULL, 4, NULL);
 	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,NULL);
+//	xTaskCreate(task_SentryTroubleShooter,"task_SentryTroubleShooter",4096,NULL,4,NULL);
 }
 //CAN线测试
 // int16_t test_data[4];

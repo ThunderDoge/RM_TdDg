@@ -20,19 +20,13 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="PIDMax" Address="0x2000A314" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="30000" YMaxSampled="30000" YAvgSampled="30000" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="Gyro[1]" Address="0x2000A0A8" Type="short" TypeID="11" Size="2" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-2373" YMaxSampled="2848" YAvgSampled="12" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="Pout" Address="0x2000A318" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-39171" YMaxSampled="2603" YAvgSampled="-8377" Offset="8" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="Gyro[1]" Address="0x2000A0F0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2373" YMaxSampled="2842" YAvgSampled="12" Offset="6" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="Iout" Address="0x2000A31C" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="2" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="Dout" Address="0x2000A320" Type="float" TypeID="1" Size="4" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="-795" YMaxSampled="1282" YAvgSampled="0" Offset="16" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1000" MaxValue="2000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="CurrentError" Address="0x2000A32C" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="-433" YMaxSampled="6528" YAvgSampled="1396" Offset="20" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryCloud.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="Angle_Rate[1]" Address="0x2000A148" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="-2384" YMaxSampled="2830" YAvgSampled="0" Offset="10" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

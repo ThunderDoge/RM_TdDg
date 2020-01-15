@@ -22,6 +22,7 @@ enum _cloud_ctrl_mode:uint8_t
     absolute_cloud = 0x01,
     relative_cloud = 0x02,
     save_cloud = 0x00,
+    absolute_gyro_cloud = 0x03,
 };
 #endif
 
@@ -63,6 +64,7 @@ public:
     //陀螺仪数据经过旋转计算，储存在这里。周期性更新。
     float RotatedImuAngle[3];   //Roll,Pitch,Yaw
     float RotatedImuAngleRate[3];   //Roll,Pitch,Yaw
+    float BaseImuAngleRate[3];
 
     //Public 状态
     int Mode;
@@ -77,6 +79,7 @@ public:
     void Safe_Set();    //安全模式
     void SetAngleTo(float pitch, float yaw);    //机械角度设定
     // void SetSoftAngleTo(float soft_pitch, float soft_yaw);  //软角度设定-未实现
+    void SetAngleTo_Gyro(float pitch, float yaw);
 	void LazerSwitchCmd(int OnOrOff);
 
 private:

@@ -66,6 +66,20 @@ void ManualShoot()
     //	Self.SetAngleTo(down_pitch,down_yaw);
 }
 /**
+  * @brief  遥控器测试云台，陀螺仪模式
+  */
+void ManualShoot_Gyro()
+{
+    if (GlobalMode != LastGlobalMode)
+    {
+        Self.TargetPitch = Self.RealPitch;
+        Self.TargetYaw = Self.RealYaw;
+    }
+    float up_pitch = Self.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //很多负号。这些都是调出来的。
+    float up_yaw = Self.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
+    Self.SetAngleTo_Gyro(up_pitch, up_yaw);
+}
+/**
   * @brief  遥控器测试底盘
   */
 void ManualChassis() //手动底盘
@@ -128,9 +142,13 @@ void ModeSelect(void)
          ManualFeed();
          break;
      case 13:    //上-中
-
+		GlobalMode = MODE_MANUAL_SHOOTING_TEST;
+		ManualShoot_Gyro();
+		break;
+	case 11:	//上-上
 		GlobalMode = MODE_FRIC_TEST;
 		ManualFeed();
+
 		break;
     case 22: //双下
     case 23:
