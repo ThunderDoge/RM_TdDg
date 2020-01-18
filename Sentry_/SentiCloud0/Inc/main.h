@@ -70,6 +70,8 @@ void Error_Handler(void);
 #define DBUS_GPIO_Port GPIOA
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
+#define LAZER_Pin GPIO_PIN_0
+#define LAZER_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -23,7 +23,7 @@
 //外设相关宏定义,移植时如果修改了外设请在这里修改
 #define BSP_VISION_UART huart6
 //视觉串口接收缓存的数组大小，有需要请在这里修改,使用空闲中断要求这个数至少要大于18
-#define BSP_VISION_BUFFER_SIZE 60
+#define BSP_VISION_BUFFER_SIZE 120
 
 //数据帧关键位置
 enum __bsp_vision_Keywords

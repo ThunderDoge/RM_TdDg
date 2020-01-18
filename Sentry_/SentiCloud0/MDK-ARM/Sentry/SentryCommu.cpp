@@ -223,6 +223,21 @@ void CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
     }
 }
 /**
+  * @brief  云台速度控制
+  */
+void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
+{
+	if(Vision_Rxbuffer[Function_word] == CMD_GIMBAL_SPEED_CONTROL)
+	{
+		VisionRx.Function_word = CMD_GIMBAL_SPEED_CONTROL;
+        memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 2, 4);
+        memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 6, 4);
+        memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
+        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
+		VisionRx.cloud_ctrl_mode = speed_cloud;
+	}
+}
+/**
   * @brief  射击控制
   */
 void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
@@ -272,7 +287,7 @@ void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(uint8_t *Vision_Rxbuffer)
     }
 }
 /**
-  * @brief  全命令接收
+  * @brief  全命令接收	新增的功能字接收函数请在这里面调用
   */
 //视觉串口中断接收函数
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
@@ -283,6 +298,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
     CMD_CHASSIS_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOACTION_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(Vision_Rxbuffer);
+	CMD_GIMBAL_SPEED_CONTROL_Rx(Vision_Rxbuffer);
 }
 //视觉串口发送函数
 void CMD_GET_MCU_STATE_Tx()
@@ -337,6 +353,11 @@ void VisionRxHandle(void)
             break;
         case absolute_cloud:
             Self.SetAngleTo(VisionRx.Pitch, VisionRx.Yaw);
+			break;
+		case speed_cloud:
+			Self.PitchMotor.Angle_Set(Self.RealPitch + VisionRx.Pitch);
+			Self.YawMotor.Speed_Set(VisionRx.Yaw);
+			break;
         default:
             break;
     }
@@ -344,8 +365,8 @@ void VisionRxHandle(void)
 }
 void CloudVisonTxRoutine(void)
 {
-    VisionTx.Cloud_mode = 0;
-    VisionTx.Shoot_mode = 0;
+    VisionTx.Cloud_mode = Self.Mode;
+    VisionTx.Shoot_mode = Self.shoot_flag;
     VisionTx.Pitch = Self.RealPitch;
     VisionTx.YawSoft = Self.RealYaw;
 	VisionTx.Yaw = Self.MechanicYaw;

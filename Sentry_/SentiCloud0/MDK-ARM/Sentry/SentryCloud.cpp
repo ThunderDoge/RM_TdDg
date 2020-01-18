@@ -22,12 +22,12 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
 
     : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
-	  PitchPosition(-20, -3, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      PitchGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
-      PitchGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
-      YawSpeed(-20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(-30, 0.5, -1, 500, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
-      YawGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
+	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+      PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
+      PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
+      YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
+      YawPosition(10, 1,-0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawGyroSpeed(15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
@@ -50,13 +50,19 @@ void SentryCloud::Handle()
 		LazerSwitchCmd(1);
 	}
 	
-	RotatedImuAngle[0] = app_imu_data.integral.Roll;
-    RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
-	RotatedImuAngle[2] = app_imu_data.integral.Yaw;
+	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)
+	{
+		app_imu_data.integral.Pitch = -Self.PitchMotor.RealAngle; 
+		app_imu_data.integral.Yaw = -Self.YawMotor.RealAngle;//×¢Òâ¸ººÅ¡£
+	}
 	
-	RotatedImuAngleRate[0] = app_imu_data.Angle_Rate[0];
+	RotatedImuAngle[0] = -app_imu_data.integral.Roll;
+    RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
+	RotatedImuAngle[2] = -app_imu_data.integral.Yaw;
+	
+	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[0];
     RotatedImuAngleRate[1] = -app_imu_data.Angle_Rate[1];
-	RotatedImuAngleRate[2] = app_imu_data.Angle_Rate[2];
+	RotatedImuAngleRate[2] = -app_imu_data.Angle_Rate[2];
 
     float Cp = cosf(RealPitch), Sp = sinf(RealPitch);
 

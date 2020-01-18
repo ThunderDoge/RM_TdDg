@@ -9,10 +9,14 @@
   */
 #include "task_SentiCloud.hpp"
 
+TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
+uint32_t mark1, mark2;
+
+
 /**
   * @brief  云台总初始化函数
   * @details  
-  * @param[in]  void
+  * @param[in]
   * @retval  
   */
 void Cloud_Init(void)
@@ -35,10 +39,10 @@ void Cloud_Init(void)
     void
     task_Main(void *param)
 {
-	while(Self.PitchMotor.RealAngle == 0){;}
-    app_imu_data.integral.Roll = -Self.PitchMotor.RealAngle; //注意负号。
-	while(Self.YawMotor.RealAngle == 0){;}
-	app_imu_data.integral.Yaw = Self.YawMotor.RealAngle;
+//	while(Self.PitchMotor.RealAngle == 0){;}
+//    app_imu_data.integral.Pitch = Self.PitchMotor.RealAngle; //注意负号。
+//	while(Self.YawMotor.RealAngle == 0){;}
+//	app_imu_data.integral.Yaw = -Self.YawMotor.RealAngle;
 
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
@@ -46,12 +50,9 @@ void Cloud_Init(void)
         app_imu_So3thread();
 		Self.Handle();	//！！！必须在app_imu_So3thread之后调用。
         ModeSelect();
-		//
-//		testDt = HAL_GetTick() - testT;
-//		testT = HAL_GetTick();
-		//
         manager::CANSend();
         vTaskDelayUntil(&LastTick, 1);
+		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);
     }
 }
 /**
@@ -67,7 +68,8 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();
 		CloudCanCommuRoutine();
-		vTaskDelayUntil(&LastTick,5);
+		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);\
+		vTaskDelayUntil(&LastTick,2);
     }
 }
 /**
@@ -79,8 +81,8 @@ void task_CommuRoutine(void *param)
 void TaskStarter(void)
 {
     Cloud_Init();
-    xTaskCreate(task_Main, "task_Main", 512, NULL, 4, NULL);
-	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,NULL);
+    xTaskCreate(task_Main, "task_Main", 512, NULL, 4, &task_Main_Handle);
+	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,&task_CommuRoutine_Handle);
 //	xTaskCreate(task_SentryTroubleShooter,"task_SentryTroubleShooter",4096,NULL,4,NULL);
 }
 //CAN线测试

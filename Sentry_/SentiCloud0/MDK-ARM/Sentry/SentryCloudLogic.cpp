@@ -72,8 +72,8 @@ void ManualShoot_Gyro()
 {
     if (GlobalMode != LastGlobalMode)
     {
-        Self.TargetPitch = Self.RealPitch;
-        Self.TargetYaw = Self.RealYaw;
+        Self.TargetPitch = Self.RotatedImuAngle[1];
+        Self.TargetYaw = Self.RotatedImuAngle[2];
     }
     float up_pitch = Self.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //很多负号。这些都是调出来的。
     float up_yaw = Self.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
@@ -98,6 +98,9 @@ void ManualFeed()
 	Self.FricLeftMotor.Speed_Set(-Shoot_Speed);
 	Self.FricRightMotor.Speed_Set(Shoot_Speed);
 	Self.Feed2nd.Free_Once_Set(100,(bsp_dbus_Data.CH_0>200));
+	
+	if(bsp_dbus_Data.CH_0>200) VisionTx.Shoot_mode = 1;
+	else VisionTx.Shoot_mode = 0;
 }
 
 /**

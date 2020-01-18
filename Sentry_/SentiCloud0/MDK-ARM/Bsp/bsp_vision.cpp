@@ -12,7 +12,11 @@
 //与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 #include "bsp_vision.hpp"
 //#include "SentryCommu.hpp"
+
+//调试用标志位
+#define VIUART_DISABLE_OTHER_IT
 //#define DEBUG
+
 #ifdef DEBUG
 uint8_t m = 1;
 float f1 = 12.5f, f2 = 25.2;
@@ -196,6 +200,17 @@ void bsp_vision_Init(void)
 {
     __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);                                                //清除空闲中断位
     __HAL_UART_ENABLE_IT(&BSP_VISION_UART, UART_IT_IDLE);                                       //使能DMA接收空闲中断
+	
+	#ifdef VIUART_DISABLE_OTHER_IT	//除能其他所有的中断
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_CTS);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_LBD);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_TXE);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_TC);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_RXNE);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_PE);
+	__HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_ERR);
+	#endif
+	
     HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //开始DMA接收
 }
 
@@ -207,14 +222,17 @@ void bsp_vision_Init(void)
 */
 void bsp_vision_It(void)
 {
+#ifndef VIUART_DISABLE_OTHER_IT	//除能其他所有的中断，不再需要判断
     if (__HAL_UART_GET_FLAG(&BSP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
+#endif
     {
         HAL_UART_DMAStop(&BSP_VISION_UART); //关闭DMA
         while (bsp_vision_Analysis())
             ;                                                                                       //数据解析，遍历一次缓冲区
         memset(Vision_Rxbuffer, 0, BSP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
         __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);                                                //清除空闲中断标志位
-        HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
+        HAL_UART_DMAResume(&BSP_VISION_UART);         //重新打开DMA
+		HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
     }
 }
 

@@ -56,9 +56,21 @@ void SentryChassis::Handle()
     MotorSoftLocation = DriveWheel.SoftAngle;
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
-    DrivePower = bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f;
-    FeedUp.PR_Handle();
-    FeedDown.PR_Handle();
+    DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
+	Accel_Railward = app_imu_data.original.Accel[0];
+//    FeedUp.PR_Handle();
+//    FeedDown.PR_Handle();
+	//撞柱标志
+	if( fabs(Accel_Railward) > fabs(imuLeftBounceThreshold) )	//超出阈值
+	{
+		if( SIGN(Accel_Railward) * SIGN(imuLeftBounceThreshold) == 1)	//同号
+			PillarFlag = PILLAR_BOUNCE_LEFT;	//判为左
+		else
+			PillarFlag = PILLAR_BOUNCE_RIGHT;	//异号判为右
+	}
+	else
+		PillarFlag = PILLAR_NOT_DETECTED;	//未超阈值
+		
     manager::CANSend();
 }
 void SentryChassis::Safe_Set()
@@ -88,7 +100,8 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
 //#define DEBUG1
 //#define DEBUG2
 //#define DEBUG3
-#define DEBUG4
+//#define DEBUG4
+#define DEBUG5
 
 #ifdef DEBUG1   
 float unfilted_pwr_in;
@@ -99,6 +112,7 @@ float VeP1,P_Idle;
 #endif
 #ifdef DEBUG4
 #endif
+float pwr_exceed,ft,et,ct;
 /**
   * @brief  柴小龙式功率闭环
   * @details  
@@ -108,14 +122,13 @@ float VeP1,P_Idle;
   *             |--- Pfd(s) ------+
   * 
   */
-float SentryChassis::PowerFeedbackSystem(float TargetCurInput,float PwrFeedbackInput)
+float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput)
 {
-    float pwr_exceed = PwrFeedbackInput-LimitPower; pwr_exceed>0? : pwr_exceed=0;   //计算超越功率
-    float ft = pidPowerFeedback.pid_run(pwr_exceed);
-    float et = TargetCurInput - ft;
-    float ct = pidDriveCurrent.pid_run(et);
+	pwr_exceed  = PwrFeedbackInput-LimitPower; (pwr_exceed>0)? 0: pwr_exceed=0;   //计算超越功率
+	ft = SIGN(TargetSpeedInput) * pidPowerFeedback.pid_run(pwr_exceed);
+	et = TargetCurInput+ft;
+	ct = pidDriveCurrent.pid_run(et);
     return ct;
-    
 }
 
 /**
@@ -179,10 +192,15 @@ void SentryChassis::CanSendHandle()
 	}
     DriveWheel.TargetCurrent = PowerOutput;
 #endif	//DEBUG4
-
-
+#ifdef DEBUG5
+	PowerOutput = PowerFeedbackSystem (DriveWheel.TargetSpeed,DriveWheel.TargetCurrent,DrivePower);
+#endif	//DEBUG5
+    DriveWheel.InsertCurrentBy(PowerOutput);
     }
-    DriveWheel.InsertCurrent();
+	else
+	{
+	DriveWheel.InsertCurrent();
+	}
 }
 #undef DEBUG1
 #undef DEBUG2

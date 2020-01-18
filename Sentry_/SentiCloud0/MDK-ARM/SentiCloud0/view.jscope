@@ -11,7 +11,7 @@
             <DataFile Name="" />
             <RawFile Name="" />
             <Scope>
-                <Options TimeResolutionUs="200000" />
+                <Options TimeResolutionUs="100000" />
             </Scope>
         </Configuration>
         <Windows>
@@ -20,13 +20,13 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="Gyro[1]" Address="0x2000A0A8" Type="short" TypeID="11" Size="2" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-2373" YMaxSampled="2848" YAvgSampled="12" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
+                <Options Name="Angle_Rate[0]" Address="0x2000A154" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="215" GraphColorBlue="0" YMinSampled="-455" YMaxSampled="502" YAvgSampled="0" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="500" MaxValue="1000" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="Gyro[1]" Address="0x2000A0F0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2373" YMaxSampled="2842" YAvgSampled="12" Offset="6" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
+                <Options Name="Angle_Rate[1]" Address="0x2000A158" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-2625" YMaxSampled="1584" YAvgSampled="0" Offset="8" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="2000" MaxValue="4000" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="Angle_Rate[1]" Address="0x2000A148" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="-2384" YMaxSampled="2830" YAvgSampled="0" Offset="10" ShowInGraph="1" ACCoupling="0" YOffset="400" IsAutoConfig="0" YResolution="500" MaxValue="3140" File="App\app_imu.c" Scope="0" DrawStyle="0" />
+                <Options Name="Angle_Rate[2]" Address="0x2000A15C" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="-1841" YMaxSampled="1626" YAvgSampled="-1" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1000" MaxValue="2000" File="App\app_imu.c" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

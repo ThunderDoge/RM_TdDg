@@ -23,6 +23,8 @@ enum _cloud_ctrl_mode:uint8_t
     relative_cloud = 0x02,
     save_cloud = 0x00,
     absolute_gyro_cloud = 0x03,
+	relative_gyro_cloud = 0x04,
+	speed_cloud = 0x05,
 };
 #endif
 

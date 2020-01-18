@@ -30,6 +30,13 @@ void RGB_SetByCode(uint8_t rgb_code)
     HAL_GPIO_WritePin(RGB2_GPIO_Port,RGB2_Pin,g_code?GPIO_PIN_SET:GPIO_PIN_RESET);
     HAL_GPIO_WritePin(RGB3_GPIO_Port,RGB3_Pin,b_code?GPIO_PIN_SET:GPIO_PIN_RESET);
 }
+int i=0;
+void CloudRGBAlert_Handle(void)
+{
+	
+	RGB_SetByCode(RGB_LoopScript[i]);
+}
+
 void task_SentryTroubleShooter(void* param)
 {
     SentryTroubleShooter_Init();

@@ -41,6 +41,23 @@ void CHASSIS_STATES_CanTx()
     SentryCanSend(&CAN_INTERBOARD, CHASSIS_STATES,
                   CanTx.Chassis_SpeedLocation[0],
                   CanTx.Chassis_SpeedLocation[1]);
+//	SentryCanSend(&CAN_INTERBOARD, CHASSIS_STATES,
+//                  CanTx.Chassis_SpeedLocation[0],
+//                  CanTx.Chassis_SpeedLocation[1]);
+}
+void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
+{
+	if(StdId == CHASSIS_PILLAR)
+	{
+		CanRx.Pillar_flag = ptrData[0];
+	}
+}
+void CHASSIS_PILLAR_CanTx()
+{
+	CanTx.Pillar_flag = Self.PillarFlag;
+	uint8_t pData[8];
+	pData[0] = CanTx.Pillar_flag;
+	SentryCanSend(&CAN_INTERBOARD, CHASSIS_PILLAR,pData);
 }
 
 //上级命令广播
@@ -404,7 +421,7 @@ void ChassisCanCommuRoutine(void)
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
 {
-	Self.Mode = CanRx.SuperCon_ChassisMode;
+	Self.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
 	switch (CanRx.SuperCon_ChassisMode)
 	{
 	case _chassis_speed:

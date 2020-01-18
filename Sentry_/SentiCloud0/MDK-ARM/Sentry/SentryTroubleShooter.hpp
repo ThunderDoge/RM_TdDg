@@ -19,7 +19,7 @@ extern uint32_t RGB_FrameTime;
 
 void SentryTroubleShooter_Init(void);
 void task_SentryTroubleShooter(void* param);
-void SentryTroubleShooter_Handle(void);
+void CloudRGBAlert_Handle(void);
 
 //Private
 #define RGB_CODE_OF(r,g,b) \

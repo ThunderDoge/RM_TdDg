@@ -599,6 +599,14 @@ WEAK void motor::InsertCurrent(void)
 	if(can_code/100==2)
 		CAN2CurrentList[can_code%100] = TargetCurrent;
 }
+void motor::InsertCurrentBy(int16_t tar_cur)
+{
+	if(can_code/100==1)
+		CAN1CurrentList[can_code%100] = tar_cur;
+	if(can_code/100==2)
+		CAN2CurrentList[can_code%100] = tar_cur;
+}
+
 /** 
 	* @brief  对该电机启用堵转检测
 	* @param [in]   Limit 电流堵转阈值
