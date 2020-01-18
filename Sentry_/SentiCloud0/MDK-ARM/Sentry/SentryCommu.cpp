@@ -54,7 +54,6 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 void CHASSIS_PILLAR_CanTx()
 {
-	CanTx.Pillar_flag = Self.PillarFlag;
 	uint8_t pData[8];
 	pData[0] = CanTx.Pillar_flag;
 	SentryCanSend(&CAN_INTERBOARD, CHASSIS_PILLAR,pData);
@@ -439,6 +438,8 @@ void ChassisCanCommuRoutine(void)
     CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
     CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
     CHASSIS_STATES_CanTx();
+	CanTx.Pillar_flag = Self.PillarFlag;
+	CHASSIS_PILLAR_CanTx();
 }
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
