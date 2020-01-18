@@ -54,6 +54,7 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 void CHASSIS_PILLAR_CanTx()
 {
+	CanTx.Pillar_flag = Self.PillarFlag;
 	uint8_t pData[8];
 	pData[0] = CanTx.Pillar_flag;
 	SentryCanSend(&CAN_INTERBOARD, CHASSIS_PILLAR,pData);
@@ -394,6 +395,7 @@ void CloudVisonTxRoutine(void)
     VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
     VisionTx.pillar_flag = CanRx.Pillar_flag;
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
+	VisionTx.pillar_flag = CanRx.Pillar_flag;
 
     CMD_GET_MCU_STATE_Tx();
     ROBOT_ERR_Tx();

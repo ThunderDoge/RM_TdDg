@@ -395,6 +395,7 @@ void CloudVisonTxRoutine(void)
     VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
     VisionTx.pillar_flag = CanRx.Pillar_flag;
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
+	VisionTx.pillar_flag = CanRx.Pillar_flag;
 
     CMD_GET_MCU_STATE_Tx();
     ROBOT_ERR_Tx();
@@ -439,6 +440,8 @@ void ChassisCanCommuRoutine(void)
     CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
     CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
     CHASSIS_STATES_CanTx();
+	CanTx.Pillar_flag = Self.PillarFlag;
+	CHASSIS_PILLAR_CanTx();
 }
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
