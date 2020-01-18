@@ -240,6 +240,21 @@ void CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
     }
 }
 /**
+  * @brief  云台速度控制
+  */
+void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
+{
+	if(Vision_Rxbuffer[Function_word] == CMD_GIMBAL_SPEED_CONTROL)
+	{
+		VisionRx.Function_word = CMD_GIMBAL_SPEED_CONTROL;
+        memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 2, 4);
+        memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 6, 4);
+        memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
+        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
+		VisionRx.cloud_ctrl_mode = speed_cloud;
+	}
+}
+/**
   * @brief  射击控制
   */
 void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
@@ -289,7 +304,7 @@ void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(uint8_t *Vision_Rxbuffer)
     }
 }
 /**
-  * @brief  全命令接收
+  * @brief  全命令接收	新增的功能字接收函数请在这里面调用
   */
 //视觉串口中断接收函数
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
@@ -300,6 +315,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
     CMD_CHASSIS_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOACTION_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(Vision_Rxbuffer);
+	CMD_GIMBAL_SPEED_CONTROL_Rx(Vision_Rxbuffer);
 }
 //视觉串口发送函数
 void CMD_GET_MCU_STATE_Tx()
@@ -313,7 +329,7 @@ void CMD_GET_MCU_STATE_Tx()
     bsp_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
     bsp_vision_load_to_txbuffer(VisionTx.Pitch, 1);
     bsp_vision_load_to_txbuffer(VisionTx.Yaw, 5);
-    bsp_vision_load_to_txbuffer(VisionTx.Shoot_speed, 9U);
+    bsp_vision_load_to_txbuffer(VisionTx.YawSoft, 9U);
     bsp_vision_load_to_txbuffer(VisionTx.Shoot_mode, 13U);
     bsp_vision_SendTxbuffer(CMD_GET_MCU_STATE);
 }
@@ -354,16 +370,22 @@ void VisionRxHandle(void)
         break;
     case absolute_cloud:
         Self.SetAngleTo(VisionRx.Pitch, VisionRx.Yaw);
-    default:
+    			break;
+		case speed_cloud:
+			Self.PitchMotor.Angle_Set(Self.RealPitch + VisionRx.Pitch);
+			Self.YawMotor.Speed_Set(VisionRx.Yaw);
+			break;
+default:
         break;
     }
     VisionRx.cloud_ctrl_mode = 0;    //处理完成标志。因为一个命令只会处理一次，处理后置0
 }
 void CloudVisonTxRoutine(void)
 {
-    VisionTx.Cloud_mode = 0;
-    VisionTx.Shoot_mode = 0;
+    VisionTx.Cloud_mode = Self.Mode;
+    VisionTx.Shoot_mode = Self.shoot_flag;
     VisionTx.Pitch = Self.RealPitch;
+    VisionTx.YawSoft = Self.RealYaw;
     VisionTx.Yaw = Self.MechanicYaw;
     VisionTx.Shoot_speed = 0;
 
@@ -390,7 +412,7 @@ void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeader
 {
     CHASSIS_SUPERIOR_ALL_CanRx(RxHead->StdId, Data);
 }
-#ifdef CLOUD_COMMMU
+#ifdef CLOUD_COMMU
 void CloudCanCommuRoutine(void)
 {
     	if(GlobalMode ==  MODE_VIISON_SHOOTING_TEST)
@@ -403,7 +425,7 @@ void CloudCanCommuRoutine(void)
 	if(GlobalMode == MODE_MANUAL_CHASSIS_MOVE)
 	{
 		CanTx.SuperCon_ChassisMode = _chassis_speed;
-		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 5000.0f / 660.0f;
+		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 8000.0f / 660.0f;
     CanTx.SuperiorControlFlags = 1;
     }
     SUPERIOR_CHASSIS_MOVE_CanTx();
@@ -414,8 +436,8 @@ void CloudCanCommuRoutine(void)
 #ifdef CHASSIS_COMMU
 void ChassisCanCommuRoutine(void)
 {
-    CanTx.Chassis_SpeedLocation[0] = Self.RealSpeed;
-    CanTx.Chassis_SpeedLocation[1] = Self.RealPosition;
+    CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
+    CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
     CHASSIS_STATES_CanTx();
 }
 //CAN信息底盘托管控制程序
