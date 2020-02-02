@@ -112,7 +112,7 @@ float VeP1,P_Idle;
 #endif
 #ifdef DEBUG4
 #endif
-float pwr_exceed,ft,et,ct;
+float pwr_exceed,pwr_idle,ft,et,ct;
 /**
   * @brief  柴小龙式功率闭环
   * @details  
@@ -122,9 +122,18 @@ float pwr_exceed,ft,et,ct;
   *             |--- Pfd(s) ------+
   * 
   */
+float pwr_idle_I=-1;
 float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput)
 {
-	pwr_exceed  = PwrFeedbackInput-LimitPower; (pwr_exceed>0)? 0: pwr_exceed=0;   //计算超越功率
+	pwr_exceed  = PwrFeedbackInput-LimitPower;
+	pwr_idle = -pwr_exceed;		
+	(pwr_idle >0)? NULL:pwr_idle =0;//计算空余功率
+	(pwr_exceed>0)? NULL: pwr_exceed=0;   //计算超越功率
+	if(pwr_idle>1)
+	{
+		pidPowerFeedback.Iout-=pwr_idle_I*pwr_idle;
+		if(pidPowerFeedback.Iout<0)	pidPowerFeedback.Iout=0;
+	}
 	ft = SIGN(TargetSpeedInput) * pidPowerFeedback.pid_run(pwr_exceed);
 	et = TargetCurInput+ft;
 	ct = pidDriveCurrent.pid_run(et);
