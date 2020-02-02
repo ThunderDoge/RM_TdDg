@@ -11,7 +11,7 @@
             <DataFile Name="..\PULSE_STATIC_RES_WITH_INF_LOAD.csv" />
             <RawFile Name="..\Data.jraw" />
             <Scope>
-                <Options TimeResolutionUs="50000" />
+                <Options TimeResolutionUs="500000" />
             </Scope>
         </Configuration>
         <Windows>
@@ -20,25 +20,22 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="DrivePower" Address="0x2000AF38" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="191" GraphColorBlue="255" YMinSampled="0" YMaxSampled="1" YAvgSampled="0" Offset="4" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="DrivePower" Address="0x2000AF3C" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="191" GraphColorBlue="255" YMinSampled="0" YMaxSampled="40" YAvgSampled="0" Offset="4" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="10" MaxValue="100" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="ct" Address="0x200001A4" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="8" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="2" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="ct" Address="0x200001B4" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-5109" YMaxSampled="5129" YAvgSampled="129" Offset="8" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="1" MaxValue="1" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="et" Address="0x200001A0" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="12" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="et" Address="0x200001B0" Type="float" TypeID="1" Size="4" GraphColorRed="102" GraphColorGreen="102" GraphColorBlue="178" YMinSampled="-5261" YMaxSampled="4977" YAvgSampled="-22" Offset="12" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="ft" Address="0x2000019C" Type="float" TypeID="1" Size="4" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="16" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="ft" Address="0x200001AC" Type="float" TypeID="1" Size="4" GraphColorRed="160" GraphColorGreen="32" GraphColorBlue="240" YMinSampled="-330" YMaxSampled="353" YAvgSampled="0" Offset="16" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="200" MaxValue="400" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="pwr_exceed" Address="0x20000194" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="20" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="pwr_exceed" Address="0x200001A8" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="-4" YMaxSampled="35" YAvgSampled="0" Offset="20" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="0" YResolution="10" MaxValue="40" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
             <Symbol>
-                <Options Name="PIDout" Address="0x2000A9DC" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="191" GraphColorBlue="255" YMinSampled="-481" YMaxSampled="551" YAvgSampled="0" Offset="24" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
-            </Symbol>
-            <Symbol>
-                <Options Name="pwr_idle" Address="0x20000198" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="100" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="28" ShowInGraph="1" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="20000" MaxValue="40000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
+                <Options Name="PIDout" Address="0x2000A9E8" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="191" GraphColorBlue="255" YMinSampled="-5155" YMaxSampled="4837" YAvgSampled="-22" Offset="24" ShowInGraph="0" ACCoupling="0" YOffset="200" IsAutoConfig="1" YResolution="5000" MaxValue="10000" File="Sentry\SentryChassis.cpp" Scope="0" DrawStyle="0" />
             </Symbol>
         </SelectedSymbols>
     </Project>

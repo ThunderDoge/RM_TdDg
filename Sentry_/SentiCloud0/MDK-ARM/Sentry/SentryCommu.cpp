@@ -424,7 +424,7 @@ void CloudCanCommuRoutine(void)
     CanTx.SuperiorControlFlags = 1;
 	}
 	if(GlobalMode == MODE_MANUAL_CHASSIS_MOVE)
- {
+	{
 		CanTx.SuperCon_ChassisMode = _chassis_speed;
 		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 8000.0f / 660.0f;
 		CanTx.SuperiorControlFlags = 1;

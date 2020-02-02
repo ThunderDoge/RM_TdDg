@@ -51,7 +51,7 @@ public:
     float nonlinear_pid_run(float err);
     float sech(float in);
 
-//private:
+private:
     //运算储存�??
     float Pout;
     float Iout;
