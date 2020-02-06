@@ -1,66 +1,66 @@
 /** 
-	* å…¶å®ä¸ªäººæ„Ÿè§‰æ˜¯ä¸ªè¶…çº§ç‰›åŠ›DJIç‰¹çº§é©±åŠ¨åŒ…
+	* ÆäÊµ¸öÈË¸Ğ¾õÊÇ¸ö³¬¼¶Å£Á¦DJIÌØ¼¶Çı¶¯°ü
 	* @details  
-	* åˆå§‹åŒ–ï¼šåˆ›é€ æƒ³ç”¨çš„ç±»çš„å¯¹è±¡ CANæ¥æ”¶å›è°ƒä¸Šæ”¾ä¸ŠCANUpdate() åœ¨å‘¨æœŸè°ƒç”¨CANSend() 
-	* ä½¿ç”¨:ç±»é‡Œé¢çš„æ“ä½œå‡½æ•°ç›´æ¥ç”¨ 
+	* ³õÊ¼»¯£º´´ÔìÏëÓÃµÄÀàµÄ¶ÔÏó CAN½ÓÊÕ»Øµ÷ÉÏ·ÅÉÏCANUpdate() ÔÚÖÜÆÚµ÷ÓÃCANSend() 
+	* Ê¹ÓÃ:ÀàÀïÃæµÄ²Ù×÷º¯ÊıÖ±½ÓÓÃ 
 	* @author      WMD,Onion rain
 	* @par Copyright (c):  
 	*       WMD,Onion rain
-	* @par æ—¥å¿—
-	*		V6.0  ä»motorç±»ä¸­æå‡ºç”µæœºæ•°æ®æ›´æ–°å’Œå‘é€éƒ¨åˆ†ä½œä¸ºmanagerç±»ï¼Œå°†motorå˜ä¸ºmanagerå­ç±»ï¼Œcloudç±»ä¹Ÿä½œä¸ºmanagerå­ç±» 
-	*		V6.1  äº‘å°ç”µæœºæ–°å¢ä½ç½®å·®è·å–é€Ÿåº¦è¿‘ä¼¼å€¼(ç„¶è€Œå¹¶ä¸å¥½ç”¨) 
-	*		V6.2  motor Angle_Setå½¢å‚æ”¹ä¸ºfloatå‹ï¼Œå•ä½ä¸ºÂ° 
-	*		V6.3  æ–°å¢Motor_tç»“æ„ä½“ï¼Œè®°å½•ç”µæœº(ç”µè°ƒ)å‚æ•°ï¼Œåˆå§‹åŒ–ç”µæœºç±»æ—¶å°†æŒ‡é’ˆä¼ å…¥ç”µæœºç±» 
-	*		V6.4  pidç±»æ–°å¢å­ç±»ï¼šéçº¿æ€§pid 
-	*		V6.5  æ–°å¢softcloudç±»ï¼Œ6020ç”µæœºä¸“å± 
-	*		V6.6  motorç±»åŠå…¶å­ç±»å¯é€‰ç”µæµç¯pid 
-	*		V6.7a Motor_tç±»å‹å¢åŠ å¿«é€Ÿåˆå§‹åŒ–åˆ—è¡¨ 
-	*		V6.7b motorã€cloudç±»å¢åŠ RealAngleå‚æ•°è¡¨ç¤ºç”µæœºåé¦ˆä½ç½®æ¢ç®—å¾—åˆ°çš„è§’åº¦ï¼Œå•ä½ä¸ºÂ°ï¼Œåœ¨å„è‡ªç±»å†…çš„updateæ›´æ–° 
-	*		V6.8a æ•´æ”¹CANSendå‡½æ•°ï¼Œä¸å†é™å®šPosition_Run()å’ŒSpeed_Run()ï¼Œä½¿ç”¨Handle()å‡½æ•°è‡ªè¡Œç®¡ç†å‘é€é€»è¾‘
-	*		V6.8b æ•´æ”¹block_typeç±»ï¼Œä¸å†é™å®šäºsoftmotorç±»å‹ï¼Œå¹¶æ‹¥æœ‰æ›´è‡ªåŠ¨åŒ–çš„æ–¹å¼
-	*		V6.9a pidç±»Doutæ”¹ä¸ºè¾“å‡ºDï¼Œä½¿ç”¨Dout_Accumulativeè¿›è¡Œç´¯è®¡
-	*		V6.9b äº‘å°åˆå§‹åŒ–æ—¶æ£€æµ‹å¤–ç¯pidå­˜åœ¨åˆ™ä½¿ç”¨é™€èºä»ªè§’é€Ÿåº¦ä½œä¸ºå¤–ç¯å¾®åˆ†å€¼
-	*		V6.9c ä¿®å¤äº†softcloudç±»Angle_Setæœºæ¢°è§’æ¨¡å¼å½’é›¶ä½ç–¯ç‹‚è½¬å¤´çš„bug
-	*		V6.9d å¢åŠ äº†åº•ç›˜æ§åˆ¶ç±»chassiscontrolï¼Œä¾¿äºäº‘å°ä¸åº•ç›˜é‡‡æ ·æ¿é€šä¿¡
-	*		V6.10 ä¿®å¤äº†pidç±»ä¸­start_timeå¯¼è‡´ç§¯åˆ†å¼‚å¸¸çš„bug
-	*		V6.10a çœŸæ­£ä¿®å¤äº†pidç±»ä¸­start_timeå¯¼è‡´ç§¯åˆ†å¼‚å¸¸çš„bug
-	*		V6.11  ä¿®å¤äº†Block_Typeæ›´æ–°åä¸èƒ½å·¥ä½œçš„é—®é¢˜
-	*		V6.12w  ç§»é™¤ç”µæœºä¸­è‡ªå¸¦çš„ç”µæµç¯ï¼ŒåŒæ—¶åœ¨åº•ç›˜ç±»å‹ä¸­æä¾›äº†ç”µæµç¯æ§åˆ¶ï¼Œå¹¶æä¾›äº†åŠŸç‡æ§åˆ¶ç³»ç»Ÿï¼Œä½¿ç”¨æ—¶éœ€è¦åœ¨CarDrv_Config.hppä¸­æ·»åŠ  \
-						 åŠŸç‡é™åˆ¶LIMIT_På®å®šä¹‰ï¼Œ ä¸éœ€è¦é™åˆ¶åŠŸç‡çš„è¯ä¸æä¾›ç”µæµç¯å³å¯.åŒæ—¶æ·»åŠ äº†@ref manager::UserProcess()ä¸­é—´å¤„ç†å‡½æ•°ï¼Œå…è®¸ \n
-						 ç”¨æˆ·åœ¨pidè¿è¡Œåå‘é€å‰æ·»åŠ è‡ªå®šä¹‰å¤„ç†é€»è¾‘ï¼ŒåŒæ—¶è¿˜å…è®¸ç”¨æˆ·å°†å·²å®šä¹‰çš„ç”µæœºä½œä¸ºä¸€ä¸ªéç‹¬ç«‹ç”µæœºé€šè¿‡å‚æ•° @ref manager::cooperative 
-						 ã€‚è®¾å®šè¯¥å‚æ•°å@ref manager::CANSend() å°†ä¸ä¼šè‡ªåŠ¨è¿è¡Œè¯¥ç”µæœºçš„pidï¼Œéœ€è¦ç”¨æˆ·åœ¨@ref manager::UserProcess()è‡ªè¡Œå¤„ç†pid.
-	*		V6.12y  ä¿®å¤äº†éçº¿æ€§pidçš„ä¸€ä¸ªé€»è¾‘é”™è¯¯
-	*		V6.13	åº•ç›˜æ§åˆ¶ç±»(foräº‘å°)æ–°å¢ä¸€é”®å›å¤´å’Œè¶…çº§ç”µå®¹å¼€å…³ï¼Œå…¼å®¹åº•ç›˜ç±»
+	* @par ÈÕÖ¾
+	*		V6.0  ´ÓmotorÀàÖĞÌá³öµç»úÊı¾İ¸üĞÂºÍ·¢ËÍ²¿·Ö×÷ÎªmanagerÀà£¬½«motor±äÎªmanager×ÓÀà£¬cloudÀàÒ²×÷Îªmanager×ÓÀà 
+	*		V6.1  ÔÆÌ¨µç»úĞÂÔöÎ»ÖÃ²î»ñÈ¡ËÙ¶È½üËÆÖµ(È»¶ø²¢²»ºÃÓÃ) 
+	*		V6.2  motor Angle_SetĞÎ²Î¸ÄÎªfloatĞÍ£¬µ¥Î»Îª¡ã 
+	*		V6.3  ĞÂÔöMotor_t½á¹¹Ìå£¬¼ÇÂ¼µç»ú(µçµ÷)²ÎÊı£¬³õÊ¼»¯µç»úÀàÊ±½«Ö¸Õë´«Èëµç»úÀà 
+	*		V6.4  pidÀàĞÂÔö×ÓÀà£º·ÇÏßĞÔpid 
+	*		V6.5  ĞÂÔösoftcloudÀà£¬6020µç»ú×¨Êô 
+	*		V6.6  motorÀà¼°Æä×ÓÀà¿ÉÑ¡µçÁ÷»·pid 
+	*		V6.7a Motor_tÀàĞÍÔö¼Ó¿ìËÙ³õÊ¼»¯ÁĞ±í 
+	*		V6.7b motor¡¢cloudÀàÔö¼ÓRealAngle²ÎÊı±íÊ¾µç»ú·´À¡Î»ÖÃ»»ËãµÃµ½µÄ½Ç¶È£¬µ¥Î»Îª¡ã£¬ÔÚ¸÷×ÔÀàÄÚµÄupdate¸üĞÂ 
+	*		V6.8a Õû¸ÄCANSendº¯Êı£¬²»ÔÙÏŞ¶¨Position_Run()ºÍSpeed_Run()£¬Ê¹ÓÃHandle()º¯Êı×ÔĞĞ¹ÜÀí·¢ËÍÂß¼­
+	*		V6.8b Õû¸Äblock_typeÀà£¬²»ÔÙÏŞ¶¨ÓÚsoftmotorÀàĞÍ£¬²¢ÓµÓĞ¸ü×Ô¶¯»¯µÄ·½Ê½
+	*		V6.9a pidÀàDout¸ÄÎªÊä³öD£¬Ê¹ÓÃDout_Accumulative½øĞĞÀÛ¼Æ
+	*		V6.9b ÔÆÌ¨³õÊ¼»¯Ê±¼ì²âÍâ»·pid´æÔÚÔòÊ¹ÓÃÍÓÂİÒÇ½ÇËÙ¶È×÷ÎªÍâ»·Î¢·ÖÖµ
+	*		V6.9c ĞŞ¸´ÁËsoftcloudÀàAngle_Set»úĞµ½ÇÄ£Ê½¹éÁãÎ»·è¿ñ×ªÍ·µÄbug
+	*		V6.9d Ôö¼ÓÁËµ×ÅÌ¿ØÖÆÀàchassiscontrol£¬±ãÓÚÔÆÌ¨Óëµ×ÅÌ²ÉÑù°åÍ¨ĞÅ
+	*		V6.10 ĞŞ¸´ÁËpidÀàÖĞstart_timeµ¼ÖÂ»ı·ÖÒì³£µÄbug
+	*		V6.10a ÕæÕıĞŞ¸´ÁËpidÀàÖĞstart_timeµ¼ÖÂ»ı·ÖÒì³£µÄbug
+	*		V6.11  ĞŞ¸´ÁËBlock_Type¸üĞÂºó²»ÄÜ¹¤×÷µÄÎÊÌâ
+	*		V6.12w  ÒÆ³ıµç»úÖĞ×Ô´øµÄµçÁ÷»·£¬Í¬Ê±ÔÚµ×ÅÌÀàĞÍÖĞÌá¹©ÁËµçÁ÷»·¿ØÖÆ£¬²¢Ìá¹©ÁË¹¦ÂÊ¿ØÖÆÏµÍ³£¬Ê¹ÓÃÊ±ĞèÒªÔÚCarDrv_Config.hppÖĞÌí¼Ó \
+						 ¹¦ÂÊÏŞÖÆLIMIT_Pºê¶¨Òå£¬ ²»ĞèÒªÏŞÖÆ¹¦ÂÊµÄ»°²»Ìá¹©µçÁ÷»·¼´¿É.Í¬Ê±Ìí¼ÓÁË@ref manager::UserProcess()ÖĞ¼ä´¦Àíº¯Êı£¬ÔÊĞí \n
+						 ÓÃ»§ÔÚpidÔËĞĞºó·¢ËÍÇ°Ìí¼Ó×Ô¶¨Òå´¦ÀíÂß¼­£¬Í¬Ê±»¹ÔÊĞíÓÃ»§½«ÒÑ¶¨ÒåµÄµç»ú×÷ÎªÒ»¸ö·Ç¶ÀÁ¢µç»úÍ¨¹ı²ÎÊı @ref manager::cooperative 
+						 ¡£Éè¶¨¸Ã²ÎÊıºó@ref manager::CANSend() ½«²»»á×Ô¶¯ÔËĞĞ¸Ãµç»úµÄpid£¬ĞèÒªÓÃ»§ÔÚ@ref manager::UserProcess()×ÔĞĞ´¦Àípid.
+	*		V6.12y  ĞŞ¸´ÁË·ÇÏßĞÔpidµÄÒ»¸öÂß¼­´íÎó
+	*		V6.13	µ×ÅÌ¿ØÖÆÀà(forÔÆÌ¨)ĞÂÔöÒ»¼ü»ØÍ·ºÍ³¬¼¶µçÈİ¿ª¹Ø£¬¼æÈİµ×ÅÌÀà
 <<<<<<< HEAD
-	*		V6.14 ä¿®å¤äº†chassisç±»ä¸ç»™å®šç”µæµç¯å³ä¸é™åŠŸç‡çš„æ—¶å€™å·¥ä½œä¸æ­£å¸¸çš„é—®é¢˜
+	*		V6.14 ĞŞ¸´ÁËchassisÀà²»¸ø¶¨µçÁ÷»·¼´²»ÏŞ¹¦ÂÊµÄÊ±ºò¹¤×÷²»Õı³£µÄÎÊÌâ
 =======
-	*		V6.14	motorç±»åŠå…¶å­ç±»LastUpdateTimeæ›´æ–°æ·»åŠ å‰åç”µæµåé¦ˆä¸åŒæ¡ä»¶ï¼Œä»¥æ£€æµ‹ç”µæœºä¸ç”µè°ƒä¹‹é—´é€šä¿¡ä¸­æ–­çš„æƒ…å†µ
+	*		V6.14	motorÀà¼°Æä×ÓÀàLastUpdateTime¸üĞÂÌí¼ÓÇ°ºóµçÁ÷·´À¡²»Í¬Ìõ¼ş£¬ÒÔ¼ì²âµç»úÓëµçµ÷Ö®¼äÍ¨ĞÅÖĞ¶ÏµÄÇé¿ö
 	
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<RM2019å’ŒRM2020åˆ†ç•Œçº¿<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<RM2019ºÍRM2020·Ö½çÏß<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	* @author  Evan-GH
-	*		V7.0 	ä¿®æ”¹pid::runè®¡ç®—å‡½æ•°ï¼Œç°åœ¨Tæ˜¯çœŸæ­£çš„ç§¯åˆ†æ—¶é—´å˜é‡äº†
-	*   V7.1 	ä¿®æ”¹äº‘å°ç±»çš„é™€èºä»ªè§’åº¦è®¾ç½®ä¸²çº§è®¡ç®—å‡½æ•°ï¼ŒæŠŠerrä½œä¸ºæµ®ç‚¹æ•°ä¼ å…¥ï¼Œä¸å†ä¹˜ä¸Š50äº†ï¼Œä¸æ”¹è¿™é‡Œä¹‹å‰å†™çš„å‚æ•°æ˜¯éœ€è¦é‡æ–°è°ƒæ•´çš„
-	*		V7.2 	ä¿®æ”¹äº‘å°ç±»çš„æœºæ¢°è§’è§’åº¦è®¾ç½®ä¸²çº§è®¡ç®—å‡½æ•°ï¼Œä¿®æ”¹errä¸ºæµ®ç‚¹æ•°ï¼Œæ”¹åŠ¨ç›®æ ‡å€¼çš„ä¼ å…¥ï¼Œé€‚åº”ä¹‹å‰è°ƒæ•´çš„å‚æ•°
-	*		V7.2a å¯¹pid::runè®¡ç®—å‡½æ•°åšäº†ä¸€æ¬¡å…¼å®¹æ€§æ›´æ–°ï¼Œé€‚åº”æ²¡æœ‰åšç§¯åˆ†åˆ†ç¦»çš„å‚æ•°
-	*		V7.2b ä½¿ç”¨æœºæ¢°è§’æ¨¡å¼è°ƒèŠ‚Yawè½´çš„æ—¶å€™å‘ç°äº†æ— æ³•å…‹æœ8192åˆ°0çš„çªå˜ï¼Œæ ¹æ®RM2019æ­¥å…µä¸Šçš„ä»£ç å¯¹softcloud::Angle_Setï¼Œsoftcloud::Position_Run
-						ä¸¤ä¸ªå‡½æ•°è¿›è¡Œäº†ä¸€æ¬¡ä¿®æ”¹ï¼Œå·²ç»æ­£å¸¸
-	*		V7.3	ä¿®æ”¹åº•ç›˜ç±»ï¼Œæ•´åˆæ ‡å¿—ä½
-	*		V7.3a	æ ¹æ®RM2019æ­¥å…µä»£ç åŠ å…¥ç¼“å†²èƒ½é‡çš„ä¸€äº›å‚æ•°ï¼Œåç»­å°†ç»§ç»­å®Œå–„
-	*		V7.4	æ ¹æ®ä»£ç è§„èŒƒä¿®æ”¹äº†ä¸€ä¸‹æ–‡ä»¶åï¼Œç”±äºå†…éƒ¨å‡½æ•°å’Œç±»æˆå‘˜è¾ƒå¤šï¼Œä¸å¯¹å†…éƒ¨è¿›è¡Œä¿®æ”¹ï¼Œé¿å…å‡ºç°éšå½¢Bugï¼Œä»£ç è§„èŒƒç»ˆç©¶è¿˜æ˜¯å¯¹C++åº“ä¸‹æ‰‹äº†
+	*		V7.0 	ĞŞ¸Äpid::run¼ÆËãº¯Êı£¬ÏÖÔÚTÊÇÕæÕıµÄ»ı·ÖÊ±¼ä±äÁ¿ÁË
+	*   V7.1 	ĞŞ¸ÄÔÆÌ¨ÀàµÄÍÓÂİÒÇ½Ç¶ÈÉèÖÃ´®¼¶¼ÆËãº¯Êı£¬°Ñerr×÷Îª¸¡µãÊı´«Èë£¬²»ÔÙ³ËÉÏ50ÁË£¬²»¸ÄÕâÀïÖ®Ç°Ğ´µÄ²ÎÊıÊÇĞèÒªÖØĞÂµ÷ÕûµÄ
+	*		V7.2 	ĞŞ¸ÄÔÆÌ¨ÀàµÄ»úĞµ½Ç½Ç¶ÈÉèÖÃ´®¼¶¼ÆËãº¯Êı£¬ĞŞ¸ÄerrÎª¸¡µãÊı£¬¸Ä¶¯Ä¿±êÖµµÄ´«Èë£¬ÊÊÓ¦Ö®Ç°µ÷ÕûµÄ²ÎÊı
+	*		V7.2a ¶Ôpid::run¼ÆËãº¯Êı×öÁËÒ»´Î¼æÈİĞÔ¸üĞÂ£¬ÊÊÓ¦Ã»ÓĞ×ö»ı·Ö·ÖÀëµÄ²ÎÊı
+	*		V7.2b Ê¹ÓÃ»úĞµ½ÇÄ£Ê½µ÷½ÚYawÖáµÄÊ±ºò·¢ÏÖÁËÎŞ·¨¿Ë·ş8192µ½0µÄÍ»±ä£¬¸ù¾İRM2019²½±øÉÏµÄ´úÂë¶Ôsoftcloud::Angle_Set£¬softcloud::Position_Run
+						Á½¸öº¯Êı½øĞĞÁËÒ»´ÎĞŞ¸Ä£¬ÒÑ¾­Õı³£
+	*		V7.3	ĞŞ¸Äµ×ÅÌÀà£¬ÕûºÏ±êÖ¾Î»
+	*		V7.3a	¸ù¾İRM2019²½±ø´úÂë¼ÓÈë»º³åÄÜÁ¿µÄÒ»Ğ©²ÎÊı£¬ºóĞø½«¼ÌĞøÍêÉÆ
+	*		V7.4	¸ù¾İ´úÂë¹æ·¶ĞŞ¸ÄÁËÒ»ÏÂÎÄ¼şÃû£¬ÓÉÓÚÄÚ²¿º¯ÊıºÍÀà³ÉÔ±½Ï¶à£¬²»¶ÔÄÚ²¿½øĞĞĞŞ¸Ä£¬±ÜÃâ³öÏÖÒşĞÎBug£¬´úÂë¹æ·¶ÖÕ¾¿»¹ÊÇ¶ÔC++¿âÏÂÊÖÁË
 						Car_Driver.cpp -> bsp_motor.cpp			Car_Driver.hpp -> bsp_motor.hpp		universe.cpp -> bsp_universe.cpp
-						CarDrv_config.hpp -> bsp_car_config.hpp  æ³¨æ„åªæ˜¯ä¿®æ”¹äº†æ–‡ä»¶åï¼Œå†…éƒ¨å‡½æ•°å¹¶æ²¡æœ‰åšå‘½åä¿®æ”¹ï¼Œè¿˜æ˜¯é€šç”¨çš„ï¼Œä½¿ç”¨æ–¹æ³•ä¸å˜ï¼
-	*		V7.4a	ä¿®æ”¹äº†æ–‡ä»¶åŒ…å«å…³ç³»ï¼Œç°åœ¨ç”µæœºåº“å¤„äºBspå±‚ï¼Œä¸å†è°ƒç”¨app_mathé‡Œé¢çš„å‡½æ•°ï¼Œæ–‡ä»¶åˆ†å±‚æ›´åŠ æ¸…æ™°
-	*		V7.5	ä¿®æ”¹äº†ç”µæœºç¦»çº¿æ£€æµ‹çš„æ—¶é—´é˜ˆå€¼10msåˆ°50ms
-	*		V7.5a	æ ¹æ®ToolMan ThunderDogeçš„éœ€æ±‚å¯¹C++ç”µæœºåº“è¿›è¡Œäº†ä¿®æ”¹ï¼Œä¿®æ”¹ä¹‹å‰gitä¸€ä¸‹ä¿å¹³å®‰
-						æŒ‰ç…§GM6020çš„æ‰‹å†Œï¼Œ6020çš„æœ€å¤§IDå¯ä»¥è¾¾åˆ°0x20Bï¼Œæ‰€ä»¥æ­¤æ¬¡ä¿®æ”¹æ›´æ–°äº†ç”µæœºåˆ—è¡¨ç­‰ç›¸å…³æ•°æ®ç±»å‹çš„æœ€å¤§é•¿åº¦ï¼Œç°åœ¨èƒ½æ”¯æŒåˆ°0x20Bäº†
-						ç®€å•æµ‹è¯•åæ„Ÿè§‰åŠŸèƒ½æ˜¯æ­£å¸¸çš„ï¼Œç°åœ¨can_codeçš„è¡¨ç¤ºæ–¹æ³•ä¸ºç™¾ä½è¡¨ç¤ºcanå‡ ï¼Œåé¢çš„å°¾æ•°è¡¨ç¤ºID-1
-	*		V7.5b æ ¹æ®ToolMan ThunderDogeçš„éœ€æ±‚å¯¹C++ç”µæœºåº“è¿›è¡Œäº†ä¿®æ”¹ï¼Œç»™softmotorç±»åŠ å…¥æ–°æˆå‘˜ SoftAngleï¼ŒRealAngleç°åœ¨å’Œmotorç±»è®¡ç®—æ–¹æ³•ä¸€è‡´ï¼ŒèŒƒå›´
-						0~360ï¼ŒSoftAngleèŒƒå›´ä¸ºè´Ÿæ— ç©·åˆ°æ­£æ— ç©·
-	*		V7.5c æ ¹æ®ToolMan ThunderDogeçš„éœ€æ±‚å¯¹C++ç”µæœºåº“è¿›è¡Œäº†ä¿®æ”¹ï¼Œä¿®æ”¹äº†motorç±»ç”µæµæˆå‘˜çš„åå­—LastCurrentEncoder -> LastRealCurrent
+						CarDrv_config.hpp -> bsp_car_config.hpp  ×¢ÒâÖ»ÊÇĞŞ¸ÄÁËÎÄ¼şÃû£¬ÄÚ²¿º¯Êı²¢Ã»ÓĞ×öÃüÃûĞŞ¸Ä£¬»¹ÊÇÍ¨ÓÃµÄ£¬Ê¹ÓÃ·½·¨²»±ä£¡
+	*		V7.4a	ĞŞ¸ÄÁËÎÄ¼ş°üº¬¹ØÏµ£¬ÏÖÔÚµç»ú¿â´¦ÓÚBsp²ã£¬²»ÔÙµ÷ÓÃapp_mathÀïÃæµÄº¯Êı£¬ÎÄ¼ş·Ö²ã¸ü¼ÓÇåÎú
+	*		V7.5	ĞŞ¸ÄÁËµç»úÀëÏß¼ì²âµÄÊ±¼äãĞÖµ10msµ½50ms
+	*		V7.5a	¸ù¾İToolMan ThunderDogeµÄĞèÇó¶ÔC++µç»ú¿â½øĞĞÁËĞŞ¸Ä£¬ĞŞ¸ÄÖ®Ç°gitÒ»ÏÂ±£Æ½°²
+						°´ÕÕGM6020µÄÊÖ²á£¬6020µÄ×î´óID¿ÉÒÔ´ïµ½0x20B£¬ËùÒÔ´Ë´ÎĞŞ¸Ä¸üĞÂÁËµç»úÁĞ±íµÈÏà¹ØÊı¾İÀàĞÍµÄ×î´ó³¤¶È£¬ÏÖÔÚÄÜÖ§³Öµ½0x20BÁË
+						¼òµ¥²âÊÔºó¸Ğ¾õ¹¦ÄÜÊÇÕı³£µÄ£¬ÏÖÔÚcan_codeµÄ±íÊ¾·½·¨Îª°ÙÎ»±íÊ¾can¼¸£¬ºóÃæµÄÎ²Êı±íÊ¾ID-1
+	*		V7.5b ¸ù¾İToolMan ThunderDogeµÄĞèÇó¶ÔC++µç»ú¿â½øĞĞÁËĞŞ¸Ä£¬¸øsoftmotorÀà¼ÓÈëĞÂ³ÉÔ± SoftAngle£¬RealAngleÏÖÔÚºÍmotorÀà¼ÆËã·½·¨Ò»ÖÂ£¬·¶Î§
+						0~360£¬SoftAngle·¶Î§Îª¸ºÎŞÇîµ½ÕıÎŞÇî
+	*		V7.5c ¸ù¾İToolMan ThunderDogeµÄĞèÇó¶ÔC++µç»ú¿â½øĞĞÁËĞŞ¸Ä£¬ĞŞ¸ÄÁËmotorÀàµçÁ÷³ÉÔ±µÄÃû×ÖLastCurrentEncoder -> LastRealCurrent
 						CurrentEncoder->RealCurrent
-	*		V7.5d æ ¹æ®ToolMan ThunderDogeçš„éœ€æ±‚å¯¹C++ç”µæœºåº“è¿›è¡Œäº†ä¿®æ”¹ï¼ŒåŠ å…¥åŸå§‹ä½ç½®ä¿¡æ¯æˆå‘˜OriginalPositionï¼Œè¿™ä¸ªé‡æ²¡æœ‰ç»è¿‡CLOUD_STDæ ¡æ­£
-						æŠŠäº‘å°ç±»çš„è½¯ä»¶é™ä½è°ƒæ•´åˆ°çˆ¶ç±»cloudé‡Œé¢æ¥ï¼Œå¹¶åœ¨cloudç±»é‡Œé¢æ·»åŠ äº†é™ä½ç”¨çš„ä¿æŠ¤å‹æˆå‘˜maxï¼Œmin è¿™ä¸¤ä¸ªå€¼åªèƒ½é€šè¿‡Limitæ–¹æ³•è¿›è¡Œé™åˆ¶
-	*		V7.6	åœ¨pidç±»ä¸­æ˜ç¡®äº†ç§¯åˆ†æ—¶é—´å’Œå¾®åˆ†æ—¶é—´ï¼Œä¸ä¼ å…¥å‚æ•°çš„æ—¶å€™éƒ½é»˜è®¤ä¸º1.ç°åœ¨è¿™ä¸¤ä¸ªå˜é‡éƒ½å¯ä»¥è¿›è¡Œè°ƒèŠ‚äº†,ç§¯åˆ†ï¼Œå¾®åˆ†ä¸¤ä¸ªç¯èŠ‚æœ‰äº†è‡ªå·±ç‹¬ç«‹çš„æ—¶é—´å˜é‡
+	*		V7.5d ¸ù¾İToolMan ThunderDogeµÄĞèÇó¶ÔC++µç»ú¿â½øĞĞÁËĞŞ¸Ä£¬¼ÓÈëÔ­Ê¼Î»ÖÃĞÅÏ¢³ÉÔ±OriginalPosition£¬Õâ¸öÁ¿Ã»ÓĞ¾­¹ıCLOUD_STDĞ£Õı
+						°ÑÔÆÌ¨ÀàµÄÈí¼şÏŞÎ»µ÷Õûµ½¸¸ÀàcloudÀïÃæÀ´£¬²¢ÔÚcloudÀàÀïÃæÌí¼ÓÁËÏŞÎ»ÓÃµÄ±£»¤ĞÍ³ÉÔ±max£¬min ÕâÁ½¸öÖµÖ»ÄÜÍ¨¹ıLimit·½·¨½øĞĞÏŞÖÆ
+	*		V7.6	ÔÚpidÀàÖĞÃ÷È·ÁË»ı·ÖÊ±¼äºÍÎ¢·ÖÊ±¼ä£¬²»´«Èë²ÎÊıµÄÊ±ºò¶¼Ä¬ÈÏÎª1.ÏÖÔÚÕâÁ½¸ö±äÁ¿¶¼¿ÉÒÔ½øĞĞµ÷½ÚÁË,»ı·Ö£¬Î¢·ÖÁ½¸ö»·½ÚÓĞÁË×Ô¼º¶ÀÁ¢µÄÊ±¼ä±äÁ¿
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 */  
 #include "bsp_motor.hpp"
@@ -68,27 +68,27 @@
 #include <string.h>
 #include <math.h>
 
-#define WEAK __attribute__((weak)) //ä½¿ç”¨WEAKç±»å‹æ˜¯æ–¹ä¾¿ç‰¹æ®Šç”µæœºæ¥é‡æ„ç‰¹å®šå‡½æ•°
+#define WEAK __attribute__((weak)) //Ê¹ÓÃWEAKÀàĞÍÊÇ·½±ãÌØÊâµç»úÀ´ÖØ¹¹ÌØ¶¨º¯Êı
 #define	ABS(x)   ((x)>0?(x):-(x))
 using namespace std;
 /** 
-*   @brief ç”µæœºåº“é”™è¯¯ç 
-*         Bit [0]:ç”µæœºçŠ¶æ€è¶…å‡ºé¢„æ–™
+*   @brief µç»ú¿â´íÎóÂë
+*         Bit [0]:µç»ú×´Ì¬³¬³öÔ¤ÁÏ
 */
 uint8_t Error_Code=0x00;
 
-////*******************************************ä¼ ç»ŸPIDç±»*************************************************************************////
+////*******************************************´«Í³PIDÀà*************************************************************************////
 /** 
-	* @brief  ä¼ ç»Ÿpidæ„é€ å‡½æ•°
-	* @param [in]   P æ¯”ä¾‹ç³»æ•°
-	* @param [in]	 I ç§¯åˆ†ç³»æ•°
-	* @param [in]	 D å¾®åˆ†ç³»æ•°
-	* @param [in]	 IMax ç§¯åˆ†é™å¹…
-	* @param [in]	 PIDMax è¾“å‡ºé™å¹…
-	* @param [in]	 I_Time ç§¯åˆ†æ—¶é—´
-	*	@param [in]	 D_Time ç§¯åˆ†æ—¶é—´
-	* @param [in]	 I_Limited è¿›è¡Œç§¯åˆ†è°ƒèŠ‚çš„è¯¯å·®åŒºé—´é™åˆ¶
-	* @par æ—¥å¿— 
+	* @brief  ´«Í³pid¹¹Ôìº¯Êı
+	* @param [in]   P ±ÈÀıÏµÊı
+	* @param [in]	 I »ı·ÖÏµÊı
+	* @param [in]	 D Î¢·ÖÏµÊı
+	* @param [in]	 IMax »ı·ÖÏŞ·ù
+	* @param [in]	 PIDMax Êä³öÏŞ·ù
+	* @param [in]	 I_Time »ı·ÖÊ±¼ä
+	*	@param [in]	 D_Time »ı·ÖÊ±¼ä
+	* @param [in]	 I_Limited ½øĞĞ»ı·Öµ÷½ÚµÄÎó²îÇø¼äÏŞÖÆ
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK pid::pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Time, uint16_t D_Time,uint16_t I_Limited)
@@ -103,15 +103,15 @@ WEAK pid::pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Ti
 	this->I_Limited=I_Limited;
 }
 /** 
-	* @brief  éçº¿æ€§pidæ„é€ å‡½æ•°
-	* @param [in]   Kp âˆˆ(ap,ap+bp),err=0æ—¶Kpæœ€å°,bpä¸ºå˜åŒ–åŒºé—´,cpè°ƒæ•´Kpå˜åŒ–é€Ÿç‡,å¶å‡½æ•°å¼€å£å‘ä¸Š
-	* @param [in]   Ki âˆˆ(0,ai),err=0æ—¶kiæœ€å¤§,ciè°ƒæ•´Kiå˜åŒ–é€Ÿç‡,å¶å‡½æ•°å¼€å£å‘ä¸‹
-	* @param [in]   Kd âˆˆ(ad,ad+bd),err=0æ—¶Kd=ad+bd/(1+cd),ddè°ƒæ•´Kdå˜åŒ–é€Ÿç‡,å•è°ƒé€’å‡
-	* @param [in]	 IMax ç§¯åˆ†é™å¹…
-	* @param [in]	 PIDMax è¾“å‡ºé™å¹…
-	* @param [in]	 T ç§¯åˆ†æ—¶é—´
-	* @param [in]	 I_Limited è¿›è¡Œç§¯åˆ†è°ƒèŠ‚çš„è¯¯å·®åŒºé—´é™åˆ¶
-	* @par æ—¥å¿— 
+	* @brief  ·ÇÏßĞÔpid¹¹Ôìº¯Êı
+	* @param [in]   Kp ¡Ê(ap,ap+bp),err=0Ê±Kp×îĞ¡,bpÎª±ä»¯Çø¼ä,cpµ÷ÕûKp±ä»¯ËÙÂÊ,Å¼º¯Êı¿ª¿ÚÏòÉÏ
+	* @param [in]   Ki ¡Ê(0,ai),err=0Ê±ki×î´ó,ciµ÷ÕûKi±ä»¯ËÙÂÊ,Å¼º¯Êı¿ª¿ÚÏòÏÂ
+	* @param [in]   Kd ¡Ê(ad,ad+bd),err=0Ê±Kd=ad+bd/(1+cd),ddµ÷ÕûKd±ä»¯ËÙÂÊ,µ¥µ÷µİ¼õ
+	* @param [in]	 IMax »ı·ÖÏŞ·ù
+	* @param [in]	 PIDMax Êä³öÏŞ·ù
+	* @param [in]	 T »ı·ÖÊ±¼ä
+	* @param [in]	 I_Limited ½øĞĞ»ı·Öµ÷½ÚµÄÎó²îÇø¼äÏŞÖÆ
+	* @par ÈÕÖ¾ 
 	*
 */
 pid::pid(float ap, float bp, float cp,
@@ -129,54 +129,54 @@ pid::pid(float ap, float bp, float cp,
 	this->I_Limited=I_Limited;
 }
 /** 
-	* @brief  pidè¿è¡Œå‡½æ•°
-	* @param [in]   err ä¼ å…¥pidç¯çš„è¯¯å·® 
-	* @retval  pidçš„è¿è¡Œè¾“å‡º 
-	* @par æ—¥å¿— 
-*				2019å¹´12æœˆ1æ—¥15:00:00 ç§»é™¤ç§¯åˆ†æ—¶é—´ä¸è®¾ç½®çš„å…¼å®¹æ€§æ”¹åŠ¨ï¼ŒåŠ å…¥å¾®åˆ†æ—¶é—´
+	* @brief  pidÔËĞĞº¯Êı
+	* @param [in]   err ´«Èëpid»·µÄÎó²î 
+	* @retval  pidµÄÔËĞĞÊä³ö 
+	* @par ÈÕÖ¾ 
+*				2019Äê12ÔÂ1ÈÕ15:00:00 ÒÆ³ı»ı·ÖÊ±¼ä²»ÉèÖÃµÄ¼æÈİĞÔ¸Ä¶¯£¬¼ÓÈëÎ¢·ÖÊ±¼ä
 */
 WEAK float pid::pid_run(float err)
 {
 	CurrentError = err;
 	Pout = CurrentError*P;
 	
-	//ç§¯åˆ†åˆ†ç¦»
-	if(HAL_GetTick() - I_start_time >= I_Time)//å¦‚æœè¾¾åˆ°äº†æ—¶é—´åŒºé—´çš„è¯åˆ™è¿›è¡Œç§¯åˆ†è¾“å‡º
+	//»ı·Ö·ÖÀë
+	if(HAL_GetTick() - I_start_time >= I_Time)//Èç¹û´ïµ½ÁËÊ±¼äÇø¼äµÄ»°Ôò½øĞĞ»ı·ÖÊä³ö
 	{
-		if(ABS(CurrentError) < I_Limited)//ä»…åœ¨å°äºè¯¯å·®åŒºé—´æ—¶è¿›è¡ŒIç§¯åˆ†
+		if(ABS(CurrentError) < I_Limited)//½öÔÚĞ¡ÓÚÎó²îÇø¼äÊ±½øĞĞI»ı·Ö
 			Iout += I	*	CurrentError;
 		else 
-			Iout=0;					//è¯¯å·®åŒºé—´å¤–è¾¹ç§¯åˆ†æ¸…0
-		I_start_time = HAL_GetTick();//é‡æ–°å®šä¹‰ç§¯åˆ†å¼€å§‹æ—¶é—´
+			Iout=0;					//Îó²îÇø¼äÍâ±ß»ı·ÖÇå0
+		I_start_time = HAL_GetTick();//ÖØĞÂ¶¨Òå»ı·Ö¿ªÊ¼Ê±¼ä
 	}
 	
-	if(Custom_Diff!=NULL)//å­˜åœ¨è‡ªå®šä¹‰å¾®åˆ†æ•°æ®
+	if(Custom_Diff!=NULL)//´æÔÚ×Ô¶¨ÒåÎ¢·ÖÊı¾İ
 		Dout_Accumulative=(*Custom_Diff)*D;
 	else
 		Dout_Accumulative=(CurrentError - LastError)*D;
 	
-	if(HAL_GetTick() - D_start_time > D_Time)//å¦‚æœè¾¾åˆ°äº†æ—¶é—´åŒºé—´çš„è¯åˆ™è¿›è¡Œå¾®åˆ†è¾“å‡º
+	if(HAL_GetTick() - D_start_time > D_Time)//Èç¹û´ïµ½ÁËÊ±¼äÇø¼äµÄ»°Ôò½øĞĞÎ¢·ÖÊä³ö
 	{
 		Dout=Dout_Accumulative;
 		Dout_Accumulative = 0;
-		D_start_time = HAL_GetTick();//é‡æ–°å®šä¹‰å¾®åˆ†å¼€å§‹æ—¶é—´
+		D_start_time = HAL_GetTick();//ÖØĞÂ¶¨ÒåÎ¢·Ö¿ªÊ¼Ê±¼ä
 	}
 	
 	if(Iout	>=	IMax)Iout=IMax;
-	if((Iout)	<=	-(IMax))Iout=-(IMax);	//ç§¯åˆ†é™å¹…
+	if((Iout)	<=	-(IMax))Iout=-(IMax);	//»ı·ÖÏŞ·ù
 	
-	PIDout = Pout + Iout + Dout;				//Pidè¾“å‡ºè®¡ç®—
+	PIDout = Pout + Iout + Dout;				//PidÊä³ö¼ÆËã
 	if(PIDout	>=	PIDMax)PIDout = PIDMax;
-	if(PIDout	<=	-(PIDMax))PIDout = -(PIDMax); //è¾“å‡ºé™å¹…
+	if(PIDout	<=	-(PIDMax))PIDout = -(PIDMax); //Êä³öÏŞ·ù
 	
 	LastError=CurrentError;
 	return PIDout;
 }
 /** 
-	* @brief  éçº¿æ€§pidè¿è¡Œå‡½æ•°
-	* @param [in]   err ä¼ å…¥pidç¯çš„è¯¯å·® 
-	* @retval  pidçš„è¿è¡Œè¾“å‡º 
-	* @par æ—¥å¿— 
+	* @brief  ·ÇÏßĞÔpidÔËĞĞº¯Êı
+	* @param [in]   err ´«Èëpid»·µÄÎó²î 
+	* @retval  pidµÄÔËĞĞÊä³ö 
+	* @par ÈÕÖ¾ 
 	*
 */
 float pid::nonlinear_pid_run(float err)
@@ -184,7 +184,7 @@ float pid::nonlinear_pid_run(float err)
 	P = ap + bp * (1 - sech(cp * err));
 	I = ai * sech(ci * err);
 	
-	//éçº¿æ€§pidå¢ç›Šè°ƒèŠ‚å‚æ•°æ›²çº¿â€”â€”kdæ›²çº¿ä¸ºå•è°ƒé€’å‡å‡½æ•°ï¼Œè²Œä¼¼åªæ”¯æŒä¸€ç§å˜åŒ–æ–¹å‘ï¼Œæ­¤å¤„å¤„ç†ä¿æŒè¾“å…¥kd(err)çš„err>0
+	//·ÇÏßĞÔpidÔöÒæµ÷½Ú²ÎÊıÇúÏß¡ª¡ªkdÇúÏßÎªµ¥µ÷µİ¼õº¯Êı£¬Ã²ËÆÖ»Ö§³ÖÒ»ÖÖ±ä»¯·½Ïò£¬´Ë´¦´¦Àí±£³ÖÊäÈëkd(err)µÄerr>0
 	if(err > 0)
 		D = ad + bd / (1 + cd * exp(dd * err));
 	else 
@@ -196,15 +196,15 @@ float pid::sech(float in)
 {
 	return 1/cosh(in);
 }
-////*******************************************block_typeç±»******************************************************************////
+////*******************************************block_typeÀà******************************************************************////
 /** 
-	* @brief  åˆå§‹åŒ–å µè½¬æ£€æµ‹
-	* @param [in]	Limit ç”µæµå µè½¬é˜ˆå€¼
-	* @param [in]	 time å µè½¬è§¦å‘æ—¶é—´
-	* @param [in]	 err_num åœ¨å¤šå°‘èŒƒå›´å†…è®¤ä¸ºæ˜¯å µè½¬
-	* @par æ—¥å¿— 
-    *       2019å¹´1æœˆ19æ—¥10:41:56 é‡æ„block_typeä½¿å†…éƒ¨æ›´ç®€æ´ï¼Œæ¥å£æ›´æ–¹ä¾¿ï¼ŒåŠŸèƒ½æ›´å…¨é¢
-	*		2019å¹´1æœˆ24æ—¥14:46:09 æ›´æ”¹è¯¥æ¥å£å˜é‡å½¢å¼
+	* @brief  ³õÊ¼»¯¶Â×ª¼ì²â
+	* @param [in]	Limit µçÁ÷¶Â×ªãĞÖµ
+	* @param [in]	 time ¶Â×ª´¥·¢Ê±¼ä
+	* @param [in]	 err_num ÔÚ¶àÉÙ·¶Î§ÄÚÈÏÎªÊÇ¶Â×ª
+	* @par ÈÕÖ¾ 
+    *       2019Äê1ÔÂ19ÈÕ10:41:56 ÖØ¹¹block_typeÊ¹ÄÚ²¿¸ü¼ò½à£¬½Ó¿Ú¸ü·½±ã£¬¹¦ÄÜ¸üÈ«Ãæ
+	*		2019Äê1ÔÂ24ÈÕ14:46:09 ¸ü¸Ä¸Ã½Ó¿Ú±äÁ¿ĞÎÊ½
 	*
 */
 void block_type::Block_Init(uint16_t Limit, uint16_t time, float err_num)
@@ -214,40 +214,40 @@ void block_type::Block_Init(uint16_t Limit, uint16_t time, float err_num)
 	block_err_num=err_num;
 }
 /** 
-	* @brief  å µè½¬æ£€æµ‹ è¯¥å‡½æ•°ä¼šç”±ç”µæœºæ‰˜ç®¡å‘¨æœŸæ‰§è¡Œ
-	* @retval  1 å µè½¬
-	* @retval  0 æœªå µè½¬
-	* @par æ—¥å¿— 
+	* @brief  ¶Â×ª¼ì²â ¸Ãº¯Êı»áÓÉµç»úÍĞ¹ÜÖÜÆÚÖ´ĞĞ
+	* @retval  1 ¶Â×ª
+	* @retval  0 Î´¶Â×ª
+	* @par ÈÕÖ¾ 
 	*
 */
 void block_type::Block_Check(void)
 {
-	if(ABS(Current)>this->block_Current_Limit)//ç”µæµè¶…è¿‡é˜ˆå€¼è¢«åˆ¤å®šä¸ºå µè½¬
+	if(ABS(Current)>this->block_Current_Limit)//µçÁ÷³¬¹ıãĞÖµ±»ÅĞ¶¨Îª¶Â×ª
 	{
-		if(block_flag==0)//æ²¡æœ‰ç™»è®°å µè½¬
+		if(block_flag==0)//Ã»ÓĞµÇ¼Ç¶Â×ª
 		{
 			block_flag=1;
-			block_Angle=RealAngle;//ç™»è®°å½“å‰å µè½¬çš„ä½ç½®
-			block_time=HAL_GetTick();//ç™»è®°å½“å‰å µè½¬æ—¶é—´
-		}else//å·²ç»ç™»è®°å µè½¬ åˆ¤æ–­æ˜¯å¦æŒç»­
+			block_Angle=RealAngle;//µÇ¼Çµ±Ç°¶Â×ªµÄÎ»ÖÃ
+			block_time=HAL_GetTick();//µÇ¼Çµ±Ç°¶Â×ªÊ±¼ä
+		}else//ÒÑ¾­µÇ¼Ç¶Â×ª ÅĞ¶ÏÊÇ·ñ³ÖĞø
 		{
-			if(ABS(block_Angle-RealAngle) < block_err_num)//ç™»è®°å µè½¬æ—¶åˆ»è‡³æ­¤åˆ»é—´ä»æœªè½¬è¿‡é˜ˆå€¼è§’åº¦
+			if(ABS(block_Angle-RealAngle) < block_err_num)//µÇ¼Ç¶Â×ªÊ±¿ÌÖÁ´Ë¿Ì¼äÈÔÎ´×ª¹ıãĞÖµ½Ç¶È
 			{
-				if(HAL_GetTick()-block_time > block_Time_Limit)//å µè½¬æ—¶é—´å¤§äºé˜ˆå€¼æ—¶é—´
+				if(HAL_GetTick()-block_time > block_Time_Limit)//¶Â×ªÊ±¼ä´óÓÚãĞÖµÊ±¼ä
 				{
 					IsBlock=1;
 					return;
 				}
-			}else block_flag=0;//å·²ç»å˜åŒ–äº† ä¸å†å µè½¬äº†
+			}else block_flag=0;//ÒÑ¾­±ä»¯ÁË ²»ÔÙ¶Â×ªÁË
 		}
 	}else block_flag=0;
 }
 /** 
-* @brief  æ¸…é™¤å µè½¬æ ‡å¿—ä½
-* @details é‡æ–°å¤ä½å µè½¬æ£€æµ‹å˜é‡ï¼Œæ¸…é™¤å µè½¬æ ‡å¿—
-* @retval  OK  æˆåŠŸ 
-* @retval  ERROR   é”™è¯¯  
-* @par æ—¥å¿— 
+* @brief  Çå³ı¶Â×ª±êÖ¾Î»
+* @details ÖØĞÂ¸´Î»¶Â×ª¼ì²â±äÁ¿£¬Çå³ı¶Â×ª±êÖ¾
+* @retval  OK  ³É¹¦ 
+* @retval  ERROR   ´íÎó  
+* @par ÈÕÖ¾ 
 *
 */
 void block_type::Clear_BlockFlag(void)
@@ -255,9 +255,9 @@ void block_type::Clear_BlockFlag(void)
 	block_flag=0;
 	IsBlock=0;
 }
-////*******************************************managerç±»*********************************************************************////
+////*******************************************managerÀà*********************************************************************////
 /** 
-	* @brief ç®¡å®¶ç±»çš„é™æ€å˜é‡,ç”¨äºå­˜å‚¨ç”µæœºå¯¹åº”idçš„å¾…å‘é€å€¼,å½“å‰ç”µæµå€¼ä¼˜å…ˆçº§,ä»¥åŠå…¶æœ¬èº«æŒ‡é’ˆ
+	* @brief ¹Ü¼ÒÀàµÄ¾²Ì¬±äÁ¿,ÓÃÓÚ´æ´¢µç»ú¶ÔÓ¦idµÄ´ı·¢ËÍÖµ,µ±Ç°µçÁ÷ÖµÓÅÏÈ¼¶,ÒÔ¼°Æä±¾ÉíÖ¸Õë
 */
 CAN_HandleTypeDef* manager::CanHandle1;
 CAN_HandleTypeDef* manager::CanHandle2;
@@ -268,11 +268,11 @@ manager* manager::CAN2MotorList[11]={NULL};
 int16_t manager::CAN2CurrentList[11]={0};
 int16_t manager::CAN2_OnlineID;
 /** 
-	* @brief  ç¡®è®¤é€‰æ‹©ä½¿ç”¨çš„CANå£
-	* @param [in]   canhandle1 CANçš„å¥æŸ„ ä¸€èˆ¬ä¸ºhcan1æˆ–hcan2
-	* @param [in]   canhandle2 CANçš„å¥æŸ„ ä¸€èˆ¬ä¸ºhcan1æˆ–hcan2
-	* @par æ—¥å¿— 
-	*       2018å¹´10æœˆ31æ—¥17:11:18 åŠ å…¥æ—¥å¿—
+	* @brief  È·ÈÏÑ¡ÔñÊ¹ÓÃµÄCAN¿Ú
+	* @param [in]   canhandle1 CANµÄ¾ä±ú Ò»°ãÎªhcan1»òhcan2
+	* @param [in]   canhandle2 CANµÄ¾ä±ú Ò»°ãÎªhcan1»òhcan2
+	* @par ÈÕÖ¾ 
+	*       2018Äê10ÔÂ31ÈÕ17:11:18 ¼ÓÈëÈÕÖ¾
 */
 void manager::CANSelect(CAN_HandleTypeDef* canhandle1, CAN_HandleTypeDef* canhandle2)
 {
@@ -280,183 +280,183 @@ void manager::CANSelect(CAN_HandleTypeDef* canhandle1, CAN_HandleTypeDef* canhan
 	CanHandle2=canhandle2;
 }
 /** 
-	* @brief  æ£€æµ‹å½“å‰ç”µæœºæ˜¯å¦ç¦»çº¿
-	* @retval  1  å‡‰äº†ï¼Œç¦»çº¿äº†
-	* @retval  0  åœ¨çº¿ç€å‘¢
-	* @par æ—¥å¿— 
-*				2019å¹´11æœˆ30æ—¥  ä¿®æ”¹can_codeè¡¨ç¤ºæ–¹æ³•å’Œæ£€æµ‹æ–¹æ³•
+	* @brief  ¼ì²âµ±Ç°µç»úÊÇ·ñÀëÏß
+	* @retval  1  Á¹ÁË£¬ÀëÏßÁË
+	* @retval  0  ÔÚÏß×ÅÄØ
+	* @par ÈÕÖ¾ 
+*				2019Äê11ÔÂ30ÈÕ  ĞŞ¸Äcan_code±íÊ¾·½·¨ºÍ¼ì²â·½·¨
 */
 uint8_t manager::Is_Offline(void)
 {
-	if(can_code/100==1)//ä¸ºCAN1ç”µæœº
+	if(can_code/100==1)//ÎªCAN1µç»ú
 			return !(CAN1_OnlineID & (0x01<<(can_code%100)));
-	else//ä¸ºCAN2ç”µæœº
+	else//ÎªCAN2µç»ú
 			return !(CAN2_OnlineID & (0x01<<(can_code%100)));
 }
 /**
-	* @brief  ç”µæœºæ•°æ®æ›´æ–°æ€»ç®¡ç¨‹åº,è´Ÿè´£æ‰€æœ‰ç”µæœºçš„æ•°æ®æ¥æ”¶
-	* @param [in]   _hcan è¿›å…¥è¯¥ä¸­æ–­çš„CAN
-	* @param [in]   RxHead æœ¬æ¬¡æ•°æ®æ ¼å¼ç»“æ„ä½“æŒ‡é’ˆ
-	* @param [in]   Data æ•°æ®å†…å®¹æŒ‡é’ˆ
-	* @retval  OK  æˆåŠŸ
-	* @retval  ERROR   é”™è¯¯
-	* @par æ—¥å¿— 
-	*      2018å¹´10æœˆ10æ—¥17:24:53 åŠ å…¥æ–°å›ºä»¶åº“çš„æ”¯æŒ
-*			 2019å¹´11æœˆ30æ—¥ 16:32:15 å¯¹ç”µæœºIDè¿›è¡Œä¸€æ¬¡æ‹“å±•æ”¹åŠ¨
+	* @brief  µç»úÊı¾İ¸üĞÂ×Ü¹Ü³ÌĞò,¸ºÔğËùÓĞµç»úµÄÊı¾İ½ÓÊÕ
+	* @param [in]   _hcan ½øÈë¸ÃÖĞ¶ÏµÄCAN
+	* @param [in]   RxHead ±¾´ÎÊı¾İ¸ñÊ½½á¹¹ÌåÖ¸Õë
+	* @param [in]   Data Êı¾İÄÚÈİÖ¸Õë
+	* @retval  OK  ³É¹¦
+	* @retval  ERROR   ´íÎó
+	* @par ÈÕÖ¾ 
+	*      2018Äê10ÔÂ10ÈÕ17:24:53 ¼ÓÈëĞÂ¹Ì¼ş¿âµÄÖ§³Ö
+*			 2019Äê11ÔÂ30ÈÕ 16:32:15 ¶Ôµç»úID½øĞĞÒ»´ÎÍØÕ¹¸Ä¶¯
 */
 WEAK void manager::CANUpdate(CAN_HandleTypeDef* _hcan, CAN_RxHeaderTypeDef* RxHead,uint8_t* Data)
  {
 	uint16_t id=RxHead->StdId;
 	if(_hcan==CanHandle1)
 	{
-		if(id<=0x20B && id>=0x201)//æ˜¯æ ‡å‡†çš„å¤§ç–†æ•°æ®å¸§
+		if(id<=0x20B && id>=0x201)//ÊÇ±ê×¼µÄ´ó½®Êı¾İÖ¡
 			if(CAN1MotorList[id-0x201]!=NULL)
 				CAN1MotorList[id-0x201]->update(Data);
 	}
 	if(_hcan==CanHandle2)
-		if(id<=0x20B && id>=0x201)//æ˜¯æ ‡å‡†çš„å¤§ç–†æ•°æ®å¸§
+		if(id<=0x20B && id>=0x201)//ÊÇ±ê×¼µÄ´ó½®Êı¾İÖ¡
 			if(CAN2MotorList[id-0x201]!=NULL)
 				CAN2MotorList[id-0x201]->update(Data);
 }
 /** 
-* @brief  CANæ€»çº¿ä¸Šçš„è‡ªå®šä¹‰æ•°æ®å¤„ç†å‡½æ•°
-* @par æ—¥å¿— 
-*       2019å¹´3æœˆ8æ—¥16:12:26 wmd è¯¥å‡½æ•°è¢«åˆ›å»º
+* @brief  CAN×ÜÏßÉÏµÄ×Ô¶¨ÒåÊı¾İ´¦Àíº¯Êı
+* @par ÈÕÖ¾ 
+*       2019Äê3ÔÂ8ÈÕ16:12:26 wmd ¸Ãº¯Êı±»´´½¨
 */
 WEAK void manager::UserProcess(void)
 {
-    //è¯¥å‡½æ•°æœ¬èº«ä¸æ‰§è¡Œä»»ä½•æ“ä½œï¼Œéœ€è¦åœ¨PIDè·‘å®Œï¼Œå‘é€ä¹‹å‰æ‰§è¡Œä»£ç çš„è¯å°±åœ¨è‡ªå·±çš„æ–‡ä»¶é‡å†™è¯¥å‡½æ•°å³å¯
+    //¸Ãº¯Êı±¾Éí²»Ö´ĞĞÈÎºÎ²Ù×÷£¬ĞèÒªÔÚPIDÅÜÍê£¬·¢ËÍÖ®Ç°Ö´ĞĞ´úÂëµÄ»°¾ÍÔÚ×Ô¼ºµÄÎÄ¼şÖØĞ´¸Ãº¯Êı¼´¿É
     UNUSED(UserProcess);
 }
 /** 
-	* @brief  CANå‘é€æ€»ç®¡.æ‰€æœ‰çš„CANç”µæœºéƒ½ä¼šåœ¨è¿™é‡Œè¿›è¡Œå¤„ç†ï¼Œå‘é€
-	* @retval  0 æˆåŠŸ
-	* @retval  ç¬¬ä¸€ä½ç½®1 CAN1 0x200å‘é€å¤±è´¥
-	* @retval  ç¬¬äºŒä½ç½®1 CAN1 0x1ffå‘é€å¤±è´¥
-	* @retval  ç¬¬ä¸‰ä½ç½®1 CAN1 0x2ffå‘é€å¤±è´¥
-	* @retval  ç¬¬å››ä½ç½®1 CAN2 0x200å‘é€å¤±è´¥
-	* @retval  ç¬¬äº”ä½ç½®1 CAN2 0x1ffå‘é€å¤±è´¥
-	* @retval  ç¬¬å…­ä½ç½®1 CAN2 0x2ffå‘é€å¤±è´¥
-	* @par æ—¥å¿—
-	*       2018å¹´10æœˆ31æ—¥16:46:48 å¤„ç†é€»è¾‘åŠ æ·±
-	*       2018å¹´11æœˆ1æ—¥20:54:09  åŠ å…¥åœ¨çº¿ç”µæœºç®¡ç†ï¼Œç¦»çº¿ç”µæœºä¸å‘é€çš„åŠŸèƒ½åœ¨æ­¤å¤„å®ç°
-	*       2019å¹´1æœˆ19æ—¥14:34:55  å¤„ç†é€»è¾‘è¿›ä¸€æ­¥ä¼˜åŒ–ï¼Œæ¯ä¸€ä¸ªç”µæœºä¸å±€é™äºä½ç½®å’Œé€Ÿåº¦ä¸¤ç§ï¼Œ å¯ä»¥è‡ªç”±å¢åŠ åŠŸèƒ½ï¼Œä¸å†éœ€è¦åœ¨CANSendé‡Œå‹‰å¼ºäº† 
-  *       2019å¹´3æœˆ14æ—¥15:09:13 åŠ å…¥äº†åˆä½œç±»å‹ç”µæœºï¼Œåˆä½œç±»å‹ç”µæœºä¸åœ¨CANSendä¸­è‡ªåŠ¨å¤„ç†ï¼Œè¦æ±‚è¿™ç±»ç”µæœºåº”åœ¨UserHandleä¸­å¤„ç†
-	*				2019å¹´11æœˆ30æ—¥15:01:01 é€‚é…GM6020çš„IDå¯èƒ½è¶…è¿‡0x208çš„æƒ…å†µ
+	* @brief  CAN·¢ËÍ×Ü¹Ü.ËùÓĞµÄCANµç»ú¶¼»áÔÚÕâÀï½øĞĞ´¦Àí£¬·¢ËÍ
+	* @retval  0 ³É¹¦
+	* @retval  µÚÒ»Î»ÖÃ1 CAN1 0x200·¢ËÍÊ§°Ü
+	* @retval  µÚ¶şÎ»ÖÃ1 CAN1 0x1ff·¢ËÍÊ§°Ü
+	* @retval  µÚÈıÎ»ÖÃ1 CAN1 0x2ff·¢ËÍÊ§°Ü
+	* @retval  µÚËÄÎ»ÖÃ1 CAN2 0x200·¢ËÍÊ§°Ü
+	* @retval  µÚÎåÎ»ÖÃ1 CAN2 0x1ff·¢ËÍÊ§°Ü
+	* @retval  µÚÁùÎ»ÖÃ1 CAN2 0x2ff·¢ËÍÊ§°Ü
+	* @par ÈÕÖ¾
+	*       2018Äê10ÔÂ31ÈÕ16:46:48 ´¦ÀíÂß¼­¼ÓÉî
+	*       2018Äê11ÔÂ1ÈÕ20:54:09  ¼ÓÈëÔÚÏßµç»ú¹ÜÀí£¬ÀëÏßµç»ú²»·¢ËÍµÄ¹¦ÄÜÔÚ´Ë´¦ÊµÏÖ
+	*       2019Äê1ÔÂ19ÈÕ14:34:55  ´¦ÀíÂß¼­½øÒ»²½ÓÅ»¯£¬Ã¿Ò»¸öµç»ú²»¾ÖÏŞÓÚÎ»ÖÃºÍËÙ¶ÈÁ½ÖÖ£¬ ¿ÉÒÔ×ÔÓÉÔö¼Ó¹¦ÄÜ£¬²»ÔÙĞèÒªÔÚCANSendÀïÃãÇ¿ÁË 
+  *       2019Äê3ÔÂ14ÈÕ15:09:13 ¼ÓÈëÁËºÏ×÷ÀàĞÍµç»ú£¬ºÏ×÷ÀàĞÍµç»ú²»ÔÚCANSendÖĞ×Ô¶¯´¦Àí£¬ÒªÇóÕâÀàµç»úÓ¦ÔÚUserHandleÖĞ´¦Àí
+	*				2019Äê11ÔÂ30ÈÕ15:01:01 ÊÊÅäGM6020µÄID¿ÉÄÜ³¬¹ı0x208µÄÇé¿ö
 */
 uint8_t manager::CANSend(void)
 {
-	if(CanHandle1!=NULL)//ç»“ç®—CAN1æ•°æ®
+	if(CanHandle1!=NULL)//½áËãCAN1Êı¾İ
 	{
-		for(uint8_t i=0;i<11;i++)//å¯¹11ä¸ªç”µæœºè¿›è¡Œè½®è¯¢
+		for(uint8_t i=0;i<11;i++)//¶Ô11¸öµç»ú½øĞĞÂÖÑ¯
 		{
-			if(CAN1MotorList[i]!=NULL)//å¦‚æœè¿™ä¸ªç”µæœºå­˜åœ¨
+			if(CAN1MotorList[i]!=NULL)//Èç¹ûÕâ¸öµç»ú´æÔÚ
 			{
-				if(CAN1MotorList[i]->cooperative==0)CAN1MotorList[i]->Handle();//å¦‚æœä¸æ˜¯åä½œå‹ç”µæœºï¼Œå°±æ‰§è¡Œå…¶å•ç‹¬ç¨‹åº
-				if(HAL_GetTick() - CAN1MotorList[i]->LastUpdateTime > 50)//å¦‚æœç”µæœºçš„æ•°æ®å·²ç»è¶…è¿‡50msæ²¡æœ‰æ›´æ–°äº†
+				if(CAN1MotorList[i]->cooperative==0)CAN1MotorList[i]->Handle();//Èç¹û²»ÊÇĞ­×÷ĞÍµç»ú£¬¾ÍÖ´ĞĞÆäµ¥¶À³ÌĞò
+				if(HAL_GetTick() - CAN1MotorList[i]->LastUpdateTime > 50)//Èç¹ûµç»úµÄÊı¾İÒÑ¾­³¬¹ı50msÃ»ÓĞ¸üĞÂÁË
 				{
-					CAN1_OnlineID &= ~(0x01<<i);//å¯¹ç›¸åº”onlineä½ç½®0
+					CAN1_OnlineID &= ~(0x01<<i);//¶ÔÏàÓ¦onlineÎ»ÖÃ0
 				}else
-				{//ä»¥ä¸‹ä¸ºåœ¨çº¿æƒ…å†µ
-					CAN1_OnlineID |=0x01<<i;//å¯¹ç›¸åº”onlineä½ç½®1
+				{//ÒÔÏÂÎªÔÚÏßÇé¿ö
+					CAN1_OnlineID |=0x01<<i;//¶ÔÏàÓ¦onlineÎ»ÖÃ1
 				}
 			}
 		}
 	}
-	if(CanHandle2!=NULL)//ç»“ç®—CAN2æ•°æ®
+	if(CanHandle2!=NULL)//½áËãCAN2Êı¾İ
 	{
-		for(uint8_t i=0;i<11;i++)//å¯¹11ä¸ªç”µæœºè¿›è¡Œè½®è¯¢
+		for(uint8_t i=0;i<11;i++)//¶Ô11¸öµç»ú½øĞĞÂÖÑ¯
 		{
-			if(CAN2MotorList[i]!=NULL)//å¦‚æœè¿™ä¸ªç”µæœºå­˜åœ¨
+			if(CAN2MotorList[i]!=NULL)//Èç¹ûÕâ¸öµç»ú´æÔÚ
 			{
-				if(CAN2MotorList[i]->cooperative==0)CAN2MotorList[i]->Handle();//å¦‚æœä¸æ˜¯åä½œå‹ç”µæœºï¼Œå°±æ‰§è¡Œå…¶å•ç‹¬ç¨‹åº
-				if(HAL_GetTick() - CAN2MotorList[i]->LastUpdateTime > 50)//å¦‚æœç”µæœºçš„æ•°æ®å·²ç»è¶…è¿‡50msæ²¡æœ‰æ›´æ–°äº†
+				if(CAN2MotorList[i]->cooperative==0)CAN2MotorList[i]->Handle();//Èç¹û²»ÊÇĞ­×÷ĞÍµç»ú£¬¾ÍÖ´ĞĞÆäµ¥¶À³ÌĞò
+				if(HAL_GetTick() - CAN2MotorList[i]->LastUpdateTime > 50)//Èç¹ûµç»úµÄÊı¾İÒÑ¾­³¬¹ı50msÃ»ÓĞ¸üĞÂÁË
 				{
-					CAN2_OnlineID &= ~(0x01<<i);//å¯¹ç›¸åº”onlineä½ç½®0
+					CAN2_OnlineID &= ~(0x01<<i);//¶ÔÏàÓ¦onlineÎ»ÖÃ0
 				}else
-				{//ä»¥ä¸‹ä¸ºåœ¨çº¿æƒ…å†µ
-					CAN2_OnlineID |=0x01<<i;//å¯¹ç›¸åº”onlineä½ç½®1
+				{//ÒÔÏÂÎªÔÚÏßÇé¿ö
+					CAN2_OnlineID |=0x01<<i;//¶ÔÏàÓ¦onlineÎ»ÖÃ1
 				}
 			}
 		}
 	}
-	if(chassis::point!=NULL)chassis::point->Handle();//å¦‚æœå­˜åœ¨åº•ç›˜çš„è¯åˆ™è¿›è¡Œåº•ç›˜çš„åŠŸç‡æ§åˆ¶å¤„ç†
-	UserProcess();//è¿›è¡Œç”¨æˆ·çš„è‡ªå®šä¹‰æ•°æ®å¤„ç†
-	//ä»¥ä¸‹ä¸ºå‘é€å¤„ç†
+	if(chassis::point!=NULL)chassis::point->Handle();//Èç¹û´æÔÚµ×ÅÌµÄ»°Ôò½øĞĞµ×ÅÌµÄ¹¦ÂÊ¿ØÖÆ´¦Àí
+	UserProcess();//½øĞĞÓÃ»§µÄ×Ô¶¨ÒåÊı¾İ´¦Àí
+	//ÒÔÏÂÎª·¢ËÍ´¦Àí
 	uint8_t check=0;
 	uint8_t result=0;
-	//CAN1ç»“ç®—æ•°æ®
-	if((CAN1_OnlineID&0x0f)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	//CAN1½áËãÊı¾İ
+	if((CAN1_OnlineID&0x0f)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		check=bsp_can_Sendmessage(CanHandle1,0x200,(int16_t*)CAN1CurrentList);
 	if(check)result|=0x01;
-	if((CAN1_OnlineID&0xf0)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	if((CAN1_OnlineID&0xf0)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		bsp_can_Sendmessage(CanHandle1,0x1ff,(int16_t*)&CAN1CurrentList[4]);
 	if(check)result|=0x02;
-	if((CAN1_OnlineID&0x700)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	if((CAN1_OnlineID&0x700)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		bsp_can_Sendmessage(CanHandle1,0x2ff,(int16_t*)&CAN1CurrentList[8]);
 	if(check)result|=0x04;
 	
-	//CAN2ç»“ç®—æ•°æ®
-	if((CAN2_OnlineID&0x0f)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	//CAN2½áËãÊı¾İ
+	if((CAN2_OnlineID&0x0f)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		bsp_can_Sendmessage(CanHandle2,0x200,(int16_t*)CAN2CurrentList);
 	if(check)result|=0x08;
-	if((CAN2_OnlineID&0xf0)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	if((CAN2_OnlineID&0xf0)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		bsp_can_Sendmessage(CanHandle2,0x1ff,(int16_t*)&CAN2CurrentList[4]);
 	if(check)result|=0x10;
-	if((CAN2_OnlineID&0x700)!=0)//åˆ¤æ–­è¯¥åˆ—ä¸­æœ‰æ²¡æœ‰åœ¨çº¿ç”µæœº
+	if((CAN2_OnlineID&0x700)!=0)//ÅĞ¶Ï¸ÃÁĞÖĞÓĞÃ»ÓĞÔÚÏßµç»ú
 		bsp_can_Sendmessage(CanHandle2,0x2ff,(int16_t*)&CAN2CurrentList[8]);
 	if(check)result|=0x20;
 	memset(CAN1CurrentList,0,22);
 	memset(CAN2CurrentList,0,22);
 	return result;
 }
-WEAK void manager::Speed_F_Set(float f)///è®¾å®šå‰é¦ˆé‡
+WEAK void manager::Speed_F_Set(float f)///Éè¶¨Ç°À¡Á¿
 {
 	Speed_F=f;
 }
-////*******************************************motorç±»***********************************************************************////
+////*******************************************motorÀà***********************************************************************////
 /** 
-	* @brief  ç”µæœºç±»æ„å»ºå‡½æ•°
-	* @param [in]  can_num	ç¬¬å‡ ä¸ªCAN åªå…è®¸è¾“å…¥1æˆ–2
-	* @param [in]  _can_id		è¯¥ç”µæœºçš„CAN_ID,å¦‚:0x201
-	* @param [in]  *motor_type ç”µæœºç±»å‹ç»“æ„ä½“æŒ‡é’ˆ
-	* @param [in]  _PID_In	å†…ç¯PID è¾“å…¥pidå¯¹è±¡æŒ‡é’ˆ
-	* @param [in]	 _PID_Out å¤–ç¯PID	è¾“å…¥pidå¯¹è±¡æŒ‡é’ˆ 
-	* @param [in]	 _PID_Current ç”µæµç¯PID	è¾“å…¥pidå¯¹è±¡æŒ‡é’ˆ 
-	* @param [in]	 CurrentSource é‡‡æ ·æ¿ç”µæµé‡‡æ ·æ•°æ®
-	* @par æ—¥å¿— 
-*				2019å¹´11æœˆ30æ—¥  ä¿®æ”¹can_codeè¡¨ç¤ºæ–¹å¼
+	* @brief  µç»úÀà¹¹½¨º¯Êı
+	* @param [in]  can_num	µÚ¼¸¸öCAN Ö»ÔÊĞíÊäÈë1»ò2
+	* @param [in]  _can_id		¸Ãµç»úµÄCAN_ID,Èç:0x201
+	* @param [in]  *motor_type µç»úÀàĞÍ½á¹¹ÌåÖ¸Õë
+	* @param [in]  _PID_In	ÄÚ»·PID ÊäÈëpid¶ÔÏóÖ¸Õë
+	* @param [in]	 _PID_Out Íâ»·PID	ÊäÈëpid¶ÔÏóÖ¸Õë 
+	* @param [in]	 _PID_Current µçÁ÷»·PID	ÊäÈëpid¶ÔÏóÖ¸Õë 
+	* @param [in]	 CurrentSource ²ÉÑù°åµçÁ÷²ÉÑùÊı¾İ
+	* @par ÈÕÖ¾ 
+*				2019Äê11ÔÂ30ÈÕ  ĞŞ¸Äcan_code±íÊ¾·½Ê½
 */
 WEAK motor::motor(const uint8_t can_num, const uint16_t _can_id, Motor_t *motor_type, pid *_PID_In, pid *_PID_Out)
 	:MotorType(motor_type), PID_In(_PID_In), PID_Out(_PID_Out)
 {
-	//åœ¨motorå¯¹è±¡è¡¨é‡Œé¢åŠ å…¥è‡ªå·±çš„æŒ‡é’ˆ
+	//ÔÚmotor¶ÔÏó±íÀïÃæ¼ÓÈë×Ô¼ºµÄÖ¸Õë
 	if(can_num==1)CAN1MotorList[_can_id-0x201]=this;
 	if(can_num==2)CAN2MotorList[_can_id-0x201]=this;
 	can_code=can_num*100+_can_id-0x201;
 }
 /** 
-	* @brief  ç”µæœºä¸­æ–­æ›´æ–°æ•°æ®çš„å‡½æ•°
-	* @param [in]   Data[] ä¸­æ–­æ—¶æ¥åˆ°çš„æ•°æ®
-	* @par æ—¥å¿— 
-	*       2018å¹´10æœˆ31æ—¥19:19:56 æ•´åˆä¸¤ä¸ªupdateå‡½æ•°ä¸ºä¸€ä¸ªupdateå‡½æ•°
-*				2019å¹´12æœˆ1æ—¥3:32:56 ä¿®æ”¹æˆå‘˜å LastCurrentEncoder -> LastRealCurrent    CurrentEncoder->RealCurrent
+	* @brief  µç»úÖĞ¶Ï¸üĞÂÊı¾İµÄº¯Êı
+	* @param [in]   Data[] ÖĞ¶ÏÊ±½Óµ½µÄÊı¾İ
+	* @par ÈÕÖ¾ 
+	*       2018Äê10ÔÂ31ÈÕ19:19:56 ÕûºÏÁ½¸öupdateº¯ÊıÎªÒ»¸öupdateº¯Êı
+*				2019Äê12ÔÂ1ÈÕ3:32:56 ĞŞ¸Ä³ÉÔ±Ãû LastCurrentEncoder -> LastRealCurrent    CurrentEncoder->RealCurrent
 */
 WEAK void motor::update(uint8_t Data[])
 {
 	LastSpeed = RealSpeed;
 	LastPosition = RealPosition;
-	LastRealCurrent = RealCurrent;//ä¿å­˜è½¬çŸ©ç”µæµ
+	LastRealCurrent = RealCurrent;//±£´æ×ª¾ØµçÁ÷
 	RealPosition = Data[0]<<8 | Data[1];
 	RealSpeed = Data[2]<<8 | Data[3];
 	RealCurrent = Data[4]<<8 | Data[5];
-	if(RealCurrent != LastRealCurrent)//å‰åè½¬çŸ©ç”µæµä¸åŒæ‰ç®—ä½œæœ‰æ•ˆæ•°æ®
-		LastUpdateTime = HAL_GetTick();//æ›´æ–°æœ¬æ¬¡ç”µæœºæ•°æ®æœ€åæ›´æ–°çš„æ—¶é—´
-	RealAngle = RealPosition*360.f/MotorType->max_mechanical_position;//æ ¹æ®æœºæ¢°è§’è®¡ç®—å‡ºçš„çœŸå®è§’åº¦
+	if(RealCurrent != LastRealCurrent)//Ç°ºó×ª¾ØµçÁ÷²»Í¬²ÅËã×÷ÓĞĞ§Êı¾İ
+		LastUpdateTime = HAL_GetTick();//¸üĞÂ±¾´Îµç»úÊı¾İ×îºó¸üĞÂµÄÊ±¼ä
+	RealAngle = RealPosition*360.f/MotorType->max_mechanical_position;//¸ù¾İ»úĞµ½Ç¼ÆËã³öµÄÕæÊµ½Ç¶È
 }
 /** 
-* @brief  ç”µæœºè¿›è¡Œæ•°æ®å¤„ç†çš„å‡½æ•° è¯¥å‡½æ•°ä¼šåœ¨CANå‘é€å‰æ‰§è¡Œï¼Œä¸€èˆ¬ç”¨äºåˆ¤æ–­è¿è¡ŒçŠ¶æ€ï¼Œè¿è¡ŒPIDè®¡ç®—ç”µæµ
-* @par æ—¥å¿— 
+* @brief  µç»ú½øĞĞÊı¾İ´¦ÀíµÄº¯Êı ¸Ãº¯Êı»áÔÚCAN·¢ËÍÇ°Ö´ĞĞ£¬Ò»°ãÓÃÓÚÅĞ¶ÏÔËĞĞ×´Ì¬£¬ÔËĞĞPID¼ÆËãµçÁ÷
+* @par ÈÕÖ¾ 
 *
 */
 WEAK void motor::Handle(void)
@@ -467,39 +467,39 @@ WEAK void motor::Handle(void)
 	}
 	switch(RunState)
 	{
-		case Speed_Ctl://ç”µæœºåœ¨ä»¥é€Ÿåº¦æ€è¿è¡Œ
+		case Speed_Ctl://µç»úÔÚÒÔËÙ¶ÈÌ¬ÔËĞĞ
 			Speed_Run();
 			break;
-		case Position_Ctl://è·¯ç¨‹
+		case Position_Ctl://Â·³Ì
 			Position_Run();
 			break;
-		case Stop://åœæ­¢çŠ¶æ€
+		case Stop://Í£Ö¹×´Ì¬
 			Safe_Set();
 			break;
 		default:
-			Error_Code|=0x01;//ç”Ÿæˆé”™è¯¯ç 
+			Error_Code|=0x01;//Éú³É´íÎóÂë
 			Safe_Set();
 			break;
 	}
 }
 /** 
-	* @brief  å¯¹è¯¥ç”µæœºæ‰§è¡Œå®‰å…¨æŒ‡ä»¤
-	* @par æ—¥å¿— 
+	* @brief  ¶Ô¸Ãµç»úÖ´ĞĞ°²È«Ö¸Áî
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void motor::Safe_Set(void)
 {
-	if(block!=NULL)block->IsBlock=0;//å»é™¤å µè½¬æ ‡å¿—ï¼Œé¿å…åœ¨é€»è¾‘ä¸­ä¾ç„¶è®¤ä¸ºæ˜¯å µè½¬
+	if(block!=NULL)block->IsBlock=0;//È¥³ı¶Â×ª±êÖ¾£¬±ÜÃâÔÚÂß¼­ÖĞÒÀÈ»ÈÏÎªÊÇ¶Â×ª
 	RunState = Stop;
 	TargetCurrent = 0;
 	InsertCurrent();
 }
 /** 
-	* @brief  ç”µæœºçš„ä½ç½®ç»™å®šå€¼
-	* @note è¯¥å‡½æ•°ä¸ºè®¾ç½®ç”µæœºè½¬å­è½¬åŠ¨ä¸€åœˆå†…çš„ä½ç½®
-	* @param [in]   Target_Angle ç›®æ ‡è§’åº¦
-	* @par æ—¥å¿— V1.0 åˆ›å»ºè¯¥å‡½æ•°
-	*           V1.1 å½¢å‚æ”¹ä¸ºfloatå‹ï¼Œè¡¨ç¤ºè§’åº¦ï¼Œå•ä½Â°
+	* @brief  µç»úµÄÎ»ÖÃ¸ø¶¨Öµ
+	* @note ¸Ãº¯ÊıÎªÉèÖÃµç»ú×ª×Ó×ª¶¯Ò»È¦ÄÚµÄÎ»ÖÃ
+	* @param [in]   Target_Angle Ä¿±ê½Ç¶È
+	* @par ÈÕÖ¾ V1.0 ´´½¨¸Ãº¯Êı
+	*           V1.1 ĞÎ²Î¸ÄÎªfloatĞÍ£¬±íÊ¾½Ç¶È£¬µ¥Î»¡ã
 	*
 */
 WEAK void motor::Angle_Set(float Target_Angle)
@@ -507,10 +507,10 @@ WEAK void motor::Angle_Set(float Target_Angle)
   RunState = Position_Ctl;
 	TargetPosition = Target_Angle/360.f * MotorType->max_mechanical_position;
 }
-/** ç»™å®šç”µæœºç›®æ ‡é€Ÿåº¦
-	* @param [in]   Speed ç›®æ ‡é€Ÿåº¦
-	* @par æ—¥å¿—
-	*       2018å¹´10æœˆ31æ—¥17:31:27 åˆ›ç«‹è¯¥å‡½æ•°
+/** ¸ø¶¨µç»úÄ¿±êËÙ¶È
+	* @param [in]   Speed Ä¿±êËÙ¶È
+	* @par ÈÕÖ¾
+	*       2018Äê10ÔÂ31ÈÕ17:31:27 ´´Á¢¸Ãº¯Êı
 	*
 */
 WEAK void motor::Speed_Set(int16_t Speed)
@@ -519,57 +519,57 @@ WEAK void motor::Speed_Set(int16_t Speed)
   TargetSpeed=Speed;
 }
 /** 
-	* @brief  è®¾å®šç”µæœºçš„ä½ç½®PID
-	* @warning è¯¥å‡½æ•°çš„ä½ç½®ç¯æ— è·¯ç¨‹ç´¯è®¡æ•ˆåº”ï¼Œåªèƒ½ç”¨äºä¸è¶…è¿‡ä¸€åœˆçš„æ™®é€šäº‘å°ç”µæœº
-	* @retval  Current è¯¥ç”µæœºæ­¤æ—¶åº”è¯¥å‘é€çš„ç”µæµå€¼
-	* @note æ­¤å‡½æ•°ç”±motor::CANSendæ‰˜ç®¡
-	* @par æ—¥å¿— 
-	*       2018å¹´10æœˆ31æ—¥17:01:51 æ›¾ç”¨åAngle_Setï¼Œç°æ”¹ä¸ºç§æœ‰å‡½æ•°å¹¶ç»Ÿä¸€è¿è¡Œ
+	* @brief  Éè¶¨µç»úµÄÎ»ÖÃPID
+	* @warning ¸Ãº¯ÊıµÄÎ»ÖÃ»·ÎŞÂ·³ÌÀÛ¼ÆĞ§Ó¦£¬Ö»ÄÜÓÃÓÚ²»³¬¹ıÒ»È¦µÄÆÕÍ¨ÔÆÌ¨µç»ú
+	* @retval  Current ¸Ãµç»ú´ËÊ±Ó¦¸Ã·¢ËÍµÄµçÁ÷Öµ
+	* @note ´Ëº¯ÊıÓÉmotor::CANSendÍĞ¹Ü
+	* @par ÈÕÖ¾ 
+	*       2018Äê10ÔÂ31ÈÕ17:01:51 ÔøÓÃÃûAngle_Set£¬ÏÖ¸ÄÎªË½ÓĞº¯Êı²¢Í³Ò»ÔËĞĞ
 	*
 */
 WEAK void motor::Position_Run(void)
 {
-	if(PID_Out==NULL)while(1);//å¦‚æœæ²¡æœ‰å¤–ç¯pidçš„è¯ç›´æ¥æš´éœ²é”™è¯¯
-	int16_t err=	TargetPosition	-	RealPosition;//æ­¤æ—¶å¾—æ•°è¯¯å·®ä¸ºè·¯ç¨‹ç¯è¯¯å·®
-	err=PID_Out->pid_run(err);//è®¡ç®—åæ­¤æ—¶errä¸ºç›®æ ‡é€Ÿåº¦
+	if(PID_Out==NULL)while(1);//Èç¹ûÃ»ÓĞÍâ»·pidµÄ»°Ö±½Ó±©Â¶´íÎó
+	int16_t err=	TargetPosition	-	RealPosition;//´ËÊ±µÃÊıÎó²îÎªÂ·³Ì»·Îó²î
+	err=PID_Out->pid_run(err);//¼ÆËãºó´ËÊ±errÎªÄ¿±êËÙ¶È
 	TargetSpeed=err;
-	Speed_Run();//æŠŠç›®æ ‡é€Ÿåº¦æ”¾è¿›é€Ÿåº¦æ§åˆ¶é‡Œ
+	Speed_Run();//°ÑÄ¿±êËÙ¶È·Å½øËÙ¶È¿ØÖÆÀï
 }
 /** 
-	* @brief  è®¾å®šç”µæœºé€Ÿåº¦PID
-	* @note è¯¥å‡½æ•°ç”±åº“å†…éƒ¨æ‰˜ç®¡å¤„ç†
-	* @par æ—¥å¿— 
-	*       2018å¹´10æœˆ31æ—¥17:34:04 åˆ›å»ºè¯¥å‡½æ•°
-    *       2019å¹´3æœˆ9æ—¥16:20:28 åˆ é™¤äº†å¯¹Current_Run()çš„ç»§ç»­è¿­ä»£ï¼æœ¬æ¬¡æ”¹åŠ¨ä¸èƒ½å¤Ÿå‘ä¸‹å…¼å®¹
+	* @brief  Éè¶¨µç»úËÙ¶ÈPID
+	* @note ¸Ãº¯ÊıÓÉ¿âÄÚ²¿ÍĞ¹Ü´¦Àí
+	* @par ÈÕÖ¾ 
+	*       2018Äê10ÔÂ31ÈÕ17:34:04 ´´½¨¸Ãº¯Êı
+    *       2019Äê3ÔÂ9ÈÕ16:20:28 É¾³ıÁË¶ÔCurrent_Run()µÄ¼ÌĞøµü´ú£¡±¾´Î¸Ä¶¯²»ÄÜ¹»ÏòÏÂ¼æÈİ
 */
 WEAK void motor::Speed_Run(void)
 {
 	TargetCurrent = PID_In->pid_run(this->TargetSpeed - RealSpeed);
-	if(Speed_F!=0)//ä½¿ç”¨äº†å‰é¦ˆæ§åˆ¶
+	if(Speed_F!=0)//Ê¹ÓÃÁËÇ°À¡¿ØÖÆ
 	{
-		//å‰é¦ˆå¤„ç†æ®µ
-		Speed_LPF = LPF_NUM*(RealSpeed-LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//é€Ÿåº¦å‰é¦ˆä½é€šæ»¤æ³¢å™¨
-		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;//æ­¤å¤„ç¬¬äºŒé¡¹ä¸ºé€Ÿåº¦ç¯å‰é¦ˆ
+		//Ç°À¡´¦Àí¶Î
+		Speed_LPF = LPF_NUM*(RealSpeed-LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//ËÙ¶ÈÇ°À¡µÍÍ¨ÂË²¨Æ÷
+		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;//´Ë´¦µÚ¶şÏîÎªËÙ¶È»·Ç°À¡
 	}
     InsertCurrent();
 }
 /** 
-	* @brief  ç”µæµç¯PID
-	* @note è¯¥å‡½æ•°ç”±åº“å†…éƒ¨æ‰˜ç®¡å¤„ç†
-	* @par æ—¥å¿— 
-	*       2019å¹´1æœˆ14æ—¥ åˆ›å»ºè¯¥å‡½æ•°
+	* @brief  µçÁ÷»·PID
+	* @note ¸Ãº¯ÊıÓÉ¿âÄÚ²¿ÍĞ¹Ü´¦Àí
+	* @par ÈÕÖ¾ 
+	*       2019Äê1ÔÂ14ÈÕ ´´½¨¸Ãº¯Êı
 	*
 */
 //WEAK void motor::Current_Run(void)
 //{
-//	if(PID_Current==NULL)while(1);//è‹¥æœ‰ç”µæµé‡‡æ ·æ•°æ®æ— ç”µæµç¯pidï¼Œæš´éœ²é”™è¯¯
-//	if(RealSpeed<0)*RealCurrent *= -1;//é‡‡æ ·ç”µæµç¬¦å·
+//	if(PID_Current==NULL)while(1);//ÈôÓĞµçÁ÷²ÉÑùÊı¾İÎŞµçÁ÷»·pid£¬±©Â¶´íÎó
+//	if(RealSpeed<0)*RealCurrent *= -1;//²ÉÑùµçÁ÷·ûºÅ
 //	CurrentSend = PID_Current->pid_run(this->TargetCurrent - *RealCurrent);
 //	InsertCurrent();
 //}
 /** 
-	* @brief  æ ¹æ®ä¼˜å…ˆçº§æŠŠè¦å‘é€çš„ç”µæµå€¼é€å…¥åˆ—è¡¨ä¸­ç­‰å¾…å‘é€
-	* @par æ—¥å¿— 
+	* @brief  ¸ù¾İÓÅÏÈ¼¶°ÑÒª·¢ËÍµÄµçÁ÷ÖµËÍÈëÁĞ±íÖĞµÈ´ı·¢ËÍ
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void motor::InsertCurrent(void)
@@ -580,136 +580,136 @@ WEAK void motor::InsertCurrent(void)
 		CAN2CurrentList[can_code%100] = TargetCurrent;
 }
 /** 
-	* @brief  å¯¹è¯¥ç”µæœºå¯ç”¨å µè½¬æ£€æµ‹
-	* @param [in]   Limit ç”µæµå µè½¬é˜ˆå€¼
-	* @param [in]	 time å µè½¬è§¦å‘æ—¶é—´
-	* @param [in]	 err_num åœ¨å¤šå°‘èŒƒå›´å†…è®¤ä¸ºæ˜¯å µè½¬
-	* @retval  0  æˆåŠŸ
-	* @retval  -1 é”™è¯¯ å¯èƒ½æ˜¯å †æ ˆç©ºé—´ä¸è¶³
-	* @par æ—¥å¿—
+	* @brief  ¶Ô¸Ãµç»úÆôÓÃ¶Â×ª¼ì²â
+	* @param [in]   Limit µçÁ÷¶Â×ªãĞÖµ
+	* @param [in]	 time ¶Â×ª´¥·¢Ê±¼ä
+	* @param [in]	 err_num ÔÚ¶àÉÙ·¶Î§ÄÚÈÏÎªÊÇ¶Â×ª
+	* @retval  0  ³É¹¦
+	* @retval  -1 ´íÎó ¿ÉÄÜÊÇ¶ÑÕ»¿Õ¼ä²»×ã
+	* @par ÈÕÖ¾
 	*
 */
 int8_t motor::Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num)
 {
 	if(block==NULL)
 	{
-		//åˆ†é…å†…å­˜
-		block=new block_type(TargetCurrent, RealAngle);//æ³¨æ„ è¿™é‡Œçš„ç”µæµå˜é‡å€¼å’Œsoftmotorä¸ä¸€æ ·
+		//·ÖÅäÄÚ´æ
+		block=new block_type(TargetCurrent, RealAngle);//×¢Òâ ÕâÀïµÄµçÁ÷±äÁ¿ÖµºÍsoftmotor²»Ò»Ñù
 		if(block==NULL)return -1;
 	}
 	block->Block_Init(Limit, time, err_num);
 	return 0;
 }
-////*******************************************softmotorç±»*******************************************************************////
+////*******************************************softmotorÀà*******************************************************************////
 /** 
-	* @brief  æ›´æ–°ç”µæœºå€¼ åŒ…æ‹¬äº†è½¯è·¯ç¨‹çš„è§£ç®—
+	* @brief  ¸üĞÂµç»úÖµ °üÀ¨ÁËÈíÂ·³ÌµÄ½âËã
 	* @retval  none
-	* @par æ—¥å¿— 
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void softmotor::update(uint8_t Data[])
 {
-	motor::update(Data);//è°ƒç”¨çˆ¶ç±»motorçš„é€šç”¨updateå‡½æ•°
+	motor::update(Data);//µ÷ÓÃ¸¸ÀàmotorµÄÍ¨ÓÃupdateº¯Êı
 	if(running_flag==0)
 	{
 		LastPosition=RealPosition;
 		running_flag=1;
 	}
-	if(RealPosition	-	LastPosition	>	4096)//åœˆæ•°ç´¯è®¡
+	if(RealPosition	-	LastPosition	>	4096)//È¦ÊıÀÛ¼Æ
 		Soft_RealPosition--;
-	else if(RealPosition	-	LastPosition	<-4096)//åœˆæ•°ç´¯è®¡
+	else if(RealPosition	-	LastPosition	<-4096)//È¦ÊıÀÛ¼Æ
 		Soft_RealPosition++;
-//	RealAngle = /*åœˆæ•°å¯¹åº”è§’åº¦*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
-//							+ /*å•åœˆå†…è§’åº¦*/1.0f*RealPosition / (8192 * MotorType->Reduction_ratio )*360;//è½¬æ¢ä¸ºè§’åº¦ ç°åœ¨è¿™ä¸ªå˜é‡æ˜¯softangle
-	RealAngle = RealPosition*360.f/MotorType->max_mechanical_position;//æ ¹æ®æœºæ¢°è§’è®¡ç®—å‡ºçš„çœŸå®è§’åº¦
-	SoftAngle = /*åœˆæ•°å¯¹åº”è§’åº¦*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
-							+ /*å•åœˆå†…è§’åº¦*/1.0f*RealPosition / (8192 * MotorType->Reduction_ratio )*360;//è½¬æ¢ä¸ºè§’åº¦
+//	RealAngle = /*È¦Êı¶ÔÓ¦½Ç¶È*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
+//							+ /*µ¥È¦ÄÚ½Ç¶È*/1.0f*RealPosition / (8192 * MotorType->Reduction_ratio )*360;//×ª»»Îª½Ç¶È ÏÖÔÚÕâ¸ö±äÁ¿ÊÇsoftangle
+	RealAngle = RealPosition*360.f/MotorType->max_mechanical_position;//¸ù¾İ»úĞµ½Ç¼ÆËã³öµÄÕæÊµ½Ç¶È
+	SoftAngle = /*È¦Êı¶ÔÓ¦½Ç¶È*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
+							+ /*µ¥È¦ÄÚ½Ç¶È*/1.0f*RealPosition / (8192 * MotorType->Reduction_ratio )*360;//×ª»»Îª½Ç¶È
 }
-///å¯¹è½¯è·¯ç¨‹è¿›è¡Œé™åˆ¶èŒƒå›´
+///¶ÔÈíÂ·³Ì½øĞĞÏŞÖÆ·¶Î§
 WEAK void softmotor::Limit(float _max, float _min)
 {
 	max=_max;
 	min=_min;
 }
 /** 
-	* @brief   æœ‰å‚æ•°çš„ä½ç½®ç¯ç¡®å®š ä¼šä½¿å…¶ç§»åŠ¨åˆ°æŒ‡å®šä½ç½®
-	* @param [in]   Target_Angle ç›®æ ‡è§’åº¦
-	* @retval  ç”µæµå€¼
-	* @par æ—¥å¿— 
-	*       V1.0 2018å¹´10æœˆ31æ—¥19:43:18 å°†PIDæ§åˆ¶æŠ½ç¦»äº†å‡ºæ¥ è¯¥å‡½æ•°åªç®¡è´Ÿè´£è®¾å®šç›®æ ‡å€¼äº†
-	*       V1.1 å½¢å‚è¡¨ç¤ºè§’åº¦ï¼Œå•ä½Â°
+	* @brief   ÓĞ²ÎÊıµÄÎ»ÖÃ»·È·¶¨ »áÊ¹ÆäÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ
+	* @param [in]   Target_Angle Ä¿±ê½Ç¶È
+	* @retval  µçÁ÷Öµ
+	* @par ÈÕÖ¾ 
+	*       V1.0 2018Äê10ÔÂ31ÈÕ19:43:18 ½«PID¿ØÖÆ³éÀëÁË³öÀ´ ¸Ãº¯ÊıÖ»¹Ü¸ºÔğÉè¶¨Ä¿±êÖµÁË
+	*       V1.1 ĞÎ²Î±íÊ¾½Ç¶È£¬µ¥Î»¡ã
 */
 WEAK void softmotor::Angle_Set(float Target_Angle)
 {
   RunState=Position_Ctl;
-	if(Target_Angle>max)Target_Angle=max;//å¯¹ç›®æ ‡è§’åº¦é™å¹…
+	if(Target_Angle>max)Target_Angle=max;//¶ÔÄ¿±ê½Ç¶ÈÏŞ·ù
 	if(Target_Angle<min)Target_Angle=min;
-	Target_Angle=Target_Angle*MotorType->Reduction_ratio/360;//å¾—åˆ°ç”µæœºå‡é€Ÿå‰ç›®æ ‡åœˆæ•°
-	TargetPosition=(Target_Angle-(int32_t)Target_Angle)*MotorType->max_mechanical_position;//å°æ•°éƒ¨åˆ† å‡é€Ÿå‰å•åœˆä½ç½®
-	Soft_TargetPosition=(int32_t)Target_Angle;//æ•´æ•°éƒ¨åˆ† å³å‡é€Ÿå‰åœˆæ•°
+	Target_Angle=Target_Angle*MotorType->Reduction_ratio/360;//µÃµ½µç»ú¼õËÙÇ°Ä¿±êÈ¦Êı
+	TargetPosition=(Target_Angle-(int32_t)Target_Angle)*MotorType->max_mechanical_position;//Ğ¡Êı²¿·Ö ¼õËÙÇ°µ¥È¦Î»ÖÃ
+	Soft_TargetPosition=(int32_t)Target_Angle;//ÕûÊı²¿·Ö ¼´¼õËÙÇ°È¦Êı
 }
 /** 
-	* @brief   æ— å‚æ•°çš„ä½ç½®ç¯+é€Ÿåº¦ç¯è¿ç®—
-	* @retval  ç”µæµå€¼
-	* @note   è¯¥å‡½æ•°é‡å†™çˆ¶ç±»å‡½æ•°ï¼Œåœ¨cansendå¾ªç¯è°ƒç”¨ä¸å¯æ”¹å
-	* @par æ—¥å¿— 
-	*       2018å¹´10æœˆ31æ—¥17:13:46 æ”¹åï¼Œè¯¥è¿ç®—ç”±motor::CANSend()æ‰˜ç®¡æ‰§è¡Œ
-	*       2018å¹´11æœˆ3æ—¥11:32:35  åŠ å…¥äº†è·¯ç¨‹ç¯æ ¡éªŒç¯èŠ‚
+	* @brief   ÎŞ²ÎÊıµÄÎ»ÖÃ»·+ËÙ¶È»·ÔËËã
+	* @retval  µçÁ÷Öµ
+	* @note   ¸Ãº¯ÊıÖØĞ´¸¸Ààº¯Êı£¬ÔÚcansendÑ­»·µ÷ÓÃ²»¿É¸ÄÃû
+	* @par ÈÕÖ¾ 
+	*       2018Äê10ÔÂ31ÈÕ17:13:46 ¸ÄÃû£¬¸ÃÔËËãÓÉmotor::CANSend()ÍĞ¹ÜÖ´ĞĞ
+	*       2018Äê11ÔÂ3ÈÕ11:32:35  ¼ÓÈëÁËÂ·³Ì»·Ğ£Ñé»·½Ú
 */
 WEAK void softmotor::Position_Run(void)
 {
-  if(PID_Out==NULL)while(1);//æš´éœ²é”™è¯¯ï¼Œä½ æ²¡æœ‰å¤–ç¯è¿˜æƒ³ç”¨ä½ç½®PID?
+  if(PID_Out==NULL)while(1);//±©Â¶´íÎó£¬ÄãÃ»ÓĞÍâ»·»¹ÏëÓÃÎ»ÖÃPID?
 	int32_t err=0;
-	err=TargetPosition-RealPosition;     //å¾—åˆ°å•åœˆè¯¯å·®
-	err+=MotorType->max_mechanical_position*(Soft_TargetPosition-Soft_RealPosition);//åŠ ä¸Šåœˆæ•°ä½ç½®è¯¯å·®
-	TargetSpeed = PID_Out->pid_run(err);//ä½ç½®ç¯å¾—åˆ°ç›®æ ‡é€Ÿåº¦
+	err=TargetPosition-RealPosition;     //µÃµ½µ¥È¦Îó²î
+	err+=MotorType->max_mechanical_position*(Soft_TargetPosition-Soft_RealPosition);//¼ÓÉÏÈ¦ÊıÎ»ÖÃÎó²î
+	TargetSpeed = PID_Out->pid_run(err);//Î»ÖÃ»·µÃµ½Ä¿±êËÙ¶È
 	TargetCurrent = PID_In->pid_run(TargetSpeed-RealSpeed);
 	InsertCurrent();
 }
 /** 
-	* @brief  å¯¹è¯¥ç”µæœºå¯ç”¨å µè½¬æ£€æµ‹
-	* @param [in]   Limit ç”µæµå µè½¬é˜ˆå€¼
-	* @param [in]	 time å µè½¬è§¦å‘æ—¶é—´
-	* @param [in]	 err_num åœ¨å¤šå°‘èŒƒå›´å†…è®¤ä¸ºæ˜¯å µè½¬
-	* @retval  0  æˆåŠŸ
-	* @retval  -1 é”™è¯¯ å¯èƒ½æ˜¯å †æ ˆç©ºé—´ä¸è¶³
-	* @par æ—¥å¿—
+	* @brief  ¶Ô¸Ãµç»úÆôÓÃ¶Â×ª¼ì²â
+	* @param [in]   Limit µçÁ÷¶Â×ªãĞÖµ
+	* @param [in]	 time ¶Â×ª´¥·¢Ê±¼ä
+	* @param [in]	 err_num ÔÚ¶àÉÙ·¶Î§ÄÚÈÏÎªÊÇ¶Â×ª
+	* @retval  0  ³É¹¦
+	* @retval  -1 ´íÎó ¿ÉÄÜÊÇ¶ÑÕ»¿Õ¼ä²»×ã
+	* @par ÈÕÖ¾
 	*
 */
 int8_t softmotor::Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num)
 {
 	if(block==NULL)
 	{
-		//åˆ†é…å†…å­˜
+		//·ÖÅäÄÚ´æ
 		block=new block_type(TargetCurrent, SoftAngle);
 		if(block==NULL)return -1;
 	}
 	block->Block_Init(Limit, time, err_num);
 	return 0;
 }
-////*******************************************Cloudç±»***********************************************************************////
+////*******************************************CloudÀà***********************************************************************////
 /** 
-	* @brief  äº‘å°ç”µæœºæ„é€ å‡½æ•° \n
-	* 				é™€èºä»ªæ¨¡å¼ä»…ç”¨äºé™€èºä»ªå’Œäº‘å°ä¸€ä½“çš„æ—¶å€™æ‰èƒ½ç”¨ å¦‚æœä¸ä½¿ç”¨é™€èºä»ªæ¨¡å¼ å¯ä»¥ç»™æ— æ•ˆå€¼
-	* @note   å³åæ˜¯å‡å°‘ å·¦åæ˜¯å¢åŠ  \n
-	*				  ä¸€å®šæ³¨æ„ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼äº‘å°Yawè½´ç”µæœºé‡æ–°å®‰è£…è¿‡äº†ä¹‹åè¿™ä¸ªä¸€å®šè¦æ”¹ï¼ï¼ï¼ï¼
-	* @param [in]   can_num	ç¬¬å‡ ä¸ªCAN åªå…è®¸è¾“å…¥1æˆ–2
-	* @param [in]   _can_id		è¯¥ç”µæœºçš„CAN_ID,å¦‚:0x201
-	* @param [in]   _CLOUD_STD è¯¥äº‘å°åœ¨æŒ‡å‘åŸç‚¹æ—¶çš„ç¼–ç å™¨çš„å€¼
-	* @param [in]   *motor_type ç”µæœºç±»å‹ç»“æ„ä½“æŒ‡é’ˆ
-	* @param [in]   PID_I		æœºæ¢°è§’æ§åˆ¶å†…ç¯
-	* @param [in]   PID_O		æœºæ¢°è§’æ§åˆ¶å¤–ç¯
-	* @param [in]   G_In		é™€èºä»ªæ§åˆ¶å†…ç¯
-	* @param [in]   G_Out		é™€èºä»ªæ§åˆ¶å¤–ç¯
-	* @param [in]   SpeedSource	    é™€èºä»ªé€Ÿåº¦æ•°æ®æº
-	* @param [in]   PositionSource	é™€èºä»ªä½ç½®æ•°æ®æº
-	* @par æ—¥å¿— 
+	* @brief  ÔÆÌ¨µç»ú¹¹Ôìº¯Êı \n
+	* 				ÍÓÂİÒÇÄ£Ê½½öÓÃÓÚÍÓÂİÒÇºÍÔÆÌ¨Ò»ÌåµÄÊ±ºò²ÅÄÜÓÃ Èç¹û²»Ê¹ÓÃÍÓÂİÒÇÄ£Ê½ ¿ÉÒÔ¸øÎŞĞ§Öµ
+	* @note   ÓÒÆ«ÊÇ¼õÉÙ ×óÆ«ÊÇÔö¼Ó \n
+	*				  Ò»¶¨×¢Òâ£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡ÔÆÌ¨YawÖáµç»úÖØĞÂ°²×°¹ıÁËÖ®ºóÕâ¸öÒ»¶¨Òª¸Ä£¡£¡£¡£¡
+	* @param [in]   can_num	µÚ¼¸¸öCAN Ö»ÔÊĞíÊäÈë1»ò2
+	* @param [in]   _can_id		¸Ãµç»úµÄCAN_ID,Èç:0x201
+	* @param [in]   _CLOUD_STD ¸ÃÔÆÌ¨ÔÚÖ¸ÏòÔ­µãÊ±µÄ±àÂëÆ÷µÄÖµ
+	* @param [in]   *motor_type µç»úÀàĞÍ½á¹¹ÌåÖ¸Õë
+	* @param [in]   PID_I		»úĞµ½Ç¿ØÖÆÄÚ»·
+	* @param [in]   PID_O		»úĞµ½Ç¿ØÖÆÍâ»·
+	* @param [in]   G_In		ÍÓÂİÒÇ¿ØÖÆÄÚ»·
+	* @param [in]   G_Out		ÍÓÂİÒÇ¿ØÖÆÍâ»·
+	* @param [in]   SpeedSource	    ÍÓÂİÒÇËÙ¶ÈÊı¾İÔ´
+	* @param [in]   PositionSource	ÍÓÂİÒÇÎ»ÖÃÊı¾İÔ´
+	* @par ÈÕÖ¾ 
 	*
 */
-WEAK cloud::cloud(uint8_t can_num, uint16_t _can_id, int16_t _CLOUD_STD, Motor_t *motor_type, pid* _PID_In, pid* _PID_Out, pid* G_In, pid* G_Out, float *SpeedSource, float *PositionSource)//!<æ„é€ å‡½æ•°ï¼Œå¯ä»¥æŒ‡å®šä½ç½®æˆ–é€Ÿåº¦æº
+WEAK cloud::cloud(uint8_t can_num, uint16_t _can_id, int16_t _CLOUD_STD, Motor_t *motor_type, pid* _PID_In, pid* _PID_Out, pid* G_In, pid* G_Out, float *SpeedSource, float *PositionSource)//!<¹¹Ôìº¯Êı£¬¿ÉÒÔÖ¸¶¨Î»ÖÃ»òËÙ¶ÈÔ´
 	:MotorType(motor_type), Gyro_RealSpeed(SpeedSource), Gyro_RealAngle(PositionSource)
 {
-	//åœ¨motorå¯¹è±¡è¡¨é‡Œé¢åŠ å…¥è‡ªå·±çš„æŒ‡é’ˆ
+	//ÔÚmotor¶ÔÏó±íÀïÃæ¼ÓÈë×Ô¼ºµÄÖ¸Õë
 	PID_In  = _PID_In;
 	PID_Out = _PID_Out;
 	if(can_num==1)CAN1MotorList[_can_id-0x201]=this;
@@ -720,68 +720,68 @@ WEAK cloud::cloud(uint8_t can_num, uint16_t _can_id, int16_t _CLOUD_STD, Motor_t
 	Gyro_PID_In=G_In;
 	Gyro_PID_Out=G_Out;
 	
-	if(Gyro_PID_Out != NULL)//å½“é™€èºä»ªpidå¤–ç¯å­˜åœ¨æ—¶å°†å¤–ç¯çš„å¾®åˆ†å€¼è®¾ç½®ä¸ºè¯¥é™€èºä»ªè§’é€Ÿåº¦
+	if(Gyro_PID_Out != NULL)//µ±ÍÓÂİÒÇpidÍâ»·´æÔÚÊ±½«Íâ»·µÄÎ¢·ÖÖµÉèÖÃÎª¸ÃÍÓÂİÒÇ½ÇËÙ¶È
 		Gyro_PID_Out->Custom_Diff = Gyro_RealSpeed;
 }
 /** 
-	* @brief  cloudç±»å‹çš„æ›´æ–°å‡½æ•°
-	* @param [in]   Data[] ä¸­æ–­ä¼ å…¥çš„æ›´æ–°æ•°æ®
-	* @note 1.è¯¥å‡½æ•°ä¼šæŠŠRealPositionè¿›è¡ŒåŸºäºSTD_YAWçš„æ ‡å‡†ç§»ä½ \n
-	*       2.è¯¥å‡½æ•°å¹¶ä¸èƒ½é€šè¿‡ç”µæœºè·å¾—é€Ÿåº¦å€¼ï¼ˆ6623æ˜¯ä¸åé¦ˆé€Ÿåº¦çš„ï¼‰é€Ÿåº¦å–é™€èºä»ªåé¦ˆé€Ÿåº¦ \n
-	* @par æ—¥å¿— 
-*				2019å¹´12æœˆ1æ—¥3:44:20 åŠ å…¥åŸå§‹ä½ç½®ä¿¡æ¯æˆå‘˜OriginalPositionï¼Œè¿™ä¸ªé‡æ²¡æœ‰ç»è¿‡CLOUD_STDæ ¡æ­£
+	* @brief  cloudÀàĞÍµÄ¸üĞÂº¯Êı
+	* @param [in]   Data[] ÖĞ¶Ï´«ÈëµÄ¸üĞÂÊı¾İ
+	* @note 1.¸Ãº¯Êı»á°ÑRealPosition½øĞĞ»ùÓÚSTD_YAWµÄ±ê×¼ÒÆÎ» \n
+	*       2.¸Ãº¯Êı²¢²»ÄÜÍ¨¹ıµç»ú»ñµÃËÙ¶ÈÖµ£¨6623ÊÇ²»·´À¡ËÙ¶ÈµÄ£©ËÙ¶ÈÈ¡ÍÓÂİÒÇ·´À¡ËÙ¶È \n
+	* @par ÈÕÖ¾ 
+*				2019Äê12ÔÂ1ÈÕ3:44:20 ¼ÓÈëÔ­Ê¼Î»ÖÃĞÅÏ¢³ÉÔ±OriginalPosition£¬Õâ¸öÁ¿Ã»ÓĞ¾­¹ıCLOUD_STDĞ£Õı
 */
 WEAK void cloud::update(uint8_t Data[])
 {
 	LastPosition=RealPosition;
 	LastTorque=RealCurrent;
 	LastSpeed=RealSpeed;
-	RealPosition=Data[0]<<8 | Data[1];  //å®é™…ä½ç½®
-	OriginalPosition = RealPosition; //åŸå§‹æ•°æ®
-	//æœºæ¢°è§’çš„çœŸå®å€¼éœ€è¦åšä¸€ä¸ªå¹³ç§» ä»¥ä¿è¯çœŸæ­£çš„0ä½ç½®æ˜¯è½¯ä»¶0ä½ç½®
+	RealPosition=Data[0]<<8 | Data[1];  //Êµ¼ÊÎ»ÖÃ
+	OriginalPosition = RealPosition; //Ô­Ê¼Êı¾İ
+	//»úĞµ½ÇµÄÕæÊµÖµĞèÒª×öÒ»¸öÆ½ÒÆ ÒÔ±£Ö¤ÕæÕıµÄ0Î»ÖÃÊÇÈí¼ş0Î»ÖÃ
 	if(RealPosition-CLOUD_STD<-4096)RealPosition = RealPosition-CLOUD_STD+8192;
 	else if(RealPosition-CLOUD_STD>4096)RealPosition = RealPosition-CLOUD_STD-8192;
 	else RealPosition = RealPosition-CLOUD_STD;
-	RealCurrent=Data[2]<<8 | Data[3];   //å®é™…è½¬çŸ©ç”µæµ
-	if(Gyro_RealSpeed != NULL) RealSpeed = *Gyro_RealSpeed;     //æœ‰å¤–éƒ¨æ•°æ®è¾“å…¥é€Ÿåº¦å–é™€èºä»ªé€Ÿåº¦
-	//æœºæ¢°è§’åšå·®é€Ÿåº¦éœ‡è¡å¥½ä¸¥é‡è€Œä¸”1mså‘¨æœŸç®—å‡ºæ¥çš„é€Ÿåº¦ä¹Ÿå¾ˆå°ï¼Œä¸€æ»¤æ³¢æ²¡äº†ï¼Œç®—äº†
-	else RealSpeed = (LastPosition - RealPosition + LastSpeed)/2; //æ— å¤–éƒ¨æ•°æ®è¾“å…¥æ ¹æ®ä½ç½®åç§»é‡æ±‚å–è§’é€Ÿåº¦,å¹¶åšå‡å€¼æ»¤æ³¢
-	LastUpdateTime=HAL_GetTick();  //æ›´æ–°æœ¬æ¬¡ç”µæœºæ•°æ®æœ€åæ›´æ–°çš„æ—¶é—´
-	RealAngle = RealPosition*360.f / MotorType->max_mechanical_position;//è½¬æ¢ä¸ºè§’åº¦
+	RealCurrent=Data[2]<<8 | Data[3];   //Êµ¼Ê×ª¾ØµçÁ÷
+	if(Gyro_RealSpeed != NULL) RealSpeed = *Gyro_RealSpeed;     //ÓĞÍâ²¿Êı¾İÊäÈëËÙ¶ÈÈ¡ÍÓÂİÒÇËÙ¶È
+	//»úĞµ½Ç×ö²îËÙ¶ÈÕğµ´ºÃÑÏÖØ¶øÇÒ1msÖÜÆÚËã³öÀ´µÄËÙ¶ÈÒ²ºÜĞ¡£¬Ò»ÂË²¨Ã»ÁË£¬ËãÁË
+	else RealSpeed = (LastPosition - RealPosition + LastSpeed)/2; //ÎŞÍâ²¿Êı¾İÊäÈë¸ù¾İÎ»ÖÃÆ«ÒÆÁ¿ÇóÈ¡½ÇËÙ¶È,²¢×ö¾ùÖµÂË²¨
+	LastUpdateTime=HAL_GetTick();  //¸üĞÂ±¾´Îµç»úÊı¾İ×îºó¸üĞÂµÄÊ±¼ä
+	RealAngle = RealPosition*360.f / MotorType->max_mechanical_position;//×ª»»Îª½Ç¶È
 }
 /** 
-* @brief  ç”µæœºè¿›è¡Œæ•°æ®å¤„ç†çš„å‡½æ•° è¯¥å‡½æ•°ä¼šåœ¨CANå‘é€å‰æ‰§è¡Œï¼Œä¸€èˆ¬ç”¨äºåˆ¤æ–­è¿è¡ŒçŠ¶æ€ï¼Œè¿è¡ŒPIDè®¡ç®—ç”µæµ
-* @par æ—¥å¿— 
+* @brief  µç»ú½øĞĞÊı¾İ´¦ÀíµÄº¯Êı ¸Ãº¯Êı»áÔÚCAN·¢ËÍÇ°Ö´ĞĞ£¬Ò»°ãÓÃÓÚÅĞ¶ÏÔËĞĞ×´Ì¬£¬ÔËĞĞPID¼ÆËãµçÁ÷
+* @par ÈÕÖ¾ 
 *
 */
 WEAK void cloud::Handle(void)
 {
 	switch(RunState)
 	{
-		case Speed_Ctl://ç”µæœºåœ¨ä»¥é€Ÿåº¦æ€è¿è¡Œ
+		case Speed_Ctl://µç»úÔÚÒÔËÙ¶ÈÌ¬ÔËĞĞ
 			Speed_Run();
 			break;
-		case Position_Ctl://è·¯ç¨‹
+		case Position_Ctl://Â·³Ì
 			Position_Run();
 			break;
-		case Gyro_Position_Ctl://é™€èºä»ªç‰¹å®šæ¨¡å¼ æ³¨æ„è¯¥çŠ¶æ€åªå…è®¸cloudç±»å‹æ‹¥æœ‰
+		case Gyro_Position_Ctl://ÍÓÂİÒÇÌØ¶¨Ä£Ê½ ×¢Òâ¸Ã×´Ì¬Ö»ÔÊĞícloudÀàĞÍÓµÓĞ
 			Gyro_Position_Run();
 			break;
-		case Gyro_Speed_Ctl://é™€èºä»ªç‰¹å®šæ¨¡å¼ æ³¨æ„è¯¥çŠ¶æ€åªå…è®¸cloudç±»å‹æ‹¥æœ‰
+		case Gyro_Speed_Ctl://ÍÓÂİÒÇÌØ¶¨Ä£Ê½ ×¢Òâ¸Ã×´Ì¬Ö»ÔÊĞícloudÀàĞÍÓµÓĞ
 			Gyro_Speed_Run();
 			break;
-		case Stop://åœæ­¢çŠ¶æ€
+		case Stop://Í£Ö¹×´Ì¬
 			Safe_Set();
 			break;
 		default:
-			Error_Code|=0x01;//ç”Ÿæˆé”™è¯¯ç 
+			Error_Code|=0x01;//Éú³É´íÎóÂë
 			Safe_Set();
 			break;
 	}
 }
 /** 
-	* @brief  ç”¨äºåˆ‡æ¢æœºæ¢°è§’pid
-	* @par æ—¥å¿— 2018.12.11åˆ›å»º
+	* @brief  ÓÃÓÚÇĞ»»»úĞµ½Çpid
+	* @par ÈÕÖ¾ 2018.12.11´´½¨
 	*
 */
 WEAK void cloud::Pid_Select(pid *PID_In_Select, pid *PID_Out_Select)
@@ -790,8 +790,8 @@ WEAK void cloud::Pid_Select(pid *PID_In_Select, pid *PID_Out_Select)
 	PID_Out = PID_Out_Select;
 }
 /** 
-	* @brief  ç”¨äºåˆ‡æ¢é™€èºä»ªpid
-	* @par æ—¥å¿— 2018.12.11åˆ›å»º
+	* @brief  ÓÃÓÚÇĞ»»ÍÓÂİÒÇpid
+	* @par ÈÕÖ¾ 2018.12.11´´½¨
 	*
 */
 WEAK void cloud::Gyro_Pid_Select(pid *Gyro_PID_In_Select, pid *Gyro_PID_Out_Select)
@@ -800,18 +800,18 @@ WEAK void cloud::Gyro_Pid_Select(pid *Gyro_PID_In_Select, pid *Gyro_PID_Out_Sele
 	Gyro_PID_Out = Gyro_PID_Out_Select;
 }
 /** 
-	* @brief  è½¯ä»¶é™ä½
-	* @par æ—¥å¿— 
-*				2019å¹´12æœˆ1æ—¥4:00:00 æŠŠè½¯ä»¶é™ä½è°ƒæ•´åˆ°çˆ¶ç±»cloudé‡Œé¢æ¥ï¼Œå¹¶åœ¨cloudç±»é‡Œé¢æ·»åŠ äº†é™ä½ç”¨çš„æˆå‘˜
+	* @brief  Èí¼şÏŞÎ»
+	* @par ÈÕÖ¾ 
+*				2019Äê12ÔÂ1ÈÕ4:00:00 °ÑÈí¼şÏŞÎ»µ÷Õûµ½¸¸ÀàcloudÀïÃæÀ´£¬²¢ÔÚcloudÀàÀïÃæÌí¼ÓÁËÏŞÎ»ÓÃµÄ³ÉÔ±
 */
 WEAK void cloud::Limit(float _max, float _min)
 {
 	max=_max;
 	min=_min;
 }
-/** ç»™å®šç”µæœºç›®æ ‡é€Ÿåº¦(æœºæ¢°è§’)
-	* @param [in]   Speed ç›®æ ‡é€Ÿåº¦
-	* @par æ—¥å¿—
+/** ¸ø¶¨µç»úÄ¿±êËÙ¶È(»úĞµ½Ç)
+	* @param [in]   Speed Ä¿±êËÙ¶È
+	* @par ÈÕÖ¾
 	*
 */
 WEAK void cloud::Speed_Set(float Speed)
@@ -820,10 +820,10 @@ WEAK void cloud::Speed_Set(float Speed)
 	TargetSpeed=Speed;
 }
 /** 
-	* @brief  ç”µæœºçš„ä½ç½®ç»™å®šå€¼(æœºæ¢°è§’)
-	* @param [in]   Target_Angle ç›®æ ‡è§’åº¦
-	* @par æ—¥å¿— 
-	*       V1.1 å½¢å‚è¡¨ç¤ºè§’åº¦ï¼Œå•ä½Â°
+	* @brief  µç»úµÄÎ»ÖÃ¸ø¶¨Öµ(»úĞµ½Ç)
+	* @param [in]   Target_Angle Ä¿±ê½Ç¶È
+	* @par ÈÕÖ¾ 
+	*       V1.1 ĞÎ²Î±íÊ¾½Ç¶È£¬µ¥Î»¡ã
 	*
 */
 WEAK void cloud::Angle_Set(float Target_Angle)
@@ -834,13 +834,13 @@ WEAK void cloud::Angle_Set(float Target_Angle)
 		TargetPosition = max;
 	if(TargetPosition <= min)
 		TargetPosition = min;
-	//TargetPosition=Target_Angle*MotorType->max_mechanical_position; //å…¼å®¹æ€§ä¿®æ”¹ï¼Œè®¾å®šè§’åº¦çš„æ—¶å€™ä¼ å…¥çš„è¦ä¸è¦æ¢æˆæœºæ¢°è§’æ•°å€¼ï¼Œè¿™é‡Œå¯¹åº”å…³ç³»æˆ‘å†æƒ³æƒ³
-	//è¿™é‡Œæ•ˆæœä¸å¥½åº”è¯¥ä¸æ˜¯ä¼ å…¥æ•°æ®é—®é¢˜ï¼Œæ˜¯å¤–ç¯å¾®åˆ†æ•°æ®æ²¡æœ‰è®¾ç½®å¥½ï¼Œéœ€è¦å¤–éƒ¨è‡ªå·±è®¾ç½®ä¸‹
+	//TargetPosition=Target_Angle*MotorType->max_mechanical_position; //¼æÈİĞÔĞŞ¸Ä£¬Éè¶¨½Ç¶ÈµÄÊ±ºò´«ÈëµÄÒª²»Òª»»³É»úĞµ½ÇÊıÖµ£¬ÕâÀï¶ÔÓ¦¹ØÏµÎÒÔÙÏëÏë
+	//ÕâÀïĞ§¹û²»ºÃÓ¦¸Ã²»ÊÇ´«ÈëÊı¾İÎÊÌâ£¬ÊÇÍâ»·Î¢·ÖÊı¾İÃ»ÓĞÉèÖÃºÃ£¬ĞèÒªÍâ²¿×Ô¼ºÉèÖÃÏÂ
 }
 /** 
-	* @brief  é€šè¿‡é™€èºä»ªæ¨¡å¼è®¾å®šé€Ÿåº¦
-	* @param [in]   TargetSpeed ç›®æ ‡é€Ÿåº¦å€¼ï¼Œè¯¥å˜é‡åº”æ¥è‡ªäºé™€èºä»ªçš„é€Ÿåº¦å€¼ 
-	* @par æ—¥å¿— 
+	* @brief  Í¨¹ıÍÓÂİÒÇÄ£Ê½Éè¶¨ËÙ¶È
+	* @param [in]   TargetSpeed Ä¿±êËÙ¶ÈÖµ£¬¸Ã±äÁ¿Ó¦À´×ÔÓÚÍÓÂİÒÇµÄËÙ¶ÈÖµ 
+	* @par ÈÕÖ¾ 
 */
 WEAK void cloud::Gyro_Speed_Set(float TargetSpeed)
 {
@@ -848,10 +848,10 @@ WEAK void cloud::Gyro_Speed_Set(float TargetSpeed)
 	Gyro_TargetSpeed=TargetSpeed;
 }
 /** 
-	* @brief  é€šè¿‡é™€èºä»ªæ¨¡å¼è®¾å®šè§’åº¦
-	* @param [in]   Target_Angle ç›®æ ‡è§’åº¦å€¼ï¼Œè¯¥å˜é‡åº”æ¥è‡ªäºé™€èºä»ªçš„è§’åº¦å€¼ 
-	* @par æ—¥å¿— 
-	*       V1.0 2018å¹´10æœˆ31æ—¥17:22:06 æ›´æ”¹å‡½æ•°æ¥å£ è¯¥å‡½æ•°ä»…ç”¨äºè®¾å®šæ•°æ®äº† ä¸å‚ä¸è¿ç®—
+	* @brief  Í¨¹ıÍÓÂİÒÇÄ£Ê½Éè¶¨½Ç¶È
+	* @param [in]   Target_Angle Ä¿±ê½Ç¶ÈÖµ£¬¸Ã±äÁ¿Ó¦À´×ÔÓÚÍÓÂİÒÇµÄ½Ç¶ÈÖµ 
+	* @par ÈÕÖ¾ 
+	*       V1.0 2018Äê10ÔÂ31ÈÕ17:22:06 ¸ü¸Äº¯Êı½Ó¿Ú ¸Ãº¯Êı½öÓÃÓÚÉè¶¨Êı¾İÁË ²»²ÎÓëÔËËã
 	*
 */
 WEAK void cloud::Gyro_Angle_Set(float Target_Angle)
@@ -864,89 +864,89 @@ WEAK void cloud::Gyro_Angle_Set(float Target_Angle)
 		Target_Angle = min;
 }
 /** 
-	* @brief  è®¾å®šç”µæœºé€Ÿåº¦PID(æœºæ¢°è§’)
-	* @note è¯¥å‡½æ•°ç”±åº“å†…éƒ¨æ‰˜ç®¡å¤„ç†
-	* @par æ—¥å¿—
-	     2018å¹´10æœˆ31æ—¥17:34:04 åˆ›å»ºè¯¥å‡½æ•°
-	     2018/12/18å¢åŠ éçº¿æ€§pidé€‚é…
+	* @brief  Éè¶¨µç»úËÙ¶ÈPID(»úĞµ½Ç)
+	* @note ¸Ãº¯ÊıÓÉ¿âÄÚ²¿ÍĞ¹Ü´¦Àí
+	* @par ÈÕÖ¾
+	     2018Äê10ÔÂ31ÈÕ17:34:04 ´´½¨¸Ãº¯Êı
+	     2018/12/18Ôö¼Ó·ÇÏßĞÔpidÊÊÅä
 	*
 */
 void cloud::Speed_Run(void)
 {
-	if(PID_In->ap==0 && PID_In->bp==0)//å†…ç¯pidä¸ºä¼ ç»Ÿpid
-		TargetCurrent = PID_In->pid_run(TargetSpeed - RealSpeed);             //ä¼ ç»Ÿpidè®¡ç®—
-	else TargetCurrent = PID_In->nonlinear_pid_run(TargetSpeed - RealSpeed);//éçº¿æ€§pidè®¡ç®—
-	if(Speed_F!=0)//ä½¿ç”¨äº†å‰é¦ˆæ§åˆ¶
+	if(PID_In->ap==0 && PID_In->bp==0)//ÄÚ»·pidÎª´«Í³pid
+		TargetCurrent = PID_In->pid_run(TargetSpeed - RealSpeed);             //´«Í³pid¼ÆËã
+	else TargetCurrent = PID_In->nonlinear_pid_run(TargetSpeed - RealSpeed);//·ÇÏßĞÔpid¼ÆËã
+	if(Speed_F!=0)//Ê¹ÓÃÁËÇ°À¡¿ØÖÆ
 	{
-		//å‰é¦ˆå¤„ç†æ®µ
-		Speed_LPF = LPF_NUM*(RealSpeed-LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//é€Ÿåº¦å‰é¦ˆä½é€šæ»¤æ³¢å™¨
-		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;                //æ­¤å¤„ç¬¬äºŒé¡¹ä¸ºé€Ÿåº¦ç¯å‰é¦ˆ
+		//Ç°À¡´¦Àí¶Î
+		Speed_LPF = LPF_NUM*(RealSpeed-LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//ËÙ¶ÈÇ°À¡µÍÍ¨ÂË²¨Æ÷
+		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;                //´Ë´¦µÚ¶şÏîÎªËÙ¶È»·Ç°À¡
 	}
 	InsertCurrent();
 }
 /** 
-	* @brief  è®¾å®šç”µæœºçš„ä½ç½®PID(æœºæ¢°è§’)
-	* @warning è¯¥å‡½æ•°çš„ä½ç½®ç¯æ— è·¯ç¨‹ç´¯è®¡æ•ˆåº”ï¼Œåªèƒ½ç”¨äºä¸è¶…è¿‡ä¸€åœˆçš„æ™®é€šäº‘å°ç”µæœº
-	* @retval  Current è¯¥ç”µæœºæ­¤æ—¶åº”è¯¥å‘é€çš„ç”µæµå€¼
-	* @note æ­¤å‡½æ•°ç”±manager::CANSendæ‰˜ç®¡
-	* @par æ—¥å¿— 
-          2018/12/18å¢åŠ éçº¿æ€§pidé€‚é…
+	* @brief  Éè¶¨µç»úµÄÎ»ÖÃPID(»úĞµ½Ç)
+	* @warning ¸Ãº¯ÊıµÄÎ»ÖÃ»·ÎŞÂ·³ÌÀÛ¼ÆĞ§Ó¦£¬Ö»ÄÜÓÃÓÚ²»³¬¹ıÒ»È¦µÄÆÕÍ¨ÔÆÌ¨µç»ú
+	* @retval  Current ¸Ãµç»ú´ËÊ±Ó¦¸Ã·¢ËÍµÄµçÁ÷Öµ
+	* @note ´Ëº¯ÊıÓÉmanager::CANSendÍĞ¹Ü
+	* @par ÈÕÖ¾ 
+          2018/12/18Ôö¼Ó·ÇÏßĞÔpidÊÊÅä
 	*
 */
 WEAK void cloud::Position_Run(void)
 {
-	if(PID_Out==NULL)while(1);                    //å¦‚æœæ²¡æœ‰å¤–ç¯pidçš„è¯ç›´æ¥æš´éœ²é”™è¯¯
-	//int16_t err = TargetPosition	-	RealPosition; //æ­¤æ—¶å¾—æ•°è¯¯å·®ä¸ºè·¯ç¨‹ç¯è¯¯å·®
-	float err = TargetPosition	-	RealPosition;		//æ­¤æ—¶å¾—æ•°è¯¯å·®ä¸ºè·¯ç¨‹ç¯è¯¯å·®
-	if(PID_Out->ap==0 && PID_Out->bp==0)          //å¤–ç¯pidä¸ºä¼ ç»Ÿpid
-		err=PID_Out->pid_run(err);                  //ä¼ ç»Ÿpidè®¡ç®—åæ­¤æ—¶errä¸ºç›®æ ‡é€Ÿåº¦
-	else err = PID_Out->nonlinear_pid_run(err);   //éçº¿æ€§pidè®¡ç®—åæ­¤æ—¶errä¸ºç›®æ ‡é€Ÿåº¦
+	if(PID_Out==NULL)while(1);                    //Èç¹ûÃ»ÓĞÍâ»·pidµÄ»°Ö±½Ó±©Â¶´íÎó
+	//int16_t err = TargetPosition	-	RealPosition; //´ËÊ±µÃÊıÎó²îÎªÂ·³Ì»·Îó²î
+	float err = TargetPosition	-	RealPosition;		//´ËÊ±µÃÊıÎó²îÎªÂ·³Ì»·Îó²î
+	if(PID_Out->ap==0 && PID_Out->bp==0)          //Íâ»·pidÎª´«Í³pid
+		err=PID_Out->pid_run(err);                  //´«Í³pid¼ÆËãºó´ËÊ±errÎªÄ¿±êËÙ¶È
+	else err = PID_Out->nonlinear_pid_run(err);   //·ÇÏßĞÔpid¼ÆËãºó´ËÊ±errÎªÄ¿±êËÙ¶È
 	TargetSpeed=err;
-	Speed_Run();//æŠŠç›®æ ‡é€Ÿåº¦æ”¾è¿›é€Ÿåº¦æ§åˆ¶é‡Œ
+	Speed_Run();//°ÑÄ¿±êËÙ¶È·Å½øËÙ¶È¿ØÖÆÀï
 }
 /** 
-	* @brief  è®¾å®šäº‘å°ç”µæœºé€Ÿåº¦çš„PIDè¿ç®—(é™€èºä»ª)
-	* @note è¯¥å‡½æ•°ç”±CAN_Send()æ‰˜ç®¡å¤„ç†
-	* @par æ—¥å¿— 
-	       2018å¹´11æœˆ27æ—¥19:44:19 æ–°å»ºè¯¥å‡½æ•°
-	       2018/12/18å¢åŠ éçº¿æ€§pidé€‚é…
+	* @brief  Éè¶¨ÔÆÌ¨µç»úËÙ¶ÈµÄPIDÔËËã(ÍÓÂİÒÇ)
+	* @note ¸Ãº¯ÊıÓÉCAN_Send()ÍĞ¹Ü´¦Àí
+	* @par ÈÕÖ¾ 
+	       2018Äê11ÔÂ27ÈÕ19:44:19 ĞÂ½¨¸Ãº¯Êı
+	       2018/12/18Ôö¼Ó·ÇÏßĞÔpidÊÊÅä
 */
 WEAK void cloud::Gyro_Speed_Run(void)
 {
-	while(this->Gyro_RealSpeed == NULL);//æœªæŒ‡å®šé™€èºä»ªé€Ÿåº¦æ•°æ®æºæš´éœ²é”™è¯¯
+	while(this->Gyro_RealSpeed == NULL);//Î´Ö¸¶¨ÍÓÂİÒÇËÙ¶ÈÊı¾İÔ´±©Â¶´íÎó
 	
-	if(Gyro_PID_In->ap==0 && Gyro_PID_In->bp==0)//å†…ç¯pidä¸ºä¼ ç»Ÿpid
-		TargetCurrent = Gyro_PID_In->pid_run(Gyro_TargetSpeed - *Gyro_RealSpeed);             //ä¼ ç»Ÿpidè®¡ç®—
-	else TargetCurrent = Gyro_PID_In->nonlinear_pid_run(Gyro_TargetSpeed - *Gyro_RealSpeed);//éçº¿æ€§pidè®¡ç®—
-	if(Speed_F!=0)//ä½¿ç”¨äº†å‰é¦ˆæ§åˆ¶
+	if(Gyro_PID_In->ap==0 && Gyro_PID_In->bp==0)//ÄÚ»·pidÎª´«Í³pid
+		TargetCurrent = Gyro_PID_In->pid_run(Gyro_TargetSpeed - *Gyro_RealSpeed);             //´«Í³pid¼ÆËã
+	else TargetCurrent = Gyro_PID_In->nonlinear_pid_run(Gyro_TargetSpeed - *Gyro_RealSpeed);//·ÇÏßĞÔpid¼ÆËã
+	if(Speed_F!=0)//Ê¹ÓÃÁËÇ°À¡¿ØÖÆ
 	{
-		//å‰é¦ˆå¤„ç†æ®µ
-		Speed_LPF = LPF_NUM*(*Gyro_RealSpeed-Gyro_LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//é€Ÿåº¦å‰é¦ˆä½é€šæ»¤æ³¢å™¨
-		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;//æ­¤å¤„ç¬¬äºŒé¡¹ä¸ºé€Ÿåº¦ç¯å‰é¦ˆ
+		//Ç°À¡´¦Àí¶Î
+		Speed_LPF = LPF_NUM*(*Gyro_RealSpeed-Gyro_LastSpeed) + (1-LPF_NUM)*(Speed_LPF);//ËÙ¶ÈÇ°À¡µÍÍ¨ÂË²¨Æ÷
+		TargetCurrent = TargetCurrent + Speed_LPF * Speed_F;//´Ë´¦µÚ¶şÏîÎªËÙ¶È»·Ç°À¡
 	}
 	InsertCurrent();
 }
 /** 
-	* @brief  è®¾å®šäº‘å°ç”µæœºè§’åº¦çš„PIDè¿ç®—(é™€èºä»ª)
-	* @note è¯¥å‡½æ•°ç”±CAN_Send()æ‰˜ç®¡å¤„ç†
-	* @par æ—¥å¿—
-          2018/12/18å¢åŠ éçº¿æ€§pidé€‚é…
+	* @brief  Éè¶¨ÔÆÌ¨µç»ú½Ç¶ÈµÄPIDÔËËã(ÍÓÂİÒÇ)
+	* @note ¸Ãº¯ÊıÓÉCAN_Send()ÍĞ¹Ü´¦Àí
+	* @par ÈÕÖ¾
+          2018/12/18Ôö¼Ó·ÇÏßĞÔpidÊÊÅä
 */
 WEAK void cloud::Gyro_Position_Run(void)
 {
-	if(Gyro_PID_Out==NULL)while(1);//å¦‚æœæ²¡æœ‰å¤–ç¯pidçš„è¯ç›´æ¥æš´éœ²é”™è¯¯
-	while(Gyro_RealAngle == NULL);//æœªæŒ‡å®šé™€èºä»ªä½ç½®æ•°æ®æº,æš´éœ²é”™è¯¯
-	//int16_t err = 50 * (Gyro_TargetAngle-*Gyro_RealAngle);//ç¡®å®šè¯¯å·®
-	float err = Gyro_TargetAngle-*Gyro_RealAngle;//ç¡®å®šè¯¯å·®
-	if(Gyro_PID_Out->ap==0 && Gyro_PID_Out->bp==0)  //å¤–ç¯pidä¸ºä¼ ç»Ÿpid
-		err=Gyro_PID_Out->pid_run(err);               //ä¼ ç»Ÿpidè®¡ç®—åæ­¤æ—¶errä¸ºç›®æ ‡é€Ÿåº¦
-	else err = Gyro_PID_Out->nonlinear_pid_run(err);//éçº¿æ€§pidè®¡ç®—åæ­¤æ—¶errä¸ºç›®æ ‡é€Ÿåº¦
+	if(Gyro_PID_Out==NULL)while(1);//Èç¹ûÃ»ÓĞÍâ»·pidµÄ»°Ö±½Ó±©Â¶´íÎó
+	while(Gyro_RealAngle == NULL);//Î´Ö¸¶¨ÍÓÂİÒÇÎ»ÖÃÊı¾İÔ´,±©Â¶´íÎó
+	//int16_t err = 50 * (Gyro_TargetAngle-*Gyro_RealAngle);//È·¶¨Îó²î
+	float err = Gyro_TargetAngle-*Gyro_RealAngle;//È·¶¨Îó²î
+	if(Gyro_PID_Out->ap==0 && Gyro_PID_Out->bp==0)  //Íâ»·pidÎª´«Í³pid
+		err=Gyro_PID_Out->pid_run(err);               //´«Í³pid¼ÆËãºó´ËÊ±errÎªÄ¿±êËÙ¶È
+	else err = Gyro_PID_Out->nonlinear_pid_run(err);//·ÇÏßĞÔpid¼ÆËãºó´ËÊ±errÎªÄ¿±êËÙ¶È
 	Gyro_TargetSpeed = err;
-	Gyro_Speed_Run();//æŠŠç›®æ ‡é€Ÿåº¦æ”¾è¿›é€Ÿåº¦æ§åˆ¶é‡Œ
+	Gyro_Speed_Run();//°ÑÄ¿±êËÙ¶È·Å½øËÙ¶È¿ØÖÆÀï
 }
 /** 
-	* @brief  æ ¹æ®ä¼˜å…ˆçº§æŠŠè¦å‘é€çš„ç”µæµå€¼é€å…¥åˆ—è¡¨ä¸­ç­‰å¾…å‘é€
-	* @par æ—¥å¿— 
+	* @brief  ¸ù¾İÓÅÏÈ¼¶°ÑÒª·¢ËÍµÄµçÁ÷ÖµËÍÈëÁĞ±íÖĞµÈ´ı·¢ËÍ
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void cloud::InsertCurrent(void)
@@ -957,8 +957,8 @@ WEAK void cloud::InsertCurrent(void)
 		CAN2CurrentList[can_code%100] = TargetCurrent;
 }
 /** 
-	* @brief  å¯¹è¯¥ç”µæœºæ‰§è¡Œå®‰å…¨æŒ‡ä»¤
-	* @par æ—¥å¿— 
+	* @brief  ¶Ô¸Ãµç»úÖ´ĞĞ°²È«Ö¸Áî
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void cloud::Safe_Set(void)
@@ -967,89 +967,89 @@ WEAK void cloud::Safe_Set(void)
 	TargetCurrent=0;
 	InsertCurrent();
 }
-////*******************************************softcloudç±»***********************************************************************////
+////*******************************************softcloudÀà***********************************************************************////
 /** 
-	* @brief  æ›´æ–°ç”µæœºå€¼ åŒ…æ‹¬äº†è½¯è·¯ç¨‹çš„è§£ç®—
+	* @brief  ¸üĞÂµç»úÖµ °üÀ¨ÁËÈíÂ·³ÌµÄ½âËã
 	* @retval  none
-	* @par æ—¥å¿— 
-	*					2019å¹´12æœˆ1æ—¥3:44:20 åŠ å…¥åŸå§‹ä½ç½®ä¿¡æ¯æˆå‘˜OriginalPositionï¼Œè¿™ä¸ªé‡æ²¡æœ‰ç»è¿‡CLOUD_STDæ ¡æ­£
+	* @par ÈÕÖ¾ 
+	*					2019Äê12ÔÂ1ÈÕ3:44:20 ¼ÓÈëÔ­Ê¼Î»ÖÃĞÅÏ¢³ÉÔ±OriginalPosition£¬Õâ¸öÁ¿Ã»ÓĞ¾­¹ıCLOUD_STDĞ£Õı
 */
 WEAK void softcloud::update(uint8_t Data[])
 {
 	LastPosition=RealPosition;
 	LastTorque=RealCurrent;
 	LastSpeed=RealSpeed;
-	RealPosition=Data[0]<<8 | Data[1];  //å®é™…ä½ç½®
-	OriginalPosition = RealPosition; //åŸå§‹ä½ç½®æ•°æ®ï¼Œæ²¡æœ‰ç»è¿‡æ ¡æ­£
-	//æœºæ¢°è§’çš„çœŸå®å€¼éœ€è¦åšä¸€ä¸ªå¹³ç§» ä»¥ä¿è¯çœŸæ­£çš„0ä½ç½®æ˜¯è½¯ä»¶0ä½ç½®
+	RealPosition=Data[0]<<8 | Data[1];  //Êµ¼ÊÎ»ÖÃ
+	OriginalPosition = RealPosition; //Ô­Ê¼Î»ÖÃÊı¾İ£¬Ã»ÓĞ¾­¹ıĞ£Õı
+	//»úĞµ½ÇµÄÕæÊµÖµĞèÒª×öÒ»¸öÆ½ÒÆ ÒÔ±£Ö¤ÕæÕıµÄ0Î»ÖÃÊÇÈí¼ş0Î»ÖÃ
 	if(RealPosition-CLOUD_STD<(-MotorType->max_mechanical_position/2))
 		RealPosition = RealPosition - CLOUD_STD + MotorType->max_mechanical_position;
 	else if(RealPosition-CLOUD_STD>(MotorType->max_mechanical_position/2))
 		RealPosition = RealPosition - CLOUD_STD - MotorType->max_mechanical_position;
 	else RealPosition = RealPosition-CLOUD_STD;
-	RealCurrent=Data[4]<<8 | Data[5];   //å®é™…è½¬çŸ©ç”µæµ
-	if(Gyro_RealSpeed != NULL) RealSpeed = *Gyro_RealSpeed;     //æœ‰å¤–éƒ¨æ•°æ®è¾“å…¥é€Ÿåº¦å–é™€èºä»ªé€Ÿåº¦
+	RealCurrent=Data[4]<<8 | Data[5];   //Êµ¼Ê×ª¾ØµçÁ÷
+	if(Gyro_RealSpeed != NULL) RealSpeed = *Gyro_RealSpeed;     //ÓĞÍâ²¿Êı¾İÊäÈëËÙ¶ÈÈ¡ÍÓÂİÒÇËÙ¶È
 	else RealSpeed = (int16_t)(Data[2]<<8 | Data[3]);
 	
-	LastUpdateTime=HAL_GetTick();  //æ›´æ–°æœ¬æ¬¡ç”µæœºæ•°æ®æœ€åæ›´æ–°çš„æ—¶é—´
-	if(running_flag==0)//å¤„ç†ç¬¬ä¸€æ¬¡
+	LastUpdateTime=HAL_GetTick();  //¸üĞÂ±¾´Îµç»úÊı¾İ×îºó¸üĞÂµÄÊ±¼ä
+	if(running_flag==0)//´¦ÀíµÚÒ»´Î
 	{
 		LastPosition=RealPosition;
 		running_flag=1;
 	}
-	if((RealPosition-LastPosition) > (MotorType->max_mechanical_position/2))//åœˆæ•°ç´¯è®¡
+	if((RealPosition-LastPosition) > (MotorType->max_mechanical_position/2))//È¦ÊıÀÛ¼Æ
 		Soft_RealPosition--;
-	else if((RealPosition-LastPosition) < (-MotorType->max_mechanical_position/2))//åœˆæ•°ç´¯è®¡
+	else if((RealPosition-LastPosition) < (-MotorType->max_mechanical_position/2))//È¦ÊıÀÛ¼Æ
 		Soft_RealPosition++;
-	RealAngle = /*åœˆæ•°å¯¹åº”è§’åº¦*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
-							+ /*å•åœˆå†…è§’åº¦*/1.0f*RealPosition / (MotorType->max_mechanical_position * MotorType->Reduction_ratio )*360;//è½¬æ¢ä¸ºè§’åº¦
+	RealAngle = /*È¦Êı¶ÔÓ¦½Ç¶È*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
+							+ /*µ¥È¦ÄÚ½Ç¶È*/1.0f*RealPosition / (MotorType->max_mechanical_position * MotorType->Reduction_ratio )*360;//×ª»»Îª½Ç¶È
 }
 /** 
-* @brief  ç”µæœºè¿›è¡Œæ•°æ®å¤„ç†çš„å‡½æ•° è¯¥å‡½æ•°ä¼šåœ¨CANå‘é€å‰æ‰§è¡Œï¼Œä¸€èˆ¬ç”¨äºåˆ¤æ–­è¿è¡ŒçŠ¶æ€ï¼Œè¿è¡ŒPIDè®¡ç®—ç”µæµ
-* @par æ—¥å¿— 
+* @brief  µç»ú½øĞĞÊı¾İ´¦ÀíµÄº¯Êı ¸Ãº¯Êı»áÔÚCAN·¢ËÍÇ°Ö´ĞĞ£¬Ò»°ãÓÃÓÚÅĞ¶ÏÔËĞĞ×´Ì¬£¬ÔËĞĞPID¼ÆËãµçÁ÷
+* @par ÈÕÖ¾ 
 *
 */
 WEAK void softcloud::Handle(void)
 {
 	switch(RunState)
 	{
-		case Speed_Ctl://ç”µæœºåœ¨ä»¥é€Ÿåº¦æ€è¿è¡Œ
+		case Speed_Ctl://µç»úÔÚÒÔËÙ¶ÈÌ¬ÔËĞĞ
 			Speed_Run();
 			break;
-		case Position_Ctl://è·¯ç¨‹
+		case Position_Ctl://Â·³Ì
 			Position_Run();
 			break;
-		case Gyro_Position_Ctl://é™€èºä»ªç‰¹å®šæ¨¡å¼ æ³¨æ„è¯¥çŠ¶æ€åªå…è®¸cloudç±»å‹æ‹¥æœ‰
+		case Gyro_Position_Ctl://ÍÓÂİÒÇÌØ¶¨Ä£Ê½ ×¢Òâ¸Ã×´Ì¬Ö»ÔÊĞícloudÀàĞÍÓµÓĞ
 			Gyro_Position_Run();
 			break;
-		case Gyro_Speed_Ctl://é™€èºä»ªç‰¹å®šæ¨¡å¼ æ³¨æ„è¯¥çŠ¶æ€åªå…è®¸cloudç±»å‹æ‹¥æœ‰
+		case Gyro_Speed_Ctl://ÍÓÂİÒÇÌØ¶¨Ä£Ê½ ×¢Òâ¸Ã×´Ì¬Ö»ÔÊĞícloudÀàĞÍÓµÓĞ
 			Gyro_Speed_Run();
 			break;
-		case Stop://åœæ­¢çŠ¶æ€
+		case Stop://Í£Ö¹×´Ì¬
 			Safe_Set();
 			break;
 		default:
-			Error_Code|=0x01;//ç”Ÿæˆé”™è¯¯ç 
+			Error_Code|=0x01;//Éú³É´íÎóÂë
 			Safe_Set();
 			break;
 	}
 }
 /** 
-	* @brief   æœ‰å‚æ•°çš„ä½ç½®ç¯ç¡®å®š ä¼šä½¿å…¶ç§»åŠ¨åˆ°æŒ‡å®šä½ç½®
-	* @param [in]   Target_Angle ç›®æ ‡è§’åº¦
-	* @retval  ç”µæµå€¼
-	* @par æ—¥å¿— 
-*				2019å¹´12æœˆ1æ—¥3:55:20 å¯¹ç›®æ ‡è§’åº¦è¿›è¡Œäº†é™å¹…
+	* @brief   ÓĞ²ÎÊıµÄÎ»ÖÃ»·È·¶¨ »áÊ¹ÆäÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ
+	* @param [in]   Target_Angle Ä¿±ê½Ç¶È
+	* @retval  µçÁ÷Öµ
+	* @par ÈÕÖ¾ 
+*				2019Äê12ÔÂ1ÈÕ3:55:20 ¶ÔÄ¿±ê½Ç¶È½øĞĞÁËÏŞ·ù
 */
 WEAK void softcloud::Angle_Set(float Target_Angle)
 {
   RunState=Position_Ctl;
-//	if(Target_Angle>max)Target_Angle=max;//å¯¹ç›®æ ‡è§’åº¦é™å¹…
+//	if(Target_Angle>max)Target_Angle=max;//¶ÔÄ¿±ê½Ç¶ÈÏŞ·ù
 //	if(Target_Angle<min)Target_Angle=min;
-//	Target_Angle=Target_Angle*MotorType->Reduction_ratio/360;//å¾—åˆ°ç”µæœºå‡é€Ÿå‰ç›®æ ‡åœˆæ•°
-//	TargetPosition=(Target_Angle-(int32_t)Target_Angle)*MotorType->max_mechanical_position;//å°æ•°éƒ¨åˆ† å‡é€Ÿå‰å•åœˆä½ç½®
-////	Soft_TargetPosition=(int32_t)Target_Angle/360.f;//æ•´æ•°éƒ¨åˆ† å³å‡é€Ÿå‰åœˆæ•°
-//	Soft_TargetPosition=Soft_RealPosition;//ç”±äº360äº‘å°æœºæ¢°è§’æ¨¡å¼ä¸éœ€è¦å¤šåœˆï¼Œæ­¤å¤„ç›®æ ‡åœˆæ•°ç½®ä¸ºå½“å‰åœˆæ•°ï¼Œé˜²æ­¢äº‘å°è½¬åŠ¨å¤šåœˆåäº‘å°ç–¯ç‹‚å›è½¬
+//	Target_Angle=Target_Angle*MotorType->Reduction_ratio/360;//µÃµ½µç»ú¼õËÙÇ°Ä¿±êÈ¦Êı
+//	TargetPosition=(Target_Angle-(int32_t)Target_Angle)*MotorType->max_mechanical_position;//Ğ¡Êı²¿·Ö ¼õËÙÇ°µ¥È¦Î»ÖÃ
+////	Soft_TargetPosition=(int32_t)Target_Angle/360.f;//ÕûÊı²¿·Ö ¼´¼õËÙÇ°È¦Êı
+//	Soft_TargetPosition=Soft_RealPosition;//ÓÉÓÚ360ÔÆÌ¨»úĞµ½ÇÄ£Ê½²»ĞèÒª¶àÈ¦£¬´Ë´¦Ä¿±êÈ¦ÊıÖÃÎªµ±Ç°È¦Êı£¬·ÀÖ¹ÔÆÌ¨×ª¶¯¶àÈ¦ºóÔÆÌ¨·è¿ñ»Ø×ª
 //	if(TargetPosition>MotorType->max_mechanical_position/2)
 //	{
 //		TargetPosition -= MotorType->max_mechanical_position;
@@ -1057,51 +1057,51 @@ WEAK void softcloud::Angle_Set(float Target_Angle)
 	if(Target_Angle >= max)
 		Target_Angle = max;
 	if(Target_Angle <= min)
-		Target_Angle = min;  //å¯¹è§’åº¦è®¾å®šå€¼è¿›è¡Œé™å¹…
+		Target_Angle = min;  //¶Ô½Ç¶ÈÉè¶¨Öµ½øĞĞÏŞ·ù
 	TargetAngle = Target_Angle;
 }
 /** 
-	* @brief   æ— å‚æ•°çš„ä½ç½®ç¯+é€Ÿåº¦ç¯è¿ç®—
-	* @retval  ç”µæµå€¼
-	* @note   è¯¥å‡½æ•°é‡å†™çˆ¶ç±»å‡½æ•°ï¼Œåœ¨cansendå¾ªç¯è°ƒç”¨ä¸å¯æ”¹å
-	* @par æ—¥å¿—
+	* @brief   ÎŞ²ÎÊıµÄÎ»ÖÃ»·+ËÙ¶È»·ÔËËã
+	* @retval  µçÁ÷Öµ
+	* @note   ¸Ãº¯ÊıÖØĞ´¸¸Ààº¯Êı£¬ÔÚcansendÑ­»·µ÷ÓÃ²»¿É¸ÄÃû
+	* @par ÈÕÖ¾
 */
 WEAK void softcloud::Position_Run(void)
 {
-  if(PID_Out==NULL)while(1);//æš´éœ²é”™è¯¯ï¼Œä½ æ²¡æœ‰å¤–ç¯è¿˜æƒ³ç”¨ä½ç½®PID?
+  if(PID_Out==NULL)while(1);//±©Â¶´íÎó£¬ÄãÃ»ÓĞÍâ»·»¹ÏëÓÃÎ»ÖÃPID?
 	int32_t err=0;
-	err = (TargetAngle-RealAngle)*MotorType->max_mechanical_position/360;     //å¾—åˆ°è¯¯å·®
-	//err=TargetPosition-RealPosition;     //å¾—åˆ°å•åœˆè¯¯å·®
-	//err+=MotorType->max_mechanical_position*(Soft_TargetPosition-Soft_RealPosition);//åŠ ä¸Šåœˆæ•°ä½ç½®è¯¯å·®
-	if(PID_Out->ap==0 && PID_Out->bp==0)               //å¤–ç¯pidä¸ºä¼ ç»Ÿpid
-		TargetSpeed=PID_Out->pid_run(err);               //ä¼ ç»Ÿpidè®¡ç®—å¾—åˆ°ç›®æ ‡é€Ÿåº¦
-	else TargetSpeed = PID_Out->nonlinear_pid_run(err);//éçº¿æ€§pidè®¡ç®—åå¾—åˆ°ç›®æ ‡é€Ÿåº¦
-	if(PID_In->ap==0 && PID_In->bp==0)                 //å†…ç¯pidä¸ºä¼ ç»Ÿpid
-		TargetCurrent=PID_In->pid_run(TargetSpeed-RealSpeed);                //ä¼ ç»Ÿpidè®¡ç®—å¾—åˆ°ç›®æ ‡ç”µæµ
-	else TargetCurrent = PID_In->nonlinear_pid_run(TargetSpeed-RealSpeed); //éçº¿æ€§pidè®¡ç®—åå¾—åˆ°ç›®æ ‡ç”µæµ
+	err = (TargetAngle-RealAngle)*MotorType->max_mechanical_position/360;     //µÃµ½Îó²î
+	//err=TargetPosition-RealPosition;     //µÃµ½µ¥È¦Îó²î
+	//err+=MotorType->max_mechanical_position*(Soft_TargetPosition-Soft_RealPosition);//¼ÓÉÏÈ¦ÊıÎ»ÖÃÎó²î
+	if(PID_Out->ap==0 && PID_Out->bp==0)               //Íâ»·pidÎª´«Í³pid
+		TargetSpeed=PID_Out->pid_run(err);               //´«Í³pid¼ÆËãµÃµ½Ä¿±êËÙ¶È
+	else TargetSpeed = PID_Out->nonlinear_pid_run(err);//·ÇÏßĞÔpid¼ÆËãºóµÃµ½Ä¿±êËÙ¶È
+	if(PID_In->ap==0 && PID_In->bp==0)                 //ÄÚ»·pidÎª´«Í³pid
+		TargetCurrent=PID_In->pid_run(TargetSpeed-RealSpeed);                //´«Í³pid¼ÆËãµÃµ½Ä¿±êµçÁ÷
+	else TargetCurrent = PID_In->nonlinear_pid_run(TargetSpeed-RealSpeed); //·ÇÏßĞÔpid¼ÆËãºóµÃµ½Ä¿±êµçÁ÷
 	InsertCurrent();
 }
 chassis* chassis::point;
-////*******************************************å…¨æ–°åº•ç›˜ç±»********************************************************************////
+////*******************************************È«ĞÂµ×ÅÌÀà********************************************************************////
 /** 
-	* @brief  åº•ç›˜å¯¹è±¡æ„å»ºå‡½æ•°
-	* @param [in]   can_num CANåºå· å¯é€‰å€¼1 2 
-	* @param [in]   First_can_id åº•ç›˜ç”µæœºçš„ç¬¬ä¸€ä¸ªidå· å¦‚è¾“å…¥0x201 åˆ™åº•ç›˜ä¸º0x201,0x202,0x203,0x204
-	* @param [in]   *motor_type ç”µæœºç±»å‹ç»“æ„ä½“æŒ‡é’ˆ
-	* @param [in]   speed_pid é€Ÿåº¦ç¯PIDæŒ‡é’ˆ
-  * @param [in]   current_pid ç”µæµç¯PIDæŒ‡é’ˆ å¯ä»¥ä¸ºç©º ä¸ºç©ºåˆ™è¡¨ç¤ºè¯¥è½¦ä¸é™åŠŸç‡
-  * @param [in]   CurrentSource ç”µæµæ•°æ®æ¥æº å¯ä»¥ä¸ºç©º åŒä¸Š
-  * @param [in]   extra_power_pid é¢å¤–åŠŸç‡PIDæŒ‡é’ˆ å¯ä»¥ä¸ºç©º åŒä¸Š
-	* @retval  OK  æˆåŠŸ 
-	* @retval  ERROR   é”™è¯¯  
-	* @par æ—¥å¿— 
+	* @brief  µ×ÅÌ¶ÔÏó¹¹½¨º¯Êı
+	* @param [in]   can_num CANĞòºÅ ¿ÉÑ¡Öµ1 2 
+	* @param [in]   First_can_id µ×ÅÌµç»úµÄµÚÒ»¸öidºÅ ÈçÊäÈë0x201 Ôòµ×ÅÌÎª0x201,0x202,0x203,0x204
+	* @param [in]   *motor_type µç»úÀàĞÍ½á¹¹ÌåÖ¸Õë
+	* @param [in]   speed_pid ËÙ¶È»·PIDÖ¸Õë
+  * @param [in]   current_pid µçÁ÷»·PIDÖ¸Õë ¿ÉÒÔÎª¿Õ Îª¿ÕÔò±íÊ¾¸Ã³µ²»ÏŞ¹¦ÂÊ
+  * @param [in]   CurrentSource µçÁ÷Êı¾İÀ´Ô´ ¿ÉÒÔÎª¿Õ Í¬ÉÏ
+  * @param [in]   extra_power_pid ¶îÍâ¹¦ÂÊPIDÖ¸Õë ¿ÉÒÔÎª¿Õ Í¬ÉÏ
+	* @retval  OK  ³É¹¦ 
+	* @retval  ERROR   ´íÎó  
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK chassis::chassis(uint8_t can_num, uint16_t First_can_id, Motor_t *motor_type,pid *speed_pid, pid *current_pid, int16_t *CurrentSource, pid *extra_power_pid):Pid_extra_power(extra_power_pid)
 {
 	if(point==NULL)point=this;
-	else while(1);//èµ°åˆ°è¿™é‡Œè¯´æ˜æ‚¨å£°æ˜äº†2ä¸ªæˆ–ä»¥ä¸Šçš„åº•ç›˜å¯¹è±¡äº†ï¼
-	//å¡«å……åº•ç›˜çš„è½®å­å’Œpidçš„vector å¡«å……4ä¸ª
+	else while(1);//×ßµ½ÕâÀïËµÃ÷ÄúÉùÃ÷ÁË2¸ö»òÒÔÉÏµÄµ×ÅÌ¶ÔÏóÁË£¡
+	//Ìî³äµ×ÅÌµÄÂÖ×ÓºÍpidµÄvector Ìî³ä4¸ö
 	for(uint8_t i=0;i<4;i++)
 	{
 		Pid_spe[i]=new pid(*speed_pid);
@@ -1110,15 +1110,15 @@ WEAK chassis::chassis(uint8_t can_num, uint16_t First_can_id, Motor_t *motor_typ
 		if(CurrentSource!=NULL)this->CurrentSource[i]=CurrentSource+i;
         else this->CurrentSource[i]=NULL;
 		Motor[i]=new softmotor(can_num, First_can_id+i, motor_type, Pid_spe[i], NULL);
-		//Motor[i]->cooperative=1;//å£°æ˜è¯¥ç”µæœºä¸ºåº•ç›˜æœºæ„çš„ä¸€éƒ¨åˆ†ï¼Œä¸ä½¿ç”¨å•ç‹¬çš„å‘é€å‡½æ•°
+		//Motor[i]->cooperative=1;//ÉùÃ÷¸Ãµç»úÎªµ×ÅÌ»ú¹¹µÄÒ»²¿·Ö£¬²»Ê¹ÓÃµ¥¶ÀµÄ·¢ËÍº¯Êı
 	}
 }
 /** 
-	* @brief  åº•ç›˜è¿åŠ¨æ§åˆ¶å‡½æ•°
-	* @param [in]   Vx xè½´è¿åŠ¨é€Ÿåº¦
-	* @param [in]   Vy yè½´è¿åŠ¨é€Ÿåº¦
-	* @param [in]   Omega æ—‹è½¬é€Ÿåº¦
-	* @par æ—¥å¿— 
+	* @brief  µ×ÅÌÔË¶¯¿ØÖÆº¯Êı
+	* @param [in]   Vx xÖáÔË¶¯ËÙ¶È
+	* @param [in]   Vy yÖáÔË¶¯ËÙ¶È
+	* @param [in]   Omega Ğı×ªËÙ¶È
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void chassis::Run(float Vx, float Vy, float Omega)
@@ -1131,13 +1131,13 @@ WEAK void chassis::Run(float Vx, float Vy, float Omega)
 	int16_t Speed[4];
 	uint8_t index;
 	
-	//é•¿æ–¹å½¢éº¦è½®åº•ç›˜çš„é€†è¿åŠ¨å­¦æ¨¡å‹
+	//³¤·½ĞÎÂóÂÖµ×ÅÌµÄÄæÔË¶¯Ñ§Ä£ĞÍ
 	Buffer[0] = (Vx + Vy + Omega);
 	Buffer[1] = (Vx - Vy - Omega);
 	Buffer[2] = (Vx - Vy + Omega);
 	Buffer[3] = (Vx + Vy - Omega);
 	
-	//æ±‚è®¾å®šå€¼ä¸­çš„æœ€å¤§å€¼
+	//ÇóÉè¶¨ÖµÖĞµÄ×î´óÖµ
 	for(index=0, MaxSpeed=0; index<4; index++)
 	{
 		if((Buffer[index]>0 ? Buffer[index] : -Buffer[index]) > MaxSpeed)
@@ -1145,7 +1145,7 @@ WEAK void chassis::Run(float Vx, float Vy, float Omega)
 			MaxSpeed = (Buffer[index]>0 ? Buffer[index] : -Buffer[index]);
 		}
 	}
-	//è‹¥é€Ÿåº¦è®¾å®šå€¼è¶…è¿‡åº•ç›˜å…è®¸æœ€å¤§é€Ÿåº¦ï¼Œåˆ™ç­‰æ¯”å‡å°é€Ÿåº¦è®¾å®šå€¼
+	//ÈôËÙ¶ÈÉè¶¨Öµ³¬¹ıµ×ÅÌÔÊĞí×î´óËÙ¶È£¬ÔòµÈ±È¼õĞ¡ËÙ¶ÈÉè¶¨Öµ
 	if(ChassisMax < MaxSpeed)
 	{
 		proportion = (float)ChassisMax / MaxSpeed;
@@ -1166,35 +1166,35 @@ WEAK void chassis::Run(float Vx, float Vy, float Omega)
 		Motor[i]->Speed_Set(Speed[i]);
 	}
 }
-WEAK void chassis::Run(void) //ä¸å¸¦å‚æ•°çš„Runä»£è¡¨ä¿æŒåŸé€Ÿåº¦è¿›è¡Œ
+WEAK void chassis::Run(void) //²»´ø²ÎÊıµÄRun´ú±í±£³ÖÔ­ËÙ¶È½øĞĞ
 {
 	this->Run(Last_Vx, Last_Vy, Last_Omega);
 }
-WEAK void chassis::Safe()//ä¸æ˜¯åˆ¶åŠ¨
+WEAK void chassis::Safe()//²»ÊÇÖÆ¶¯
 {
 	for(uint8_t i=0; i<4; i++)
 		Motor[i]->Safe_Set();
 }
 /** 
-* @brief  åº•ç›˜çš„æ‰˜ç®¡å¤„ç†ç¨‹åº å»ºè®®ä¿æŒå’ŒCANSendåŒå‘¨æœŸæ‰§è¡Œ éœ€è¦æ‰‹åŠ¨åœ¨UserHandleä¸­è°ƒç”¨
-* @par æ—¥å¿— 
-*   2019å¹´3æœˆ9æ—¥16:48:07 è¯¥å‡½æ•°è¢«åˆ›å»º
-*   2019å¹´3æœˆ19æ—¥15:37:36 éœ€è¦åœ¨CarDriver_Config.hppä¸­æ·»åŠ LIMIT_Pçš„å®šä¹‰ï¼Œå¦åˆ™ä¼šæŠ¥é”™
+* @brief  µ×ÅÌµÄÍĞ¹Ü´¦Àí³ÌĞò ½¨Òé±£³ÖºÍCANSendÍ¬ÖÜÆÚÖ´ĞĞ ĞèÒªÊÖ¶¯ÔÚUserHandleÖĞµ÷ÓÃ
+* @par ÈÕÖ¾ 
+*   2019Äê3ÔÂ9ÈÕ16:48:07 ¸Ãº¯Êı±»´´½¨
+*   2019Äê3ÔÂ19ÈÕ15:37:36 ĞèÒªÔÚCarDriver_Config.hppÖĞÌí¼ÓLIMIT_PµÄ¶¨Òå£¬·ñÔò»á±¨´í
 */
 WEAK void chassis::Handle()
 {
-	//ä»¥é¦–ç”µæœºç¡®è®¤è½¦è¾†æ˜¯å¦å¤„äºéåœæ­¢çŠ¶æ€æˆ–ä¸éœ€è¦é™åˆ¶åŠŸç‡
+	//ÒÔÊ×µç»úÈ·ÈÏ³µÁ¾ÊÇ·ñ´¦ÓÚ·ÇÍ£Ö¹×´Ì¬»ò²»ĞèÒªÏŞÖÆ¹¦ÂÊ
 	if(Motor[0]->RunState==0 || Pid_current[0]==NULL)return;
-	//æ³¨æ„ï¼šè¯¥é»˜è®¤å¤„ç†å‡½æ•°ä¸ºä»…ä¿è¯åŠŸç‡é™åˆ¶çš„åŠŸèƒ½ï¼Œå¹¶ä¸”ç”µæºç”µå‹ä¸ºå¸¸é‡ï¼Œéœ€è¦åŠ å…¥è¶…çº§ç”µå®¹æˆ–ç”µæºå˜åŒ–çš„è¯éœ€è¦é‡å†™
+	//×¢Òâ£º¸ÃÄ¬ÈÏ´¦Àíº¯ÊıÎª½ö±£Ö¤¹¦ÂÊÏŞÖÆµÄ¹¦ÄÜ£¬²¢ÇÒµçÔ´µçÑ¹Îª³£Á¿£¬ĞèÒª¼ÓÈë³¬¼¶µçÈİ»òµçÔ´±ä»¯µÄ»°ĞèÒªÖØĞ´
 	float calcPower = 0;
 	uint8_t i;    
-	for(i=0; i<4; i++)//æŒ‰ç…§å››ä¸ªè½®å­çš„åŠŸç‡è®¡ç®—éœ€è¦å—é™çš„åŠŸç‡
+	for(i=0; i<4; i++)//°´ÕÕËÄ¸öÂÖ×ÓµÄ¹¦ÂÊ¼ÆËãĞèÒªÊÜÏŞµÄ¹¦ÂÊ
 		calcPower += 24.0f*ABS(point->Motor[i]->TargetCurrent)/819.2f;
 	
-	if(calcPower>LIMIT_P)//ç†è®ºåŠŸç‡å·²ç»è¶…é¢
+	if(calcPower>LIMIT_P)//ÀíÂÛ¹¦ÂÊÒÑ¾­³¬¶î
 		for(i=0; i<4; i++)
-			Motor[i]->TargetCurrent *= LIMIT_P/calcPower;//æ€»ä½“å››è½®å‹é™
-	int8_t flag = 1;//ç”µæµçš„æ­£è´Ÿæ ‡å¿— 1ä¸ºæ­£ -1ä½è´Ÿ
+			Motor[i]->TargetCurrent *= LIMIT_P/calcPower;//×ÜÌåËÄÂÖÑ¹ÏŞ
+	int8_t flag = 1;//µçÁ÷µÄÕı¸º±êÖ¾ 1ÎªÕı -1Î»¸º
 	for(i=0; i<4; i++)
 	{
 		if(Motor[i]->RealSpeed < 0)flag = -1;
@@ -1203,14 +1203,14 @@ WEAK void chassis::Handle()
 		Motor[i]->InsertCurrent();
 	}
 }
-////*******************************************åº•ç›˜æ§åˆ¶ç±»foräº‘å°********************************************************************////
+////*******************************************µ×ÅÌ¿ØÖÆÀàforÔÆÌ¨********************************************************************////
 /** 
-	* @brief  åº•ç›˜æ§åˆ¶ç±»å¯¹è±¡æ„å»ºå‡½æ•°
-	* @param [in]   can_num CANåºå· å¯é€‰å€¼1 2 
-	* @param [in]   Chassis_id åº•ç›˜id
-	* @retval  OK  æˆåŠŸ 
-	* @retval  ERROR   é”™è¯¯  
-	* @par æ—¥å¿— 
+	* @brief  µ×ÅÌ¿ØÖÆÀà¶ÔÏó¹¹½¨º¯Êı
+	* @param [in]   can_num CANĞòºÅ ¿ÉÑ¡Öµ1 2 
+	* @param [in]   Chassis_id µ×ÅÌid
+	* @retval  OK  ³É¹¦ 
+	* @retval  ERROR   ´íÎó  
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK chassiscontrol::chassiscontrol(CAN_HandleTypeDef* canhandle, uint16_t chassis_id)
@@ -1219,14 +1219,14 @@ WEAK chassiscontrol::chassiscontrol(CAN_HandleTypeDef* canhandle, uint16_t chass
 	Chassis_ID = chassis_id;
 }
 /** 
-	* @brief  åº•ç›˜è¿åŠ¨æ§åˆ¶å‡½æ•°
-	* @param [in]   Vx xè½´è¿åŠ¨é€Ÿåº¦,æ³¨æ„æ­¤å¤„é€Ÿåº¦ä¸ºint16ç±»å‹
-	* @param [in]   Vy yè½´è¿åŠ¨é€Ÿåº¦
-	* @param [in]   Omega æ—‹è½¬é€Ÿåº¦
-	* @param [in]   Mode 	åº•ç›˜æ¨¡å¼
-	* @param [in]   Reverse åº•ç›˜åå‘å¼€å…³
-	* @param [in]   SuperCap è¶…çº§ç”µå®¹å¼€å…³
-	* @par æ—¥å¿— 
+	* @brief  µ×ÅÌÔË¶¯¿ØÖÆº¯Êı
+	* @param [in]   Vx xÖáÔË¶¯ËÙ¶È,×¢Òâ´Ë´¦ËÙ¶ÈÎªint16ÀàĞÍ
+	* @param [in]   Vy yÖáÔË¶¯ËÙ¶È
+	* @param [in]   Omega Ğı×ªËÙ¶È
+	* @param [in]   Mode 	µ×ÅÌÄ£Ê½
+	* @param [in]   Reverse µ×ÅÌ·´Ïò¿ª¹Ø
+	* @param [in]   SuperCap ³¬¼¶µçÈİ¿ª¹Ø
+	* @par ÈÕÖ¾ 
 	*
 */
 WEAK void chassiscontrol::Run(int16_t Vx, int16_t Vy, int16_t Omega, uint8_t Mode, 
@@ -1245,11 +1245,11 @@ WEAK void chassiscontrol::Run(int16_t Vx, int16_t Vy, int16_t Omega, uint8_t Mod
 	
 	bsp_can_Sendmessage(Canhandle, Chassis_ID, sendbuf);
 }
-WEAK void chassiscontrol::Run(void) //ä¸å¸¦å‚æ•°çš„Runä»£è¡¨ä¿æŒåŸé€Ÿåº¦è¿›è¡Œ
+WEAK void chassiscontrol::Run(void) //²»´ø²ÎÊıµÄRun´ú±í±£³ÖÔ­ËÙ¶È½øĞĞ
 {
 	this->Run(Last_Vx, Last_Vy, Last_Omega, Last_Mode);
 }
-WEAK void chassiscontrol::Safe()//ä¸æ˜¯åˆ¶åŠ¨
+WEAK void chassiscontrol::Safe()//²»ÊÇÖÆ¶¯
 {
 	Last_Mode = 0x00;
 	int16_t sendbuf[4] = {0};
@@ -1257,5 +1257,5 @@ WEAK void chassiscontrol::Safe()//ä¸æ˜¯åˆ¶åŠ¨
 	bsp_can_Sendmessage(Canhandle, Chassis_ID, sendbuf);
 }
 
-//å¸è½½å®å®šä¹‰
+//Ğ¶ÔØºê¶¨Òå
 #undef ABS
