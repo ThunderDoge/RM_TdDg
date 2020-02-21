@@ -1,3 +1,13 @@
+/**
+ * @file bsp_spi.h
+ * @author ThunderDoge (thunderdoge@qq.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-02-15
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef __BSP_SPI_H
 #define __BSP_SPI_H
 #include "stm32f4xx_hal.h"

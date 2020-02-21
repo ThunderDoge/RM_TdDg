@@ -1,4 +1,4 @@
-/* -- Encoding = GB2312 -- */
+/** -- Encoding = GB2312 -- */
 /**
   * @file  SentryTroubleShooter.cpp
   * @brief    SentryTroubleShooter 哨兵故障自诊断功能，试作型01号

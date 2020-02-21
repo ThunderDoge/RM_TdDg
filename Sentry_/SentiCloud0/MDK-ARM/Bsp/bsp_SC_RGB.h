@@ -1,4 +1,15 @@
+/**
+ * @file bsp_SC_RGB.h
+ * @author ThunderDoge (thunderdoge@qq.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-02-15
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef BSP_SC_RGB
+
 #define BSP_SC_RGB
 
 #define _USE_SOFTWARE_TIMER    //使用RTOS软件定时器
@@ -14,6 +25,7 @@
 #define B_GPIO_PROT RGB3_GPIO_Port
 #define B_GPIO_PIN RGB3_Pin
 #endif
+
 #ifdef _USE_HARDWARE_TIMER
 #include "tim.h"
 #endif

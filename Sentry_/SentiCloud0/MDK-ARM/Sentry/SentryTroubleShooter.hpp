@@ -1,6 +1,6 @@
 /* -- Encoding = GB2312 -- */
 /**
-  * @file  SentryTroubleShooter.cpp
+  * @file  SentryTroubleShooter.hpp
   * @brief    SentryTroubleShooter 哨兵故障自诊断功能，试作型01号
   * @details  使用RGB
   * @author   ThunderDoge

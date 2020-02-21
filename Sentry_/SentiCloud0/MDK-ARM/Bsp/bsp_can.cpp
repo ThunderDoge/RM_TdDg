@@ -1,4 +1,5 @@
 /** 
+ * @file    bsp_can.cpp
 * @brief    CAN板级支持包
 * @details  CAN总线相关设置，数据接收解析函数
 * @author   Evan-GH
@@ -21,9 +22,6 @@
 *				2019.11.15|		2.0		|		去除了信号量使用的条件编译，现在只需要选择使用哪一个CAN总线了，添加了一个freertos的条件编译使用选项
 */
 #include "bsp_can.hpp"
-#include "bsp_motor.hpp"
-#include "task_SentiCloud.hpp"
-#include "SentryCanCommu.hpp"
 
 /**
 * @brief  CAN总线配置初始化

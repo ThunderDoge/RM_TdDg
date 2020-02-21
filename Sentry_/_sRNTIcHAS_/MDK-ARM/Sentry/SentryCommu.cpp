@@ -443,7 +443,7 @@ void ChassisCanCommuRoutine(void)
 	CanTx.Pillar_flag = Self.PillarFlag;
 	CHASSIS_PILLAR_CanTx();
 }
-//CAN信息底盘托管控制程序
+///CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
 {
 	Self.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;

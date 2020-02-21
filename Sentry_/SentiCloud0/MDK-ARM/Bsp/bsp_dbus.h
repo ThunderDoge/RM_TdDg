@@ -1,3 +1,14 @@
+/**
+ * @file bsp_dbus.h
+* @brief    Dbus板级支持包
+* @details  Dbus数据接收，解析
+* @author   Evan-GH
+* @date      2019.10
+* @version  1.3
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef __BSP_DBUS_H
 #define __BSP_DBUS_H
 #include "stm32f4xx.h"

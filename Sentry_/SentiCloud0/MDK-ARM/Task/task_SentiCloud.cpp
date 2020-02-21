@@ -1,12 +1,14 @@
 /**
-  * @file:
-  * @brief    RM2020 哨兵工程
-  * @details  
-  * @author   
-  * @date     
-  * @version  
-  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  */
+ * @file task_SentiCloud.cpp
+ * @author ThunderDoge (thunderdoge@qq.com)
+ * @brief Tasks of SentryCloud
+ * @version 0.1
+ * @date 2020-02-18
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+
 #include "task_SentiCloud.hpp"
 
 TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
@@ -21,14 +23,14 @@ uint32_t mark1, mark2;
   */
 void Cloud_Init(void)
 {
-    bsp_spi_Icm20602Init();
-    app_imu_Init();
+    bsp_spi_Icm20602Init(); //陀螺仪Icm20602初始化，在SPI上
+    app_imu_Init();         //陀螺仪数据处理app_imu初始化
 
     bsp_can_Init();  //CAN总线初始化函数
     bsp_dbus_Init(); //DBUS初始化
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
-	bsp_vision_Init();
-    manager::CANSelect(&hcan1, &hcan2);
+	bsp_vision_Init();              //视觉串口接收初始化
+    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
 }
 /**
   * @brief  主任务
@@ -47,12 +49,12 @@ void Cloud_Init(void)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-        app_imu_So3thread();
-		Self.Handle();	//！！！必须在app_imu_So3thread之后调用。
-        ModeSelect();
-        manager::CANSend();
-        vTaskDelayUntil(&LastTick, 1);
-		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);
+        app_imu_So3thread();    //获取陀螺仪数据
+		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
+        ModeSelect();           //手柄遥控模式初始化
+        manager::CANSend();     //统一的CAN电机控制
+        vTaskDelayUntil(&LastTick, 1);  //延时1Tick(默认为1ms)
+		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
     }
 }
 /**
@@ -66,10 +68,10 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-		CloudVisonTxRoutine();
-		CloudCanCommuRoutine();
-		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);\
-		vTaskDelayUntil(&LastTick,2);
+		CloudVisonTxRoutine();  //云台视觉串口发送
+		CloudCanCommuRoutine(); //云台CAN发送
+		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
+		vTaskDelayUntil(&LastTick,2);   //延时2Tick
     }
 }
 /**
@@ -81,9 +83,9 @@ void task_CommuRoutine(void *param)
 void TaskStarter(void)
 {
     Cloud_Init();
-    xTaskCreate(task_Main, "task_Main", 512, NULL, 4, &task_Main_Handle);
-	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,&task_CommuRoutine_Handle);
-//	xTaskCreate(task_SentryTroubleShooter,"task_SentryTroubleShooter",4096,NULL,4,NULL);
+    xTaskCreate(task_Main, "task_Main", 512, NULL, 4, &task_Main_Handle);   //512Byte, Priority=4
+	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,&task_CommuRoutine_Handle);    //512Byte, Priority=4
+//	xTaskCreate(task_SentryTroubleShooter,"task_SentryTroubleShooter",4096,NULL,4,NULL);    //
 }
 //CAN线测试
 // int16_t test_data[4];

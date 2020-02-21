@@ -1,9 +1,23 @@
+/** 
+ * @file    bsp_can.hpp
+* @brief    CAN板级支持包
+* @details  CAN总线相关设置，数据接收解析函数
+* @author   Evan-GH
+* @date      2019.11
+* @version  1.8
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef __BSP_CAN_H
 #define __BSP_CAN_H
 #include "stm32f4xx.h"
-//#include "app_motor.h"
 #include "can.h"
-//#include "SentryCommu.hpp"
+#include "bsp_motor.hpp"
+#include "task_SentiCloud.hpp"
+#include "SentryCanCommu.hpp"
+
+
 
 
 //条件编译开关宏定义，不需要开启的就注释掉相关宏定义

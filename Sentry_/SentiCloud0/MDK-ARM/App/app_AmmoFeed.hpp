@@ -20,7 +20,7 @@
 #include "bsp_can.hpp"
 #include "bsp_dbus.h"
 
-enum {
+enum ammofeed_status_enum {
 	AMMOFEED_FREE_FIRE,
 	AMMOFEED_BURST,
 	AMMOFEED_FREE_ONCE
@@ -71,6 +71,8 @@ class AmmoFeed : public softmotor
 			virtual void  Safe_Set(void) override;
 			
 			int16_t trigger;//Free_Once和Burst的触发条件
+			uint8_t feed_mode;		//拨弹模式指示
+			uint16_t free_once_trig_time = 150;	//按住切到单步连发切换的延时时间
 			
 		protected:	
 			virtual void Handle(void);
@@ -79,10 +81,6 @@ class AmmoFeed : public softmotor
 			void Burst(void);				//N连发模式，N=burst_shoot_cnt
 			void Free_Once(void);		//连续单发
 		
-		private:
-			uint8_t feed_mode;		//拨弹模式指示
-		
-			uint16_t free_once_trig_time = 150;	//按住切到单步连发切换的延时时间
 };
 
 

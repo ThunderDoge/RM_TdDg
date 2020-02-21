@@ -17,11 +17,11 @@
   ******************************************************************************
   */
   /** 
-   * @brief    
+   * @brief    main of SentryCloud
    * @details  
-   * @author   
-   * @date      
-   * @version  
+   * @author   ThunderDoge
+   * @date      2020-2-18
+   * @version  0.1
    * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
    */
   
@@ -38,7 +38,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "task_SentiCloud.hpp"
+#include "task_SentiCloud.hpp"  ///Include "task_SentiCloud.hpp" the only depend file.
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -113,7 +113,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-
+    //TaskStarter() called in MX_FREERTOS_Init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

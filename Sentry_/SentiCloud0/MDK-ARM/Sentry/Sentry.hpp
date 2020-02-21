@@ -1,20 +1,23 @@
 /**
-  * @brief    哨兵支持包。
+ * @file Sentry.hpp
+  * @brief    哨兵支持包
   * @details  
   * @author   ThunderDoge
   * @date     
   * @version  
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
- 
+
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
-#include "SentryCloud.hpp"
-#include "SentryCanCommu.hpp"
 #include "SentryCloudLogic.hpp"
-#include "SentryCloudVision.hpp"
-#include "SentryCommu.hpp"
+#include "SentryCloudCommu.hpp"
+
+// #include "SentryCommu.hpp"
+// #include "SentryCloud.hpp"
+// #include "SentryCanCommu.hpp"
+// #include "SentryCloudVision.hpp"
 // #include "SentryTroubleShooter.hpp"
 
 #endif // __SENTRY_HPP_

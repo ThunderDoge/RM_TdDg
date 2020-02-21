@@ -1,3 +1,13 @@
+/**
+ * @file bsp_spi.c
+ * @author ThunderDoge (thunderdoge@qq.com)
+ * @brief BSP_SPI
+ * @version 0.1
+ * @date 2020-02-15
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #include "bsp_spi.h"
 #include "spi.h"
 //需要自己转接的3个宏定义

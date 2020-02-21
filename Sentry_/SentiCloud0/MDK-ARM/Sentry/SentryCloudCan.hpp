@@ -1,6 +1,7 @@
 #ifndef __SENTRY_CLOUD_CAN_COMMU_HPP_
 #define __SENTRY_CLOUD_CAN_COMMU_HPP_
-/**
+/** 
+ * @file SentryCloudCan.hpp
   * @brief    哨兵云台CAN通信
   * @details  
   * @author   ThunderDoge
@@ -10,14 +11,15 @@
   */
 
 #include "can.h"
-#include "bsp_can.hpp"
-#include "SentryCloudLogic.hpp"
 #include <string.h>
+#include "bsp_can.hpp"
+#include "sentry_can_commom.hpp"
 
 #define CAN_INTERBOARD hcan2
 
+void CloudCanFilterConfig(void);    ///云台用 设定CAN过滤器，以过滤不需要的ID号
+void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///云台用 板间通讯CAN回调函数
+// void ChassisCanRxHandle(void);
 
 
-HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, uint8_t *ptrData);
-HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, float argu1, float argu2);
 #endif // __SENTRY_CLOUD_CAN_COMMU_HPP_

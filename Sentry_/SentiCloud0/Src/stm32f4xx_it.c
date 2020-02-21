@@ -26,7 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_dbus.h"
-#include "bsp_vision.hpp"
+#include "app_vision.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

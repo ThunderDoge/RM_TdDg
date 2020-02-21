@@ -1,5 +1,5 @@
 /** 
-* @file	   CarDrv_config.hpp
+* @file	   bsp_car_config.hpp
 * @brief    用户自定义参数头文件
 * @details  该头文件下的参数与Car_Driver电机驱动库有关，用户可以自行配置，建议在此配置库选项，以保证库文件不改动 \n
 *           当没有出现新的参数的时候，不要提交本文件避免专用参数提交到通用参数里
@@ -9,7 +9,7 @@
 * @par Copyright (c):  
 *       WMD 
 * @par 日志
-*       V0.1	WMD觉得需要有这一个文件，所以这个文件就被创建了
+*       V0.1	WMD觉得需要有这一个文件，所以这个文件就被创建了 CarDrv_config.hpp
 *				V0.2	Evan-GH修改了这个文件的文件名来适应代码规范
 */  
 #ifndef __BSP_CAR_CONFIG_HPP

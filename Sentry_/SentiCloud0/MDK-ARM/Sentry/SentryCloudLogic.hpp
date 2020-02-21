@@ -1,70 +1,64 @@
 /**
- * @brief    哨兵控制逻辑
- * @details  Encoding - GB2312
- * @author   OnePointFive 2020 ThunderDoge
- * @date     2019/12/13, The Day of
- * @version
- * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
- */
+  * @file   SentryCloudLogic.hpp
+  * @brief    哨兵控制逻辑
+  * @details  Encoding - GB2312
+  * @author   
+  * @date     
+  * @version  
+  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+  */
 #ifndef __SENTRY_CLOUD_LOGIC_HPP
 #define __SENTRY_CLOUD_LOGIC_HPP
 
-//#include "SentryCanCommu.hpp"
-//#include "SentryCloud.hpp"
-//#include "SentryCommu.hpp"
-//#include "bsp_dbus.h"
-//#include "bsp_vision.hpp"
-#include "Sentry.hpp"
+#include "bsp_dbus.h"
+#include "SentryCloud.hpp"
+#include "SentryCommu.hpp"
+#include "app_mode.hpp"
 
-enum GlobalModeName
+enum GlobalModeName : uint8_t
 {
-    MODE_SAFE = 0X01,
+    MODE_SAFE = 0X00,
     MODE_MANUAL_SHOOTING_TEST,
     MODE_VIISON_SHOOTING_TEST,
-	MODE_FRIC_TEST,
+    MODE_FRIC_TEST,
     MODE_KEYBOARD_TEST,
     MODE_MANUAL_CHASSIS_MOVE,
     MODE_AUTONOMOUS,
 };
-enum CommandSourceName
-{
-    CMDSRC_DBUS,
-    CMDSRC_CAN,
-    CMDSRC_SELF,
-};
 
-extern GlobalModeName GlobalMode;
-extern CommandSourceName CommandSource;
+// extern GlobalModeName GlobalMode;
+// extern CommandSourceName CommandSource;
+extern SentryCloud CloudEntity;
 
-void ManualChassis(); //手动底盘
-void ManualShoot();   //手动操炮射击
-void VisionControl(); //视觉调试
-void AutoMove();      //全自动移动
-void GlobalSafe();    //安全模式
+extern Mode* CurrentMode,*LastMode;
 
-void ModeSelect();
+/**
+ * @defgroup RemoteDebugModes
+ * @addtogroup RemoteDebugModes
+ * @{
+ */
+extern Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
 
-void CloudCommuRoutine(void);
+void ModeSelect(); ///主逻辑-模式选择
 
+void ManualChassis(); ///手动底盘
+void ManualShoot();   ///手动操炮射击
+void VisionControl(); ///视觉调试
+void AutoMove();      ///全自动移动
+void GlobalSafe();    ///安全模式
+
+/** @} */
 #endif // __SENTRY_CLOUD_LOGIC_HPP
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
   * @brief  废案 Abandonded Code
   */
+// enum CommandSourceName
+// {
+//     CMDSRC_DBUS,
+//     CMDSRC_CAN,
+//     CMDSRC_SELF,
+// };
 
 // class GlobalModeClass
 // {
@@ -82,10 +76,6 @@ void CloudCommuRoutine(void);
 //     void CanSend();
 // }
 
-/**
-  * @brief  废案二度 Abandonded Code #2
-  */
-// typedef void (*vivoFuncPtr)(void);
 // class GlobalModeClass
 // {
 // private:
