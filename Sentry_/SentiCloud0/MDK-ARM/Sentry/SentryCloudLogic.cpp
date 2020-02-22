@@ -13,10 +13,74 @@
 // GlobalModeName GlobalMode;
 // GlobalModeName LastGlobalMode;
 // CommandSourceName CommandSource;
+
+//模式定义
+Mode ModeManualChassis(NULL, ManualChassis, NULL);
+Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
+Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
+Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
+Mode ModeVisionControl(VisionControlEnter, VisionControl, VisionControlExit);
+Mode ModeAutoMove(nullptr, nullptr, nullptr);
+Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
+Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
+
 Mode *LastMode = nullptr;
 Mode *CurrentMode = nullptr;
 
-extern Sentry_vision_data VisionRx, VisionTx;
+extern sentry_vision_data VisionRx, VisionTx;
+/**
+  * @brief  模式选择函数，控制逻辑源于此
+  */
+void ModeSelect(void)
+{
+    int mode = bsp_dbus_Data.S1 * 10 + bsp_dbus_Data.S2;
+    // LastGlobalMode = GlobalMode;
+    LastMode = CurrentMode;
+
+    switch (mode)
+    {
+    case 32: //中-下：手动控底盘
+        CurrentMode = &ModeManualChassis;
+        break;
+    case 12: //上-下：手动控云台
+        CurrentMode = &ModeManualShoot;
+        break;
+    case 33: //双中：视觉控制云台转动
+        CurrentMode = &ModeVisionControl;
+        break;
+    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
+        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
+        // VisionControl();
+        // ManualFeed();
+        CurrentMode = &ModeVisionFeed;
+        break;
+    case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
+        // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
+        // ManualShoot_Gyro();
+        CurrentMode = &ModeManualShootGyro;
+        break;
+    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
+        // CurrentMode = MODE_FRIC_TEST;
+        // ManualFeed();
+        CurrentMode = &ModeManualFeed;
+        break;
+    case 22: //双下
+    case 23:
+    case 21: //左下
+    default: //默认
+        // CurrentMode = MODE_SAFE;
+        // GlobalSafe();
+        CurrentMode = &ModeGlobalSafe;
+        break;
+    }
+    if (LastMode != CurrentMode)
+    {
+        LastMode->Exit();
+        CurrentMode->Enter();
+    }
+    CurrentMode->Run();
+}
+
 
 /**
   * @brief  视觉控制云台
@@ -70,6 +134,12 @@ void VisionControl(void)
     // GlobalMode = MODE_VIISON_SHOOTING_TEST;
     // VisionRxHandle();
 }
+void VisionControlEnter(){
+    IS_SUPERIOR_VISION_CTRL =1;
+}
+void VisionControlExit(){
+    IS_SUPERIOR_VISION_CTRL =0;
+}
 /**
   * @brief  遥控器测试云台
   */
@@ -111,6 +181,9 @@ void ManualChassis() //手动底盘
     SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
                   (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
                   0);
+}
+void ManualChassisEnter(){
+    
 }
 
 /**
@@ -171,64 +244,3 @@ void GlobalSafe() //安全模式
     SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]); //通过CAN向其他的MCU发送安全模式指令
 }
 
-//模式定义
-Mode ModeManualChassis(NULL, ManualChassis, NULL);
-Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
-Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
-Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
-Mode ModeVisionControl(nullptr, VisionControl, nullptr);
-Mode ModeAutoMove(nullptr, nullptr, nullptr);
-Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
-Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
-/**
-  * @brief  模式选择函数，控制逻辑源于此
-  */
-void ModeSelect(void)
-{
-    int mode = bsp_dbus_Data.S1 * 10 + bsp_dbus_Data.S2;
-    // LastGlobalMode = GlobalMode;
-    LastMode = CurrentMode;
-
-    switch (mode)
-    {
-    case 32: //中-下：手动控底盘
-        CurrentMode = &ModeManualChassis;
-        break;
-    case 12: //上-下：手动控云台
-        CurrentMode = &ModeManualShoot;
-        break;
-    case 33: //双中：视觉控制云台转动
-        CurrentMode = &ModeVisionControl;
-        break;
-    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-        // VisionControl();
-        // ManualFeed();
-        CurrentMode = &ModeVisionFeed;
-        break;
-    case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
-        // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
-        // ManualShoot_Gyro();
-        CurrentMode = &ModeManualShootGyro;
-        break;
-    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_FRIC_TEST;
-        // ManualFeed();
-        CurrentMode = &ModeManualFeed;
-        break;
-    case 22: //双下
-    case 23:
-    case 21: //左下
-    default: //默认
-        // CurrentMode = MODE_SAFE;
-        // GlobalSafe();
-        CurrentMode = &ModeGlobalSafe;
-        break;
-    }
-    if (LastMode != CurrentMode)
-    {
-        LastMode->Exit();
-        CurrentMode->Enter();
-    }
-    CurrentMode->Run();
-}

@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;   ../Middlewares/Third_Party/FreeRTOS/Source/include;   ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;   ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;   ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;   ../Drivers/CMSIS/Include;   .\Task;   .\App;   .\Bsp;   .\Motor;   .\Sentry</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\App;.\Bsp;.\Motor;.\Sentry;.\App_Sentry_Commom</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -692,11 +692,6 @@
               <FilePath>.\Bsp\bsp_can.cpp</FilePath>
             </File>
             <File>
-              <FileName>bsp_vision.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Bsp\bsp_vision.cpp</FilePath>
-            </File>
-            <File>
               <FileName>bsp_SC_RGB.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Bsp\bsp_SC_RGB.c</FilePath>
@@ -720,6 +715,16 @@
               <FileName>app_AmmoFeed.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\App\app_AmmoFeed.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_vision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Bsp\app_vision.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_mode.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\App\app_mode.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -767,19 +772,29 @@
               <FilePath>.\Sentry\SentryCloudLogic.cpp</FilePath>
             </File>
             <File>
-              <FileName>SentryCanCommu.cpp</FileName>
+              <FileName>SentryCloudCommu.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryCanCommu.cpp</FilePath>
+              <FilePath>.\Sentry\SentryCloudCommu.cpp</FilePath>
             </File>
             <File>
-              <FileName>SentryCommu.cpp</FileName>
+              <FileName>SentryCloudCan.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryCommu.cpp</FilePath>
+              <FilePath>.\Sentry\SentryCloudCan.cpp</FilePath>
             </File>
             <File>
-              <FileName>SentryTroubleShooter.cpp</FileName>
+              <FileName>SentryCloudVision.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryTroubleShooter.cpp</FilePath>
+              <FilePath>.\Sentry\SentryCloudVision.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SentryCommom</GroupName>
+          <Files>
+            <File>
+              <FileName>sentry_can_commom.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\App_Sentry_Commom\sentry_can_commom.cpp</FilePath>
             </File>
           </Files>
         </Group>

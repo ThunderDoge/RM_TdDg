@@ -11,18 +11,43 @@
 #ifndef __SENTRY_CLOUD_VISION_HPP_
 #define __SENTRY_CLOUD_VISION_HPP_
 
+#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
+#define __PROJECT_SENTRY_CLOUD_
+#endif // __PROJECT_SENTRY_CLOUD_
+
+
 ///依赖的文件
 #include "stm32f4xx.h"
 #include "app_vision.hpp"
+#include "SentryCloudCan.hpp"
 
-/**
- * @brief 视觉传输数据解析结构体
- * @addtogroup Sentry_Vision
- */
 
 /**
  * @brief 哨兵视觉数据缓存结构体
  * 
+ */
+
+extern sentry_vision_data VisionTx,VisionRx;    ///储存用结构体
+
+extern void CloudVisonTxRoutine(void);  ///主逻辑回调函数。向小主机发送一次VisionTx的全部信息。
+void CloudVisionSendFrame(uint8_t funcword,uint8_t* pData); ///阻塞式UART发送，立即向小主机发送一个数据帧。
+
+#endif // __SENTRY_CLOUD_VISION_HPP_
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @brief 视觉传输数据解析结构体
+ * @addtogroup Sentry_Vision
  */
 // struct Sentry_vision_data
 // {
@@ -56,25 +81,3 @@
 // };
 
 ///ROBOT_ERR 的错误码列表
-enum __bsp_vision_RobotError
-{
-    DBUS_OFFLINE = 0X01,
-    CAN1_OFFLINE = 0X02,
-    CAN2_OFFLINE = 0X03,
-    MOTOR_OFFLINE_CNT = 0X04,
-    GIMBOL_OFFLINE = 0X05,
-    CHASSIS_OFFLINE = 0X06,
-    JUDG_OFFLINE = 0X07,
-    REBOOTINT = 0X08,
-};
-
-
-
-extern Sentry_vision_data VisionTx,VisionRx;    ///储存用结构体
-
-void CloudVisionRoutine(void);  ///主逻辑回调函数。查看一次UART接收缓存，有就处理后放在VisionRx。然后向小主机发送一次VisionTx的全部信息。
-// void CloudVisionHandleRx(void); ///查看一次UART接收缓存，有就处理后放在VisionRx。由CloudVisionRoutine调用。
-// void CloudVisionHandleTx(void);///向小主机发送一次VisionTx的全部信息。由CloudVisionRoutine调用。
-void CloudVisionSendFrame(uint8_t funcword,uint8_t* pData); ///阻塞式UART发送，立即向小主机发送一个数据帧。
-
-#endif // __SENTRY_CLOUD_VISION_HPP_

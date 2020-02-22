@@ -69,7 +69,7 @@ void task_CommuRoutine(void *param)
     while (1)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
-		CloudCanCommuRoutine(); //云台CAN发送
+		UpCloudCanCommuRoutine(); //上云台CAN发送
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
 		vTaskDelayUntil(&LastTick,2);   //延时2Tick
     }

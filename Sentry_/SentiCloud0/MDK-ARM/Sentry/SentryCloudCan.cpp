@@ -8,7 +8,7 @@
   * @version  v0.0.1
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
-#include "SentryCanCommu.hpp"
+#include "SentryCloudCan.hpp"
 #include <cstring>
 //全局CAN接收变量
 /**

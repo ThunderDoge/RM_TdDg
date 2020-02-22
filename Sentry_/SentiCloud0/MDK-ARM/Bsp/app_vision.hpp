@@ -19,6 +19,9 @@
 #include "stm32f4xx.h"
 #include <string.h>
 #include "usart.h"
+#include "SentryCloud.hpp"	//ÒòÎªĞèÒªÊ¹ÓÃ_cloud_ctrl_modeËùÒÔ°üº¬ÁË¡£Ã»ÓĞ±ğµÄÒÀÀµ
+#include "sentry_ctrl_def.hpp"
+#include "sentry_can_commom.hpp"
 
 
 
@@ -67,33 +70,50 @@ typedef struct __vision_data
 {
     uint8_t Frame_header = FRAME_HEADER_DATA;
     uint8_t Frame_end = FRAME_END_DATA;
-    uint8_t Function_word; //Êı¾İÖ¡¹¦ÄÜ×Ö
-    //µ×ÅÌÊı¾İ
-    float Vx; //µ×ÅÌXÖáËÙ¶È
-    float Vy; //µ×ÅÌYÖáËÙ¶È
-	float Px; //µ×ÅÌXÖáÂ·³Ì
-	float Py; //µ×ÅÌYÖáÂ·³Ì
-	float SpeedLimit;	//µ×ÅÌÏŞËÙ
-    uint8_t pillar_flag;    //µ×ÅÌ×´Ì¬±êÖ¾Î»
-    //ÔÆÌ¨Êı¾İ
-    float Yaw;          //YawÖá½Ç¶È
-    float Pitch;        //PitchÖá½Ç¶È
-    uint8_t Cloud_mode; //ÔÆÌ¨Ä£Ê½
-    //Éä»÷Êı¾İ
-    uint8_t Shoot_mode; //Éä»÷Ä£Ê½
-    float Shoot_speed;  //Éä»÷ËÙ¶È
-    uint8_t Shoot_freq; //Éä»÷ÆµÂÊ
-    //Êı¾İ±êÖ¾
-    uint8_t Shoot_flag = 0; //ÊÓ¾õÉä»÷±êÖ¾Î»
-    uint8_t Ready_flag = 0; //Êı¾İ¾ÍĞ÷±êÖ¾Î»
+    uint8_t Function_word; ///<Êı¾İÖ¡¹¦ÄÜ×Ö
+    ///µ×ÅÌÊı¾İ
+    float Vx;         ///<µ×ÅÌXÖáËÙ¶È
+    float Vy;         ///<µ×ÅÌYÖáËÙ¶È
+    float Px;         ///<µ×ÅÌXÖáÂ·³Ì
+    float Py;         ///<µ×ÅÌYÖáÂ·³Ì
+    float SpeedLimit; ///<µ×ÅÌÏŞËÙ
+    uint8_t pillar_flag;
+    uint8_t chassis_mode;
+    ///ÔÆÌ¨Êı¾İ
+    float Yaw;          ///<YawÖá½Ç¶È
+	float YawSoft;
+    float Pitch;        ///<PitchÖá½Ç¶È
+    uint8_t Cloud_mode; ///<ÔÆÌ¨Ä£Ê½
+    uint8_t cloud_ctrl_mode;
+    ///Éä»÷Êı¾İ
+    uint8_t Shoot_mode; ///<Éä»÷Ä£Ê½
+    float Shoot_speed;  ///<Éä»÷ËÙ¶È
+    uint8_t Shoot_freq; ///<Éä»÷ÆµÂÊ
+    ///Êı¾İ±êÖ¾
+    uint32_t UpdateTime;
+    ///ÈÕÖ¾ÏµÍ³Ê¹ÓÃ
+    uint8_t Error_code = 0;          ///<´íÎó´úÂë
+    int16_t CAN1_motorlist = 0xffff; ///<CAN1µç»úÁĞ±í
+    int16_t CAN2_motorlist = 0xffff; ///<CAN2µç»úÁĞ±í
+	//±¾½á¹¹ÌåĞÅÏ¢
+	uint8_t Ready_flag;	//¾ÍĞ÷±êÖ¾¡£±íÊ¾ÓĞĞÂÊı¾İÎ´´¦Àí¡£
+} sentry_vision_data;
 
-    //ÈÕÖ¾ÏµÍ³Ê¹ÓÃ
-    uint8_t Error_code = 0;          //´íÎó´úÂë
-    int16_t CAN1_motorlist = 0xffff; //CAN1µç»úÁĞ±í
-    int16_t CAN2_motorlist = 0xffff; //CAN2µç»úÁĞ±í
-} bsp_vision_data;
+///´íÎó´úÂëÁĞ±í
+enum __bsp_vision_RobotError
+{
+    DBUS_OFFLINE = 0X01,
+    CAN1_OFFLINE = 0X02,
+    CAN2_OFFLINE = 0X03,
+    MOTOR_OFFLINE_CNT = 0X04,
+    GIMBOL_OFFLINE = 0X05,
+    CHASSIS_OFFLINE = 0X06,
+    JUDG_OFFLINE = 0X07,
+    REBOOTINT = 0X08,
+};
 
-extern bsp_vision_data bsp_vision_Send_Data, bsp_vision_Rec_Data; ///´®¿Ú·¢ËÍ/½ÓÊÕ»º´æ½á¹¹Ìå
+
+extern sentry_vision_data VisionTx, VisionRx; ///´®¿Ú·¢ËÍ/½ÓÊÕ»º´æ½á¹¹Ìå
 extern uint8_t Vision_Txbuffer[18];         ///´®¿Ú·¢ËÍÔİ´æÊı×é
 
 void bsp_vision_Init(void);                                   ///ÊÓ¾õ´®¿Ú³õÊ¼»¯
@@ -102,5 +122,7 @@ void bsp_vision_It(void);                                     ///ÊÓ¾õ´®¿ÚÖĞ¶Ï´¦À
 HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword);
 void bsp_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata); ///½«Êı¾İ×°Èë»º´æVision_TxbufferÖĞ
 void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata);    ///½«Êı¾İ×°Èë»º´æVision_TxbufferÖĞ
+
+void CloudVisionTxRoutine(void);  ///Ö÷Âß¼­»Øµ÷º¯Êı¡£ÏòĞ¡Ö÷»ú·¢ËÍÒ»´ÎVisionTxµÄÈ«²¿ĞÅÏ¢¡£
 
 #endif

@@ -101,21 +101,3 @@ HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int1
 	return HAL_RESULT;
 }
 
-/**
-* @brief  CAN接收中断
-* @details  重新定义接收中断，会自动在CAN中断中调用，不需要手动添加,使用的时候自行在此函数中替换解析函数
-* @param  NULL
-* @retval  NULL
-*/
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
-{
-	static CAN_RxHeaderTypeDef bsp_can_Rx;
-	uint8_t CAN_RxData[8];
-	
-	if(HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0)!=0) //判断中断产生
-	{
-		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//获取CAN报文
-		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//电机信息更新
-		CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
-	}
-}

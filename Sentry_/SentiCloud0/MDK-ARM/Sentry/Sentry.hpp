@@ -13,6 +13,7 @@
 
 #include "SentryCloudLogic.hpp"
 #include "SentryCloudCommu.hpp"
+#include "sentry_config.hpp"
 
 // #include "SentryCommu.hpp"
 // #include "SentryCloud.hpp"

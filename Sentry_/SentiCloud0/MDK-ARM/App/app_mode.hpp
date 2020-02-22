@@ -15,10 +15,10 @@ typedef void (*vivoFuncPtr)(void); ///指向void 函数名(void)的指针。Pointer to vo
  * @brief Mode状态枚举值
  * 
  */
-enum mode_status_enum:uin8_t{
+enum mode_status_enum:uint8_t{
     MODE_OFF = 0,
     MODE_ON = 1,
-}
+};
 /**
   * @brief  废案重启 Mode类定义
   */

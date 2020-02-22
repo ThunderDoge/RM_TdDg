@@ -14,8 +14,8 @@
 #include "stm32f4xx.h"
 #include "can.h"
 #include "bsp_motor.hpp"
-#include "task_SentiCloud.hpp"
-#include "SentryCanCommu.hpp"
+//#include "task_SentiCloud.hpp"
+//#include "SentryCanCommu.hpp"
 
 
 
@@ -28,5 +28,4 @@
 
 void bsp_can_Init(void);	//CAN总线初始化函数
 HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int16_t* Can_Send_Data);	//CAN总线数据发送函数
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);	//重定义的CAN中断回调函数
 #endif

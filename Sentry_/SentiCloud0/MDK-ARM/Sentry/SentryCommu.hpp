@@ -27,14 +27,6 @@
 #endif
 
 #ifndef __CHASSIS_MODE_DEF
-#define __CHASSIS_MODE_DEF
-enum _chassis_mode:uint8_t
-{
-    _chassis_speed =1,
-    _chassis_location =2,
-    _chassis_location_limit_speed =3,
-    _chassis_save =0,
-};
 #endif	//__CHASSIS_MODE_DEF
 
 void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData);
@@ -43,7 +35,7 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData);
 //全局接收变量
 extern CanCommuRecv_t CanRx, CanTx;
 // #ifdef USE_VISION
-// extern Sentry_vision_data VisionRx,VisionTx;
+// extern sentry_vision_data VisionRx,VisionTx;
 // #endif
 #ifdef CLOUD_COMMU
 #endif

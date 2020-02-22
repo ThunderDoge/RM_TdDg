@@ -21,7 +21,7 @@
 //调试用标志位
 #define VIUART_DISABLE_OTHER_IT
 
-bsp_vision_data bsp_vision_Rec_Data, bsp_vision_Send_Data; ///视觉串口解析到的数据,视觉串口发送的数据
+sentry_vision_data VisionRx, VisionTx; ///视觉串口解析到的数据,视觉串口发送的数据
 uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
 static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
 
@@ -55,7 +55,7 @@ static uint8_t bsp_vision_Analysis(void)
             }
 
             //帧头帧尾正确，和校验正确，开始解析
-            bsp_vision_Rec_Data.Ready_flag = 1; //标记数据就绪
+            VisionRx.Ready_flag = 1; //标记数据就绪
             SentryVisionUartRxAll(Vision_Rxbuffer + Array_index);   //解析数据帧
             //运行到这里就表示解析已经成功，一帧数据已经完备
             Array_index += 18; //数据帧一帧长度为18，所以移动18位
@@ -242,9 +242,9 @@ void CMD_CHASSIS_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
 {
     if (Vision_Rxbuffer[Function_word] == CMD_CHASSIS_CONTROL)
     {
-        bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
-        memcpy(&bsp_vision_Rec_Data.Vx, Vision_Rxbuffer + 2, 4); //底盘速度解析
-        memcpy(&bsp_vision_Rec_Data.Vy, Vision_Rxbuffer + 6, 4);
+        VisionRx.Function_word = CMD_CHASSIS_CONTROL;
+        memcpy(&VisionRx.Vx, Vision_Rxbuffer + 2, 4); //底盘速度解析
+        memcpy(&VisionRx.Vy, Vision_Rxbuffer + 6, 4);
     }
 }
 ///底盘路程控制
@@ -370,7 +370,8 @@ void CloudVisonTxRoutine(void)
     ROBOT_ERR_Tx();
     STA_CHASSIS_Tx();
 }
-#endif
+
+#endif //USE_VISION
 
 
 /**
@@ -404,59 +405,59 @@ void CloudVisonTxRoutine(void)
   */
 //void CMD_GIMBAL_RELATIVE_CONTROL_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
-//    memcpy(&bsp_vision_Rec_Data.Pitch, Vision_Rxbuffer + Array_index + 2, 4); //云台角度解析
-//    memcpy(&bsp_vision_Rec_Data.Yaw, Vision_Rxbuffer + Array_index + 6, 4);
-//    memcpy(&bsp_vision_Rec_Data.Cloud_mode, Vision_Rxbuffer + Array_index + 10, 1); //云台模式解析
-//    memcpy(&bsp_vision_Rec_Data.Shoot_mode, Vision_Rxbuffer + Array_index + 11, 1); //射击模式
-//    bsp_vision_Rec_Data.Ready_flag = 1;                                             //数据就绪
+//    VisionRx.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
+//    memcpy(&VisionRx.Pitch, Vision_Rxbuffer + Array_index + 2, 4); //云台角度解析
+//    memcpy(&VisionRx.Yaw, Vision_Rxbuffer + Array_index + 6, 4);
+//    memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + Array_index + 10, 1); //云台模式解析
+//    memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + Array_index + 11, 1); //射击模式
+//    VisionRx.Ready_flag = 1;                                             //数据就绪
 //}
 ///**
 //  * @brief  云台绝对角度控制
 //  */
 //void CMD_GIMBAL_ABSOLUTE_CONTROL_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
-//    memcpy(&bsp_vision_Rec_Data.Yaw, Vision_Rxbuffer + Array_index + 2, 4);
-//    memcpy(&bsp_vision_Rec_Data.Pitch, Vision_Rxbuffer + Array_index + 6, 4);
-//    memcpy(&bsp_vision_Rec_Data.Cloud_mode, Vision_Rxbuffer + Array_index + 10, 1);
-//    memcpy(&bsp_vision_Rec_Data.Shoot_mode, Vision_Rxbuffer + Array_index + 11, 1);
-//    bsp_vision_Rec_Data.Ready_flag = 1; //数据就绪
+//    VisionRx.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
+//    memcpy(&VisionRx.Yaw, Vision_Rxbuffer + Array_index + 2, 4);
+//    memcpy(&VisionRx.Pitch, Vision_Rxbuffer + Array_index + 6, 4);
+//    memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + Array_index + 10, 1);
+//    memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + Array_index + 11, 1);
+//    VisionRx.Ready_flag = 1; //数据就绪
 //}
 ///**
 //  * @brief  射击控制
 //  */
 //void CMD_SHOOT_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_SHOOT;
-//    bsp_vision_Rec_Data.Shoot_flag = 1;                                             //射击指令就绪
-//    memcpy(&bsp_vision_Rec_Data.Shoot_speed, Vision_Rxbuffer + Array_index + 2, 4); //射击速度
-//    memcpy(&bsp_vision_Rec_Data.Shoot_freq, Vision_Rxbuffer + Array_index + 6, 1);  //射击频率
-//    memcpy(&bsp_vision_Rec_Data.Shoot_mode, Vision_Rxbuffer + Array_index + 7, 1);  //射击模式
+//    VisionRx.Function_word = CMD_SHOOT;
+//    VisionRx.Shoot_flag = 1;                                             //射击指令就绪
+//    memcpy(&VisionRx.Shoot_speed, Vision_Rxbuffer + Array_index + 2, 4); //射击速度
+//    memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + Array_index + 6, 1);  //射击频率
+//    memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + Array_index + 7, 1);  //射击模式
 //}
 ///**
 //  * @brief  底盘运动控制
 //  */
 //void CMD_CHASSIS_CONTROL_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_CONTROL;
-//    memcpy(&bsp_vision_Rec_Data.Vx, Vision_Rxbuffer + Array_index + 2, 4); //底盘速度解析
-//    memcpy(&bsp_vision_Rec_Data.Vy, Vision_Rxbuffer + Array_index + 6, 4);
+//    VisionRx.Function_word = CMD_CHASSIS_CONTROL;
+//    memcpy(&VisionRx.Vx, Vision_Rxbuffer + Array_index + 2, 4); //底盘速度解析
+//    memcpy(&VisionRx.Vy, Vision_Rxbuffer + Array_index + 6, 4);
 //}
 ///**
 //  * @brief  底盘路程控制
 //  */
 //void CMD_CHASSIS_LOACTION_CONTROL_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
-//    memcpy(&bsp_vision_Rec_Data.Px, Vision_Rxbuffer + Array_index + 2, 4);
-//    memcpy(&bsp_vision_Rec_Data.Py, Vision_Rxbuffer + Array_index + 6, 4);
+//    VisionRx.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
+//    memcpy(&VisionRx.Px, Vision_Rxbuffer + Array_index + 2, 4);
+//    memcpy(&VisionRx.Py, Vision_Rxbuffer + Array_index + 6, 4);
 //}
 //void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Analysis()
 //{
-//    bsp_vision_Rec_Data.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
-//    memcpy(&bsp_vision_Rec_Data.Px, Vision_Rxbuffer + Array_index + 2, 4);
-//    memcpy(&bsp_vision_Rec_Data.SpeedLimit, Vision_Rxbuffer + Array_index + 6, 4);
+//    VisionRx.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+//    memcpy(&VisionRx.Px, Vision_Rxbuffer + Array_index + 2, 4);
+//    memcpy(&VisionRx.SpeedLimit, Vision_Rxbuffer + Array_index + 6, 4);
 //}
 //HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
 //{
@@ -471,29 +472,29 @@ void CloudVisonTxRoutine(void)
 //    case CMD_GET_MCU_STATE:
 //        //给视觉发心跳包
 //#ifndef DEBUG
-//        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Cloud_mode, 1); //控制模式
-//        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.Pitch, 4);      //Pitch轴数据
-//        memcpy(Vision_Txbuffer + 7, &bsp_vision_Send_Data.Yaw, 4);        //Yaw轴数据
+//        memcpy(Vision_Txbuffer + 2, &VisionTx.Cloud_mode, 1); //控制模式
+//        memcpy(Vision_Txbuffer + 3, &VisionTx.Pitch, 4);      //Pitch轴数据
+//        memcpy(Vision_Txbuffer + 7, &VisionTx.Yaw, 4);        //Yaw轴数据
 //#else
 //        memcpy(Vision_Txbuffer + 2, &m, 1);  //控制模式
 //        memcpy(Vision_Txbuffer + 3, &f1, 4); //Pitch轴数据
 //        memcpy(Vision_Txbuffer + 7, &f2, 4); //Yaw轴数据
 //#endif
-//        memcpy(Vision_Txbuffer + 11, &bsp_vision_Send_Data.Shoot_speed, 4); //射速
-//        memcpy(Vision_Txbuffer + 15, &bsp_vision_Send_Data.Shoot_freq, 1);  //射频
+//        memcpy(Vision_Txbuffer + 11, &VisionTx.Shoot_speed, 4); //射速
+//        memcpy(Vision_Txbuffer + 15, &VisionTx.Shoot_freq, 1);  //射频
 //        break;
 //    case ROBOT_ERR:
-//        memcpy(Vision_Txbuffer + 2, &bsp_vision_Send_Data.Error_code, 1); //日志系统错误代码
-//        if (bsp_vision_Send_Data.Error_code == MOTOR_OFFLINE_CNT)         //0x04的时候要额外发两个在线列表数据
+//        memcpy(Vision_Txbuffer + 2, &VisionTx.Error_code, 1); //日志系统错误代码
+//        if (VisionTx.Error_code == MOTOR_OFFLINE_CNT)         //0x04的时候要额外发两个在线列表数据
 //        {
-//            memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.CAN1_motorlist, 2); //CAN1电机数据
-//            memcpy(Vision_Txbuffer + 5, &bsp_vision_Send_Data.CAN2_motorlist, 2); //CAN2电机数据
+//            memcpy(Vision_Txbuffer + 3, &VisionTx.CAN1_motorlist, 2); //CAN1电机数据
+//            memcpy(Vision_Txbuffer + 5, &VisionTx.CAN2_motorlist, 2); //CAN2电机数据
 //        }
 //        break;
 //    case STA_CHASSIS:
 //        Vision_Txbuffer[2] = 0;
-//        memcpy(Vision_Txbuffer + 3, &bsp_vision_Send_Data.pillar_flag, 1);
-//        memcpy(Vision_Txbuffer + 4, &bsp_vision_Send_Data.Px, 4);
+//        memcpy(Vision_Txbuffer + 3, &VisionTx.pillar_flag, 1);
+//        memcpy(Vision_Txbuffer + 4, &VisionTx.Px, 4);
 //    default:
 //        break;
 //    }

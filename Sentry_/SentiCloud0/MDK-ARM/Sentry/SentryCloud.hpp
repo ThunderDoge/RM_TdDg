@@ -15,18 +15,9 @@
 #include "app_imu.h"
 #include "app_AmmoFeed.hpp"
 //#include "app_vision.hpp"
+#include "sentry_ctrl_def.hpp"
 
 #ifndef __CLOUD_MODE_DEF
-#define __CLOUD_MODE_DEF
-enum _cloud_ctrl_mode:uint8_t
-{
-    absolute_cloud = 0x01,
-    relative_cloud = 0x02,
-    save_cloud = 0x00,
-    absolute_gyro_cloud = 0x03,
-	relative_gyro_cloud = 0x04,
-	speed_cloud = 0x05,
-};
 #endif
 
 

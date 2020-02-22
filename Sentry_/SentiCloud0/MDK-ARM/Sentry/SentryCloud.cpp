@@ -133,7 +133,7 @@ void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t tr
 }
 void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
     if(shoot_is_permitted)
-    Feed2nd.Free_Once_Set(ShootCnt,DiscreDelay,trig);
+    Feed2nd.Free_Once_Set(DiscreDelay,trig);
 }
 void SentryCloud::Feed_Safe_Set(){
     Feed2nd.Safe_Set();
@@ -155,7 +155,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 {
 	if(NewState == 0)
 	{
-		shoot_is_permitted=0    //不允许射击
+		shoot_is_permitted=0;    //不允许射击
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
         CloudEntity.Feed2nd.Safe_Set();
