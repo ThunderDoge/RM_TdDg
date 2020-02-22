@@ -24,8 +24,8 @@ Mode ModeAutoMove(nullptr, nullptr, nullptr);
 Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
 Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
 
-Mode *LastMode = nullptr;
-Mode *CurrentMode = nullptr;
+Mode *LastMode = &ModeGlobalSafe;
+Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
 /**

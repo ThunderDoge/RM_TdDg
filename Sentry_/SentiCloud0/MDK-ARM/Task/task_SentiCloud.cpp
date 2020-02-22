@@ -25,8 +25,9 @@ void Cloud_Init(void)
 {
     bsp_spi_Icm20602Init(); //陀螺仪Icm20602初始化，在SPI上
     app_imu_Init();         //陀螺仪数据处理app_imu初始化
-
+#ifndef	MIGRATE_F407ZG
     bsp_can_Init();  //CAN总线初始化函数
+#endif //MIGRATE_F407ZG
     bsp_dbus_Init(); //DBUS初始化
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	bsp_vision_Init();              //视觉串口接收初始化
