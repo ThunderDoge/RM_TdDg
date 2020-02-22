@@ -49,6 +49,7 @@
 *.su
 *.idb
 *.pdb
+*.dbgconf
 
 # Kernel Module Compile Results
 *.s
@@ -58,6 +59,7 @@
 *.mxproject
 *.axf
 *.log
+*.__i
 
 
 .tmp_versions/
@@ -85,3 +87,4 @@ Sentry_/SentiCloud0/MDK-ARM/SentiCloud0/view.jscope
 *.jscope
 *.dep
 Sentry_/SentiCloud0/Doxygen/
+*.lst
