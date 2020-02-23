@@ -19,6 +19,7 @@
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
 #include "bsp_dbus.h"
+#include "app_math.h"
 
 enum ammofeed_status_enum {
 	AMMOFEED_FREE_FIRE,

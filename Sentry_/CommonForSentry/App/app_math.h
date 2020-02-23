@@ -4,6 +4,8 @@
 #include <math.h>
 #define PI 		3.14159265358979323846f
 
+#define SIGN(x) ((x)>0?1:((x)<0?-1:0))
+
 #define Threshold_1     8       //阈值1用于一阶带参滤波器，变化角度大于此值时，计数增加
 #define Threshold_2     30      //阈值2用于一阶带参滤波器，计数值大于此值时，增大参数，增强滤波跟随
 

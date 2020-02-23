@@ -3,9 +3,9 @@
 	* @details  
 	* 初始化：创造想用的类的对象 CAN接收回调上放上CANUpdate() 在周期调用CANSend() 
 	* 使用:类里面的操作函数直接用 
-	* @author      WMD,Onion rain
+	* @author      WMD,Onion rain,Evan-GH
 	* @par Copyright (c):  
-	*       WMD,Onion rain
+	*       WMD,Onion rain, Evan-GH
 	* @par 日志
 	*		V6.0  从motor类中提出电机数据更新和发送部分作为manager类，将motor变为manager子类，cloud类也作为manager子类 
 	*		V6.1  云台电机新增位置差获取速度近似值(然而并不好用) 
@@ -62,11 +62,20 @@
 						把云台类的软件限位调整到父类cloud里面来，并在cloud类里面添加了限位用的保护型成员max，min 这两个值只能通过Limit方法进行限制
 	*		V7.6	在pid类中明确了积分时间和微分时间，不传入参数的时候都默认为1.现在这两个变量都可以进行调节了,积分，微分两个环节有了自己独立的时间变量
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<RM2020哨兵自定义内容
+    * @author ThunderDoge
+    *       v7.7    2019-12-21 哨兵底盘适配性修正。将CANSend的托管的chassis::point指向哨兵自定义的底盘类SentryChassis。添加了在 motor 中添加了 InsertCurrentBy()以在外部写入要发送的电流值
 */  
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
 #include <string.h>
 #include <math.h>
+
+//RM2020自定义内容
+#ifdef __PROJECT_SENTRY_CHASSIS_
+#include "SentryChassis.hpp"
+#endif // !__PROJECT_SENTRY_CHASSIS_
+
 
 #define WEAK __attribute__((weak)) //使用WEAK类型是方便特殊电机来重构特定函数
 #define	ABS(x)   ((x)>0?(x):-(x))
@@ -305,7 +314,7 @@ uint8_t manager::Is_Offline(void)
 *			 2019年11月30日 16:32:15 对电机ID进行一次拓展改动
 */
 WEAK void manager::CANUpdate(CAN_HandleTypeDef* _hcan, CAN_RxHeaderTypeDef* RxHead,uint8_t* Data)
- {
+{
 	uint16_t id=RxHead->StdId;
 	if(_hcan==CanHandle1)
 	{
@@ -328,6 +337,11 @@ WEAK void manager::UserProcess(void)
     //该函数本身不执行任何操作，需要在PID跑完，发送之前执行代码的话就在自己的文件重写该函数即可
     UNUSED(UserProcess);
 }
+
+//哨兵自定义
+#ifdef __PROJECT_SENTRY_CHASSIS_
+//SentryChassis* SentryChassis::pointer;
+#endif // __PROJECT_SENTRY_CHASSIS_
 /** 
 	* @brief  CAN发送总管.所有的CAN电机都会在这里进行处理，发送
 	* @retval  0 成功
@@ -343,6 +357,7 @@ WEAK void manager::UserProcess(void)
 	*       2019年1月19日14:34:55  处理逻辑进一步优化，每一个电机不局限于位置和速度两种， 可以自由增加功能，不再需要在CANSend里勉强了 
   *       2019年3月14日15:09:13 加入了合作类型电机，合作类型电机不在CANSend中自动处理，要求这类电机应在UserHandle中处理
 	*				2019年11月30日15:01:01 适配GM6020的ID可能超过0x208的情况
+    *       2019/12/23  【哨兵自定义】调用底盘类chassis处理 改为 哨兵自定义的底盘类SentryChassis处理
 */
 uint8_t manager::CANSend(void)
 {
@@ -380,7 +395,11 @@ uint8_t manager::CANSend(void)
 			}
 		}
 	}
+#ifdef __PROJECT_SENTRY_CHASSIS_
+    if(SentryChassis::pointer!=NULL)SentryChassis::pointer->CanSendHandle();
+#else
 	if(chassis::point!=NULL)chassis::point->Handle();//如果存在底盘的话则进行底盘的功率控制处理
+#endif // __PROJECT_SENTRY_CHASSIS_
 	UserProcess();//进行用户的自定义数据处理
 	//以下为发送处理
 	uint8_t check=0;
@@ -579,6 +598,14 @@ WEAK void motor::InsertCurrent(void)
 	if(can_code/100==2)
 		CAN2CurrentList[can_code%100] = TargetCurrent;
 }
+void motor::InsertCurrentBy(int16_t tar_cur)
+{
+	if(can_code/100==1)
+		CAN1CurrentList[can_code%100] = tar_cur;
+	if(can_code/100==2)
+		CAN2CurrentList[can_code%100] = tar_cur;
+}
+
 /** 
 	* @brief  对该电机启用堵转检测
 	* @param [in]   Limit 电流堵转阈值

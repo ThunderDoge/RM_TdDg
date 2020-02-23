@@ -10,6 +10,8 @@
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
+#include "sentry_config.hpp"
+
 #include "SentryChassis.hpp"
 #include "SentryCanCommu.hpp"
 #include "SentryChassisLogic.hpp"

@@ -64,7 +64,7 @@
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<RM2020哨兵自定义内容
     * @author ThunderDoge
-    *       v7.7    将CANSend的托管的chassis::point指向哨兵自定义的底盘类SentryChassis
+    *       v7.7    2019-12-21 哨兵底盘适配性修正。将CANSend的托管的chassis::point指向哨兵自定义的底盘类SentryChassis。添加了在 motor 中添加了 InsertCurrentBy()以在外部写入要发送的电流值
 */  
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"

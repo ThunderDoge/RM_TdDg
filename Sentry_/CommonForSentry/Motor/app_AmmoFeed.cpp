@@ -13,7 +13,6 @@
   */
 
 #include "app_AmmoFeed.hpp"
-#define SIGN(x) ((x)>0?1:((x)<0?-1:0))
 
 /** 
     * @brief 周期执行的函数

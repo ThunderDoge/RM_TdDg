@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\App;.\Bsp;.\Motor;.\Task;.\Sentry;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\Sentry;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;..\..\CommonForSentry\App;..\..\CommonForSentry\App_Sentry;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -712,14 +712,19 @@
           <GroupName>app</GroupName>
           <Files>
             <File>
+              <FileName>app_mode.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_mode.cpp</FilePath>
+            </File>
+            <File>
               <FileName>app_imu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\app_imu.c</FilePath>
+              <FilePath>..\..\CommonForSentry\App\app_imu.c</FilePath>
             </File>
             <File>
               <FileName>app_math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\app_math.c</FilePath>
+              <FilePath>..\..\CommonForSentry\App\app_math.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -729,27 +734,27 @@
             <File>
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_spi.c</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_spi.c</FilePath>
             </File>
             <File>
               <FileName>bsp_can.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Bsp\bsp_can.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_current.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_current.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_adc_deal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_adc_deal.c</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_can.cpp</FilePath>
             </File>
             <File>
               <FileName>bsp_encoder.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Bsp\bsp_encoder.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_encoder.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_current.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_current.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_adc_deal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_adc_deal.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -769,17 +774,17 @@
             <File>
               <FileName>app_AmmoFeed.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\app_AmmoFeed.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Motor\app_AmmoFeed.cpp</FilePath>
             </File>
             <File>
               <FileName>bsp_motor.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_motor.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_motor.cpp</FilePath>
             </File>
             <File>
               <FileName>bsp_universe.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_universe.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_universe.cpp</FilePath>
             </File>
           </Files>
         </Group>

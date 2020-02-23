@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx,MIGRATE_F407ZG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\App;.\Bsp;.\Motor;.\Sentry;.\App_Sentry_Commom</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\Sentry;..\..\CommonForSentry\App;..\..\CommonForSentry\App_Sentry;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -679,22 +679,17 @@
             <File>
               <FileName>bsp_dbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_dbus.c</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_dbus.c</FilePath>
             </File>
             <File>
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_spi.c</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_spi.c</FilePath>
             </File>
             <File>
               <FileName>bsp_can.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Bsp\bsp_can.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_SC_RGB.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Bsp\bsp_SC_RGB.c</FilePath>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_can.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -704,27 +699,17 @@
             <File>
               <FileName>app_math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\app_math.c</FilePath>
+              <FilePath>..\..\CommonForSentry\App\app_math.c</FilePath>
             </File>
             <File>
               <FileName>app_imu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\App\app_imu.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_AmmoFeed.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\App\app_AmmoFeed.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>app_vision.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Bsp\app_vision.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\App\app_imu.c</FilePath>
             </File>
             <File>
               <FileName>app_mode.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\App\app_mode.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\App\app_mode.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -744,12 +729,17 @@
             <File>
               <FileName>bsp_motor.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_motor.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_motor.cpp</FilePath>
             </File>
             <File>
               <FileName>bsp_universe.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Motor\bsp_universe.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_universe.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_AmmoFeed.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\app_AmmoFeed.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -786,6 +776,11 @@
               <FileType>8</FileType>
               <FilePath>.\Sentry\SentryCloudVision.cpp</FilePath>
             </File>
+            <File>
+              <FileName>app_vision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App_Sentry\app_vision.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -794,7 +789,7 @@
             <File>
               <FileName>sentry_can_commom.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\App_Sentry_Commom\sentry_can_commom.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\App_Sentry\sentry_can_commom.cpp</FilePath>
             </File>
           </Files>
         </Group>
