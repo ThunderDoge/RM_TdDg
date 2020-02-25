@@ -12,7 +12,7 @@ float location_on_rail;
 //         pillar_close_flag = 2;
 //     else
 //         pillar_close_flag = 0;
-//     location_on_rail = Self.MotorSoftLocation;
+//     location_on_rail = ChassisEntity.MotorSoftLocation;
 // }
 // void ChassisSendInfoCanTx(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 // {
@@ -41,12 +41,19 @@ int16_t dictT = 100;
 
 GlobalModeName GlobalMode;
 GlobalModeName LastGlobalMode;
-CommandSourceName CommandSource;
+//CommandSourceName CommandSource;
 GlobalModeName RecvCMD;
 GlobalModeName GetGlobalMode()
 {
     return GlobalMode;
 }
+
+//模式定义
+Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
+Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
+//模式指针
+Mode *CurrentMode=&ModeGlobalSafe;
+Mode *LastMode=&ModeGlobalSafe;
 
 void ModeSelect(void)
 {
@@ -61,23 +68,23 @@ void ModeSelect(void)
         SuperiorControl();
         break;
     default:
-        Self.Safe_Set();
+        ChassisEntity.Safe_Set();
         break;
     }
 #else
     {
-        PowerOut += pidDriveCurrent.pid_run(TargetPower - fabs(Self.DrivePower));
+        PowerOut += pidDriveCurrent.pid_run(TargetPower - fabs(ChassisEntity.DrivePower));
         if (PowerOut < 0)
             PowerOut = 0;
-        Self.MotorSpeed_Set(PowerOut);
+        ChassisEntity.MotorSpeed_Set(PowerOut);
     }
     {
-        Self.FeedUp.Freefire_Set(FeedUpSpd);
+        ChassisEntity.FeedUp.Freefire_Set(FeedUpSpd);
 		if(trig >300)
-			Self.FeedUp.FreeOnce_Set(dictT,&trig);
-        Self.Fric.Speed_Set(-FeedFricSpd);
-        FeedUpRealSpd = Self.FeedUp.RealSpeed;
-        FeedUpRealCrr = Self.FeedUp.RealCurrent;
+			ChassisEntity.FeedUp.FreeOnce_Set(dictT,&trig);
+        ChassisEntity.Fric.Speed_Set(-FeedFricSpd);
+        FeedUpRealSpd = ChassisEntity.FeedUp.RealSpeed;
+        FeedUpRealCrr = ChassisEntity.FeedUp.RealCurrent;
     }
 #endif
 }
@@ -88,16 +95,16 @@ void SuperiorControl() //视觉调试
 //    switch (CanRecv.SuperiorControlFlags)
 //    {
 //    case _SUPERIOR_CHASSIS_SPEED_SET_:
-//        Self.pidDriveLocation.PIDMax = SpeedMax; //恢复
-//        Self.MotorSpeed_Set(CanRecv.ChassisSpeed);
+//        ChassisEntity.pidDriveLocation.PIDMax = SpeedMax; //恢复
+//        ChassisEntity.MotorSpeed_Set(CanRecv.ChassisSpeed);
 //        break;
 //    case _SUPERIOR_CHASSIS_LOACATION_SET_:
-//        Self.pidDriveLocation.PIDMax = SpeedMax; //恢复
-//        Self.MotorSoftLocation_Set(Self.MotorSoftLocation + CanRecv.ChassisLocation);
+//        ChassisEntity.pidDriveLocation.PIDMax = SpeedMax; //恢复
+//        ChassisEntity.MotorSoftLocation_Set(ChassisEntity.MotorSoftLocation + CanRecv.ChassisLocation);
 //        break;
 //    case _SUPERIOR_CHASSIS_LOACATION_SET_SPEED_LIMIT_:
-//        Self.MotorSoftLocation_Set(Self.MotorSoftLocation + CanRecv.ChassisLocation); //覆写
-//        Self.pidDriveLocation.PIDMax = CanRecv.ChassisSpeedLimit;
+//        ChassisEntity.MotorSoftLocation_Set(ChassisEntity.MotorSoftLocation + CanRecv.ChassisLocation); //覆写
+//        ChassisEntity.pidDriveLocation.PIDMax = CanRecv.ChassisSpeedLimit;
 //        break;
 //    default:
 //        break;
@@ -105,10 +112,14 @@ void SuperiorControl() //视觉调试
 //    CanRecv.SuperiorControlFlags = _SUPERIOR_OFFLINE_;
 //    if (HAL_GetTick() - CanRecv.RecvUpdateTime > 1000)
 //    {
-//        Self.Safe_Set();
+//        ChassisEntity.Safe_Set();
 //        GlobalMode = MODE_SAFE;
 //    }
 	ChassisCanRxHandle();
+}
+void GlobalSafe()
+{
+    ChassisEntity.Safe_Set();
 }
 #ifdef DEBUG
 #endef

@@ -211,26 +211,26 @@ void DownCloudCanCommuRoutine(void)
  */
 void ChassisCanCommuRoutine(void)
 {
-    CanTx.Chassis_SpeedLocation[0] = Self.MotorSpeed;
-    CanTx.Chassis_SpeedLocation[1] = Self.MotorSoftLocation;
+    CanTx.Chassis_SpeedLocation[0] = ChassisEntity.MotorSpeed;
+    CanTx.Chassis_SpeedLocation[1] = ChassisEntity.MotorSoftLocation;
     CHASSIS_STATES_CanTx();
-	CanTx.Pillar_flag = Self.PillarFlag;
+	CanTx.Pillar_flag = ChassisEntity.PillarFlag;
 	CHASSIS_PILLAR_CanTx();
 }
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
 {
-	Self.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
+	ChassisEntity.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
 	switch (CanRx.SuperCon_ChassisMode)
 	{
 	case _chassis_speed:
-        Self.MotorSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[0]);
+        ChassisEntity.MotorSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[0]);
         break;
     case _chassis_location:
-        Self.MotorSoftLocation_Set(CanRx.SuperCon_ChassisSpeedLocation[1]);
+        ChassisEntity.MotorSoftLocation_Set(CanRx.SuperCon_ChassisSpeedLocation[1]);
         break;
     case _chassis_location_limit_speed:
-        Self.MotorSoftLocation_LimitSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[1],
+        ChassisEntity.MotorSoftLocation_LimitSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[1],
 		CanRx.Chassis_SpeedLimit);
 		break;
 	}

@@ -59,10 +59,10 @@
 "_srntichas_\bsp_motor.o"
 "_srntichas_\bsp_universe.o"
 "_srntichas_\sentry.o"
-"_srntichas_\sentrycancommu.o"
 "_srntichas_\sentrychassis.o"
 "_srntichas_\sentrychassislogic.o"
-"_srntichas_\sentrycommu.o"
+"_srntichas_\sentry_can_commom.o"
+"_srntichas_\sentrytroubleshooter.o"
 --strict --scatter "_sRNTIcHAS_\_sRNTIcHAS_.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

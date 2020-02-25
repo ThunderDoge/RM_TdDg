@@ -16,7 +16,7 @@
 #define __SENTRY_CAN_COMMOM_HPP_
 
 //依赖的文件
-#include "stm32f4xx.h"
+#include "stm32f4xx_hal.h"
 #include "string.h"
 #include "bsp_can.hpp"          //需要使用CAN
 #include "sentry_ctrl_def.hpp"  //依赖于MCU模式枚举值

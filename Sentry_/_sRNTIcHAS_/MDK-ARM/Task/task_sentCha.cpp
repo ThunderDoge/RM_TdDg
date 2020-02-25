@@ -25,7 +25,9 @@ void RoboInit()
 	app_imu_Init();
 	taskEXIT_CRITICAL();
 //	bsp_dbus_Init();
-	bsp_can_Init();
+#ifndef	MIGRATE_F407ZG
+    bsp_can_Init();  //CAN总线初始化函数
+#endif //MIGRATE_F407ZG
 	bsp_Current_Init();
 	bsp_encoder_Init(2048);
 	bsp_ADC_Sensor_Init();
@@ -45,7 +47,7 @@ void task_Main(void* param)
 		bsp_Current_Read();
 		bsp_encoder_Handle();
 		app_imu_So3thread();
-        Self.Handle();
+        ChassisEntity.Handle();
 		ModeSelect();
 //		manager::CANSend();	
 		vTaskDelayUntil(&LastTick,1);

@@ -18,7 +18,7 @@ float SpeedMax = 16000;
 //系统变量
 SentryChassis *SentryChassis::pointer=NULL;
 //本体
-SentryChassis Self(2, 0x201,
+SentryChassis ChassisEntity(2, 0x201,
                    2, 0x203,
                    1, 0x202,
                    1, 0x201,

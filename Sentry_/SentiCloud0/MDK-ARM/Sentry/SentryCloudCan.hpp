@@ -16,13 +16,15 @@
 #define __PROJECT_SENTRY_CLOUD_
 #endif // __PROJECT_SENTRY_CLOUD_
 
+//CAN板间通信定义，如果修CAN口请修改此处宏定义
+#define CAN_INTERBOARD hcan2
+
 #include "can.h"
 #include <string.h>
 #include "bsp_can.hpp"
 #include "sentry_can_commom.hpp"
 
 
-#define CAN_INTERBOARD hcan2
 
 void UpCloudCanCommuRoutine(void);  ///云台定时发送的板间CAN通信 - 上云台
 void CloudCanFilterConfig(void);    ///云台用 设定CAN过滤器，以过滤不需要的ID号

@@ -1,9 +1,11 @@
 #ifndef __SENTRY_CHASSIS_LOGIC_H_
 #define __SENTRY_CHASSIS_LOGIC_H_
 #include "SentryChassis.hpp"
-#include "SentryCanCommu.hpp"
-#include "SentryCommu.hpp"
+#include "SentryChassisCommu.hpp"
+//#include "SentryCanCommu.hpp"
+//#include "SentryCommu.hpp"
 #include "bsp_adc_deal.h"
+#include "app_mode.hpp"
 
 enum GlobalModeName
 {
@@ -14,12 +16,12 @@ enum GlobalModeName
     MODE_MANUAL_CHASSIS_MOVE,
     MODE_AUTONOMOUS,
 };
-enum CommandSourceName
-{
-    CMDSRC_DBUS,
-    CMDSRC_CAN,
-    CMDSRC_SELF,
-};
+// enum CommandSourceName
+// {
+//     CMDSRC_DBUS,
+//     CMDSRC_CAN,
+//     CMDSRC_SELF,
+// };
 //typedef void(*vivoFuncPtr)(void);
 //typedef void(*CanCommuFuncPtr)(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);
 //class GlobalModeAgent
@@ -81,10 +83,13 @@ enum CommandSourceName
 //};
 
 GlobalModeName GetGlobalMode();
-extern CommandSourceName CommandSource;
+//extern CommandSourceName CommandSource;
 extern GlobalModeName RecvCMD;
 
-void ModeSelect(void);
-void SuperiorControl(); //视觉调试
+void ModeSelect(void);  ///模式运转逻辑
+void SuperiorControl(); ///上级通讯控制模式
+void GlobalSafe();  ///全局安全模式
+
+extern Mode ModeSuperSuperiorControl,ModeGlobalSafe;
 
 #endif // __SENTRY_CHASSIS_LOGIC_H_

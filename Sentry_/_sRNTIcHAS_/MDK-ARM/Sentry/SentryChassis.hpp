@@ -10,21 +10,23 @@
 #include "app_math.h"
 #include <cmath>
 #include <cstring>
+#include "app_mode.hpp"
+#include "sentry_ctrl_def.hpp"
 
 extern float SpeedMax;
 
 //#ifndef __SENTRY_COMMU_HPP_
 
-#ifndef __CHASSIS_MODE_DEF
-#define __CHASSIS_MODE_DEF
-enum _chassis_mode : uint8_t
-{
-    _chassis_speed = 1,
-    _chassis_location = 2,
-    _chassis_location_limit_speed = 3,
-    _chassis_save = 0,
-};
-#endif //__CHASSIS_MODE_DEF
+// #ifndef __CHASSIS_MODE_DEF
+// #define __CHASSIS_MODE_DEF
+// enum _chassis_mode : uint8_t
+// {
+//     _chassis_speed = 1,
+//     _chassis_location = 2,
+//     _chassis_location_limit_speed = 3,
+//     _chassis_save = 0,
+// };
+// #endif //__CHASSIS_MODE_DEF
 //#endif // !__SENTRY_COMMU_HPP_
 
 enum PillarFlagEnum : int8_t
@@ -106,6 +108,6 @@ private:
     // int8_t PillarHit_Check();
     // int8_t PillarHit_Handle();
 };
-extern SentryChassis Self;
+extern SentryChassis ChassisEntity;
 
 #endif // __SENTRY_CHASSIS_HPP_

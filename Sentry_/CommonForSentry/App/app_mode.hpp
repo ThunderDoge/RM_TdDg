@@ -8,6 +8,8 @@
  * @copyright Copyright (c) 2020
  * 
  */
+#ifndef __APP_MODE_HPP_
+#define __APP_MODE_HPP_
 #include "stm32f4xx.h"
 
 typedef void (*vivoFuncPtr)(void); ///指向void 函数名(void)的指针。Pointer to void input void output function
@@ -38,3 +40,5 @@ private:
     vivoFuncPtr RunningCallback;
     vivoFuncPtr ExitCallback;
 };
+
+#endif // __APP_MODE_HPP_

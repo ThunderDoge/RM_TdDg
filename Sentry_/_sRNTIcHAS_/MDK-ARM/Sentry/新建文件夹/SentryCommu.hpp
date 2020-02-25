@@ -152,7 +152,6 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData);
 #endif
 
 //全局接收变量
-extern CanCommuRecv_t CanRx, CanTx;
 #ifdef USE_VISION
 extern Sentry_vision_data VisionRx,VisionTx;
 #endif
