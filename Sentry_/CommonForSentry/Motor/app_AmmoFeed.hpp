@@ -24,12 +24,14 @@
 enum ammofeed_status_enum {
 	AMMOFEED_FREE_FIRE,
 	AMMOFEED_BURST,
-	AMMOFEED_FREE_ONCE
+	AMMOFEED_FREE_ONCE,
 };
 
 
 class AmmoFeed : public softmotor
 {
+    friend class SentryCloud;   //使得仅有SentryCloud可以调用供弹控制函数
+    friend class SentryChassis; 
     public:
 			AmmoFeed(uint8_t can_num,
 							 uint16_t _can_id,
@@ -60,15 +62,12 @@ class AmmoFeed : public softmotor
 						 
 			int8_t rammer_direction = 1;					//位置控制，指示转动方向。正负随电机编码器增长方向。
 			
-		  uint8_t burst_shoot_cnt = 3;			//N连发的N
+		    uint8_t burst_shoot_cnt = 3;			//N连发的N
 
 			uint8_t Blocked_Reaction(void);	//堵转反应处理过程
 			
 			virtual void Step_Run(void);			//位置控制模式
 		
-			void Free_Fire_Set(int32_t FreeSpeed);			//流畅运转模式配置
-			void Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);				//N连发模式配置
-			void Free_Once_Set(int32_t	DiscreDelay,int16_t trig);				//单发模式配置
 			virtual void  Safe_Set(void) override;
 			
 			int16_t trigger;//Free_Once和Burst的触发条件
@@ -76,6 +75,9 @@ class AmmoFeed : public softmotor
 			uint16_t free_once_trig_time = 150;	//按住切到单步连发切换的延时时间
 			
 		protected:	
+			void Free_Fire_Set(int32_t FreeSpeed);			//流畅运转模式配置
+			void Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);				//N连发模式配置
+			void Free_Once_Set(int32_t	DiscreDelay,int16_t trig);				//单发模式配置
 			virtual void Handle(void);
 	
 			void Free_Fire(void);			//流畅运转模式

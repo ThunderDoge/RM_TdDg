@@ -146,6 +146,10 @@ pid::pid(float ap, float bp, float cp,
 */
 WEAK float pid::pid_run(float err)
 {
+    //在所有处理之前调用。暂定
+    if(pid_run_CallBack!=nullptr)
+    pid_run_CallBack(this); //用户自定义回调 by thunderdoge 2020-2-27
+
 	CurrentError = err;
 	Pout = CurrentError*P;
 	

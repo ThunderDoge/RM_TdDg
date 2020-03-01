@@ -10,8 +10,12 @@
   */
 #ifndef __APP_SENTRY_DIAGNOSIS_HPP_
 #define __APP_SENTRY_DIAGNOSIS_HPP_
+#include "stm32f4xx_hal.h"
 
-#define APP_SENTRY_DIAG_FLAG_IN_BIT 1
+#define APP_SENTRY_DIAG_FLAG_IN_BIT 1   //“标识位按bit使用”标识宏定义,为1表示按位使用,为0表示按字节使用,体现在读取与写入方式不同.不影响实际使用.
+
+#define APP_SENTRY_DIAG_GENARAL_DEVICE_OFFLINE_TIMEOUT_MS 1000; //一般设备的判定为离线的时间，单位是ms
+#define APP_SENTRY_DIAG_IS_OFFLINE_TIMEOUT(t0) ((HAL_GetTick()- (t0)) > APP_SENTRY_DIAG_GENARAL_DEVICE_OFFLINE_TIMEOUT_MS)
 
 /**
  * @brief 哨兵设备代码，用于诊断系统中. DCODE_ stand for Devide_Code_ .
@@ -44,9 +48,13 @@ enum _sentry_device_code_enum:uint8_t {
     DCODE_CHASSIS_JUDGE,
     DCODE_CHASSIS_PILLARWATCH_LEFT,
     DCODE_CHASSIS_PILLARWATCH_RIGHT,
-}
+};
 
-#define APP_SENTRY_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE 20
+#if APP_SENTRY_DIAG_FLAG_IN_BIT
+    #define APP_SENTRY_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE 5
+#elif
+    #define APP_SENTRY_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE 40
+#endif
 
 extern uint8_t OfflineListBytes[APP_SENTRY_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE];
 

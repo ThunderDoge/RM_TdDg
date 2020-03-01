@@ -1,13 +1,15 @@
 /**
  * @file Sentry.hpp
-  * @brief    哨兵支持包
-  * @details  
-  * @author   ThunderDoge
-  * @date     
-  * @version  
-  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  */
-
+ * @brief    哨兵支持包
+ * @details  
+ * @author   ThunderDoge
+ * @date     
+ * @version  
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+ */
+/**
+ * @mainpage
+ */
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 

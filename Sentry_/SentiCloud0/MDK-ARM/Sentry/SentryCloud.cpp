@@ -45,6 +45,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	Feed2nd.Enable_Block(4000,200,5);
 	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;
+    PitchPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
+    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
 };
 void SentryCloud::Handle()
 {
@@ -167,6 +169,15 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
         FricRightMotor.Speed_Set(Shoot_Speed);
 	}
 }
+/**
+ * @brief 
+ * 
+ */
+void pidPitchCallBack(pid* self)
+{
+    self->PIDout+=CloudEntity.gravity_feedforward(CloudEntity.RealPitch);
+}
+
 
 
 

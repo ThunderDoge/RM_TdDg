@@ -59,6 +59,8 @@ typedef struct
 
 extern MPU_DEF app_imu_data;
 
+extern uint32_t tNow;   //app_imu_So3thread运行时的微秒(us)数。就是Hal_GetTick()*1000
+
 uint8_t app_imu_Init(void);
 void app_imu_So3thread(void);
 #endif

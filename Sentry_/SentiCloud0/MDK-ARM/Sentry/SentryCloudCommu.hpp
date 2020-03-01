@@ -19,8 +19,6 @@
 #include "app_vision.hpp"
 #include "SentryCloudVision.hpp"
 #include "SentryCloudCan.hpp"
-//CAN板间通信定义，如果修CAN口请修改此处宏定义
-#define CAN_INTERBOARD hcan2
 
 //此板子使用了视觉串口
 #define USE_VISION

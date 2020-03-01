@@ -49,15 +49,14 @@ public:
     pid FeedSpeed;          ///<供弹轮 速度环
     pid FeedPositon;        ///<供弹轮 位置环
 
-    softcloud YawMotor;     ///Yaw轴电机对象_CAN1上
-    softcloud PitchMotor;   ///Pitch轴电机对象_CAN1上
-private:
-    //很危险的电机所以不能让外界动
+    softcloud YawMotor;     ///<Yaw轴电机对象_CAN1上
+    softcloud PitchMotor;   ///<Pitch轴电机对象_CAN1上
+
     motor FricLeftMotor;    ///< 左边摩擦轮
     motor FricRightMotor;   ///< 右边摩擦轮
     AmmoFeed Feed2nd;       ///< 供弹轮电机
 public:
-    //包装供弹轮函数，需要确认shoot_is_permitted才能运行供弹轮。
+    //为了安全，提供了包装供弹轮函数，需要确认shoot_is_permitted才能运行供弹轮。提不要直接使用Feed2nd
     void Feed_Free_Fire_Set(int32_t FreeSpeed);
     void Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);
     void Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig);
@@ -89,11 +88,17 @@ public:
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮
+    float gravity_feedforward(float pitch){
+        return g_A*cos(pitch+g_phi);
+    }
 
 private:
     static const float RotationMatrix[3][3];    ///<旋转矩阵陀螺仪到云台枪口方向。现在没用 
     //基本状态
     uint8_t shoot_is_permitted=0; ///<“允许射击”指示位。只能通过ShooterSwitchCmd开启。为0时不允许使用摩擦轮和拨弹电机。
+    //PITCH重力补偿
+    float g_A=0;  //重力补偿之系数
+    float g_phi=0;    //重力补偿初相
     //裁判系统相关
     int RobotHP;    //现在的HP
     //视觉小主机通讯相关
@@ -102,6 +107,6 @@ private:
 
 extern SentryCloud CloudEntity; ///非常重要
 
-void ModeSelect(void);
+void pidPitchCallBack(pid* self);
 
 #endif // __SENTRY_CLOUD_HPP_

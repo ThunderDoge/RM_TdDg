@@ -197,6 +197,7 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1); //云台模式解析
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1); //射击模式
         VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///云台绝对角度控制
@@ -210,6 +211,7 @@ void CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
         VisionRx.cloud_ctrl_mode = absolute_cloud; //数据就绪
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///云台速度控制
@@ -223,6 +225,7 @@ void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
 		VisionRx.cloud_ctrl_mode = speed_cloud;
+        VisionRx.UpdateTime = HAL_GetTick();
 	}
 }
 ///射击控制
@@ -235,6 +238,7 @@ void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Shoot_speed, Vision_Rxbuffer + 2, 4); //射击速度
         memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + 6, 1);  //射击频率
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 7, 1);  //射击模式
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///底盘运动控制
@@ -245,6 +249,7 @@ void CMD_CHASSIS_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         VisionRx.Function_word = CMD_CHASSIS_CONTROL;
         memcpy(&VisionRx.Vx, Vision_Rxbuffer + 2, 4); //底盘速度解析
         memcpy(&VisionRx.Vy, Vision_Rxbuffer + 6, 4);
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///底盘路程控制
@@ -256,6 +261,7 @@ void CMD_CHASSIS_LOACTION_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Px, Vision_Rxbuffer + 2, 4);
         memcpy(&VisionRx.Py, Vision_Rxbuffer + 6, 4);
         VisionRx.chassis_mode = _chassis_location;
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///底盘路程控制且限速
@@ -267,6 +273,7 @@ void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Px, Vision_Rxbuffer + 2, 4);
         memcpy(&VisionRx.SpeedLimit, Vision_Rxbuffer + 6, 4);
         VisionRx.chassis_mode = _chassis_location_limit_speed;
+        VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///全命令接收	新增的功能字接收函数请在这里面调用
