@@ -75,6 +75,8 @@ dkms.conf
 *.json
 
 # Project Files
+! **/.vscode
+
 # **/MDK-ARM/
 ! **/MDK-ARM/App/
 ! **/MDK-ARM/Bsp/
