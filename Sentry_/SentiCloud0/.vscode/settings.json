@@ -1,0 +1,16 @@
+{
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "*.hpp": "cpp",
+        "*.h": "c",
+        "main.c": "cpp",
+        "stm32f4xx_it.c": "cpp",
+        "*.tcc": "cpp"
+    },
+    "files.encoding": "gb2312",
+    "doxdocgen.generic.paramTemplate": "@param {indent:10} {param} ",
+    "doxdocgen.generic.authorEmail": "thunderdoge@qq.com",
+    "doxdocgen.generic.authorName": "ThunderDoge",
+    "doxdocgen.file.fileTemplate": "@file {name}",
+    "doxdocgen.c.commentPrefix": " * "
+}
