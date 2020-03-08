@@ -3,6 +3,7 @@
 # Key To Hold
 ! *.uvprojx
 ! *.ioc
+! startup_stm32*.s
 # Keil Library
 **/Drivers/
 
