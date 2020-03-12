@@ -4,8 +4,7 @@
 ! *.uvprojx
 ! *.ioc
 ! startup_stm32*.s
-# Keil Library
-**/Drivers/
+
 
 # Prerequisites
 *.d

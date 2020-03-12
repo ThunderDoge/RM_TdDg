@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/SentiCloud0/Inc",
+                "${workspaceFolder}/SentiCloud0/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/SentiCloud0/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/SentiCloud0/Middlewares/Third_Party/FreeRTOS/Source/include",
+                "${workspaceFolder}/SentiCloud0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS",
+                "${workspaceFolder}/SentiCloud0/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F",
+                "${workspaceFolder}/SentiCloud0/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/SentiCloud0/Drivers/CMSIS/Include",
+                "${workspaceFolder}/SentiCloud0/MDK-ARM/Task",
+                "${workspaceFolder}/SentiCloud0/MDK-ARM/Sentry",
+                "${workspaceFolder}/CommonForSentry/App",
+                "${workspaceFolder}/CommonForSentry/App_Sentry",
+                "${workspaceFolder}/CommonForSentry/Bsp",
+                "${workspaceFolder}/CommonForSentry/Motor"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F405xx",
+                "USE_HAL_DRIVER",
+                "STM32F405xx"
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "cStandard": "c99",
+            "cppStandard": "c++11"
+        }
+    ],
+    "version": 4
+}
