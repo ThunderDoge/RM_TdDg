@@ -14,6 +14,8 @@
 #include "stm32f4xx.h"
 #include "sentry_config.hpp"
 
+class Device
+
 #define APP_SENTRY_CHASSIS_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE 20;
 
 extern uint8_t app_sentry_chassis_diag_OfflineList[APP_SENTRY_CHASSIS_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE];

@@ -10,52 +10,24 @@
  */
 #include "app_can_operator.hpp"
 #include <string.h>
+/**
+ * @brief Construct a new Can Operator object 创建一个新的CAN通信操作器。每个CAN_ID对应一个操作数。
+ * 
+ * @param     sentry_can_id     此操作器对应的CAN_ID
+ */
+CanOperator::CanOperator( uint32_t sentry_can_id, (void)(*pfunc)(uint32_t , uint8_t*) ):
+sentry_can_id(sentry_can_id),callback(pfunc),update_time(0)
+{}
 
 /**
- * @brief       输入收到的ID号，尝试触发操作器。成功返回1，并更新时间戳
+ * @brief Construct a new Operate object
  * 
- * @param     cmd_id 尝试用于触发的Id号
- * @return uint8_t  1:Operator Trigged; 0:Operator NOT Trigged;
+ * @param     sentry_can_id     
+ * @param     pData 
  */
-uint8_t CanOperator::TryTrigger(uint32_t cmd_id)
+void CanOperator::Operate(uint8_t *pData)
 {
-    if (cmd_id == TriggerId)
-    {
-        // Operator Trigged
-        if(pReadData[0]!=nullptr && pWriteData[0]!=nullptr)
-            memcpy(pWriteData[0], pReadData[0], DataLength[0]);
-        if(pReadData[1]!=nullptr && pWriteData[1]!=nullptr)
-            memcpy(pWriteData[1], pReadData[1], DataLength[1]);
-        TriggedTimestamp = HAL_GetTick();
-        if (TrigCallBack != nullptr && TrigCallBack != NULL)
-        {
-            TrigCallBack(this);
-        }
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    update_time=HAL_GetTick();
+    if(callback!=nullptr && callback!=NULL)
+        callback(pData);
 }
-/**
- * @brief   启动发送。同样会更新时间戳。回调函数由用户自定义，下面会提供基本回调函数
- * 
- */
-void CanOperator::ForceTrigger()
-{
-        if(pReadData[0]!=nullptr && pWriteData[0]!=nullptr)
-            memcpy(pWriteData[0], pReadData[0], DataLength[0]);
-        if(pReadData[1]!=nullptr && pWriteData[1]!=nullptr)
-            memcpy(pWriteData[1], pReadData[1], DataLength[1]);
-        TriggedTimestamp = HAL_GetTick();
-        if (TrigCallBack != nullptr && TrigCallBack != NULL)
-        {
-            TrigCallBack(this);
-        }
-}
-void app_can_operator_StdSendCmdCallBack(CanOperator* self);
-{
-    uint8_t pData[4];
-}
-

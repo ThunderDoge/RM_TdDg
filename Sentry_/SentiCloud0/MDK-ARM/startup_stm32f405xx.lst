@@ -864,11 +864,11 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=senticloud0\startup_stm32f405xx.d -osenticloud0\startup_stm32f4
-05xx.o -I..\\Inc -I.\RTE\_SentiCloud0 -I"D:\Program Files\Keil_MDK5\ARM\PACK\AR
-M\CMSIS\5.5.1\CMSIS\Core\Include" -I"D:\Program Files\Keil_MDK5\ARM\PACK\Keil\S
-TM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include" --predefine="__U
-VISION_VERSION SETA 528" --predefine="_RTE_ SETA 1" --predefine="STM32F407xx SE
-TA 1" --list=startup_stm32f405xx.lst startup_stm32f405xx.s
+05xx.o -I..\\Inc -I..\Inc -I.\RTE\_SentiCloud0 -I"D:\Program Files\Keil_MDK5\AR
+M\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include" -I"D:\Program Files\Keil_MDK5\ARM\PA
+CK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include" --prede
+fine="__UVISION_VERSION SETA 528" --predefine="_RTE_ SETA 1" --predefine="STM32
+F405xx SETA 1" --list=startup_stm32f405xx.lst startup_stm32f405xx.s
 
 
 

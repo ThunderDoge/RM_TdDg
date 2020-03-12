@@ -12,44 +12,20 @@
 #define __APP_CAN_OPERATOR_
 
 #include "stm32f4xx_hal.h"
-#include "app_mode.hpp"
 #include <string.h>
 
-class CanOperator;
-typedef void (*pvCanOpCallBack)(CanOperator*)
-
-class CanOperator /// CanOperator 用于处理CAN_ID发送接收和处理的类
+class CanOperator /// CAN通信操作器 用于处理CAN_ID的处理的类
 {
 public:
-    CanOperator(uint32_t cmd_id, pvCanOpCallBack pfunc = nullptr,
-                void *pData_read_1 = nullptr,
-                void *pData_write_1 = nullptr,
-                uint8_t data_lenght_1 = 1,
-                void *pData_read_2 = nullptr,
-                void *pData_write_2 = nullptr,
-                uint8_t data_lenght_1 = 1)
-        : TriggerId(cmd_id),
-          TrigCallBack(pfunc),
-          pReadData[0](pData_read_1),
-          pWriteData[0](pData_write_1),
-          pReadData[1](pData_read_2),
-          pWriteData[1](pData_write_2),
-          DataLength[0](data_lenght_1),
-          DataLength[1](data_lenght_2)  {}
+    CanOperator( uint32_t sentry_can_id, void(*pfunc)(uint8_t* p) );    ///<构造函数
 
-    uint8_t TryTrigger(uint32_t cmd_id);
-    void ForceTrigger();
+    void Operate(uint8_t* pData);   ///<执行操作器的操作
 
     //状态变量
-    uint32_t TriggerId;
-    pvCanOpCallBack TrigCallBack;
-    //   uint8_t DataCommand;
-    void *pReadData[2];
-    void *pWriteData[2];
-    uint8_t DataLength[2];
-    uint32_t TriggedTimestamp;
+    uint32_t sentry_can_id; ///<CAN_ID
+    uint32_t update_time;   ///<最近执行操作的时间
+private:
+    void(*callback)(uint8_t* );
 };
-
-void app_can_operator_StdSendCmdCallBack(CanOperator* self);
 
 #endif // !__APP_CAN_OPERATOR_

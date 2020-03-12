@@ -17,7 +17,7 @@
                 "${workspaceFolder}../CommonForSentry/App_Sentry",
                 "${workspaceFolder}../CommonForSentry/Bsp",
                 "${workspaceFolder}../CommonForSentry/Motor",
-            
+            ],
             "defines": [
                 "USE_HAL_DRIVER",
                 "STM32F405xx",
