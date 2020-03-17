@@ -206,6 +206,7 @@ void ManualFeed()
     //     VisionTx.Shoot_mode = 0;
 
     VisionTx.Shoot_mode = CloudEntity.shoot_flag; //状态信息发送到VisionTx
+    
 }
 /**
  * @brief 视觉控制云台，手动拨弹
