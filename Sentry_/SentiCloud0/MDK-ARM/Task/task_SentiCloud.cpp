@@ -42,10 +42,6 @@ void Cloud_Init(void)
     void
     task_Main(void *param)
 {
-//	while(Self.PitchMotor.RealAngle == 0){;}
-//    app_imu_data.integral.Pitch = Self.PitchMotor.RealAngle; //注意负号。
-//	while(Self.YawMotor.RealAngle == 0){;}
-//	app_imu_data.integral.Yaw = -Self.YawMotor.RealAngle;
 
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
@@ -54,8 +50,10 @@ void Cloud_Init(void)
 		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
         manager::CANSend();     //统一的CAN电机控制
-        vTaskDelayUntil(&LastTick, 1);  //延时1Tick(默认为1ms)
+        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1Tick(默认为1ms)
+		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
+		#endif
     }
 }
 /**
@@ -71,9 +69,12 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
+		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2Tick
+		
+		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
-		vTaskDelayUntil(&LastTick,2);   //延时2Tick
-    }
+		#endif
+	}
 }
 /**
   * @brief  任务启动器
@@ -84,9 +85,26 @@ void task_CommuRoutine(void *param)
 void TaskStarter(void)
 {
     Cloud_Init();
-    xTaskCreate(task_Main, "task_Main", 512, NULL, 4, &task_Main_Handle);   //512Byte, Priority=4
-	xTaskCreate(task_CommuRoutine,"task_CommuRoutine",512,NULL,4,&task_CommuRoutine_Handle);    //512Byte, Priority=4
-//	xTaskCreate(task_SentryTroubleShooter,"task_SentryTroubleShooter",4096,NULL,4,NULL);    //
+    xTaskCreate((TaskFunction_t)	task_Main,		//任务代码
+				(char*)				"task_Main",	//任务名
+				(uint16_t)			512,			//堆栈深度
+				(void*)				NULL,			//参数列表
+				(UBaseType_t)		4,				//优先级
+				(TaskHandle_t*)		&task_Main_Handle	);
+				
+	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+				(char*)				"task_CommuRoutine",
+				(uint16_t)			512,
+				(void*)				NULL,
+				(UBaseType_t)		4,
+				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+				
+	xTaskCreate((TaskFunction_t)	task_CheckDevice,
+				(char*)				"task_CheckDevice",
+				(uint16_t)			512,
+				(void*)				NULL,
+				(UBaseType_t)		4,
+				(TaskHandle_t*)		&task_CheckDevice_Handle);
 }
 //CAN线测试
 // int16_t test_data[4];

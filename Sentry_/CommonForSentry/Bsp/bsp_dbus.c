@@ -14,8 +14,13 @@
 				1.3		|		增加对接收缓存数组处理之后的清0操作，确保数据校验准确
 				1.4		|		根据代码规范修改了一些函数名称
 				1.5		|		修改一些小bug
+				2.0		2020-3-18	ThunderDoge		整合到哨兵工程中。加入了离线检测部分。
 */
 #include "bsp_dbus.h"
+
+/// 离线检测 结构体
+CheckDevice_Type Dbus_CheckDevice(DbusDevice,0,100);
+
 
 bsp_dbus_RC_Data bsp_dbus_Data; //Dbus解算数据
 static uint8_t Dbus_Rxbuffer[BSP_DBUS_BUFFER_SIZE]={0}; //Dbus接收数据缓存数组
@@ -29,6 +34,10 @@ int16_t Dbus_CHx_StaticOffset[4]={0};	//遥控器处于松手状态时的偏移。默认为0.修改
 */
 void bsp_dbus_Init(void)
 {
+	// 离线检测结构体 设置
+	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
+																
+	
 	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //清除空闲中断位
 	__HAL_UART_ENABLE_IT(&BSP_DBUS_UART,UART_IT_IDLE); //使能DMA接收空闲中断
 	HAL_UART_Receive_DMA(&BSP_DBUS_UART,Dbus_Rxbuffer,BSP_DBUS_BUFFER_SIZE); //开始DMA接收
@@ -121,6 +130,9 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 		bsp_dbus_Data.CH_1 -= 1024+Dbus_CHx_StaticOffset[1];
 		bsp_dbus_Data.CH_2 -= 1024+Dbus_CHx_StaticOffset[2];
 		bsp_dbus_Data.CH_3 -= 1024+Dbus_CHx_StaticOffset[3];
+		
+		//离线检测更新
+		Dbus_CheckDevice.update_hook_func(&Dbus_CheckDevice);
 	}
 #endif
 

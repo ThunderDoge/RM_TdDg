@@ -16,9 +16,8 @@
 #include "app_AmmoFeed.hpp"
 //#include "app_vision.hpp"
 #include "sentry_ctrl_def.hpp"
+#include "app_sentry_check_device.hpp"
 
-#ifndef __CLOUD_MODE_DEF
-#endif
 
 
 class SentryCloud   //云台电机集合

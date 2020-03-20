@@ -1,4 +1,5 @@
 /** 
+* @file         app_imu.c
 * @brief        使用icm20602作为app_imu_data
 * @details  
 * @author      Asn
@@ -25,6 +26,10 @@
 #include "app_imu.h"
 #include "app_math.h"
 #include "bsp_spi.h"
+
+// 离线检测 结构体
+CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,0,100,NULL);
+
  
 #define USE_LPF           //使用低通滤波
 #define MAG_OFFSET
@@ -76,6 +81,15 @@ LPF2 Mag_LPF[3];
 * @remarks 用于零点校正，采样均值,只对陀螺仪进行
 */
 uint8_t app_imu_Init(void){
+
+    // 离线检测 结构体 设置
+    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
+
+
+
+
+
+
 	static uint16_t unstable_num;
 	app_imu_data.reset = 1;
 #ifdef USE_LPF	
@@ -488,6 +502,10 @@ static float Soft_Angle(float angle,uint8_t whichAngle)
 uint32_t tPrev,tNow; 
 void app_imu_So3thread(void)
 {   
+    // 离线检测 by thunderdoge
+    IMU_CheckDevice.update_hook_func(&IMU_CheckDevice);
+
+
     float euler[3] = {0,0,0};            //rad  
     float Rot_matrix[9] = {1.0f,  0.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,  0.0f,  1.0f };       /**< init: identity matrix */
     /* 计算两次解算时间间隔 */

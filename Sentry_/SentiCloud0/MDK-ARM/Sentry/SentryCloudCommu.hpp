@@ -19,6 +19,7 @@
 #include "app_vision.hpp"
 #include "SentryCloudVision.hpp"
 #include "SentryCloudCan.hpp"
+#include "app_sentry_check_device.hpp"
 
 //此板子使用了视觉串口
 #define USE_VISION

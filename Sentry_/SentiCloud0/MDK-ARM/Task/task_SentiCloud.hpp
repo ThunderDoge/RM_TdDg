@@ -27,6 +27,7 @@
 #include "cmsis_os.h"
 #include "app_imu.h"
 #include "Sentry.hpp"
+#include "task_sentry_check_device.h"
 
 void TaskStarter(void); ///全任务启动器
 

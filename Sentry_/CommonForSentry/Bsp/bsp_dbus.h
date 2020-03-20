@@ -2,18 +2,24 @@
  * @file bsp_dbus.h
 * @brief    Dbus板级支持包
 * @details  Dbus数据接收，解析
-* @author   Evan-GH
+* @author   Evan-GH, ThunderDoge
 * @date      2019.10
-* @version  1.3
+* @version  2.0
  * 
  * @copyright Copyright (c) 2020
- * 
+ * @par
+ 				2.0		2020-3-18	ThunderDoge		整合到哨兵工程中。加入了离线检测部分。
  */
 #ifndef __BSP_DBUS_H
 #define __BSP_DBUS_H
 #include "stm32f4xx.h"
 #include "string.h"
 #include "usart.h"
+#include "app_sentry_check_device.hpp"
+
+/// 离线检测 结构体
+extern CheckDevice_Type Dbus_CheckDevice;
+
 
 //条件编译开关宏定义，不需要开启的就注释掉相关宏定义
 //#define BSP_DBUS_USE_SIGNAL
