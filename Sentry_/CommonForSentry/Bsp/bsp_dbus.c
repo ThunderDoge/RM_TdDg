@@ -19,7 +19,7 @@
 #include "bsp_dbus.h"
 
 /// 离线检测 结构体
-CheckDevice_Type Dbus_CheckDevice(DbusDevice,0,100);
+CheckDevice_Type Dbus_CheckDevice(DbusDevice,100);
 
 
 bsp_dbus_RC_Data bsp_dbus_Data; //Dbus解算数据

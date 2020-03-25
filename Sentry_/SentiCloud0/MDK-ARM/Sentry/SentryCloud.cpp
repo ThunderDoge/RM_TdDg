@@ -31,15 +31,28 @@ DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(Feed2nd)
 //定义各个设备结构体
 CheckDevice_Type UpCloudLeftFric_CheckDevice(
                 (CheckDeviceID_Enum)         UpCloudLeftFricDevice,  // 设备ID
-                                            0,                      // 是否是其他主控板的设备
                                             100,                    // 允许离线时间
                                             FUNC_NAME(FricLeftMotor) ); // 离线检测函数 函数名
-CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,0,100,FUNC_NAME(FricRightMotor));
-CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,0,100,FUNC_NAME(YawMotor));
-CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,0,100,FUNC_NAME(PitchMotor));
-CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,0,100,FUNC_NAME(Feed2nd));
+CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,100,FUNC_NAME(FricRightMotor));
+CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,100,FUNC_NAME(YawMotor));
+CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_NAME(PitchMotor));
+CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
 
-
+static void SentryCloudCheckDeviceInit()
+{
+	static int8_t is_sentry_cloud_check_device_inited = 0;
+	// 设备添加到设备列表
+	if(is_sentry_cloud_check_device_inited == 0)
+	{
+		is_sentry_cloud_check_device_inited = 1;
+	}
+	
+    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
+}
 
 
 
@@ -83,16 +96,10 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
     PitchPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
     PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
-
-    // 设备添加到设备列表
-    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
 };
 void SentryCloud::Handle()
 {
+	SentryCloudCheckDeviceInit();
 	if(Mode != save_cloud)
 		LazerSwitchCmd(1);  
     else

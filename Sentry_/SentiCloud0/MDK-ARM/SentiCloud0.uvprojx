@@ -275,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0xe0000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--cpp11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx,MIGRATE_F407ZG,DEBUG</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\Sentry;..\..\CommonForSentry\App;..\..\CommonForSentry\App_Sentry;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task</IncludePath>
             </VariousControls>

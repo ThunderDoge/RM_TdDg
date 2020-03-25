@@ -36,7 +36,7 @@
 #define CAN_INTERBOARD hcan2
 #endif // CAN_INTERBOARD
 
-#define SENTRY_CAN_ID_CNT 20
+#define SENTRY_CAN_ID_CNT 25
 
 /**
  * 2020-2-27 ThunderDoge观察到，绝大多数的
@@ -64,6 +64,7 @@ enum SENTRY_CAN_ID : uint32_t //板间通讯ID号
     CHASSIS_PILLAR = 0X104U,                            ///< 底盘撞柱信息（之后会改掉）
     OFFLINE_LIST =0X105U,                               ///< 离线设备列表
     SUPERIOR_SAFE = 0x106U,                             ///< 底盘安全
+    CAN_ERRLIST = 0X107,                                ///< 离线设备列表
 
     //上云台接收 0x11X
     SUPERIOR_UP_RELATIVE_CMD = 0X111U,                  ///< SUPERCMD（上级指令）上云台相对角控制
@@ -77,7 +78,7 @@ enum SENTRY_CAN_ID : uint32_t //板间通讯ID号
     SUPERIOR_CHASSIS_MOVE = 0X130U,                     ///< SUPERCMD底盘速度控制
     SUPERIOR_CHASSIS_SET_LOACTION = 0X131U,             ///< 底盘位置控制
     SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED = 0X132U, ///< 底盘位置控制加限速
-
+    
 };
 
 // CanRx,CanTx内时间戳的数量
