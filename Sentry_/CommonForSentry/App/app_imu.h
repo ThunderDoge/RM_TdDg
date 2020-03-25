@@ -86,7 +86,7 @@ typedef struct
 }MPU_DEF;
 
 // 离线检测 结构体
-//extern CheckDevice_Type IMU_CheckDevice;
+extern CheckDevice_Type IMU_CheckDevice;
 
 
 extern MPU_DEF app_imu_data;

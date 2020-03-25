@@ -73,7 +73,7 @@ uint32_t SENTRY_CAN_ID_List[SENTRY_CAN_ID_CNT] = {
 //     return HAL_RESULT;
 // }
 /**
- * @brief     我自定义的CAN发送函数.可调数据帧长度 (size 参数)
+ * @brief 
  * 
  * @param     _hcan CAN句柄
  * @param     command_id 将要发送的消息的CAN_ID

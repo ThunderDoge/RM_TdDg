@@ -28,7 +28,7 @@
 #include "bsp_spi.h"
 
 // 离线检测 结构体
-CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,100);
+CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,0,100,NULL);
 
  
 #define USE_LPF           //使用低通滤波

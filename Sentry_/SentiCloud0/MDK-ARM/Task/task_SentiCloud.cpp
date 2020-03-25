@@ -23,7 +23,6 @@ uint32_t mark1, mark2;
   */
 void Cloud_Init(void)
 {
-	app_sentry_CheckDevice_Init();
     bsp_spi_Icm20602Init(); //陀螺仪Icm20602初始化，在SPI上
     app_imu_Init();         //陀螺仪数据处理app_imu初始化
 #ifndef	MIGRATE_F407ZG
