@@ -4,9 +4,12 @@
  * @details   
  * @author   ThunderDoge
  * @date      2020-3-12
- * @version   0.1
+ * @version   0.2
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
                            Using encoding: gb2312
+ * 		date		ver		details
+		2020-3-24	0.1		实现基础功能
+		2020-3-26	0.2		改为.cpp 改写逻辑 使用了类等语言特性
  */
 #include "app_sentry_check_device.hpp"
 
@@ -17,10 +20,6 @@
 static uint8_t checkdevice_is_inited=0;			//【已经初始化】标志变量
 
 CheckDeviceArry_Type CheckDeviceArry;			//所有设备列表
-
-CheckDevice_Type* LastOfflineDevice = NULL;      ///上一个离线设备
-CheckDevice_Type* CurrentOfflineDevice = NULL;   ///当前离线设备
-
 QueueHandle_t QueueOfflineDeviceToCommuTask;					/// 已离线设备列表 发送给通信函数处理
 
 
@@ -119,7 +118,6 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
  */
 CheckDevice_Type::CheckDevice_Type(
 	CheckDeviceID_Enum 				id,
-	uint8_t 						is_inter_brd,    
     uint16_t                        allow_time,
 	uint8_t(*ptr_is_offline_func)(void),
 	AlarmPriority_Enum      		pri,
@@ -129,7 +127,6 @@ CheckDevice_Type::CheckDevice_Type(
 	id(id),
     maxAllowTime(allow_time),
 	priority(pri),
-	is_interboard_device(is_inter_brd),
 	is_offline_func(ptr_is_offline_func),
 	state_changed_callback_func(ptr_state_changed_callback_func),
 	update_hook_func(ptr_update_hook_func)
@@ -165,58 +162,6 @@ void app_sentry_CheckDevice_Init(void)
 
 
 
-/**
- * @brief 初始化设备结构体。全部设为默认值
- * 
- * @param     device    设备结构体的指针
- */
-void app_sentry_CheckDevice_Type_Init(CheckDevice_Type* device)
-{
-	// 载入缺省参数
-	device->id = CheckDeviceID_EnumLength;
-    device->lastTick = 0;
-    device->maxAllowTime = 0;
-	device->is_interboard_device = 0;
-    device->is_offline = 0;
-    device->priority = PriorityNormal;
-    device->is_offline_func = NULL;
-    device->update_hook_func = Default_CheckDevice_UpdateHookFunc;
-}
-
-void app_sentry_CheckDevice_Type_Init_AddToArray(	CheckDevice_Type* 	device,
-										CheckDeviceID_Enum 	id,
-										uint16_t 			max_allow_time,
-										AlarmPriority_Enum 	priority,
-										FunctionalState		enable_alarm,
-										uint8_t (*ptr_is_offline_func)(void),
-										void (*ptr_update_hook_func)(CheckDevice_Type*self) )
-{
-	// 初始化其结构体。
-	app_sentry_CheckDevice_Type_Init(device);		
-	
-	//载入参数
-	device->id = id;
-	device->maxAllowTime = max_allow_time;
-	device->priority = priority;
-	device->alarm_enabled = enable_alarm;
-	
-	//函数指针 如果是NULL则仅使用缺省参数
-	if(ptr_is_offline_func != NULL)
-		device->is_offline_func = ptr_is_offline_func;
-	if(ptr_update_hook_func != NULL)
-		device->update_hook_func = ptr_update_hook_func;
-	
-	//载入
-	if(app_sentry_CheckDevice_AddToArray(device) != HAL_OK)
-	{
-		
-		#ifdef __APP_CHECK_DEVICE_DEBUG		// DEBUG用宏定义
-		while(1){;}
-		#endif	//__APP_CHECK_DEVICE_DEBUG
-		
-	}
-	
-}
 
 
 
@@ -230,7 +175,10 @@ HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAd
 {
     if( ! checkdevice_is_inited )   //检查是否初始化
         while(1){;}                    //暴露错误
-
+	
+	if(DeviceToAdd->id == CheckDeviceID_EnumLength)
+		return HAL_ERROR;
+	
     for(int i=0;i<CheckDeviceArry.checkDeviceNum;i++)
     {
         if( DeviceToAdd->id == CheckDeviceArry.deviceArry[i]->id )  //发现重合ID
@@ -238,10 +186,42 @@ HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAd
     }
 
     CheckDeviceArry.deviceArry[CheckDeviceArry.checkDeviceNum] = DeviceToAdd;
+	CheckDeviceArry.checkDeviceNum++;
     return HAL_OK;
 }
 
+#ifdef __APP_CHECK_DEVICE_USE_OLED
 
+__WEAK void app_sentry_CheckDevice_OledDisplay(CheckDevice_Type* device)
+{
+    // 开发中
+    UNUSED(device);
+}
+
+#endif // __APP_CHECK_DEVICE_USE_OLED
+
+#ifdef __APP_CHECK_DEVICE_USE_CAN
+/// 发送队列中所有的设备的信息. 你可以自定义这个文件的含义
+void app_sentry_CheckDevice_CanSend()
+{
+    uint64_t offline_bit_array;
+    memset(&offline_bit_array,0,sizeof(offline_bit_array));
+
+    for(int i=0;i<CheckDeviceArry.checkDeviceNum;i++)
+    {
+        if(CheckDeviceArry.deviceArry[i]->is_offline)
+        {
+            SET_BIT_NTH(offline_bit_array,i);
+        }
+    }
+    
+    SentryCanSend(  &CAN_INTERBOARD,CAN_ERRLIST,
+                    (uint8_t*)&offline_bit_array,
+                    CheckDeviceArry.checkDeviceNum/8);
+
+}
+
+#endif // __APP_CHECK_DEVICE_USE_CAN
 
 
 
