@@ -75,7 +75,7 @@ public:
     float BaseImuAngleRate[3];      ///< 云台水平底座朝向
 
     //Public 状态
-    // int Mode;   ///<云台状态指示
+    int Mode;   ///<云台状态指示
     uint8_t force_use_mech_gyro=0;
     uint8_t err_flags=0;    ///<错误标志位。每一位的定义见：
 	int shoot_flag=0;   ///<“正在射击”指示位
@@ -89,9 +89,9 @@ public:
     void Handle();  ///< 云台自动控制函数，包含着所有数据的获取、处理和例行执行。应当在主逻辑任务中调用。>>>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<<
     void Safe_Set();    ///<安全模式
     void SetAngleTo(float pitch, float yaw);    ///<机械角度设定
-    void SetSoftAngleTo(float soft_pitch, float soft_yaw);  ///<软角度设定-未实现
-    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< 强制设定控制模式
-    // void SetAngleTo_Gyro(float pitch, float yaw);   ///<角度设定 陀螺仪控制模式
+//    void SetSoftAngleTo(float soft_pitch, float soft_yaw);  ///<软角度设定-未实现
+//    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< 强制设定控制模式
+    void SetAngleTo_Gyro(float pitch, float yaw);   ///<角度设定 陀螺仪控制模式
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮
@@ -123,13 +123,13 @@ extern CheckDevice_Type UpCloudPitchMotor_CheckDevice;
 extern CheckDevice_Type UpCloudFeedMotor_CheckDevice;
 
 // 云台控制模式相关
-void EnterModeCloudCtrlMech(void);
-void RunModeCloudCtrlMech(void);
-void EnterModeCloudCtrlGyro(void);
-void RunModeCloudCtrlGyro(void);
+//void EnterModeCloudCtrlMech(void);
+//void RunModeCloudCtrlMech(void);
+//void EnterModeCloudCtrlGyro(void);
+//void RunModeCloudCtrlGyro(void);
 
-extern Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
-extern Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
+//extern Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
+//extern Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
 
 /// PID运算回调。用于PITCH重力前馈 逻辑
 void pidPitchCallBack(pid* self);
