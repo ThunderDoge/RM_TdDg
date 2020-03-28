@@ -1,6 +1,6 @@
 /**
   * @file      task_sentry_check_device.c
-  * @brief     å…¬ç”¨è®¾å¤‡ç¦»çº¿æ£€æµ‹ä»»åŠ¡
+  * @brief     ¹«ÓÃÉè±¸ÀëÏß¼ì²âÈÎÎñ
   * @details   
   * @author   ThunderDoge
   * @date      2020-3-18
@@ -17,9 +17,9 @@ TaskHandle_t task_CheckDevice_Handle;
 uint32_t mark_check_device;
 
 /**
- * @brief å…¬ç”¨è®¾å¤‡ç¦»çº¿æ£€æµ‹ä»»åŠ¡
+ * @brief ¹«ÓÃÉè±¸ÀëÏß¼ì²âÈÎÎñ
  * 
- * @param     param = NULL å³å¯
+ * @param     param = NULL ¼´¿É
  */
 void task_CheckDevice(void* param)
 {

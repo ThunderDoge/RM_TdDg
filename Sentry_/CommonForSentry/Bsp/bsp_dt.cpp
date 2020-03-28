@@ -1,16 +1,16 @@
 /**
  * @file bsp_dt.cpp
- * @brief æ•°æ®ä¼ è¾“æ¿çº§æ”¯æŒåŒ…
+ * @brief Êı¾İ´«Êä°å¼¶Ö§³Ö°ü
  * @author Evan-GH (751191269@qq.com)
  * @version 1.4
  * @date 2020-02-28
  * @copyright OnePointFive
- * @par æ—¥å¿—:
- *   V1.0 åˆ›å»ºæ­¤æ–‡ä»¶ç®¡ç†å¯¹å¤–å‘é€æ•°æ®çš„ç›¸å…³å‡½æ•°å’Œæ•°æ®\n
- *   V1.1 é‡æ–°è§„èŒƒåŒ–ä»£ç æ–‡ä»¶ç¼–ç æ ¼å¼å’ŒDoxygenæ³¨é‡Š\n
- *   V1.2 å®Œå–„å‘é€å’Œæ¥æ”¶å¤„ç†çš„ç›¸å…³å‡½æ•°\n
- *   V1.3 åˆæ­¥æ·»åŠ å¯¹åŒ¿åä¸Šä½æœºçš„æ•°æ®ä¼ è¾“æ”¯æŒ\n
- *   v1.4 å®Œæˆå¯¹äºåŒ¿åä¸Šä½æœºV7ç‰ˆæœ¬æ–°åè®®çš„é€‚é…\n
+ * @par ÈÕÖ¾:
+ *   V1.0 ´´½¨´ËÎÄ¼ş¹ÜÀí¶ÔÍâ·¢ËÍÊı¾İµÄÏà¹Øº¯ÊıºÍÊı¾İ\n
+ *   V1.1 ÖØĞÂ¹æ·¶»¯´úÂëÎÄ¼ş±àÂë¸ñÊ½ºÍDoxygen×¢ÊÍ\n
+ *   V1.2 ÍêÉÆ·¢ËÍºÍ½ÓÊÕ´¦ÀíµÄÏà¹Øº¯Êı\n
+ *   V1.3 ³õ²½Ìí¼Ó¶ÔÄäÃûÉÏÎ»»úµÄÊı¾İ´«ÊäÖ§³Ö\n
+ *   v1.4 Íê³É¶ÔÓÚÄäÃûÉÏÎ»»úV7°æ±¾ĞÂĞ­ÒéµÄÊÊÅä\n
  */
 #include "bsp_dt.hpp"
 #include "usart.h"
@@ -18,38 +18,38 @@
 #include <string.h>
 #include "bsp_dbus.h"
 
-//ä½¿ç”¨åŒ¿åä¸Šä½æœºä¼ è¾“æ•°æ®éœ€è¦çš„å®å®šä¹‰ï¼Œç”¨äºæ‹†åˆ†ä¸€ä¸ªæ•´å‹æ•°çš„é«˜ä½ä½
+//Ê¹ÓÃÄäÃûÉÏÎ»»ú´«ÊäÊı¾İĞèÒªµÄºê¶¨Òå£¬ÓÃÓÚ²ğ·ÖÒ»¸öÕûĞÍÊıµÄ¸ßµÍÎ»
 #define BYTE0(Data)      (*(char *)(&Data))
 #define BYTE1(Data)      (*((char *)(&Data)+1))
 #define BYTE2(Data)      (*((char *)(&Data)+2))
 #define BYTE3(Data)      (*((char *)(&Data)+3))
 
-bsp_dt_data bsp_dt_Send_Data; //!< å­˜å‚¨å¯¹å¤–å‘é€ä¿¡æ¯çš„ç»“æ„ä½“
-static uint8_t DT_Rxbuffer[BSP_DT_BUFFER_SIZE]={0}; //!< ä¸²å£æ¥æ”¶æ•°æ®ç¼“å­˜æ•°ç»„
-int32_t bsp_dt_ParList[166];  //å‚æ•°åˆ—è¡¨
+bsp_dt_data bsp_dt_Send_Data; //!< ´æ´¢¶ÔÍâ·¢ËÍĞÅÏ¢µÄ½á¹¹Ìå
+static uint8_t DT_Rxbuffer[BSP_DT_BUFFER_SIZE]={0}; //!< ´®¿Ú½ÓÊÕÊı¾İ»º´æÊı×é
+int32_t bsp_dt_ParList[166];  //²ÎÊıÁĞ±í
 
-static uint8_t DT_Txbuffer[16]={0};  //ä¸²å£å‘é€ç”¨æ•°ç»„
+static uint8_t DT_Txbuffer[16]={0};  //´®¿Ú·¢ËÍÓÃÊı×é
 /**
- * @brief ä½¿ç”¨è‡ªå·±çš„ä¸Šä½æœºè§£ææ•°æ®çš„ä¸²å£å‘é€å‡½æ•°
+ * @brief Ê¹ÓÃ×Ô¼ºµÄÉÏÎ»»ú½âÎöÊı¾İµÄ´®¿Ú·¢ËÍº¯Êı
  * @return HAL_StatusTypeDef
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_Sendmessage(void)
 {
-	int16_t _check_sum = 0; //å’Œæ ¡éªŒç”¨å˜é‡
-	memset(DT_Txbuffer,0,16); //å‘é€ä¹‹å‰å…ˆæ¸…ç©ºä¸€æ¬¡
-	DT_Txbuffer[0] = 0xff; //å¸§å¤´
-	DT_Txbuffer[1] = bsp_dt_Send_Data.Function_word;  //åŠŸèƒ½å­—
-	DT_Txbuffer[15] = 0x0d; //å¸§å°¾
+	int16_t _check_sum = 0; //ºÍĞ£ÑéÓÃ±äÁ¿
+	memset(DT_Txbuffer,0,16); //·¢ËÍÖ®Ç°ÏÈÇå¿ÕÒ»´Î
+	DT_Txbuffer[0] = 0xff; //Ö¡Í·
+	DT_Txbuffer[1] = bsp_dt_Send_Data.Function_word;  //¹¦ÄÜ×Ö
+	DT_Txbuffer[15] = 0x0d; //Ö¡Î²
 
 	memcpy(DT_Txbuffer+2,&bsp_dt_Send_Data.Data_1,4);
 	memcpy(DT_Txbuffer+6,&bsp_dt_Send_Data.Data_2,4);
 	memcpy(DT_Txbuffer+10,&bsp_dt_Send_Data.Data_3,4);
 
-	for(int i=0; i<16; i++) //å’Œæ ¡éªŒ
+	for(int i=0; i<16; i++) //ºÍĞ£Ñé
 	{
-		if(i!=14)	_check_sum+=DT_Txbuffer[i];  //é™¤äº†å’Œæ ¡éªŒé‚£ä¸€ä½å…¶ä»–ä½ä¸Šçš„æ•°å€¼åŠ å’Œ
+		if(i!=14)	_check_sum+=DT_Txbuffer[i];  //³ıÁËºÍĞ£ÑéÄÇÒ»Î»ÆäËûÎ»ÉÏµÄÊıÖµ¼ÓºÍ
 	}
 	_check_sum = _check_sum & 0xff;
 	DT_Txbuffer[14] = _check_sum;
@@ -57,42 +57,42 @@ HAL_StatusTypeDef bsp_dt_Sendmessage(void)
 	return HAL_UART_Transmit_DMA(&BSP_DT_UART,DT_Txbuffer,16);
 }
 
-static uint8_t ANO_DT_Txbuffer[50] = {0};  //ä¸²å£å‘é€ç”¨ç¼“å­˜ï¼ŒåŒ¿åä¸Šä½æœºç”¨
+static uint8_t ANO_DT_Txbuffer[50] = {0};  //´®¿Ú·¢ËÍÓÃ»º´æ£¬ÄäÃûÉÏÎ»»úÓÃ
 /**
- * @brief å‘åŒ¿åä¸Šä½æœºå‘é€ç”¨æˆ·è‡ªå®šä¹‰æ•°æ®
- * @param _Frame_ID å¸§ID
- * @param Data1 æ•°æ®1
- * @param Data2 æ•°æ®2
- * @param Data3 æ•°æ®3
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ÏòÄäÃûÉÏÎ»»ú·¢ËÍÓÃ»§×Ô¶¨ÒåÊı¾İ
+ * @param _Frame_ID Ö¡ID
+ * @param Data1 Êı¾İ1
+ * @param Data2 Êı¾İ2
+ * @param Data3 Êı¾İ3
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_UserData(uint8_t _Frame_ID, int32_t Data1, int32_t Data2, int32_t Data3)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = _Frame_ID;  //å‘é€ç”¨æˆ·è‡ªå®šä¹‰æ•°æ®
-	ANO_DT_Txbuffer[cnt++] = 12;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = _Frame_ID;  //·¢ËÍÓÃ»§×Ô¶¨ÒåÊı¾İ
+	ANO_DT_Txbuffer[cnt++] = 12;  //Êı¾İ³¤¶È
 
-	int32_t temp = Data1;  //å¡«å……Data1
+	int32_t temp = Data1;  //Ìî³äData1
 	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE2(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE3(temp);
-	temp = Data2;  //å¡«å……Data2
+	temp = Data2;  //Ìî³äData2
 	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE2(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE3(temp);
-	temp = Data3;  //å¡«å……Data3
+	temp = Data3;  //Ìî³äData3
 	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE2(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE3(temp);
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -105,40 +105,40 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_UserData(uint8_t _Frame_ID, int32_t Data1, int
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€ä¼ æ„Ÿå™¨æ•°æ®1
- * @param Acc_x Xè½´åŠ é€Ÿåº¦
- * @param Acc_y Yè½´åŠ é€Ÿåº¦
- * @param Acc_z Zè½´åŠ é€Ÿåº¦
- * @param Gyro_x Xè½´è§’é€Ÿåº¦
- * @param Gyro_y Yè½´è§’é€Ÿåº¦
- * @param Gyro_z Zè½´è§’é€Ÿåº¦
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍ´«¸ĞÆ÷Êı¾İ1
+ * @param Acc_x XÖá¼ÓËÙ¶È
+ * @param Acc_y YÖá¼ÓËÙ¶È
+ * @param Acc_z ZÖá¼ÓËÙ¶È
+ * @param Gyro_x XÖá½ÇËÙ¶È
+ * @param Gyro_y YÖá½ÇËÙ¶È
+ * @param Gyro_z ZÖá½ÇËÙ¶È
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData1(int16_t Acc_x, int16_t Acc_y, int16_t Acc_z, int16_t Gyro_x, int16_t Gyro_y, int16_t Gyro_z)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0X01;  //å‘é€ä¼ æ„Ÿå™¨æ•°æ®1
-	ANO_DT_Txbuffer[cnt++] = 13;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0X01;  //·¢ËÍ´«¸ĞÆ÷Êı¾İ1
+	ANO_DT_Txbuffer[cnt++] = 13;  //Êı¾İ³¤¶È
 
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_x);  //å¡«å……Xè½´åŠ é€Ÿåº¦
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_x);  //Ìî³äXÖá¼ÓËÙ¶È
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Acc_x);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_y);  //å¡«å……Yè½´åŠ é€Ÿåº¦
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_y);  //Ìî³äYÖá¼ÓËÙ¶È
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Acc_y);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_z);  //å¡«å……Zè½´åŠ é€Ÿåº¦
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Acc_z);  //Ìî³äZÖá¼ÓËÙ¶È
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Acc_z);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_x);  //å¡«å……Xè½´é™€èºä»ªæ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_x);  //Ìî³äXÖáÍÓÂİÒÇÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Gyro_x);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_y);  //å¡«å……Yè½´é™€èºä»ªæ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_y);  //Ìî³äYÖáÍÓÂİÒÇÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Gyro_y);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_z);  //å¡«å……Zè½´é™€èºä»ªæ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Gyro_z);  //Ìî³äZÖáÍÓÂİÒÇÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Gyro_z);
 	ANO_DT_Txbuffer[cnt++] = 0;
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -151,43 +151,43 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData1(int16_t Acc_x, int16_t Acc_y, int1
 }
 
 /**
- * @brief å‘åŒ¿åä¸Šä½æœºå‘é€ä¼ æ„Ÿå™¨æ•°æ®2ï¼Œæ¸©åº¦æ‰©å¤§åå€
- * @param Mag_x Xè½´ç£åŠ›è®¡æ•°æ®
- * @param Mag_y Yè½´ç£åŠ›è®¡æ•°æ®
- * @param Mag_z Zè½´ç£åŠ›è®¡æ•°æ®
- * @param Alt_Bar æ°”å‹è®¡é«˜åº¦æ•°æ®ï¼Œå•ä½CM
- * @param Temp æ¸©åº¦æ•°æ®
- * @param Bar_STA æ°”å‹è®¡çŠ¶æ€
- * @param Mag_STA ç£åŠ›è®¡çŠ¶æ€
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ÏòÄäÃûÉÏÎ»»ú·¢ËÍ´«¸ĞÆ÷Êı¾İ2£¬ÎÂ¶ÈÀ©´óÊ®±¶
+ * @param Mag_x XÖá´ÅÁ¦¼ÆÊı¾İ
+ * @param Mag_y YÖá´ÅÁ¦¼ÆÊı¾İ
+ * @param Mag_z ZÖá´ÅÁ¦¼ÆÊı¾İ
+ * @param Alt_Bar ÆøÑ¹¼Æ¸ß¶ÈÊı¾İ£¬µ¥Î»CM
+ * @param Temp ÎÂ¶ÈÊı¾İ
+ * @param Bar_STA ÆøÑ¹¼Æ×´Ì¬
+ * @param Mag_STA ´ÅÁ¦¼Æ×´Ì¬
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData2(int16_t Mag_x, int16_t Mag_y, int16_t Mag_z, float Alt_Bar, float Temp, uint8_t Bar_STA, uint8_t Mag_STA)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0X02;  //å‘é€ä¼ æ„Ÿå™¨æ•°æ®2
-	ANO_DT_Txbuffer[cnt++] = 14;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0X02;  //·¢ËÍ´«¸ĞÆ÷Êı¾İ2
+	ANO_DT_Txbuffer[cnt++] = 14;  //Êı¾İ³¤¶È
 
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_x);  //å¡«å……Xè½´ç£åŠ›è®¡æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_x);  //Ìî³äXÖá´ÅÁ¦¼ÆÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Mag_x);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_y);  //å¡«å……Yè½´ç£åŠ›è®¡æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_y);  //Ìî³äYÖá´ÅÁ¦¼ÆÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Mag_y);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_z);  //å¡«å……Zè½´ç£åŠ›è®¡æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_z);  //Ìî³äZÖá´ÅÁ¦¼ÆÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Mag_z);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Alt_Bar);  //å¡«å……æ°”å‹è®¡é«˜åº¦æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Alt_Bar);  //Ìî³äÆøÑ¹¼Æ¸ß¶ÈÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Alt_Bar);
 	ANO_DT_Txbuffer[cnt++] = BYTE2(Alt_Bar);
 	ANO_DT_Txbuffer[cnt++] = BYTE3(Alt_Bar);
 	int16_t temp = Temp * 10;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……æ¸©åº¦æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³äÎÂ¶ÈÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Bar_STA);  //å¡«å……çŠ¶æ€æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Bar_STA);  //Ìî³ä×´Ì¬Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE0(Mag_STA);
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -200,39 +200,39 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData2(int16_t Mag_x, int16_t Mag_y, int1
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€æ¬§æ‹‰è§’æ•°æ®ï¼Œæ•°æ®æ‰©å¤§100å€
- * @param Pitch ä¿¯ä»°è§’
- * @param Roll ç¿»æ»šè§’
- * @param Yaw åèˆªè§’
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍÅ·À­½ÇÊı¾İ£¬Êı¾İÀ©´ó100±¶
+ * @param Pitch ¸©Ñö½Ç
+ * @param Roll ·­¹ö½Ç
+ * @param Yaw Æ«º½½Ç
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_EulerAngle(float Pitch, float Roll, float Yaw)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xAF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0X03;  //å‘é€æ¬§æ‹‰è§’
-	ANO_DT_Txbuffer[cnt++] = 0x07;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xAF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0X03;  //·¢ËÍÅ·À­½Ç
+	ANO_DT_Txbuffer[cnt++] = 0x07;  //Êı¾İ³¤¶È
 
 	int16_t temp;
-	//å½’ä¸€åŒ–è§’åº¦
+	//¹éÒ»»¯½Ç¶È
 	if(Roll>0 && Roll<180)
 		temp = (180-Roll)*100;
 	if(Roll<0 && Roll>-180)
 		temp = (-180-Roll)*100;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……ç¿»æ»šè§’
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³ä·­¹ö½Ç
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	temp = Pitch * 100;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……ä¿¯ä»°è§’
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³ä¸©Ñö½Ç
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	temp = Yaw * 100;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……åèˆªè§’
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³äÆ«º½½Ç
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	ANO_DT_Txbuffer[cnt++] = 0;
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -245,42 +245,42 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_EulerAngle(float Pitch, float Roll, float Yaw)
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€é¥æ§å™¨æ•°æ®
- * @param CH0 é€šé“0æ•°æ®
- * @param CH1 é€šé“1æ•°æ®
- * @param CH2 é€šé“2æ•°æ®
- * @param CH3 é€šé“3æ•°æ®
- * @param S1 æ‹¨ç å¼€å…³1
- * @param S2 æ‹¨ç å¼€å…³2
- * @param Dial æ‹¨è½®æ•°æ®
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍÒ£¿ØÆ÷Êı¾İ
+ * @param CH0 Í¨µÀ0Êı¾İ
+ * @param CH1 Í¨µÀ1Êı¾İ
+ * @param CH2 Í¨µÀ2Êı¾İ
+ * @param CH3 Í¨µÀ3Êı¾İ
+ * @param S1 ²¦Âë¿ª¹Ø1
+ * @param S2 ²¦Âë¿ª¹Ø2
+ * @param Dial ²¦ÂÖÊı¾İ
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_Remote(int16_t CH0, int16_t CH1, int16_t CH2, int16_t CH3, int16_t S1, int16_t S2, int16_t Dial)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0X40;  //å‘é€é¥æ§å™¨æ•°æ®
-	ANO_DT_Txbuffer[cnt++] = 20;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0X40;  //·¢ËÍÒ£¿ØÆ÷Êı¾İ
+	ANO_DT_Txbuffer[cnt++] = 20;  //Êı¾İ³¤¶È
 
-	ANO_DT_Txbuffer[cnt++] = BYTE0(CH0);  //å¡«å……é€šé“0æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(CH0);  //Ìî³äÍ¨µÀ0Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(CH0);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(CH1);  //å¡«å……é€šé“1æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(CH1);  //Ìî³äÍ¨µÀ1Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(CH1);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(CH2);  //å¡«å……é€šé“2æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(CH2);  //Ìî³äÍ¨µÀ2Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(CH2);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(CH3);  //å¡«å……é€šé“3æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(CH3);  //Ìî³äÍ¨µÀ3Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(CH3);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(S1);  //å¡«å……æ‹¨ç å¼€å…³1æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(S1);  //Ìî³ä²¦Âë¿ª¹Ø1Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(S1);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(S2);  //å¡«å……æ‹¨ç å¼€å…³2æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(S2);  //Ìî³ä²¦Âë¿ª¹Ø2Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(S2);
-	ANO_DT_Txbuffer[cnt++] = BYTE0(Dial);  //å¡«å……æ‹¨è½®æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(Dial);  //Ìî³ä²¦ÂÖÊı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(Dial);
 
-	//åé¢çš„æ•°æ®æ²¡æœ‰å°±è¡¥0
+	//ºóÃæµÄÊı¾İÃ»ÓĞ¾Í²¹0
 	ANO_DT_Txbuffer[cnt++] = 0;
 	ANO_DT_Txbuffer[cnt++] = 0;
 	ANO_DT_Txbuffer[cnt++] = 0;
@@ -288,7 +288,7 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_Remote(int16_t CH0, int16_t CH1, int16_t CH2, 
 	ANO_DT_Txbuffer[cnt++] = 0;
 	ANO_DT_Txbuffer[cnt++] = 0;
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -301,29 +301,29 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_Remote(int16_t CH0, int16_t CH1, int16_t CH2, 
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€ç”µå‹ç”µæµæ•°æ®ï¼Œæ•°æ®æ‰©å¤§åå€
- * @param Volatile ç”µå‹æ•°æ®
- * @param Current ç”µæµæ•°æ®
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍµçÑ¹µçÁ÷Êı¾İ£¬Êı¾İÀ©´óÊ®±¶
+ * @param Volatile µçÑ¹Êı¾İ
+ * @param Current µçÁ÷Êı¾İ
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_VolatileCurrent(float Volatile, float Current)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0X0D;  //å‘é€é¥æ§å™¨æ•°æ®
-	ANO_DT_Txbuffer[cnt++] = 4;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0X0D;  //·¢ËÍÒ£¿ØÆ÷Êı¾İ
+	ANO_DT_Txbuffer[cnt++] = 4;  //Êı¾İ³¤¶È
 
 	uint16_t temp = Volatile * 10;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……ç”µå‹æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³äµçÑ¹Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 	temp = Current * 10;
-	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //å¡«å……ç”µæµæ•°æ®
+	ANO_DT_Txbuffer[cnt++] = BYTE0(temp);  //Ìî³äµçÁ÷Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = BYTE1(temp);
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -336,29 +336,29 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_VolatileCurrent(float Volatile, float Current)
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€ä¸€ä¸ªå­—ç¬¦ä¸²
- * @param Color å­—ç¬¦ä¸²é¢œè‰²
- * @param String å‘é€çš„å­—ç¬¦ä¸²
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍÒ»¸ö×Ö·û´®
+ * @param Color ×Ö·û´®ÑÕÉ«
+ * @param String ·¢ËÍµÄ×Ö·û´®
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_LogString(uint8_t Color, uint8_t* String)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0XA0;  //å‘é€ä¼ æ„Ÿå™¨æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0XA0;  //·¢ËÍ´«¸ĞÆ÷Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = 0;
-	ANO_DT_Txbuffer[cnt++] = Color;  //è®¾ç½®é¢œè‰²
+	ANO_DT_Txbuffer[cnt++] = Color;  //ÉèÖÃÑÕÉ«
 	uint8_t i = 0;
 	while(*(String+i) != '\0')
 	{
-		ANO_DT_Txbuffer[cnt++] = *(String+i++);  //å¡«å……å­—ç¬¦ä¸²åˆ°å¸§ä¸­
-		if(cnt > 50) break;  //å¸§é•¿åº¦æœ€å¤š50
+		ANO_DT_Txbuffer[cnt++] = *(String+i++);  //Ìî³ä×Ö·û´®µ½Ö¡ÖĞ
+		if(cnt > 50) break;  //Ö¡³¤¶È×î¶à50
 	}
 	ANO_DT_Txbuffer[3] = cnt - 4;
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -371,19 +371,19 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_LogString(uint8_t Color, uint8_t* String)
 }
 
 /**
- * @brief å‘åŒ¿åä¸Šä½æœºå‘é€logä¿¡æ¯ï¼Œæ•°å­—ï¼‹å­—ç¬¦ä¸²
- * @param Num æ•°å€¼
- * @param String å­—ç¬¦ä¸²ä¿¡æ¯
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ÏòÄäÃûÉÏÎ»»ú·¢ËÍlogĞÅÏ¢£¬Êı×Ö£«×Ö·û´®
+ * @param Num ÊıÖµ
+ * @param String ×Ö·û´®ĞÅÏ¢
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_NumString(int32_t Num,uint8_t *String)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0XA0;  //å‘é€ä¼ æ„Ÿå™¨æ•°æ®
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0XA0;  //·¢ËÍ´«¸ĞÆ÷Êı¾İ
 	ANO_DT_Txbuffer[cnt++] = 0;
 
 	ANO_DT_Txbuffer[cnt++] = BYTE0(Num);
@@ -394,11 +394,11 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_NumString(int32_t Num,uint8_t *String)
 	uint8_t i = 0;
 	while(*(String+i) != '\0')
 	{
-		ANO_DT_Txbuffer[cnt++] = *(String+i++);  //å¡«å……å­—ç¬¦ä¸²åˆ°å¸§ä¸­
-		if(cnt > 50) break;  //å¸§é•¿åº¦æœ€å¤š50
+		ANO_DT_Txbuffer[cnt++] = *(String+i++);  //Ìî³ä×Ö·û´®µ½Ö¡ÖĞ
+		if(cnt > 50) break;  //Ö¡³¤¶È×î¶à50
 	}
 	ANO_DT_Txbuffer[3] = cnt - 4;
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -411,25 +411,25 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_NumString(int32_t Num,uint8_t *String)
 }
 
 /**
- * @brief å‘é€æ ¡éªŒä¿¡æ¯åˆ°ä¸Šä½æœº
- * @param _Sc æ”¶åˆ°çš„å’Œæ ¡éªŒ
- * @param _Ac æ”¶åˆ°çš„é™„åŠ æ ¡éªŒ
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @brief ·¢ËÍĞ£ÑéĞÅÏ¢µ½ÉÏÎ»»ú
+ * @param _Sc ÊÕµ½µÄºÍĞ£Ñé
+ * @param _Ac ÊÕµ½µÄ¸½¼ÓĞ£Ñé
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_Check(uint8_t Frame_ID, uint8_t _Sc, uint8_t _Ac)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0x00;  //å‘é€åé¦ˆå¸§
-	ANO_DT_Txbuffer[cnt++] = 3;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0x00;  //·¢ËÍ·´À¡Ö¡
+	ANO_DT_Txbuffer[cnt++] = 3;  //Êı¾İ³¤¶È
 	ANO_DT_Txbuffer[cnt++] = Frame_ID;
-	ANO_DT_Txbuffer[cnt++] = _Sc;  //å¡«å……æ¥æ”¶åˆ°çš„æ ¡éªŒä¿¡æ¯
+	ANO_DT_Txbuffer[cnt++] = _Sc;  //Ìî³ä½ÓÊÕµ½µÄĞ£ÑéĞÅÏ¢
 	ANO_DT_Txbuffer[cnt++] = _Ac;
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -442,25 +442,25 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_Check(uint8_t Frame_ID, uint8_t _Sc, uint8_t _
 }
 
 /**
- * @brief å¯¹åŒ¿åä¸Šä½æœºå‘é€è¢«æŸ¥è¯¢çš„å‚æ•°å€¼ï¼ŒPIDå‚æ•°æ‰©å¤§1000å€ä¸Šä¼ 
+ * @brief ¶ÔÄäÃûÉÏÎ»»ú·¢ËÍ±»²éÑ¯µÄ²ÎÊıÖµ£¬PID²ÎÊıÀ©´ó1000±¶ÉÏ´«
  * @param _ParaID
- * @return HAL_StatusTypeDef å‘é€ç»“æœ
- * @retval HAL_OK å‘é€æˆåŠŸ
- * @retval HAL_ERROR å‘é€å¤±è´¥
+ * @return HAL_StatusTypeDef ·¢ËÍ½á¹û
+ * @retval HAL_OK ·¢ËÍ³É¹¦
+ * @retval HAL_ERROR ·¢ËÍÊ§°Ü
  */
 HAL_StatusTypeDef bsp_dt_ANO_Send_Parameter(uint16_t _ParaID)
 {
 	uint8_t cnt = 0;
-	ANO_DT_Txbuffer[cnt++] = 0xAA;  //å¸§å¤´
-	ANO_DT_Txbuffer[cnt++] = 0xFF;  //ç›®æ ‡åœ°å€
-	ANO_DT_Txbuffer[cnt++] = 0xE2;  //å‘é€åé¦ˆå¸§
-	ANO_DT_Txbuffer[cnt++] = 6;  //æ•°æ®é•¿åº¦
+	ANO_DT_Txbuffer[cnt++] = 0xAA;  //Ö¡Í·
+	ANO_DT_Txbuffer[cnt++] = 0xFF;  //Ä¿±êµØÖ·
+	ANO_DT_Txbuffer[cnt++] = 0xE2;  //·¢ËÍ·´À¡Ö¡
+	ANO_DT_Txbuffer[cnt++] = 6;  //Êı¾İ³¤¶È
 
 	ANO_DT_Txbuffer[cnt++] = BYTE0(_ParaID);
 	ANO_DT_Txbuffer[cnt++] = BYTE1(_ParaID);
 
 	int32_t temp = bsp_dt_ParList[_ParaID];
-	if(temp >= 11 && temp <=64)  //PIDå‚æ•°åˆ—è¡¨å‘é€æ—¶å€™è¦æŠŠå¯¹åº”æµ®ç‚¹æ•°æ®æ‰©å¤§1000å€
+	if(temp >= 11 && temp <=64)  //PID²ÎÊıÁĞ±í·¢ËÍÊ±ºòÒª°Ñ¶ÔÓ¦¸¡µãÊı¾İÀ©´ó1000±¶
 	{
 
 	}
@@ -469,7 +469,7 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_Parameter(uint16_t _ParaID)
 	ANO_DT_Txbuffer[cnt++] = BYTE2(temp);
 	ANO_DT_Txbuffer[cnt++] = BYTE3(temp);
 
-	uint8_t sc=0,ac=0;  //æ ¡éªŒ
+	uint8_t sc=0,ac=0;  //Ğ£Ñé
 	for(int i=0;i<ANO_DT_Txbuffer[3]+4;i++)
 	{
 		sc += ANO_DT_Txbuffer[i];
@@ -483,50 +483,50 @@ HAL_StatusTypeDef bsp_dt_ANO_Send_Parameter(uint16_t _ParaID)
 
 static void bsp_dt_Ano_Data_Analysis(void)
 {
-	uint8_t sc=0,ac=0;  //æ ¡éªŒç”¨å˜é‡
+	uint8_t sc=0,ac=0;  //Ğ£ÑéÓÃ±äÁ¿
 	uint16_t ParID;
 
-	if (DT_Rxbuffer[0] == 0xAA && (DT_Rxbuffer[1] == 0xFF || DT_Rxbuffer[1] == 0x05))  //æ£€æµ‹å¸§çš„å¤´ä¸¤ä¸ªæ•°æ®
+	if (DT_Rxbuffer[0] == 0xAA && (DT_Rxbuffer[1] == 0xFF || DT_Rxbuffer[1] == 0x05))  //¼ì²âÖ¡µÄÍ·Á½¸öÊı¾İ
 	{
 		switch (DT_Rxbuffer[2])
 		{
-			case 0xE0:  //å‘½ä»¤æ“ä½œ
+			case 0xE0:  //ÃüÁî²Ù×÷
 				for(int i=0;i<DT_Rxbuffer[3]+4;i++)
 				{
 					sc += DT_Rxbuffer[i];
 					ac += sc;
 				}
-				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //æ ¡éªŒä¸é€šè¿‡ï¼Œè¿”å›
+				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //Ğ£Ñé²»Í¨¹ı£¬·µ»Ø
 					return;
-				bsp_dt_ANO_Send_Check(0XE0,sc,ac);  //å‘é€å›é¦ˆæŒ‡ä»¤
-				if(DT_Rxbuffer[4] == 0x02)  //ç³»ç»Ÿé‡å¯å‘½ä»¤ï¼Œè¦åœ¨å‘é€åé¦ˆæŠ¥æ–‡ä¹‹åæ‰§è¡Œï¼Œå¦åˆ™ä¼šåå¤é‡å¯
+				bsp_dt_ANO_Send_Check(0XE0,sc,ac);  //·¢ËÍ»ØÀ¡Ö¸Áî
+				if(DT_Rxbuffer[4] == 0x02)  //ÏµÍ³ÖØÆôÃüÁî£¬ÒªÔÚ·¢ËÍ·´À¡±¨ÎÄÖ®ºóÖ´ĞĞ£¬·ñÔò»á·´¸´ÖØÆô
 				{
-					__set_PRIMASK(1);  //å…³é—­ä¸­æ–­
-					NVIC_SystemReset();  //è¯·æ±‚å•ç‰‡æœºé‡å¯
+					__set_PRIMASK(1);  //¹Ø±ÕÖĞ¶Ï
+					NVIC_SystemReset();  //ÇëÇóµ¥Æ¬»úÖØÆô
 				}
 			break;
-			case 0xE1:  //è¯»å–å‚æ•°
-				ParID = DT_Rxbuffer[5]<<8 | DT_Rxbuffer[4];  //è·å–å‚æ•°ID
+			case 0xE1:  //¶ÁÈ¡²ÎÊı
+				ParID = DT_Rxbuffer[5]<<8 | DT_Rxbuffer[4];  //»ñÈ¡²ÎÊıID
 				for(int i=0;i<DT_Rxbuffer[3]+4;i++)
 				{
 					sc += DT_Rxbuffer[i];
 					ac += sc;
 				}
-				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //æ ¡éªŒä¸é€šè¿‡ï¼Œè¿”å›
+				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //Ğ£Ñé²»Í¨¹ı£¬·µ»Ø
 					return;
 				bsp_dt_ANO_Send_Parameter(ParID);
 			break;
-			case 0xE2:  //å†™å…¥å‚æ•°
+			case 0xE2:  //Ğ´Èë²ÎÊı
 				for(int i=0;i<DT_Rxbuffer[3]+4;i++)
 				{
 					sc += DT_Rxbuffer[i];
 					ac += sc;
 				}
 				ParID = DT_Rxbuffer[5]<<8 | DT_Rxbuffer[4];
-				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //æ ¡éªŒä¸é€šè¿‡ï¼Œè¿”å›
+				if(DT_Rxbuffer[DT_Rxbuffer[3]+4] !=sc || DT_Rxbuffer[DT_Rxbuffer[3]+5] != ac)  //Ğ£Ñé²»Í¨¹ı£¬·µ»Ø
 					return;
 				bsp_dt_ANO_Send_Check(0XE2,sc,ac);
-				if(ParID >= 11 && ParID <=64)  //æ›´æ–°PIDå‚æ•°åˆ—è¡¨æ—¶å€™è¦ç¼©å°1000å€å†æ›´æ–°åˆ°å¯¹åº”æ•°æ®é‡Œ
+				if(ParID >= 11 && ParID <=64)  //¸üĞÂPID²ÎÊıÁĞ±íÊ±ºòÒªËõĞ¡1000±¶ÔÙ¸üĞÂµ½¶ÔÓ¦Êı¾İÀï
 					bsp_dt_ParList[ParID] = (int32_t)(DT_Rxbuffer[6] | DT_Rxbuffer[7]<<8 | DT_Rxbuffer[8]<<16 | DT_Rxbuffer[9]<<24);
 				else
 					bsp_dt_ParList[ParID] = (int32_t)(DT_Rxbuffer[6] | DT_Rxbuffer[7]<<8 | DT_Rxbuffer[8]<<16 | DT_Rxbuffer[9]<<24);
@@ -537,20 +537,20 @@ static void bsp_dt_Ano_Data_Analysis(void)
 	}
 	else
 	{
-		return;  //å¸§å¤´æ•°æ®ä¸å¯¹ï¼Œè¿”å›
+		return;  //Ö¡Í·Êı¾İ²»¶Ô£¬·µ»Ø
 	}
 }
 
 /**
- * @brief æ•°æ®ä¼ è¾“åˆå§‹åŒ–
+ * @brief Êı¾İ´«Êä³õÊ¼»¯
  */
 void bsp_dt_Init(void)
 {
-	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DT_UART); //æ¸…é™¤ç©ºé—²ä¸­æ–­ä½
-	__HAL_UART_ENABLE_IT(&BSP_DT_UART,UART_IT_IDLE); //ä½¿èƒ½DMAæ¥æ”¶ç©ºé—²ä¸­æ–­
-	HAL_UART_Receive_DMA(&BSP_DT_UART, (uint8_t*)DT_Rxbuffer, BSP_DT_BUFFER_SIZE); //å¼€å§‹DMAæ¥æ”¶
+	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DT_UART); //Çå³ı¿ÕÏĞÖĞ¶ÏÎ»
+	__HAL_UART_ENABLE_IT(&BSP_DT_UART,UART_IT_IDLE); //Ê¹ÄÜDMA½ÓÊÕ¿ÕÏĞÖĞ¶Ï
+	HAL_UART_Receive_DMA(&BSP_DT_UART, (uint8_t*)DT_Rxbuffer, BSP_DT_BUFFER_SIZE); //¿ªÊ¼DMA½ÓÊÕ
 
-	//åˆå§‹åŒ–ç‰ˆæœ¬å‚æ•°ï¼Œæ¨¡æ‹Ÿä¸ºæ‹“ç©ºè€…é£æ§ï¼Œå¦åˆ™ä¸€éƒ¨åˆ†åŠŸèƒ½æ²¡æ³•ç”¨
+	//³õÊ¼»¯°æ±¾²ÎÊı£¬Ä£ÄâÎªÍØ¿ÕÕß·É¿Ø£¬·ñÔòÒ»²¿·Ö¹¦ÄÜÃ»·¨ÓÃ
 	bsp_dt_ParList[BSP_DT_PAR_DEVICE_NAME] = INFANTRY_NAME;
 	bsp_dt_ParList[BSP_DT_PAR_HWTYPE] = INFANTRY_HWTYPE;
 	bsp_dt_ParList[BSP_DT_PAR_HWVER] = INFANTRY_HWVER;
@@ -559,24 +559,24 @@ void bsp_dt_Init(void)
 }
 
 /**
- * @brief æ•°æ®ä¼ è¾“ä¸­æ–­å¤„ç†
+ * @brief Êı¾İ´«ÊäÖĞ¶Ï´¦Àí
  */
 void bsp_dt_It(void)
 {
-	if(__HAL_UART_GET_FLAG(&BSP_DT_UART,UART_FLAG_IDLE) != RESET)	//å¦‚æœäº§ç”Ÿäº†ç©ºé—²ä¸­æ–­
+	if(__HAL_UART_GET_FLAG(&BSP_DT_UART,UART_FLAG_IDLE) != RESET)	//Èç¹û²úÉúÁË¿ÕÏĞÖĞ¶Ï
 	{
-		HAL_UART_DMAStop(&BSP_DT_UART); //å…³é—­DMA
+		HAL_UART_DMAStop(&BSP_DT_UART); //¹Ø±ÕDMA
 		bsp_dt_Ano_Data_Analysis();
-		memset(DT_Rxbuffer,0,BSP_DT_BUFFER_SIZE); //è§£æå®Œæˆï¼Œæ•°æ®æ¸…0
-		__HAL_UART_CLEAR_IDLEFLAG(&BSP_DT_UART); //æ¸…é™¤ç©ºé—²ä¸­æ–­æ ‡å¿—ä½
-		HAL_UART_DMAResume(&BSP_DT_UART);         //é‡æ–°æ‰“å¼€DMAï¼Œè¿™å¥è®°å¾—åŠ 
-		HAL_UART_Receive_DMA(&BSP_DT_UART, (uint8_t*)DT_Rxbuffer, BSP_DT_BUFFER_SIZE);//é‡æ–°å¼€å¯DMAæ¥æ”¶ä¼ è¾“
+		memset(DT_Rxbuffer,0,BSP_DT_BUFFER_SIZE); //½âÎöÍê³É£¬Êı¾İÇå0
+		__HAL_UART_CLEAR_IDLEFLAG(&BSP_DT_UART); //Çå³ı¿ÕÏĞÖĞ¶Ï±êÖ¾Î»
+		HAL_UART_DMAResume(&BSP_DT_UART);         //ÖØĞÂ´ò¿ªDMA£¬Õâ¾ä¼ÇµÃ¼Ó
+		HAL_UART_Receive_DMA(&BSP_DT_UART, (uint8_t*)DT_Rxbuffer, BSP_DT_BUFFER_SIZE);//ÖØĞÂ¿ªÆôDMA½ÓÊÕ´«Êä
 	}
 }
 
 /**
- * @brief å‘åŒ¿åä¸Šä½æœºå‘é€ä¿¡æ¯çš„å¥æŸ„å‡½æ•°
- * æ­¤å‡½æ•°1MSè°ƒç”¨ä¸€æ¬¡ï¼Œå†…éƒ¨é€šè¿‡çŠ¶æ€æœºæ¥å®ç°ä¸åŒé¢‘ç‡çš„æ•°æ®ä¼ é€
+ * @brief ÏòÄäÃûÉÏÎ»»ú·¢ËÍĞÅÏ¢µÄ¾ä±úº¯Êı
+ * ´Ëº¯Êı1MSµ÷ÓÃÒ»´Î£¬ÄÚ²¿Í¨¹ı×´Ì¬»úÀ´ÊµÏÖ²»Í¬ÆµÂÊµÄÊı¾İ´«ËÍ
  */
 void bsp_dt_ANO_Send_Handle(void)
 {

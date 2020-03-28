@@ -439,8 +439,8 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 		}
 #endif
     // Time derivative of quaternion. q_dot = 0.5*q\otimes omega.
-    //! q_k = q_{k-1} + dt*\dot{q}
-    //! \dot{q} = 0.5*q \otimes P(\omega)
+    //! q_k = q_{k-1} + dt*\ dot{q}
+    //! \ dot{q} = 0.5*q \otimes P(\omega)
     dq0 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
     dq1 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
     dq2 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);

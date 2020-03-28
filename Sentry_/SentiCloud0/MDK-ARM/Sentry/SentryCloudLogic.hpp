@@ -37,7 +37,6 @@ extern SentryCloud CloudEntity;
 extern Mode* CurrentMode,*LastMode;
 
 /**
- * @defgroup RemoteDebugModes
  * @addtogroup RemoteDebugModes
  * @{
  */

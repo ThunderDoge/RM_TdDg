@@ -11,9 +11,9 @@
 #include "bsp_oled_font.h"
 
 #define BSP_OLED_SPI					hspi1
-//-----------------OLEDå®šä¹‰----------------
-#define BSP_OLED_CMD  0	//å†™å‘½ä»¤
-#define BSP_OLED_DATA 1	//å†™æ•°æ®
+//-----------------OLED¶¨Òå----------------
+#define BSP_OLED_CMD  0	//Ğ´ÃüÁî
+#define BSP_OLED_DATA 1	//Ğ´Êı¾İ
 
 #define BSP_OLED_RST_CLR() HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin,GPIO_PIN_RESET)//OLED_RES
 #define BSP_OLED_RST_SET() HAL_GPIO_WritePin(OLED_RES_GPIO_Port,OLED_RES_Pin,GPIO_PIN_SET)
@@ -32,21 +32,21 @@ typedef enum
 
 
 //-----------------------------------------
-void bsp_oled_Write(uint8_t Data,uint8_t Cmd);//oled spiå†™å‡½æ•°
-//OLEDæ§åˆ¶ç”¨å‡½æ•°
-void bsp_oled_Refresh_Gram(void);  //æ˜¾å­˜åˆ·æ–°
-void bsp_oled_Display_On(void);//å¼€å¯æ˜¾ç¤º
-void bsp_oled_Set_Pos(uint8_t x, uint8_t y);//è®¾ç½®åæ ‡
-void bsp_oled_Display_Off(void);//å…³é—­æ˜¾ç¤º
-void bsp_oled_Init(void);//oledåˆå§‹åŒ–
-void bsp_oled_Show_Logo(void); //æ˜¾ç¤ºLogo
-void bsp_oled_Clear(void);//æ¸…å±
-void bsp_oled_Draw_Point(uint8_t x, uint8_t y, bsp_oled_Pen pen); //ç”»ç‚¹
-void bsp_oled_Show_Graphic(uint8_t x, uint8_t y, const picture_t *graphic);  //æ˜¾ç¤ºç›¸å…³å›¾å½¢
-void bsp_oled_Show_Char(uint8_t col, uint8_t row, uint8_t chr);//æ˜¾ç¤ºå­—ç¬¦
-void bsp_oled_Show_String(uint8_t col, uint8_t row, uint8_t *chr); //æ˜¾ç¤ºå­—ç¬¦ä¸²
-void bsp_oled_Printf(uint8_t col, uint8_t row, const char *fmt,...);  //OLEDç±»printå‡½æ•°
-void bsp_oled_Show_Chinese(uint8_t x,uint8_t y,uint8_t no);//æ˜¾ç¤ºä¸­æ–‡å­—ç¬¦
-void bsp_oled_Display_Fill(uint8_t Fill_Data); //å…¨å±å¡«å……
+void bsp_oled_Write(uint8_t Data,uint8_t Cmd);//oled spiĞ´º¯Êı
+//OLED¿ØÖÆÓÃº¯Êı
+void bsp_oled_Refresh_Gram(void);  //ÏÔ´æË¢ĞÂ
+void bsp_oled_Display_On(void);//¿ªÆôÏÔÊ¾
+void bsp_oled_Set_Pos(uint8_t x, uint8_t y);//ÉèÖÃ×ø±ê
+void bsp_oled_Display_Off(void);//¹Ø±ÕÏÔÊ¾
+void bsp_oled_Init(void);//oled³õÊ¼»¯
+void bsp_oled_Show_Logo(void); //ÏÔÊ¾Logo
+void bsp_oled_Clear(void);//ÇåÆÁ
+void bsp_oled_Draw_Point(uint8_t x, uint8_t y, bsp_oled_Pen pen); //»­µã
+void bsp_oled_Show_Graphic(uint8_t x, uint8_t y, const picture_t *graphic);  //ÏÔÊ¾Ïà¹ØÍ¼ĞÎ
+void bsp_oled_Show_Char(uint8_t col, uint8_t row, uint8_t chr);//ÏÔÊ¾×Ö·û
+void bsp_oled_Show_String(uint8_t col, uint8_t row, uint8_t *chr); //ÏÔÊ¾×Ö·û´®
+void bsp_oled_Printf(uint8_t col, uint8_t row, const char *fmt,...);  //OLEDÀàprintº¯Êı
+void bsp_oled_Show_Chinese(uint8_t x,uint8_t y,uint8_t no);//ÏÔÊ¾ÖĞÎÄ×Ö·û
+void bsp_oled_Display_Fill(uint8_t Fill_Data); //È«ÆÁÌî³ä
 
 #endif
