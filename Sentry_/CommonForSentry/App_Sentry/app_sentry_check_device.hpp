@@ -16,7 +16,6 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
-#include "sentry_can_commom.hpp"
 
 //DEBUG用宏定义
 #define __APP_CHECK_DEVICE_DEBUG
@@ -85,21 +84,21 @@ void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self);
 struct CheckDevice_Type
 {
 	CheckDevice_Type(															///< 构造函数
-		CheckDeviceID_Enum  id,
-        uint16_t            allow_time,
-		uint8_t             (*ptr_is_offline_func)(void)                                = NULL,
-		AlarmPriority_Enum  pri                                                         = PriorityNormal,
-		void                (*ptr_state_changed_callback_func)(CheckDevice_Type*self)   = Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask,
-		void                (*ptr_update_hook_func)(CheckDevice_Type*self)              = Default_CheckDevice_UpdateHookFunc
+		CheckDeviceID_Enum id,
+        uint16_t allow_time,
+		uint8_t(*ptr_is_offline_func)(void) = NULL,
+		AlarmPriority_Enum      pri = PriorityNormal,
+		void (*ptr_state_changed_callback_func)(CheckDevice_Type*self) = Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask,
+		void (*ptr_update_hook_func)(CheckDevice_Type*self) = Default_CheckDevice_UpdateHookFunc
 		);
-	CheckDeviceID_Enum      id              = CheckDeviceID_EnumLength;						/** 器件ID,为防止ID冲突，将所有需检测ID放入 @see CheckDeviceID_Enum 变量中 */
-	uint32_t                lastTick        = 0;            /* 上次在线时间 */
-	uint16_t                maxAllowTime    = 100;	        /* 最大允许时长 */
-	AlarmPriority_Enum      priority        = PriorityNormal;		        /* 优先级 */
-	uint8_t			        alarm_enabled   = 1;		// 离线报警已使能
-	// uint8_t                 is_offline      = 0 ;           /* 器件在线状态*/
+	CheckDeviceID_Enum      id = CheckDeviceID_EnumLength;						/** 器件ID,为防止ID冲突，将所有需检测ID放入 @see CheckDeviceID_Enum 变量中 */
+	uint32_t                lastTick = 0;            /* 上次在线时间 */
+	uint16_t                maxAllowTime = 100;	        /* 最大允许时长 */
+	AlarmPriority_Enum      priority = PriorityNormal;		        /* 优先级 */
+	uint8_t			alarm_enabled = 1;		// 离线报警已使能
+	uint8_t                 is_offline = 0 ;           /* 器件在线状态*/
     uint8_t                 is_change_reported = 0;       // 是否已发送告警信息
-    uint8_t(*is_offline_func)(void)         = NULL;                //离线状态检查函数
+    uint8_t(*is_offline_func)(void) = NULL;                //离线状态检查函数
 	void (*state_changed_callback_func)(CheckDevice_Type* self);	// 离线回调函数。检测到离线之后调用此函数。
 	void (*update_hook_func)(CheckDevice_Type* self);		// 状态更新钩子函数。在设备更新时调用。
 };
@@ -120,8 +119,7 @@ typedef struct
 
 
 extern QueueHandle_t QueueOfflineDeviceToCommuTask;     /// 已离线设备列表 发送给通信函数处理
-extern CheckDeviceArry_Type CheckDeviceArry;			/// 本机包含的设备的列表
-extern uint8_t app_sentry_CheckDevice_OfflineList[ CheckDeviceID_EnumLength+2 ];    /// 哨兵所有设备的离线状态
+extern CheckDeviceArry_Type CheckDeviceArry;			/// 所有设备列表
 
 
 //-----------------------------\end 相关全局变量-------------------------------
@@ -153,14 +151,11 @@ HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAd
 ///刷新错误列表。通过重新将所有的设备发送到 QueueOfflineDeviceToCommuTask 来实现
 void app_sentry_CheckDevice_CheckAllDevice(void);
 
-///通用离线检测任务代码。您的主逻辑Task调用。请注意需要的宏定义。
+///通用离线检测任务代码。可以在需要的时候添加到自己的Task实现之中。请注意需要的宏定义。
 void app_sentry_CheckDevice_TaskHandler(void);
 
-///您的通信函数调用的 错误设备处理函数。它将处理 @see QueueOfflineDeviceToCommuTask
+///交由通信函数调用的错误设备处理函数。它将处理 @see QueueOfflineDeviceToCommuTask
 void app_sentry_CheckDevice_CommuTaskCallback(void);
-
-///CAN 接收函数. 在CAN接收回调函数中调用
-void app_sentry_CheckDevice_CanRxCallBack(uint8_t* pdata);
 
 #endif // !__APP_SENTRY_CHECK_DEVICE_H_
 

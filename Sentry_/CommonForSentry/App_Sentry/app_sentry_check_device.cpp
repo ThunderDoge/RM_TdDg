@@ -2,21 +2,9 @@
  * @file      app_sentry_check_device.cpp
  * @brief     离线检测功能，云台底盘公用文件。
  * @details   
- * 1. 使用方法：
- *  【以下为编译时】
- *  1.1 添加你设备的ID在 @see CheckDeviceID_Enum 中
- *  1.2 定义你的 设备对象 @see CheckDevice_Type 使用其构造函数
- *      1.2.1 如果设备自带离线检测函数your_is_offline()，请将is_offline 函数指针给构造函数
- *      1.2.2 如果没有，请调用设备对象的 update_hook_func() 在设备数据更新时
- *      1.2.3 如果 设备自带离线检测函数 your_is_offline() 不符合设备对象中的函数指针的形式，你需要自己定义一个外套函数 套在 your_is_offline() 外面
- *  【以下为运行时，需要注意时序】
- *  1.3 运行时初始化函数中 初始化离线检测 使用 @see app_sentry_CheckDevice_Init()
- *  1.4 在1.3 执行完毕后，调用 app_sentry_CheckDevice_AddToArray() 将你的设备对象添加到 CheckDeviceArry
- *  1.5 在你的主要逻辑任务中（其他也可）调用 app_sentry_CheckDevice_TaskHandler 以运行功能
- *  1.6 在你的CAN通信任务中调用 app_sentry_CheckDevice_CommuTaskCallback
  * @author   ThunderDoge
  * @date      2020-3-12
- * @version   1.0
+ * @version   0.1
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
                            Using encoding: gb2312
  */
@@ -28,9 +16,10 @@
 
 static uint8_t checkdevice_is_inited=0;			//【已经初始化】标志变量
 
-CheckDeviceArry_Type CheckDeviceArry;			// 本机包含的设备的列表
+CheckDeviceArry_Type CheckDeviceArry;			//所有设备列表
 
-uint8_t app_sentry_CheckDevice_OfflineList[ CheckDeviceID_EnumLength+2 ] = {1U}; /// 哨兵所有设备的离线状态
+CheckDevice_Type* LastOfflineDevice = NULL;      ///上一个离线设备
+CheckDevice_Type* CurrentOfflineDevice = NULL;   ///当前离线设备
 
 QueueHandle_t QueueOfflineDeviceToCommuTask;					/// 已离线设备列表 发送给通信函数处理
 
@@ -43,11 +32,11 @@ QueueHandle_t QueueOfflineDeviceToCommuTask;					/// 已离线设备列表 发送给通信函
 void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
 {
     self->lastTick = HAL_GetTick();
-    if(app_sentry_CheckDevice_OfflineList[(uint8_t)self->id] == 1)
+    if(self->is_offline == 1)
     {
         self->is_change_reported = 0;
     }
-    app_sentry_CheckDevice_OfflineList[(uint8_t)self->id] =0;
+    self->is_offline =0;
 }
 
 
@@ -78,19 +67,19 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
     if( device == NULL )    //无效的设备。很可能是越界
         while (1){;}        //暴露错误
 
-	uint8_t last_offline = app_sentry_CheckDevice_OfflineList[(uint8_t)device->id];
+	uint8_t last_offline = device->is_offline;
 
 	if( device->is_offline_func != NULL )   //如果有内置离线检测函数
 	{
-		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = device->is_offline_func();    //就直接执行函数
+		device->is_offline = device->is_offline_func();    //就直接执行函数
 	}
 	else                                        //如果没有
 	{
 		uint32_t dt = HAL_GetTick() - device->lastTick;     //计算离线时间
-		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = (dt > device->maxAllowTime);    //写入状态
+		device->is_offline = (dt > device->maxAllowTime);    //写入状态
 	}
 	
-	if(app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] != last_offline)	// 登记：需要更新
+	if(device->is_offline != last_offline)	// 登记：需要更新
 	{device->is_change_reported = 0;}
 	
 	if(!device->is_change_reported)
@@ -185,7 +174,7 @@ void app_sentry_CheckDevice_Type_Init(CheckDevice_Type* device)
 	device->id = CheckDeviceID_EnumLength;
     device->lastTick = 0;
     device->maxAllowTime = 0;
-    app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = 0;
+    device->is_offline = 0;
     device->priority = PriorityNormal;
     device->is_offline_func = NULL;
     device->update_hook_func = Default_CheckDevice_UpdateHookFunc;
@@ -263,27 +252,4 @@ void app_sentry_CheckDevice_TaskHandler(void)
         DeviceOffline_Check( CheckDeviceArry.deviceArry[tempDeviceId] );       //检查设备离线。离线状态写入
     }
 }
-
-/**
- * @brief 处理本机有 离线/上线设备时 该怎么办
- * 
- */
-void app_sentry_CheckDevice_CommuTaskCallback(void)
-{
-    uint8_t data_to_send[2];
-    CheckDevice_Type* device_to_send;
-
-    if(xQueueReceive(QueueOfflineDeviceToCommuTask,&device_to_send,0U) == pdTRUE)    // 看看有东西没。延时为0 就是不用等的意思。不会阻塞。
-    {
-        data_to_send[0] = device_to_send->id;           //第一字节事ID
-        data_to_send[1] = app_sentry_CheckDevice_OfflineList[ device_to_send->id ];   //第二字节事设备状态
-        SentryCanSend(&CAN_INTERBOARD,(uint32_t)OFFLINE_LIST,(uint8_t)&data_to_send,(size_t)2U);   //发射
-    }
-}
-
-void app_sentry_CheckDevice_CanRxCallBack(uint8_t* pdata)
-{
-    app_sentry_CheckDevice_OfflineList[ pdata[0] ] = pdata[1];  // 写入离线状态
-}
-
 

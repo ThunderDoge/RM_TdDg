@@ -12,7 +12,7 @@
 #define BSP_DT_UART           huart6
 #define BSP_DT_BUFFER_SIZE    50
 
-//ÄäÃûÉÏÎ»»ú¶ÁÈ¡ºÍĞ´Èë²ÎÊıÊ±µÄĞòºÅ
+//åŒ¿åä¸Šä½æœºè¯»å–å’Œå†™å…¥å‚æ•°æ—¶çš„åºå·
 #define BSP_DT_PAR_DEVICE_NAME 0
 #define BSP_DT_PAR_HWTYPE 1
 #define BSP_DT_PAR_HWVER 2
@@ -79,34 +79,34 @@
 #define BSP_DT_PAR_PID_18_I 63
 #define BSP_DT_PAR_PID_18_D 64
 
-//²½±øµÄÉè±¸ĞÅÏ¢
-#define INFANTRY_NAME 0x05  //!< Ä£Äâ³ÉÍØ¿ÕÕß·É¿Ø
-#define INFANTRY_HWTYPE 0X05  //!< ²½±øÓ²¼şÖÖÀà
-#define INFANTRY_HWVER 0x02  //!< ²½±øÔÆÌ¨°åPCB°æ±¾
-#define INFANTRY_SWVER 0X0A  //!< ²½±øÔÆÌ¨Èí¼ş°æ±¾
-#define INFANTRY_BLVER 0X00  //!< ²½±øÔÆÌ¨BL°æ±¾
+//æ­¥å…µçš„è®¾å¤‡ä¿¡æ¯
+#define INFANTRY_NAME 0x05  //!< æ¨¡æ‹Ÿæˆæ‹“ç©ºè€…é£æ§
+#define INFANTRY_HWTYPE 0X05  //!< æ­¥å…µç¡¬ä»¶ç§ç±»
+#define INFANTRY_HWVER 0x02  //!< æ­¥å…µäº‘å°æ¿PCBç‰ˆæœ¬
+#define INFANTRY_SWVER 0X0A  //!< æ­¥å…µäº‘å°è½¯ä»¶ç‰ˆæœ¬
+#define INFANTRY_BLVER 0X00  //!< æ­¥å…µäº‘å°BLç‰ˆæœ¬
 /**
- * @brief ¼àÊÓÊı¾İ·¢ËÍ½á¹¹Ìå
+ * @brief ç›‘è§†æ•°æ®å‘é€ç»“æ„ä½“
  */
 typedef struct __bsp_dt_data
 {
-	uint8_t Frame_header = 0xff;  //!< Ö¡Í·
-	uint8_t Frame_end = 0x0d;  //!< Ö¡Î²
-    uint8_t Function_word;  //!< Êı¾İÖ¡¹¦ÄÜ×Ö
+	uint8_t Frame_header = 0xff;  //!< å¸§å¤´
+	uint8_t Frame_end = 0x0d;  //!< å¸§å°¾
+    uint8_t Function_word;  //!< æ•°æ®å¸§åŠŸèƒ½å­—
 
-    float Data_1;  //!< Òª´«ÊäµÄÊı¾İ1
-    float Data_2;  //!< Òª´«ÊäµÄÊı¾İ2
-    float Data_3;  //!< Òª´«ÊäµÄÊı¾İ3
+    float Data_1;  //!< è¦ä¼ è¾“çš„æ•°æ®1
+    float Data_2;  //!< è¦ä¼ è¾“çš„æ•°æ®2
+    float Data_3;  //!< è¦ä¼ è¾“çš„æ•°æ®3
 }bsp_dt_data;
 
-extern bsp_dt_data bsp_dt_Send_Data; //!< ·¢ËÍµÄÊı¾İ
+extern bsp_dt_data bsp_dt_Send_Data; //!< å‘é€çš„æ•°æ®
 extern int32_t bsp_dt_ParList[166];
 
 void bsp_dt_Init(void);
 void bsp_dt_It(void);
-//±°Î¢¸öÈËÉÏÎ»»ú·¢ËÍÓÃº¯Êı
+//å‘å¾®ä¸ªäººä¸Šä½æœºå‘é€ç”¨å‡½æ•°
 HAL_StatusTypeDef bsp_dt_Sendmessage(void);
-//ÄäÃûÉÏÎ»»úÓÃ·¢ËÍº¯Êı
+//åŒ¿åä¸Šä½æœºç”¨å‘é€å‡½æ•°
 HAL_StatusTypeDef bsp_dt_ANO_Send_UserData(uint8_t _Frame_ID, int32_t Data1, int32_t Data2, int32_t Data3);
 HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData1(int16_t Acc_x, int16_t Acc_y, int16_t Acc_z, int16_t Gyro_x, int16_t Gyro_y, int16_t Gyro_z);
 HAL_StatusTypeDef bsp_dt_ANO_Send_SensorData2(int16_t Mag_x, int16_t Mag_y, int16_t Mag_z, float Alt_Bar, float Temp, uint8_t Bar_STA, uint8_t Mag_STA);

@@ -123,6 +123,11 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, f
 }
 
 
+/**
+ * @defgroup Can_TxRx_Functions
+ * CAN TxRx Functions CAN发送和接收函数。所有的接收函数都直接套用CAN回调StdId和ptrData
+ * @{
+ */
 #ifdef __PROJECT_SENTRY_CLOUD_
 
 #endif // __PROJECT_SENTRY_CLOUD
@@ -135,6 +140,13 @@ void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeader
 }
 #endif // __PROJECT_SENTRY_CHASSIS
 
+/**
+ * @defgroup Can_Rx_Functions
+ * CAN接收函数。统一的参数列表:
+ *  StdId   CAN回调函数的StdId
+ *  ptrData CAN回调函数的数据
+ *  @{
+ */
 /**
  * @brief CAN接收上云台状态。使用时直接在CAN回调函数里面套用
  * 
@@ -178,6 +190,17 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 
 
+/**
+ * @}
+ * End of Group Can_Rx_Functions
+ * 
+ * 
+ * 
+ * 
+ * @defgroup Can_Tx_Functions
+ * CAN发送函数。请定义了CAN_INTERBOARD之后调用
+ * @{
+ */
 #ifdef CAN_INTERBOARD
 
 #ifdef __PROJECT_SENTRY_CLOUD_
@@ -213,6 +236,11 @@ void CHASSIS_PILLAR_CanTx()
 
 #endif // CAN_INTERBOARD
 
+/**
+ * @}
+ * End of group: Can_Tx_Functions
+ * 
+ */
 #ifdef __PROJECT_SENTRY_CLOUD_
 /**
  * @brief 云台定时发送的板间CAN通信 - 上云台
@@ -283,6 +311,15 @@ void ChassisCanRxHandle(void)
 }
 #endif  //__PROJECT_SENTRY_CHASSIS_
 
+/**
+ * @defgroup SuperiorCommands
+ * 上级命令(SUPERIOR)广播。上级命令指操纵全车的指令
+ * @{
+ */
+/**
+ * @defgroup SuCmdCanTx
+ * @{
+ */
 #ifdef CAN_INTERBOARD
 
 void SUPERIOR_UP_RELATIVE_CMD_CanTx()
@@ -342,6 +379,14 @@ void SUPERIOR_SAFE_CanTx()
 #endif // CAN_INTERBOARD
 
 
+/**
+ * @}
+ * SuCmdCanTx
+ */
+/**
+ * @defgroup SuCmdCanRx
+ * @{
+ */
 #ifdef __PROJECT_SENTRY_CLOUD_
 
 ///上云台控制
@@ -443,6 +488,10 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 #endif // __PROJECT_SENTRY_CHASSIS_
 
+/**
+ * @} 
+ * SuCmdCanRx
+ */
 
 
 //供弹。因为结构调整而废弃。
@@ -473,3 +522,12 @@ void DOWN_FEED_CanTx()
 */
 
 
+/**
+ * @}
+ * End of group: SuperiorCommands
+ * 
+ * 
+ * 
+ * @}
+ * End of group: Can_TxRx_Functions
+ */

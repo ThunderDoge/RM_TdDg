@@ -1,5 +1,4 @@
 /**
-  * @file app_AmmoFeed.hpp
   * @brief    通用拨弹电机库
   * @details  
   * @author   ThunderDoge & Asn
@@ -10,8 +9,8 @@
   * v1.0.1  2019/12/6   Asn进行了部分简化，使其易于使用。
   * v1.0.2  2019/12/13  修正了部分多余的依赖，以及一些语法错误。拨弹回转处理部分Blocked_Reaction仍存在死锁风险，可以PID参数解决。
 	*	v1.0.3  2019/12.27  修正堵转判断逻辑，并统一用外部cansend函数，然后更新命名，使其更规范
-	* v1.0.4  2019/12/31  把原来的Pr_Handle函数移植到Handle中，使Set完模式之后只需要调用manager::CANSend()就好了
   */
+
 #ifndef	__APP_AMMOFEED_H
 #define	__APP_AMMOFEED_H
 

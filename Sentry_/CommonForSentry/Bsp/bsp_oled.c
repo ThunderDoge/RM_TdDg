@@ -1,17 +1,17 @@
 /**
 * @file bsp_oled.c
-* @brief OLED°å¼¶Ö§³Ö°ü
+* @brief OLEDæ¿çº§æ”¯æŒåŒ…
 * @author Evan-GH (751191269@qq.com), Asn
 * @version 1.5
 * @date 2020-03-03
 * @copyright OnePointFive
-* @par ÈÕÖ¾:
-*		v1.0 ÒÆÖ²ÖĞ¾°Ô°oledÀı³Ì³É¹¦\n
-*		v1.1 ¸ù¾İ´úÂë¹æ·¶×öÁËÒ»Ğ©ĞŞ¸Ä£¬ÒÆÖ²Ò»²¿·ÖEvasn-GHµÄ¾Éoled¿âµ½ÕâÀïÀ´£¬ÏÖÔÚ¿ÉÒÔÏÔÊ¾¸¡µãÊıÁËÄØ\n
-*		v1.2 Îªº¯ÊıÔö¼ÓÁË×¢ÊÍ\n
-*   	v1.3 ĞŞ¸ÄÎÄ¼şÒÀÀµ¹ØÏµ£¬ÏÖÔÚ²»ÔÙµ÷ÓÃapp²ãÎÄ¼ş\n
-*   	v1.4 ÖØĞÂ¹æ·¶»¯´úÂëÎÄ¼ş±àÂë¸ñÊ½ºÍDoxygen×¢ÊÍ\n
-*   	v1.5 ÒÆÖ²´ó½®¹Ù·½¿ªÔ´²½±ø´úÂëÖĞOLEDÏà¹ØÎÄ¼şµÄº¯ÊıºÍÊı¾İ\n
+* @par æ—¥å¿—:
+*		v1.0 ç§»æ¤ä¸­æ™¯å›­oledä¾‹ç¨‹æˆåŠŸ\n
+*		v1.1 æ ¹æ®ä»£ç è§„èŒƒåšäº†ä¸€äº›ä¿®æ”¹ï¼Œç§»æ¤ä¸€éƒ¨åˆ†Evasn-GHçš„æ—§oledåº“åˆ°è¿™é‡Œæ¥ï¼Œç°åœ¨å¯ä»¥æ˜¾ç¤ºæµ®ç‚¹æ•°äº†å‘¢\n
+*		v1.2 ä¸ºå‡½æ•°å¢åŠ äº†æ³¨é‡Š\n
+*   	v1.3 ä¿®æ”¹æ–‡ä»¶ä¾èµ–å…³ç³»ï¼Œç°åœ¨ä¸å†è°ƒç”¨appå±‚æ–‡ä»¶\n
+*   	v1.4 é‡æ–°è§„èŒƒåŒ–ä»£ç æ–‡ä»¶ç¼–ç æ ¼å¼å’ŒDoxygenæ³¨é‡Š\n
+*   	v1.5 ç§»æ¤å¤§ç–†å®˜æ–¹å¼€æºæ­¥å…µä»£ç ä¸­OLEDç›¸å…³æ–‡ä»¶çš„å‡½æ•°å’Œæ•°æ®\n
 */
 #include "bsp_oled.h"
 #include "spi.h"
@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-//OLEDÏà¹Øºê¶¨Òå
+//OLEDç›¸å…³å®å®šä¹‰
 #define SIZE 16
 #define XLEVELL		0x00
 #define XLEVELH		0x10
@@ -30,14 +30,14 @@
 #define X_WIDTH 	128
 #define Y_WIDTH 	64
 #define	ABS(x)   ((x)>0?(x):-(x))
-//OLEDµÄÏÔ´æ£¬OLED×óÏÂ½ÇÎªÔ­µã
+//OLEDçš„æ˜¾å­˜ï¼ŒOLEDå·¦ä¸‹è§’ä¸ºåŸç‚¹
 static uint8_t bsp_oled_Gram[8][128];
 
 /**
- * @brief OLEDÃüÁî/Êı¾İĞ´Èë
- * @param Data ÒªĞ´ÈëµÄÊı¾İ/ÃüÁî
- * @param Cmd Êı¾İ/ÃüÁî±êÖ¾
- * @note 0,±íÊ¾ÃüÁî;1,±íÊ¾Êı¾İ
+ * @brief OLEDå‘½ä»¤/æ•°æ®å†™å…¥
+ * @param Data è¦å†™å…¥çš„æ•°æ®/å‘½ä»¤
+ * @param Cmd æ•°æ®/å‘½ä»¤æ ‡å¿—
+ * @note 0,è¡¨ç¤ºå‘½ä»¤;1,è¡¨ç¤ºæ•°æ®
  */
 void bsp_oled_Write(uint8_t Data,uint8_t Cmd)
 {
@@ -51,13 +51,13 @@ void bsp_oled_Write(uint8_t Data,uint8_t Cmd)
 	}
 	BSP_OLED_CS_CLR();
 	HAL_SPI_Transmit(&BSP_OLED_SPI,&Data,1,0xff);
-	//HAL_SPI_Transmit_DMA(&BSP_OLED_SPI,&Data,1);//Èç¹û¿ªÁËDMA´«Êä¿ÉÒÔÊÔÊÔÕâ¾ä
+	//HAL_SPI_Transmit_DMA(&BSP_OLED_SPI,&Data,1);//å¦‚æœå¼€äº†DMAä¼ è¾“å¯ä»¥è¯•è¯•è¿™å¥
 	BSP_OLED_CS_SET();
 	BSP_OLED_DC_SET();
 }
 
 /**
- * @brief OLED³õÊ¼»¯
+ * @brief OLEDåˆå§‹åŒ–
  */
 void bsp_oled_Init(void)
 {
@@ -67,14 +67,14 @@ void bsp_oled_Init(void)
 	HAL_Delay(200);
 	BSP_OLED_RST_SET();
 
-	bsp_oled_Write(0xAE,BSP_OLED_CMD);  //ÏÔÊ¾¹Ø±Õ
-	bsp_oled_Write(0x40,BSP_OLED_CMD);  //ÉèÖÃÆğÊ¼ĞĞµØÖ·
-	bsp_oled_Write(0x81,BSP_OLED_CMD);  //ÉèÖÃ¶Ô±È¶È¿ØÖÆ¼Ä´æÆ÷
-	bsp_oled_Write(0xFF,BSP_OLED_CMD);  //ÁÁ¶È0x00?0xff
-	bsp_oled_Write(0xA4,BSP_OLED_CMD);  //0xa4£¬Êä³ö¸úËæRAMÄÚÈİ 0xa5£¬Êä³öºöÂÔRAMÄÚÈİ
-	bsp_oled_Write(0xA6,BSP_OLED_CMD);  //ÉèÖÃÆÕÍ¨ÏÔÊ¾
-	bsp_oled_Write(0x20,BSP_OLED_CMD);  //ÉèÖÃÄÚ´æÑ°Ö·Ä£Ê½
-	bsp_oled_Write(0x00,BSP_OLED_CMD);  //00£¬Ë®Æ½Ñ°Ö·Ä£Ê½; 01£¬´¹Ö±Ñ°Ö·Ä£Ê½; 10£¬Ò³ÃæÑ°Ö·Ä£Ê½£¨RESET£©; 11£¬ÎŞĞ§
+	bsp_oled_Write(0xAE,BSP_OLED_CMD);  //æ˜¾ç¤ºå…³é—­
+	bsp_oled_Write(0x40,BSP_OLED_CMD);  //è®¾ç½®èµ·å§‹è¡Œåœ°å€
+	bsp_oled_Write(0x81,BSP_OLED_CMD);  //è®¾ç½®å¯¹æ¯”åº¦æ§åˆ¶å¯„å­˜å™¨
+	bsp_oled_Write(0xFF,BSP_OLED_CMD);  //äº®åº¦0x00ã€œ0xff
+	bsp_oled_Write(0xA4,BSP_OLED_CMD);  //0xa4ï¼Œè¾“å‡ºè·ŸéšRAMå†…å®¹ 0xa5ï¼Œè¾“å‡ºå¿½ç•¥RAMå†…å®¹
+	bsp_oled_Write(0xA6,BSP_OLED_CMD);  //è®¾ç½®æ™®é€šæ˜¾ç¤º
+	bsp_oled_Write(0x20,BSP_OLED_CMD);  //è®¾ç½®å†…å­˜å¯»å€æ¨¡å¼
+	bsp_oled_Write(0x00,BSP_OLED_CMD);  //00ï¼Œæ°´å¹³å¯»å€æ¨¡å¼; 01ï¼Œå‚ç›´å¯»å€æ¨¡å¼; 10ï¼Œé¡µé¢å¯»å€æ¨¡å¼ï¼ˆRESETï¼‰; 11ï¼Œæ— æ•ˆ
 	bsp_oled_Write(0x21,BSP_OLED_CMD);
 	bsp_oled_Write(0x00,BSP_OLED_CMD);
 	bsp_oled_Write(0x7F,BSP_OLED_CMD);
@@ -82,23 +82,23 @@ void bsp_oled_Init(void)
 	bsp_oled_Write(0x00,BSP_OLED_CMD);
 	bsp_oled_Write(0x07,BSP_OLED_CMD);
 	bsp_oled_Write(0x3F,BSP_OLED_CMD);
-	bsp_oled_Write(0xC8,BSP_OLED_CMD);  //ÉèÖÃCOMÊä³öÉ¨Ãè·½Ïò
-	bsp_oled_Write(0xA1,BSP_OLED_CMD);  //ÉèÖÃ¶ÎÖØĞÂÓ³Éä0µ½127
-	bsp_oled_Write(0xA8,BSP_OLED_CMD);  //ÉèÖÃ¶àÂ·¸´ÓÃÂÊ1µ½64
+	bsp_oled_Write(0xC8,BSP_OLED_CMD);  //è®¾ç½®COMè¾“å‡ºæ‰«ææ–¹å‘
+	bsp_oled_Write(0xA1,BSP_OLED_CMD);  //è®¾ç½®æ®µé‡æ–°æ˜ å°„0åˆ°127
+	bsp_oled_Write(0xA8,BSP_OLED_CMD);  //è®¾ç½®å¤šè·¯å¤ç”¨ç‡1åˆ°64
 	bsp_oled_Write(0x00,BSP_OLED_CMD);
-	bsp_oled_Write(0xD3,BSP_OLED_CMD);  //ÉèÖÃÏÔÊ¾Æ«ÒÆ
-	bsp_oled_Write(0x00,BSP_OLED_CMD);  //²»Æ«ÒÆ
-	bsp_oled_Write(0xD5,BSP_OLED_CMD);  //ÉèÖÃÏÔÊ¾Ê±ÖÓ·ÖÆµ±È/Õñµ´Æ÷ÆµÂÊ
-	bsp_oled_Write(0xF0,BSP_OLED_CMD);  //ÉèÖÃ·ÖÆµ±È
-	bsp_oled_Write(0xD9,BSP_OLED_CMD);  //ÉèÖÃÔ¤³äµçÊ±¼ä
+	bsp_oled_Write(0xD3,BSP_OLED_CMD);  //è®¾ç½®æ˜¾ç¤ºåç§»
+	bsp_oled_Write(0x00,BSP_OLED_CMD);  //ä¸åç§»
+	bsp_oled_Write(0xD5,BSP_OLED_CMD);  //è®¾ç½®æ˜¾ç¤ºæ—¶é’Ÿåˆ†é¢‘æ¯”/æŒ¯è¡å™¨é¢‘ç‡
+	bsp_oled_Write(0xF0,BSP_OLED_CMD);  //è®¾ç½®åˆ†é¢‘æ¯”
+	bsp_oled_Write(0xD9,BSP_OLED_CMD);  //è®¾ç½®é¢„å……ç”µæ—¶é—´
 	bsp_oled_Write(0x22,BSP_OLED_CMD);
-	bsp_oled_Write(0xDA,BSP_OLED_CMD);  //ÉèÖÃcomÒı½ÅµÄÓ²¼şÅäÖÃ
+	bsp_oled_Write(0xDA,BSP_OLED_CMD);  //è®¾ç½®comå¼•è„šçš„ç¡¬ä»¶é…ç½®
 	bsp_oled_Write(0x12,BSP_OLED_CMD);
-	bsp_oled_Write(0xDB,BSP_OLED_CMD);  //ÉèÖÃvcomh
+	bsp_oled_Write(0xDB,BSP_OLED_CMD);  //è®¾ç½®vcomh
 	bsp_oled_Write(0x20,BSP_OLED_CMD);  //0x20,0.77xVcc
-	bsp_oled_Write(0x8D,BSP_OLED_CMD);  //Ê¹ÄÜDC-DC
+	bsp_oled_Write(0x8D,BSP_OLED_CMD);  //ä½¿èƒ½DC-DC
 	bsp_oled_Write(0x14,BSP_OLED_CMD);
-	bsp_oled_Write(0xAF,BSP_OLED_CMD);  //´ò¿ªoledÃæ°å
+	bsp_oled_Write(0xAF,BSP_OLED_CMD);  //æ‰“å¼€oledé¢æ¿
 
 	bsp_oled_Clear();
 	bsp_oled_Show_Logo();
@@ -118,9 +118,9 @@ void bsp_oled_Init(void)
 }
 
 /**
- * @brief ÉèÖÃ×ø±ê
- * @param x XÖá×ø±ê
- * @param y YÖá×ø±ê
+ * @brief è®¾ç½®åæ ‡
+ * @param x Xè½´åæ ‡
+ * @param y Yè½´åæ ‡
  */
 void bsp_oled_Set_Pos(uint8_t x, uint8_t y)
 {
@@ -137,60 +137,60 @@ void bsp_oled_Set_Pos(uint8_t x, uint8_t y)
 }
 
 /**
- * @brief ¿ªÆôOLEDÏÔÊ¾
+ * @brief å¼€å¯OLEDæ˜¾ç¤º
  */
 void bsp_oled_Display_On(void)
 {
-	bsp_oled_Write(0X8D,BSP_OLED_CMD);  //ÉèÖÃDCDCÃüÁî
-	bsp_oled_Write(0X14,BSP_OLED_CMD);  //´ò¿ªDCDC
-	bsp_oled_Write(0XAF,BSP_OLED_CMD);  //¿ªÊ¼ÏÔÊ¾
+	bsp_oled_Write(0X8D,BSP_OLED_CMD);  //è®¾ç½®DCDCå‘½ä»¤
+	bsp_oled_Write(0X14,BSP_OLED_CMD);  //æ‰“å¼€DCDC
+	bsp_oled_Write(0XAF,BSP_OLED_CMD);  //å¼€å§‹æ˜¾ç¤º
 }
 
 /**
- * @brief ¹Ø±ÕOLEDÏÔÊ¾
+ * @brief å…³é—­OLEDæ˜¾ç¤º
  */
 void bsp_oled_Display_Off(void)
 {
-	bsp_oled_Write(0X8D,BSP_OLED_CMD);  //ÉèÖÃDCDCÃüÁî
-	bsp_oled_Write(0X10,BSP_OLED_CMD);  //¹Ø±ÕDCDC
-	bsp_oled_Write(0XAE,BSP_OLED_CMD);  //¹Ø±ÕÏÔÊ¾
+	bsp_oled_Write(0X8D,BSP_OLED_CMD);  //è®¾ç½®DCDCå‘½ä»¤
+	bsp_oled_Write(0X10,BSP_OLED_CMD);  //å…³é—­DCDC
+	bsp_oled_Write(0XAE,BSP_OLED_CMD);  //å…³é—­æ˜¾ç¤º
 }
 
 /**
- * @brief OLEDË¢ĞÂÕû¸öÆÁÄ»µÄÊı¾İ
+ * @brief OLEDåˆ·æ–°æ•´ä¸ªå±å¹•çš„æ•°æ®
  */
 void bsp_oled_Refresh_Gram(void)
 {
 	bsp_oled_Set_Pos(0,0);
 	BSP_OLED_DC_SET();
 	BSP_OLED_CS_CLR();
-	HAL_SPI_Transmit(&BSP_OLED_SPI,(uint8_t *)&bsp_oled_Gram,1024,10);  //Ë®Æ½Ñ°Ö·ÏÂÖ±½ÓĞ´Èë1024¸öÊı¾İ
+	HAL_SPI_Transmit(&BSP_OLED_SPI,(uint8_t *)&bsp_oled_Gram,1024,10);  //æ°´å¹³å¯»å€ä¸‹ç›´æ¥å†™å…¥1024ä¸ªæ•°æ®
 	BSP_OLED_CS_SET();
 	BSP_OLED_DC_SET();
 }
 
 /**
- * @brief ÏÔÊ¾RM¹Ù·½Logo
+ * @brief æ˜¾ç¤ºRMå®˜æ–¹Logo
  */
 void bsp_oled_Show_Logo(void)
 {
-    // memcpy(bsp_oled_Gram, RM_LOGO_BMP_TRANS, 1024);  //Ìî³äÊı¾İ
+    // memcpy(bsp_oled_Gram, RM_LOGO_BMP_TRANS, 1024);  //å¡«å……æ•°æ®
     // bsp_oled_Refresh_Gram();
-	bsp_oled_Show_Graphic(1,1,&rm_logo);  //¸öÈË¸Ğ¾õÕâ¸öLogo±ÈÉÏÃæµÄÄÇ¸öÒªºÃ¿´£¬×Ô¼ºÑ¡Ôñ°É
+	bsp_oled_Show_Graphic(1,1,&rm_logo);  //ä¸ªäººæ„Ÿè§‰è¿™ä¸ªLogoæ¯”ä¸Šé¢çš„é‚£ä¸ªè¦å¥½çœ‹ï¼Œè‡ªå·±é€‰æ‹©å§
 }
 
 /**
- * @brief È«ÆÁÌî³ä
- * @param Fill_Data ÒªÌî³äµÄÊı¾İ
+ * @brief å…¨å±å¡«å……
+ * @param Fill_Data è¦å¡«å……çš„æ•°æ®
  */
 void bsp_oled_Display_Fill(uint8_t Fill_Data)
 {
-	memset(bsp_oled_Gram,Fill_Data,1024);  //Ìî³äÊı¾İ
+	memset(bsp_oled_Gram,Fill_Data,1024);  //å¡«å……æ•°æ®
 	bsp_oled_Refresh_Gram();
 }
 
 /**
- * @brief ÇåÆÁº¯Êı
+ * @brief æ¸…å±å‡½æ•°
  */
 void bsp_oled_Clear(void)
 {
@@ -198,10 +198,10 @@ void bsp_oled_Clear(void)
 }
 
 /**
- * @brief »­µãº¯Êı
- * @param x XÖá×ø±ê
- * @param y YÖá×ø±ê
- * @param pen »­±ÊÀàĞÍ
+ * @brief ç”»ç‚¹å‡½æ•°
+ * @param x Xè½´åæ ‡
+ * @param y Yè½´åæ ‡
+ * @param pen ç”»ç¬”ç±»å‹
  */
 void bsp_oled_Draw_Point(uint8_t x, uint8_t y, bsp_oled_Pen pen)
 {
@@ -230,10 +230,10 @@ void bsp_oled_Draw_Point(uint8_t x, uint8_t y, bsp_oled_Pen pen)
 }
 
 /**
- * @brief ÏÔÊ¾Ïà¹ØÍ¼ĞÎ
- * @param x XÖá×ø±ê
- * @param y YÖá×ø±ê
- * @param graphic ÒªÏÔÊ¾µÄÍ¼ĞÎ½á¹¹Ìå
+ * @brief æ˜¾ç¤ºç›¸å…³å›¾å½¢
+ * @param x Xè½´åæ ‡
+ * @param y Yè½´åæ ‡
+ * @param graphic è¦æ˜¾ç¤ºçš„å›¾å½¢ç»“æ„ä½“
  */
 void bsp_oled_Show_Graphic(uint8_t x, uint8_t y, const picture_t *graphic)
 {
@@ -269,9 +269,9 @@ void bsp_oled_Show_Graphic(uint8_t x, uint8_t y, const picture_t *graphic)
 }
 
 /**
-* @brief  ×Ö·ûÏÔÊ¾º¯Êı
-* @details  ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾Ò»¸ö×Ö·û,°üÀ¨²¿·Ö×Ö·û
-* @param  x:0~127£¬y:0~63£¬chr ÒªÏÔÊ¾µÄ×Ö·û
+* @brief  å­—ç¬¦æ˜¾ç¤ºå‡½æ•°
+* @details  åœ¨æŒ‡å®šä½ç½®æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦,åŒ…æ‹¬éƒ¨åˆ†å­—ç¬¦
+* @param  x:0~127ï¼Œy:0~63ï¼Œchr è¦æ˜¾ç¤ºçš„å­—ç¬¦
 * @retval  NULL
 */
 void bsp_oled_Show_Char(uint8_t col, uint8_t row, uint8_t chr)
@@ -306,9 +306,9 @@ void bsp_oled_Show_Char(uint8_t col, uint8_t row, uint8_t chr)
 }
 
 /**
-* @brief  ÏÔÊ¾×Ö·û´®
-* @details  ÔÚÆÁÄ»Ä³¸öÎ»ÖÃÏÔÊ¾×Ö·û´®
-* @param  x,y Æğµã×ø±ê	 uint8_t *chr
+* @brief  æ˜¾ç¤ºå­—ç¬¦ä¸²
+* @details  åœ¨å±å¹•æŸä¸ªä½ç½®æ˜¾ç¤ºå­—ç¬¦ä¸²
+* @param  x,y èµ·ç‚¹åæ ‡	 uint8_t *chr
 * @retval  NULL
 */
 void bsp_oled_Show_String(uint8_t col, uint8_t row, uint8_t *chr)
@@ -347,9 +347,9 @@ void bsp_oled_Printf(uint8_t col, uint8_t row, const char *fmt,...)
 }
 
 /**
-* @brief  ÏÔÊ¾ºº×Ö
-* @details  ÔÚÆÁÄ»Ä³¸öÎ»ÖÃÏÔÊ¾ºº×Ö
-* @param  x,y Æğµã×ø±ê	 noºº×Ö±àºÅ
+* @brief  æ˜¾ç¤ºæ±‰å­—
+* @details  åœ¨å±å¹•æŸä¸ªä½ç½®æ˜¾ç¤ºæ±‰å­—
+* @param  x,y èµ·ç‚¹åæ ‡	 noæ±‰å­—ç¼–å·
 * @retval  NULL
 */
 void bsp_oled_Show_Chinese(uint8_t x,uint8_t y,uint8_t no)
@@ -369,7 +369,7 @@ void bsp_oled_Show_Chinese(uint8_t x,uint8_t y,uint8_t no)
 	}
 }
 
-//Ğ¶ÔØºê¶¨Òå
+//å¸è½½å®å®šä¹‰
 #undef SIZE
 #undef XLEVELL
 #undef XLEVELH
