@@ -9,7 +9,7 @@
 #define  __BSP_DT_HPP
 #include "stm32f4xx.h"
 
-#define BSP_DT_UART           huart1
+#define BSP_DT_UART           huart6
 #define BSP_DT_BUFFER_SIZE    50
 
 //匿名上位机读取和写入参数时的序号

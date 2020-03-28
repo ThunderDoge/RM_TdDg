@@ -85,7 +85,6 @@ struct CheckDevice_Type
 {
 	CheckDevice_Type(															///< 构造函数
 		CheckDeviceID_Enum id,
-		uint8_t is_inter_brd,
         uint16_t allow_time,
 		uint8_t(*ptr_is_offline_func)(void) = NULL,
 		AlarmPriority_Enum      pri = PriorityNormal,
@@ -97,7 +96,6 @@ struct CheckDevice_Type
 	uint16_t                maxAllowTime = 100;	        /* 最大允许时长 */
 	AlarmPriority_Enum      priority = PriorityNormal;		        /* 优先级 */
 	uint8_t			alarm_enabled = 1;		// 离线报警已使能
-	uint8_t					is_interboard_device = 0;		// 是其他主控板控制的器件
 	uint8_t                 is_offline = 0 ;           /* 器件在线状态*/
     uint8_t                 is_change_reported = 0;       // 是否已发送告警信息
     uint8_t(*is_offline_func)(void) = NULL;                //离线状态检查函数

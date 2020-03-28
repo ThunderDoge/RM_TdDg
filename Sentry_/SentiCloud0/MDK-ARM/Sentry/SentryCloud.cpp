@@ -10,55 +10,71 @@
  */
 #include "SentryCloud.hpp"
 
-// 宏定义：另外定义一函数调用 MotorObj 的 isOffline ，将函数指针传给 CheckDevice_Type 
+// ---------------------------------离线检测用 函数定义---------------------------
+// ?? 使用用了大量宏定义，请小心阅读
+// 宏定义(1)：定义函数：调用 MotorObj 的 isOffline。将此函数指针传给 CheckDevice_Type 
 #define DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(MotorObj)	\
 uint8_t func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj(void) \
 {		\
 	return CloudEntity.MotorObj.Is_Offline();	\
 }
 
-// 上面定义的函数的函数名
+// 宏定义(2)：给出上面定义的函数的函数名
 #define FUNC_NAME(MotorObj) \
 	func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj
 
-// 定义函数
+// (3):使用宏定义(1) 定义函数
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(PitchMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(YawMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricLeftMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricRightMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(Feed2nd)
 
-//定义各个设备结构体
+//定义各个设备结构体，他们使用了(3)中定义的函数的指针
 CheckDevice_Type UpCloudLeftFric_CheckDevice(
                 (CheckDeviceID_Enum)         UpCloudLeftFricDevice,  // 设备ID
-                                            0,                      // 是否是其他主控板的设备
                                             100,                    // 允许离线时间
                                             FUNC_NAME(FricLeftMotor) ); // 离线检测函数 函数名
-CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,0,100,FUNC_NAME(FricRightMotor));
-CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,0,100,FUNC_NAME(YawMotor));
-CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,0,100,FUNC_NAME(PitchMotor));
-CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,0,100,FUNC_NAME(Feed2nd));
+CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,100,FUNC_NAME(FricRightMotor));
+CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,100,FUNC_NAME(YawMotor));
+CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_NAME(PitchMotor));
+CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
+
+// ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
+Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
+Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
+
+void EnterModeCloudCtrlMech(void)
+{
+    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+    CloudEntity.TargetYaw = CloudEntity.RealYaw;
+    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+}
+void RunModeCloudCtrlMech(void)
+{
+    
+}
+void EnterModeCloudCtrlGyro(void);
+void RunModeCloudCtrlGyro(void);
 
 
 
-
-
-
-
+// 电机型号类
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
+// 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
 SentryCloud CloudEntity(1, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x204);
 
 
-
+/// 云台物理实体类 构造与删除函数
 SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t pitch_can_num, uint16_t pitch_can_id,
                          uint8_t fric_l_can_num, uint16_t fric_l_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
-
+        // 初始化各项PID参数
     : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
@@ -71,7 +87,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
-	  
+        // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),
       PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
@@ -83,13 +99,6 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
     PitchPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
     PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
-
-    // 设备添加到设备列表
-    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
 };
 void SentryCloud::Handle()
 {

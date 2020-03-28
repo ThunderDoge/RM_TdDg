@@ -32,6 +32,20 @@ void Cloud_Init(void)
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	bsp_vision_Init();              //视觉串口接收初始化
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
+	
+	app_sentry_CheckDevice_Init();
+	// 设备添加到设备列表
+    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
+	
+	// 离线检测结构体 设置
+	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
+    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
+
+
 }
 /**
   * @brief  主任务
@@ -50,7 +64,10 @@ void Cloud_Init(void)
 		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
         manager::CANSend();     //统一的CAN电机控制
-        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1Tick(默认为1ms)
+        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
+		
+		
+		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
@@ -69,7 +86,7 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
-		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2Tick
+		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2ms
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
@@ -92,12 +109,12 @@ void TaskStarter(void)
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
-	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
-				(char*)				"task_CommuRoutine",
-				(uint16_t)			512,
-				(void*)				NULL,
-				(UBaseType_t)		4,
-				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+//	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+//				(char*)				"task_CommuRoutine",
+//				(uint16_t)			512,
+//				(void*)				NULL,
+//				(UBaseType_t)		4,
+//				(TaskHandle_t*)		&task_CommuRoutine_Handle);
 				
 	xTaskCreate((TaskFunction_t)	task_CheckDevice,
 				(char*)				"task_CheckDevice",

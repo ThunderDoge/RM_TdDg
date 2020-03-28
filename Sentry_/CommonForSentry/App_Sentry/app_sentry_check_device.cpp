@@ -119,7 +119,6 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
  */
 CheckDevice_Type::CheckDevice_Type(
 	CheckDeviceID_Enum 				id,
-	uint8_t 						is_inter_brd,    
     uint16_t                        allow_time,
 	uint8_t(*ptr_is_offline_func)(void),
 	AlarmPriority_Enum      		pri,
@@ -129,7 +128,6 @@ CheckDevice_Type::CheckDevice_Type(
 	id(id),
     maxAllowTime(allow_time),
 	priority(pri),
-	is_interboard_device(is_inter_brd),
 	is_offline_func(ptr_is_offline_func),
 	state_changed_callback_func(ptr_state_changed_callback_func),
 	update_hook_func(ptr_update_hook_func)
@@ -176,7 +174,6 @@ void app_sentry_CheckDevice_Type_Init(CheckDevice_Type* device)
 	device->id = CheckDeviceID_EnumLength;
     device->lastTick = 0;
     device->maxAllowTime = 0;
-	device->is_interboard_device = 0;
     device->is_offline = 0;
     device->priority = PriorityNormal;
     device->is_offline_func = NULL;

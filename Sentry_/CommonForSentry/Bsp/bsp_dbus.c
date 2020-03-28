@@ -19,7 +19,7 @@
 #include "bsp_dbus.h"
 
 /// 离线检测 结构体
-CheckDevice_Type Dbus_CheckDevice(DbusDevice,0,100);
+struct CheckDevice_Type Dbus_CheckDevice(DbusDevice,100);
 
 
 bsp_dbus_RC_Data bsp_dbus_Data; //Dbus解算数据
@@ -33,10 +33,7 @@ int16_t Dbus_CHx_StaticOffset[4]={0};	//遥控器处于松手状态时的偏移。默认为0.修改
 * @retval  NULL
 */
 void bsp_dbus_Init(void)
-{
-	// 离线检测结构体 设置
-	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
-																
+{																
 	
 	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //清除空闲中断位
 	__HAL_UART_ENABLE_IT(&BSP_DBUS_UART,UART_IT_IDLE); //使能DMA接收空闲中断

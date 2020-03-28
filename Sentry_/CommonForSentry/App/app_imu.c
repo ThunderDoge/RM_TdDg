@@ -28,7 +28,7 @@
 #include "bsp_spi.h"
 
 // 离线检测 结构体
-CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,0,100,NULL);
+struct CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,100);
 
  
 #define USE_LPF           //使用低通滤波
@@ -81,14 +81,6 @@ LPF2 Mag_LPF[3];
 * @remarks 用于零点校正，采样均值,只对陀螺仪进行
 */
 uint8_t app_imu_Init(void){
-
-    // 离线检测 结构体 设置
-    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
-
-
-
-
-
 
 	static uint16_t unstable_num;
 	app_imu_data.reset = 1;

@@ -18,7 +18,7 @@
 #include "app_sentry_check_device.hpp"
 
 /// 离线检测 结构体
-extern CheckDevice_Type Dbus_CheckDevice;
+extern struct CheckDevice_Type Dbus_CheckDevice;
 
 
 //条件编译开关宏定义，不需要开启的就注释掉相关宏定义
