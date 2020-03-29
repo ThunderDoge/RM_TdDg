@@ -20,6 +20,8 @@ CheckDeviceArry_Type CheckDeviceArry;			//所有设备列表
 
 QueueHandle_t QueueOfflineDevice;					/// 已离线设备列表 发送给通信函数处理
 
+uint8_t app_sentry_CheckDevice_OfflineList[ CheckDeviceID_EnumLength+2 ] = {1};
+
 
 /**
  * @brief       默认的更新钩子函数。更新钩子函数将在初始化中 @see app_sentry_CheckDevice_Type_Init() 设为这个
@@ -29,11 +31,11 @@ QueueHandle_t QueueOfflineDevice;					/// 已离线设备列表 发送给通信函数处理
 void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
 {
     self->lastTick = HAL_GetTick();
-    if(self->is_offline == 1)
+    if(app_sentry_CheckDevice_OfflineList[(uint8_t)self->id] == 1)
     {
         self->is_change_reported = REPORT_NEEDED;
     }
-    self->is_offline =0;
+    app_sentry_CheckDevice_OfflineList[(uint8_t)self->id] =0;
 }
 
 
@@ -68,19 +70,19 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
     if( device == NULL )    //无效的设备。很可能是越界
         while (1){;}        //暴露错误
 
-	uint8_t last_offline = device->is_offline;
+	uint8_t last_offline = app_sentry_CheckDevice_OfflineList[(uint8_t)device->id];
 
 	if( device->is_offline_func != NULL )   //如果有内置离线检测函数
 	{
-		device->is_offline = device->is_offline_func();    //就直接执行函数
+		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = device->is_offline_func();    //就直接执行函数
 	}
 	else                                        //如果没有
 	{
 		uint32_t dt = HAL_GetTick() - device->lastTick;     //计算离线时间
-		device->is_offline = (dt > device->maxAllowTime);    //写入状态
+		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = (dt > device->maxAllowTime);    //写入状态
 	}
 	
-	if(device->is_offline != last_offline)	// 登记：需要更新
+	if(app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] != last_offline)	// 登记：需要更新
 	{device->is_change_reported = REPORT_NEEDED;}
 	
 	if(device->is_change_reported == REPORT_NEEDED)
@@ -224,7 +226,7 @@ uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, u
     if(xQueueReceive(QueueOfflineDevice,&device_ptr,0) == pdTRUE)
     {
         *device_id = device_ptr->id;
-        *device_isoffline = device_ptr->is_offline;
+        *device_isoffline = app_sentry_CheckDevice_OfflineList[(uint8_t)device_ptr->id];
 		return 1U;
     }
 	return 0U;
