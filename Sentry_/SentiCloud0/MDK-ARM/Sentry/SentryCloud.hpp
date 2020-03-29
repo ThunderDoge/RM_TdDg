@@ -11,14 +11,13 @@
 #define __SENTRY_CLOUD_HPP_
 
 // ÒÀÀµµÄÎÄ¼þ
+#include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
 #include "app_imu.h"
-#include "app_AmmoFeed.hpp"
 //#include "app_vision.hpp"
-#include "sentry_ctrl_def.hpp"
 #include "app_mode.hpp"
 #include "app_sentry_check_device.hpp"
-
+#include "app_AmmoFeed.hpp"
 
 
 

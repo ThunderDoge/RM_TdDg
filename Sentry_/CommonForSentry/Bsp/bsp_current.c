@@ -1,7 +1,7 @@
 /**
 	****************************(C) COPYRIGHT KisonHe****************************
 	* @file       bsp_current.cpp
-	* @brief      KisonHe çš„ç”µæµé‡‡æ ·
+	* @brief      KisonHe µÄµçÁ÷²ÉÑù
 	* @note
 	* @history
 	*  Version    Date            Author          Modification
@@ -17,22 +17,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CURRENT_LSB (0.25f) //é‡‡æ ·ç”µé˜»ä¸åŒä¼šå¯¼è‡´è®¡ç®—å…¬å¼ä¸åŒï¼Œè¯¢é—®ä½ çš„ç”µè·¯é˜Ÿå‹æ¥è®¡ç®—é‡‡æ ·å…¬å¼ã€‚
-														//å»ºè®®åˆ©ç”¨ç”µå­è´Ÿè½½éªŒè¯ä½ çš„å…¬å¼
+#define CURRENT_LSB (0.25f) //²ÉÑùµç×è²»Í¬»áµ¼ÖÂ¼ÆËã¹«Ê½²»Í¬£¬Ñ¯ÎÊÄãµÄµçÂ·¶ÓÓÑÀ´¼ÆËã²ÉÑù¹«Ê½¡£
+														//½¨ÒéÀûÓÃµç×Ó¸ºÔØÑéÖ¤ÄãµÄ¹«Ê½
 #define INA226I2C (hi2c3)
 
-uint8_t INA226_ID[5] = {0, 0x80, 0x88, 0x8A, 0x80}; //å‡ ä¸ªè½®å­çš„IDå·ç ï¼Œ
+uint8_t INA226_ID[5] = {0, 0x80, 0x88, 0x8A, 0x80}; //¼¸¸öÂÖ×ÓµÄIDºÅÂë£¬
 
-int16_t bsp_CurrentRead[5]; //é‡‡æ ·çš„ç»“æœï¼Œbsp_CurrentRead[1] ä¸º1å·ç”µæœºç”µæµï¼Œä»¥æ­¤ç±»æ¨åˆ°4å·ç”µæœº
-int16_t bsp_VoltageRead[5]; //ç±»ä¼¼
+int16_t bsp_CurrentRead[5]; //²ÉÑùµÄ½á¹û£¬bsp_CurrentRead[1] Îª1ºÅµç»úµçÁ÷£¬ÒÔ´ËÀàÍÆµ½4ºÅµç»ú
+int16_t bsp_VoltageRead[5]; //ÀàËÆ
 
 static int32_t bsp_current_TempCurrent = 0;
 static int32_t bsp_current_TempVoltage = 0;
-//int16_t bsp_current_ConfigRead = 0;			//ä»226è¯»å–åˆ°çš„é…ç½®ï¼Œæ–¹ä¾¿DEBUGä½¿ç”¨ã€‚è¯»å–çš„é‚£è¡Œåœ¨Initå‡½æ•°ä¸­ï¼Œå·²è¢«æ³¨é‡Š
-static int16_t bsp_current_TimeOut = 0x00FF; //I2Cé€šè®¯è¶…æ—¶æ—¶é—´
+//int16_t bsp_current_ConfigRead = 0;			//´Ó226¶ÁÈ¡µ½µÄÅäÖÃ£¬·½±ãDEBUGÊ¹ÓÃ¡£¶ÁÈ¡µÄÄÇĞĞÔÚInitº¯ÊıÖĞ£¬ÒÑ±»×¢ÊÍ
+static int16_t bsp_current_TimeOut = 0x00FF; //I2CÍ¨Ñ¶³¬Ê±Ê±¼ä
 
-//int16_t bsp_current_TempID = INA226_No4; //IDå·ï¼Œä¾¿äºå¾ªç¯
-int8_t bsp_current_CycleID = 1;			 //IDå·ï¼Œä¾¿äºå¾ªç¯
+//int16_t bsp_current_TempID = INA226_No4; //IDºÅ£¬±ãÓÚÑ­»·
+int8_t bsp_current_CycleID = 1;			 //IDºÅ£¬±ãÓÚÑ­»·
 
 static uint8_t I2CTx[8];
 static uint8_t I2CRx[8];
@@ -42,15 +42,15 @@ static void Current_InitAssi(uint8_t ID);
 static void Current_Read_Assistant(uint8_t ID);
 
 
-void bsp_Current_Read(void) //ä¸ºäº†æ–¹ä¾¿é4ä¸ªè½®å­çš„å…µç§ï¼Œå¾ªç¯ä¸æ‰§è¡Œåˆ†å¼€ã€‚è¿™ä¸ªå‡½æ•°çš„åšæ³•æ˜¯è°ƒç”¨ä¸€æ¬¡è¯»å–ä¸€ä¸ªè½®å­ç”µæµã€‚ç•¥åŠ ä¿®æ”¹å¯ä»¥æ”¹æˆä½ æƒ³è¦çš„æ•ˆæœ
+void bsp_Current_Read(void) //ÎªÁË·½±ã·Ç4¸öÂÖ×ÓµÄ±øÖÖ£¬Ñ­»·ÓëÖ´ĞĞ·Ö¿ª¡£Õâ¸öº¯ÊıµÄ×ö·¨ÊÇµ÷ÓÃÒ»´Î¶ÁÈ¡Ò»¸öÂÖ×ÓµçÁ÷¡£ÂÔ¼ÓĞŞ¸Ä¿ÉÒÔ¸Ä³ÉÄãÏëÒªµÄĞ§¹û
 {
 	
-		Current_Read_Assistant(bsp_current_CycleID); //å®é™…è¯»å–æ•°æ®`
+		Current_Read_Assistant(bsp_current_CycleID); //Êµ¼Ê¶ÁÈ¡Êı¾İ`
 	
-	bsp_current_CycleID = 1; //ä¸€ä¸ªå¾ªç¯ä¹‹åIDå·å½’ä½
+	bsp_current_CycleID = 1; //Ò»¸öÑ­»·Ö®ºóIDºÅ¹éÎ»
 }
 
-void bsp_Current_Init(void) //åˆå§‹åŒ–ï¼Œä¸ºäº†æ–¹ä¾¿é4ä¸ªè½®å­çš„å…µç§ï¼Œå¾ªç¯ä¸æ‰§è¡Œåˆ†å¼€ã€‚
+void bsp_Current_Init(void) //³õÊ¼»¯£¬ÎªÁË·½±ã·Ç4¸öÂÖ×ÓµÄ±øÖÖ£¬Ñ­»·ÓëÖ´ĞĞ·Ö¿ª¡£
 {
 	Current_InitAssi(INA226_ID[1]);
 	
@@ -59,9 +59,9 @@ void bsp_Current_Init(void) //åˆå§‹åŒ–ï¼Œä¸ºäº†æ–¹ä¾¿é4ä¸ªè½®å­çš„å…µç§ï¼Œå
 
 static void Current_InitAssi(uint8_t ID)
 {
-	memset(&I2CTx[0], 0, sizeof(I2CTx)); //å‘é€Bufferæ¸…é›¶
+	memset(&I2CTx[0], 0, sizeof(I2CTx)); //·¢ËÍBufferÇåÁã
 
-	//1024æ¬¡å‡å€¼ï¼Œ140usä¸€æ¬¡é‡‡æ ·ï¼ŒæŒç»­ç”µæµä¸ç”µå‹æ¨¡å¼
+	//1024´Î¾ùÖµ£¬140usÒ»´Î²ÉÑù£¬³ÖĞøµçÁ÷ÓëµçÑ¹Ä£Ê½
 	I2CTx[0] = 0x00;
 //	I2CTx[1] = 0x4E;
 //	To increase sampling rate
@@ -72,7 +72,7 @@ static void Current_InitAssi(uint8_t ID)
 
 	memset(&I2CTx[0], 0, sizeof(I2CTx));
 
-	//ä»226è¯»å–åˆ°çš„é…ç½®ï¼Œæ–¹ä¾¿DEBUGé—®é¢˜ã€‚
+	//´Ó226¶ÁÈ¡µ½µÄÅäÖÃ£¬·½±ãDEBUGÎÊÌâ¡£
 	// I2CTx[0] = 0x00; //Confige Register
 	// HAL_I2C_Master_Transmit(&INA226I2C, bsp_current_TempID, &I2CTx[0], 1, bsp_current_TimeOut);
 	// HAL_I2C_Master_Receive(&INA226I2C, bsp_current_TempID, &I2CRx[0], 2, bsp_current_TimeOut);
@@ -94,6 +94,6 @@ static void Current_Read_Assistant(uint8_t ID)
 	HAL_I2C_Master_Receive(&INA226I2C, INA226_ID[ID], &I2CRx[0], 2, bsp_current_TimeOut);
 	bsp_current_TempVoltage = (int16_t)(((I2CRx[0] << 8) + I2CRx[1])) * 1.25;
 
-	bsp_CurrentRead[ID] = bsp_current_TempCurrent; //æŠŠä¸´æ—¶é‡å­˜å…¥è¯»å–æ•°ç»„ä¸­
-	bsp_VoltageRead[ID] = bsp_current_TempVoltage; //æŠŠä¸´æ—¶é‡å­˜å…¥è¯»å–æ•°ç»„ä¸­
+	bsp_CurrentRead[ID] = bsp_current_TempCurrent; //°ÑÁÙÊ±Á¿´æÈë¶ÁÈ¡Êı×éÖĞ
+	bsp_VoltageRead[ID] = bsp_current_TempVoltage; //°ÑÁÙÊ±Á¿´æÈë¶ÁÈ¡Êı×éÖĞ
 }

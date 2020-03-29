@@ -18,10 +18,7 @@ static uint8_t checkdevice_is_inited=0;			//【已经初始化】标志变量
 
 CheckDeviceArry_Type CheckDeviceArry;			//所有设备列表
 
-CheckDevice_Type* LastOfflineDevice = NULL;      ///上一个离线设备
-CheckDevice_Type* CurrentOfflineDevice = NULL;   ///当前离线设备
-
-QueueHandle_t QueueOfflineDeviceToCommuTask;					/// 已离线设备列表 发送给通信函数处理
+QueueHandle_t QueueOfflineDevice;					/// 已离线设备列表 发送给通信函数处理
 
 
 /**
@@ -34,22 +31,26 @@ void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
     self->lastTick = HAL_GetTick();
     if(self->is_offline == 1)
     {
-        self->is_change_reported = 0;
+        self->is_change_reported = REPORT_NEEDED;
     }
     self->is_offline =0;
 }
 
 
 /**
- * @brief   默认的离线回调函数。会把本设备 self 添加到队列 QueueOfflineDeviceToCommuTask
+ * @brief   默认的离线回调函数。会把本设备 self 添加到队列 QueueOfflineDevice
  * 离线和上线都要
  * @param     self  指向自己的指针。离线回调函数将在初始化中 @see app_sentry_CheckDevice_Type_Init() 设为这个
  */
 void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_Type* self)
 {
-    xQueueSendToBack( 	(QueueHandle_t) 	QueueOfflineDeviceToCommuTask,
-                    (CheckDevice_Type*)	self , 
-                    (TickType_t)		100 / portTICK_PERIOD_MS 	);
+    if(self->is_change_reported == REPORT_NEEDED)
+    {
+        xQueueSendToBack( 	(QueueHandle_t) 	QueueOfflineDevice,
+                        (CheckDevice_Type*)	self , 
+                        (TickType_t)		100 / portTICK_PERIOD_MS 	);
+        self->is_change_reported = REPORT_IN_QUEUE;
+    }
 
 }
 
@@ -80,12 +81,12 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
 	}
 	
 	if(device->is_offline != last_offline)	// 登记：需要更新
-	{device->is_change_reported = 0;}
+	{device->is_change_reported = REPORT_NEEDED;}
 	
-	if(!device->is_change_reported)
+	if(device->is_change_reported == REPORT_NEEDED)
 	{
 		device->state_changed_callback_func(device);
-		device->is_change_reported = 1;
+		// device->is_change_reported = REPORT_IN_QUEUE;    //在 state_changed_callback_func 里面更改状态
 	}
     
 }
@@ -145,75 +146,30 @@ void app_sentry_CheckDevice_Init(void)
     {
         CheckDeviceArry.deviceArry[i] = NULL;   //初始化设备列表
     }
+
+    for(int i=0;i< CheckDeviceID_EnumLength+2 ; i++)    //初始化离线设备列表为全1
+    {
+        app_sentry_CheckDevice_OfflineList[i] = 1U;
+    }
 	
 	if(											// 确认队列创建成功
-		(QueueOfflineDeviceToCommuTask = 
+		(QueueOfflineDevice = 
 			xQueueCreate( CheckDeviceID_EnumLength,
 						  sizeof(CheckDevice_Type*) )
 		)
 		==NULL
 	)											
-	{while(1);}									// 失败则暴露错误
+	{
+        #ifdef APP_SENTRY_CHECK_DEVICE_DEBUG
+        while(1);                               // 失败则暴露错误
+        #endif // APP_SENTRY_CHECK_DEVICE_DEBUG
+    }									
 	
     checkdevice_is_inited = 1;					// 标记已经初始化
 }
 
 
 
-
-
-
-/**
- * @brief 初始化设备结构体。全部设为默认值
- * 
- * @param     device    设备结构体的指针
- */
-void app_sentry_CheckDevice_Type_Init(CheckDevice_Type* device)
-{
-	// 载入缺省参数
-	device->id = CheckDeviceID_EnumLength;
-    device->lastTick = 0;
-    device->maxAllowTime = 0;
-    device->is_offline = 0;
-    device->priority = PriorityNormal;
-    device->is_offline_func = NULL;
-    device->update_hook_func = Default_CheckDevice_UpdateHookFunc;
-}
-
-void app_sentry_CheckDevice_Type_Init_AddToArray(	CheckDevice_Type* 	device,
-										CheckDeviceID_Enum 	id,
-										uint16_t 			max_allow_time,
-										AlarmPriority_Enum 	priority,
-										FunctionalState		enable_alarm,
-										uint8_t (*ptr_is_offline_func)(void),
-										void (*ptr_update_hook_func)(CheckDevice_Type*self) )
-{
-	// 初始化其结构体。
-	app_sentry_CheckDevice_Type_Init(device);		
-	
-	//载入参数
-	device->id = id;
-	device->maxAllowTime = max_allow_time;
-	device->priority = priority;
-	device->alarm_enabled = enable_alarm;
-	
-	//函数指针 如果是NULL则仅使用缺省参数
-	if(ptr_is_offline_func != NULL)
-		device->is_offline_func = ptr_is_offline_func;
-	if(ptr_update_hook_func != NULL)
-		device->update_hook_func = ptr_update_hook_func;
-	
-	//载入
-	if(app_sentry_CheckDevice_AddToArray(device) != HAL_OK)
-	{
-		
-		#ifdef __APP_CHECK_DEVICE_DEBUG		// DEBUG用宏定义
-		while(1){;}
-		#endif	//__APP_CHECK_DEVICE_DEBUG
-		
-	}
-	
-}
 
 
 
@@ -245,11 +201,33 @@ HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAd
 /**
  * @brief 通用离线检测任务代码。可以在添加到你自己的（指云台或底盘的）Task实现之中。请注意需要的宏定义。
  */
-void app_sentry_CheckDevice_TaskHandler(void)
+void app_sentry_CheckDevice_Handle(void)
 {
     for( uint16_t tempDeviceId = 0;tempDeviceId < CheckDeviceArry.checkDeviceNum;tempDeviceId++ )  //遍历设备数组
     {
         DeviceOffline_Check( CheckDeviceArry.deviceArry[tempDeviceId] );       //检查设备离线。离线状态写入
     }
 }
+
+
+
+/**
+ * @brief       从队列获取离线设备
+ * 
+ * @param     device_id         设备ID 写到这里
+ * @param     device_isoffline  设备状态写到这里
+ * @return uint8_t      1为获取成功，0为队列空或者获取错误
+ */
+uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, uint8_t* device_isoffline)
+{
+    CheckDevice_Type* device_ptr;
+    if(xQueueReceive(QueueOfflineDevice,&device_ptr,0) == pdTRUE)
+    {
+        *device_id = device_ptr->id;
+        *device_isoffline = device_ptr->is_offline;
+		return 1U;
+    }
+	return 0U;
+}
+
 
