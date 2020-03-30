@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -573,9 +573,9 @@
               <FilePath>..\..\CommonForSentry\App_Sentry\sentry_can_commom.cpp</FilePath>
             </File>
             <File>
-              <FileName>SentryTroubleShooter.cpp</FileName>
+              <FileName>app_sentry_check_device.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\CommonForSentry\App_Sentry\SentryTroubleShooter.cpp</FilePath>
+              <FilePath>..\..\CommonForSentry\App_Sentry\app_sentry_check_device.cpp</FilePath>
             </File>
           </Files>
         </Group>

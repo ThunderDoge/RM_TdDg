@@ -1,10 +1,18 @@
 /**
  * @file      app_sentry_check_device.cpp
  * @brief     离线检测功能，云台底盘公用文件。
- * @details   
+ * @details   使用方法：
+ * 1.如要添加新设备 在 CheckDeviceID_Enum 中加入设备ID枚举量
+ * 2.定义设备对象 CheckDevice_Type
+ * 3.初始化函数中调用 app_sentry_CheckDevice_Init()
+ * 4.调用 app_sentry_CheckDevice_AddToArray() 将你定义的设备对象加到本机设备列表
+ * 5.周期地运行 app_sentry_CheckDevice_Handle()
+ * 6.在CAN回调函数中调用 app_sentry_CheckDevice_CanRxCallback() 以更新其他板上的设备的状态
+ * 7.重要>>>>>>>>>>>>>>>>>>您需要自行定义 通过CAN发送本机离线设备的函数<<<<<<<<<<<<<<<<<<。 
+ *   您可以通过 app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo() 获取队列中待处理的离线设备
  * @author   ThunderDoge
  * @date      2020-3-12
- * @version   0.1
+ * @version   0.2
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
                            Using encoding: gb2312
  */
@@ -40,19 +48,17 @@ void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
 
 
 /**
- * @brief   默认的离线回调函数。会把本设备 self 添加到队列 QueueOfflineDevice
+ * @brief   默认的离线回调函数。会把本设备 device 添加到队列 QueueOfflineDevice
  * 离线和上线都要
- * @param     self  指向自己的指针。离线回调函数将在初始化中 @see app_sentry_CheckDevice_Type_Init() 设为这个
+ * @param     device  指向自己的指针。离线回调函数将在初始化中 @see app_sentry_CheckDevice_Type_Init() 设为这个
  */
-void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_Type* self)
+void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_Type* device)
 {
-    if(self->is_change_reported == REPORT_NEEDED)
-    {
+
         xQueueSendToBack( 	(QueueHandle_t) 	QueueOfflineDevice,
-                        (CheckDevice_Type*)	self , 
+                        (CheckDevice_Type*)	device , 
                         (TickType_t)		100 / portTICK_PERIOD_MS 	);
-        self->is_change_reported = REPORT_IN_QUEUE;
-    }
+        device->is_change_reported = REPORT_IN_QUEUE;
 
 }
 
@@ -227,9 +233,25 @@ uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, u
     {
         *device_id = device_ptr->id;
         *device_isoffline = app_sentry_CheckDevice_OfflineList[(uint8_t)device_ptr->id];
+
+        device_ptr->is_change_reported = REPORT_NON;
+
 		return 1U;
     }
 	return 0U;
+}
+
+/**
+ * @brief       处理CAN收到的离线设备消息
+ * 
+ * @param     ptrData 指向收到数据。根据协议，[0]字节为id，[1]字节为状态
+ */
+void app_sentry_CheckDevice_CanRxCallback(uint8_t *ptrData)
+{
+    
+    if(ptrData[0] < CheckDeviceID_EnumLength)   // 检查参数范围
+        app_sentry_CheckDevice_OfflineList[ ptrData[0] ] = (uint8_t)(ptrData[1]==1) ;   //写入离线状态
+
 }
 
 

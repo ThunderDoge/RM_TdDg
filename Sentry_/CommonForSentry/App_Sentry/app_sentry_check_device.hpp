@@ -4,7 +4,7 @@
  * @details   
  * @author   ThunderDoge
  * @date      2020-3-12
- * @version   0.1
+ * @version   0.2
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
                            Using encoding: gb2312
  */
@@ -19,11 +19,6 @@
 
 //DEBUG用宏定义
 #define __APP_CHECK_DEVICE_DEBUG
-
-//使用设备的宏定义
-// #define APP_ALARM_USE_OLED   //使用OLED屏幕
-// #define APP_ALARM_USE_BEEP   //使用蜂鸣器
-// #define APP_ALARM_USE_LED    //使用LED灯
 
 //----------------------- 相关结构体/枚举型定义------------------------
 
@@ -146,6 +141,10 @@ void app_sentry_CheckDevice_Handle(void);
 
 /// 外部:从队列获取离线设备
 uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, uint8_t* device_isoffline);
+
+/// 处理CAN收到的离线设备
+void app_sentry_CheckDevice_CanRxCallback(uint8_t *ptrData);
+
 
 #endif // !__APP_SENTRY_CHECK_DEVICE_H_
 

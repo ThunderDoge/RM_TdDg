@@ -26,6 +26,7 @@
 #include "app_imu.h"
 #include "app_math.h"
 #include "bsp_spi.h"
+#include "app_sentry_check_device.hpp"
 
 // 离线检测 结构体
 struct CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,100);

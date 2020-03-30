@@ -11,6 +11,7 @@ GlobalModeName GetGlobalMode()
 
 //模式定义
 Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
+//Mode ModeAutonomousDrive()
 Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
 //模式指针
 Mode *CurrentMode=&ModeGlobalSafe;
