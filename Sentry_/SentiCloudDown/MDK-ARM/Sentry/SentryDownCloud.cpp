@@ -8,7 +8,7 @@
  * @version  v0.1-Develop
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
  */
-#include "SentryCloud.hpp"
+#include "SentryDownCloud.hpp"
 
 // ---------------------------------离线检测用 函数定义---------------------------
 // ?? 使用用了大量宏定义，请小心阅读
@@ -16,7 +16,7 @@
 #define DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(MotorObj)	\
 uint8_t func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj(void) \
 {		\
-	return CloudEntity.MotorObj.Is_Offline();	\
+	return DownCloudEntity.MotorObj.Is_Offline();	\
 }
 
 // 宏定义(2)：给出上面定义的函数的函数名
@@ -41,14 +41,14 @@ CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_
 CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
 
 // ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
-//Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
-//Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
+//app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
+//app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
 
 void EnterModeCloudCtrlMech(void)
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+    DownCloudEntity.TargetPitch = DownCloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+    DownCloudEntity.TargetYaw = DownCloudEntity.RealYaw;
+    DownCloudEntity.Mode = absolute_cloud; //视为绝对角控制
 }
 void RunModeCloudCtrlMech(void)
 {
@@ -65,7 +65,7 @@ Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud CloudEntity(1, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x204);
+SentryCloud DownCloudEntity(1, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x204);
 
 
 /// 云台物理实体类 构造与删除函数
@@ -110,8 +110,8 @@ void SentryCloud::Handle()
 	
 	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
-		app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//注意负号。
-		app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Pitch = -DownCloudEntity.PitchMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Yaw = -DownCloudEntity.YawMotor.RealAngle;//注意负号。
 	}
 	//↓↓↓陀螺仪角度旋转到枪口方向↓↓↓
 	RotatedImuAngle[0] = -app_imu_data.integral.Roll;
@@ -212,7 +212,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 		shoot_is_permitted=0;    //不允许射击
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
-        CloudEntity.Feed2nd.Safe_Set();
+        DownCloudEntity.Feed2nd.Safe_Set();
 	}
 	else
 	{
@@ -227,7 +227,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
  */
 void pidPitchCallBack(pid* self)
 {
-    self->PIDout+=CloudEntity.gravity_feedforward(CloudEntity.RealPitch);
+    self->PIDout+=DownCloudEntity.gravity_feedforward(DownCloudEntity.RealPitch);
 }
 
 #undef DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ

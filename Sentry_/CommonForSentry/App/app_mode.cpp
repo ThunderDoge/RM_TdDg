@@ -10,7 +10,7 @@
  */
 #include "app_mode.hpp"
 
-void Mode::Enter()
+void app_Mode::Enter()
 {
     if (EnterCallback != nullptr || EnterCallback != NULL)
     {
@@ -20,7 +20,7 @@ void Mode::Enter()
     else
         return;
 }
-void Mode::Run()
+void app_Mode::Run()
 {
     if (RunningCallback != nullptr || RunningCallback != NULL)
     {
@@ -31,7 +31,7 @@ void Mode::Run()
         while (1)
         {;} //ERROR: Try to call NULL Function Pointer
 }
-void Mode::Exit()
+void app_Mode::Exit()
 {
     if (ExitCallback != nullptr || ExitCallback != NULL)
     {

@@ -18,13 +18,15 @@
 ///云台模式取值枚举型
 enum _cloud_ctrl_mode:uint8_t
 {
-    absolute_cloud = 0x01,
-    relative_cloud = 0x02,
-    save_cloud = 0x00,
-    absolute_gyro_cloud = 0x03,
-	relative_gyro_cloud = 0x04,
-	speed_cloud = 0x05,
-    auto_cloud = 0x06,
+    save_cloud,
+	speed_cloud,
+	absolute_cloud,
+    relative_cloud,
+    absolute_gyro_cloud,
+	relative_gyro_cloud,
+    absolute_auto_cloud,
+	relative_auto_cloud,
+	auto_cloud,
 };
 
 #define __CHASSIS_MODE_DEF

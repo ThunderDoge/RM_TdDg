@@ -19,8 +19,7 @@
 #include "stm32f4xx.h"
 #include <string.h>
 #include "usart.h"
-#include "SentryCloud.hpp"	//因为需要使用_cloud_ctrl_mode所以包含了。没有别的依赖
-#include "sentry_ctrl_def.hpp"
+#include "sentry_ctrl_def.hpp"	//因为需要使用 _cloud_ctrl_mode 所以包含了。
 #include "sentry_can_commom.hpp"
 
 
@@ -30,8 +29,10 @@
 //视觉串口接收缓存的数组大小，有需要请在这里修改,使用空闲中断要求这个数至少要大于18
 #define BSP_VISION_BUFFER_SIZE 120
 
+
+
 ///数据帧关键位置
-enum __bsp_vision_Keywords
+enum __app_vision_Keywords
 {
     Frame_header = 0,  //帧头
     Function_word = 1, //功能字
@@ -40,7 +41,7 @@ enum __bsp_vision_Keywords
 };
 
 ///数据帧功能字
-enum __bsp_vision_Commom_Data
+enum __app_vision_Commom_Data
 {
     //帧头帧尾
     FRAME_HEADER_DATA = 0xff,
@@ -48,7 +49,7 @@ enum __bsp_vision_Commom_Data
 };
 
 ///哨兵视觉信息功能字
-enum __bsp_vision_Functionwords
+enum __app_vision_Functionwords
 {
     //视觉发给电控的
     CMD_GIMBAL_RELATIVE_CONTROL = 0x01,      //控制云台相对角度
@@ -63,6 +64,16 @@ enum __bsp_vision_Functionwords
     CMD_GET_MCU_STATE = 0x11, //获取电控控制信息
     ROBOT_ERR = 0X12,
     STA_CHASSIS = 0X13,
+    JUD_GAME_STATUS,
+    JUD_ENY_HP,
+    JUD_GAME_EVENT,
+    JUD_SELF_HP,
+    JUD_GUN_CHASSIS_HEAT,
+    JUD_SELF_BUFF,
+    JUD_TAKING_DMG,
+    JUD_SHOOTING,
+    JUD_AMMO_LEFT,
+    JUD_USER,
 };
 
 ///视觉传输数据解析结构体
@@ -100,7 +111,7 @@ typedef struct __vision_data
 } sentry_vision_data;
 
 ///错误代码列表
-enum __bsp_vision_RobotError
+enum __app_vision_RobotError
 {
     DBUS_OFFLINE = 0X01,
     CAN1_OFFLINE = 0X02,
@@ -116,13 +127,17 @@ enum __bsp_vision_RobotError
 extern sentry_vision_data VisionTx, VisionRx; ///串口发送/接收缓存结构体
 extern uint8_t Vision_Txbuffer[18];         ///串口发送暂存数组
 
-void bsp_vision_Init(void);                                   ///视觉串口初始化
-void bsp_vision_It(void);                                     ///视觉串口中断处理
-// HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword); ///视觉传口发送函数
-HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword);
-void bsp_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata); ///将数据装入缓存Vision_Txbuffer中
-void bsp_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata);    ///将数据装入缓存Vision_Txbuffer中
+void app_vision_Init(void);                                   ///视觉串口初始化
+void app_vision_It(void);                                     ///视觉串口中断处理
+void app_vision_dma_cpltcallback(void);
+void app_vision
+// HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword); ///视觉传口发送函数
+HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword);
+void app_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata); ///将数据装入缓存Vision_Txbuffer中
+void app_vision_load_to_txbuffer(float fdata, int loaction_at_buffdata);    ///将数据装入缓存Vision_Txbuffer中
 
 void CloudVisionTxRoutine(void);  ///主逻辑回调函数。向小主机发送一次VisionTx的全部信息。
+
+void vision_test();
 
 #endif

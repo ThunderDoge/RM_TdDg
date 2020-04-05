@@ -17,8 +17,7 @@
 
 ///依赖的文件
 #include "app_vision.hpp"
-#include "SentryCloudVision.hpp"
-#include "SentryCloudCan.hpp"
+#include "SentryDownCloudCan.hpp"
 #include "app_sentry_check_device.hpp"
 
 //此板子使用了视觉串口

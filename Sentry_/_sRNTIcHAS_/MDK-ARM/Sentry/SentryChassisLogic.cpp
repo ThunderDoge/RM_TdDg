@@ -10,12 +10,12 @@ GlobalModeName GetGlobalMode()
 }
 
 //模式定义
-Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
-//Mode ModeAutonomousDrive()
-Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
+app_app_Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
+//app_app_Mode ModeAutonomousDrive()
+app_app_Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
 //模式指针
-Mode *CurrentMode=&ModeGlobalSafe;
-Mode *LastMode=&ModeGlobalSafe;
+app_Mode *CurrentMode=&ModeGlobalSafe;
+app_Mode *LastMode=&ModeGlobalSafe;
 
 void ModeSelect(void)
 {

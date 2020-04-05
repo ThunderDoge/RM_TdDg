@@ -25,6 +25,6 @@ void ModeSelect(void);  ///模式运转逻辑
 void SuperiorControl(); ///上级通讯控制模式
 void GlobalSafe();  ///全局安全模式
 
-extern Mode ModeSuperSuperiorControl,ModeGlobalSafe;
+extern app_app_Mode ModeSuperSuperiorControl,ModeGlobalSafe;
 
 #endif // __SENTRY_CHASSIS_LOGIC_H_

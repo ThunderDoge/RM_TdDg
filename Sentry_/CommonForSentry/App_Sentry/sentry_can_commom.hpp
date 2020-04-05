@@ -31,6 +31,11 @@
 #include "SentryChassis.hpp"
 #endif //__PROJECT_SENTRY_CHASSIS_
 
+#ifdef __PROJECT_SENTRY_DOWN_CLOUD_
+#include "SentryDownCloud.hpp"
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
+
+
 //必须定义的宏定义。如果未定义会帮你定义
 #ifndef CAN_INTERBOARD
 #define CAN_INTERBOARD hcan2

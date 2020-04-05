@@ -1,12 +1,14 @@
 /** 
+ * @file app_math.c
 * @brief        数学相关 
 * @details  
-* @author    Nankel  Li, Asn
+* @author    Nankel  Li, Asn, Thunderdoge
 * @date     2019.10.16 
-* @version  
+* @version  0.2
 * @par Copyright (c):  RM2020电控
 *  
 * @par 日志
+    2020-4-1    Thunderdoge 添加了周期性限幅函数
 */  
 #include "app_math.h"
 #include <math.h>
@@ -142,4 +144,30 @@ float app_math_Lpf2apply(LPF2* LPF,float sample)
 				return output;
 		}
 }
+
+
+float app_math_fLimitPeriod(float data,float max,float min)
+{
+    float period = max - min;
+
+    while(data > max)
+    {
+        data -= period;
+    }
+
+    while (data < min)
+    {
+        data += period;
+    }
+
+    return data;
+}
+
+
+
+
+
+
+
+
 

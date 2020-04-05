@@ -29,7 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "task_SentryDownCloud.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

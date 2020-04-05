@@ -14,26 +14,52 @@
     PS 与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 */
 
+
+
 ///依赖的文件
 #include "app_vision.hpp"
 //#include "SentryCommu.hpp"
 
+
+
 //调试用标志位
 #define VIUART_DISABLE_OTHER_IT
+#define _VISION_DEBUG
 
+
+
+///储存数据使用的结构体
 sentry_vision_data VisionRx, VisionTx; ///视觉串口解析到的数据,视觉串口发送的数据
 uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
-static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
 
+
+
+///关键状态变量
+static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
+static int not_analysed_index_in_buffer=0;                  /// Vision_Rxbuffer中从[0]到[not_analysed_index_in_buffer]的内容都未曾解析。
+
+
+
+/// 根据协议解析的函数的集合。在缓存数据解析中调用。
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);   ///统一的接收缓存处理函数。！Vision_Rxbuffer应当验证通过已符合数据帧帧格式
 
 /**
 * @brief  视觉串口解析函数
+*   解包将收到的原始数据转换成可使用的数据
+*   关键变量
+*   unsigned char _recv_buf[_len*3];  //接收时用于存储原始数据
+*   int _recv_len;                //接收缓冲区当前有效字节数量
+*   存储结构决定,越早收到的字节在越前面
+*   缓冲区维护逻辑
+*   1.收到正确帧,正确帧和正确帧之前的内容清空,后面的数据依次向前移动
+*   2.缓冲区超过长度,清空最前面的_len个字节,后续字节依次向前移动_len个字节,新收到的内容追加在后部
+*   3.帧头帧尾符合,校验和不符合,继续向下检验
+*   4.在_recv_buf中只有前_recv_len字节有效,剩余的缓冲区内容无效,不进行维护,禁止读取
 * @details  在中断中，对缓冲池中数据进行一次遍历并解析数据
 * @param  NULL
 * @retval  uint8_t 1还没有解析完整个缓冲池数据 0解析已经完成
 */
-static uint8_t bsp_vision_Analysis(void)
+static uint8_t app_vision_Analysis(void)
 {
     int16_t _check_sum = 0;                         //和校验用变量
     if (Array_index <= BSP_VISION_BUFFER_SIZE - 18) //检查未超过下标
@@ -54,10 +80,6 @@ static uint8_t bsp_vision_Analysis(void)
                 return 1;         //校验和出错，直接退出,继续在缓冲区检测数据帧
             }
 
-            //帧头帧尾正确，和校验正确，开始解析
-            VisionRx.Ready_flag = 1; //标记数据就绪
-            SentryVisionUartRxAll(Vision_Rxbuffer + Array_index);   //解析数据帧
-            //运行到这里就表示解析已经成功，一帧数据已经完备
             Array_index += 18; //数据帧一帧长度为18，所以移动18位
             return 1;          //处理完一帧，移动18位继续检测
         }
@@ -74,13 +96,109 @@ static uint8_t bsp_vision_Analysis(void)
     }
 }
 
+
+
+
+/**
+* @brief  视觉串口解析函数
+*   解包将收到的原始数据转换成可使用的数据
+*   关键变量
+*   unsigned char _recv_buf[_len*3];  //接收时用于存储原始数据
+*   int _recv_len;                //接收缓冲区当前有效字节数量
+*   存储结构决定,越早收到的字节在越前面
+*   缓冲区维护逻辑
+*   1.收到正确帧,正确帧和正确帧之前的内容清空,后面的数据依次向前移动
+*   2.缓冲区超过长度,清空最前面的_len个字节,后续字节依次向前移动_len个字节,新收到的内容追加在后部
+*   3.帧头帧尾符合,校验和不符合,继续向下检验
+*   4.在_recv_buf中只有前_recv_len字节有效,剩余的缓冲区内容无效,不进行维护,禁止读取
+* @details  在中断中，对缓冲池中数据进行一次遍历并解析数据
+* @param  NULL
+* @retval  uint8_t 1还没有解析完整个缓冲池数据 0解析已经完成
+*/
+static uint8_t app_vision_analysis_intgrated(void)
+{
+    int16_t _check_sum = 0;                         //和校验用变量
+    
+    uint32_t head_index_buf_under_analyze=0;            //指示目前正在解析的段的起始。
+    uint32_t end_index_buf_under_analyze=Frame_end;            //指示目前正在解析的段的结束。
+
+    uint8_t frame_solved=0;
+
+    if( not_analysed_index_in_buffer < end_index_buf_under_analyze )   // 本来收到的数据根本不够解析一个帧
+    {   return 0;   }
+
+    // 遍历 Vision_Rxbuffer
+    for(;
+    end_index_buf_under_analyze <= not_analysed_index_in_buffer;    // 检查未超过已收到的数据的下标
+    head_index_buf_under_analyze++ , end_index_buf_under_analyze++) // 指示变量后移
+    {
+         /* 不满足帧头帧尾条件 */ 
+        if(!((Vision_Rxbuffer [ head_index_buf_under_analyze ] == FRAME_HEADER_DATA)        
+            && (Vision_Rxbuffer [ end_index_buf_under_analyze ] == FRAME_END_DATA)))
+
+            {continue;   }//跳过到下一个
+
+        else    // 满足帧尾条件
+        {
+
+
+            // 计算校验和
+            for (int i = head_index_buf_under_analyze; i <= end_index_buf_under_analyze; i++)   
+            {
+                if (i != head_index_buf_under_analyze+Sum_check)
+                    _check_sum += Vision_Rxbuffer[i];
+                _check_sum &= 0xff;
+            }
+
+
+
+
+            // 如果校验和符合
+            if (_check_sum == Vision_Rxbuffer[ head_index_buf_under_analyze + Sum_check ] ) // 和校验符合
+            {
+                //帧头帧尾正确，和校验正确，开始解析
+                VisionRx.Ready_flag ++; //标记数据就绪
+                frame_solved++;          //解出的帧的计数
+                SentryVisionUartRxAll(Vision_Rxbuffer + head_index_buf_under_analyze);   //解析数据帧
+                //运行到这里就表示解析已经成功，一帧有效数据已经解出
+                head_index_buf_under_analyze = end_index_buf_under_analyze;
+                end_index_buf_under_analyze += 18;
+            }
+
+            else
+            {continue;}   //跳过到下一个
+
+
+
+        }
+    }
+    // 遍历到此结束
+
+    // 将未解析的数据移到前面
+    int i,j;
+    for(i =head_index_buf_under_analyze,j=0;
+        i<=not_analysed_index_in_buffer;
+        i++,j++)
+    {
+        Vision_Rxbuffer[j] = Vision_Rxbuffer[i];
+    }
+    not_analysed_index_in_buffer = j;
+
+
+    // 返回解析出的帧的数量。
+    return frame_solved;
+
+}
+
+
+
 /**
 * @brief  视觉串口初始化
 * @details  重置空闲(IDLE)中断位，开启空闲中断。关闭其他的无关中断。开启UART-DMA接收，绑定到Vision_Rxbuffer。长度设置为BSP_VISION_BUFFER_SIZE。
 * @param  NULL
 * @retval  NULL
 */
-void bsp_vision_Init(void)
+void app_vision_Init(void)
 {
     __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);          //清除空闲中断位
     __HAL_UART_ENABLE_IT(&BSP_VISION_UART, UART_IT_IDLE); //使能DMA接收空闲中断
@@ -98,20 +216,38 @@ void bsp_vision_Init(void)
     HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
 }
 
+
+
+
+
+
+/**
+ * @brief 小主机通信 串口中断接收/DMA接收完成 回调函数。
+ * 在 HAL_UART_RxCpltCallback 中调用此函数，前面要加上 if huart1。
+ * 由于在初始化时是接收直到末尾的。
+ * 启动数据解析。
+ * 
+ */
+void app_vision_dma_cpltcallback(void)
+{
+
+}
+
+
 /**
 * @brief  视觉串口中断处理函数
 * @details  用于对视觉发送过来的数据做解析操作，将会遍历一次缓冲池
 * @param  NULL
 * @retval  NULL
 */
-void bsp_vision_It(void)
+void app_vision_It(void)
 {
 #ifndef VIUART_DISABLE_OTHER_IT                                         //除能其他所有的中断，不再需要判断
     if (__HAL_UART_GET_FLAG(&BSP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
 #endif
     {
         HAL_UART_DMAStop(&BSP_VISION_UART); //关闭DMA
-        while (bsp_vision_Analysis())
+        while (app_vision_Analysis())
             ;                                                                                       //数据解析，遍历一次缓冲区
         memset(Vision_Rxbuffer, 0, BSP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
         __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);                                                //清除空闲中断标志位
@@ -133,7 +269,7 @@ uint8_t Vision_Txbuffer[18] = {0}; //发送用数组
  * @param     u8data 这一字节的数据
  * @param     location_at_buffdata 在数据帧【数据】段中的位置。0表示【数据】第1字节. 类推
  */
-void bsp_vision_load_to_txbuffer(uint8_t u8data, int location_at_buffdata)
+void app_vision_load_to_txbuffer(uint8_t u8data, int location_at_buffdata)
 {
     Vision_Txbuffer[location_at_buffdata + 2] = u8data;
 }
@@ -143,7 +279,7 @@ void bsp_vision_load_to_txbuffer(uint8_t u8data, int location_at_buffdata)
  * @param     fdata 待装入的浮点数据
  * @param     location_at_buffdata 在数据帧【数据】段中的位置。0表示装入【数据】第1~4字节. 类推. 注意1个float占用4字节
  */
-void bsp_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
+void app_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
 {
     //    *((float*)(&Vision_Txbuffer[location_at_buffdata+2])) = fdata;	This cause HardFault
     memcpy(Vision_Txbuffer + location_at_buffdata + 2, &fdata, 4);
@@ -154,7 +290,7 @@ void bsp_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
  * @param     _Functionword 待发送数据帧的功能字。
  * @return HAL_StatusTypeDef HAL_OK为正常
  */
-HAL_StatusTypeDef bsp_vision_SendTxbuffer(uint8_t _Functionword)
+HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 {
     int16_t _check_sum = 0; //和校验用变量
     // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
@@ -297,12 +433,12 @@ void CMD_GET_MCU_STATE_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    bsp_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
-    bsp_vision_load_to_txbuffer(VisionTx.Pitch, 1);
-    bsp_vision_load_to_txbuffer(VisionTx.Yaw, 5);
-    bsp_vision_load_to_txbuffer(VisionTx.YawSoft, 9U);
-    bsp_vision_load_to_txbuffer(VisionTx.Shoot_mode, 13U);
-    bsp_vision_SendTxbuffer(CMD_GET_MCU_STATE);
+    app_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
+    app_vision_load_to_txbuffer(VisionTx.Pitch, 1);
+    app_vision_load_to_txbuffer(VisionTx.Yaw, 5);
+    app_vision_load_to_txbuffer(VisionTx.YawSoft, 9U);
+    app_vision_load_to_txbuffer(VisionTx.Shoot_mode, 13U);
+    app_vision_SendTxbuffer(CMD_GET_MCU_STATE);
 }
 ///串口发送到小主机日志系统
 void ROBOT_ERR_Tx()
@@ -313,8 +449,8 @@ void ROBOT_ERR_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    bsp_vision_load_to_txbuffer(VisionTx.Error_code, 0U);
-    bsp_vision_SendTxbuffer(ROBOT_ERR);
+    app_vision_load_to_txbuffer(VisionTx.Error_code, 0U);
+    app_vision_SendTxbuffer(ROBOT_ERR);
 }
 ///发送底盘状态
 void STA_CHASSIS_Tx()
@@ -325,11 +461,11 @@ void STA_CHASSIS_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    bsp_vision_load_to_txbuffer(VisionTx.chassis_mode, 0U);
-    bsp_vision_load_to_txbuffer(VisionTx.pillar_flag, 1U);
-    bsp_vision_load_to_txbuffer(VisionTx.Vx, 2);
-	bsp_vision_load_to_txbuffer(VisionTx.Px, 6);
-    bsp_vision_SendTxbuffer(STA_CHASSIS);
+    app_vision_load_to_txbuffer(VisionTx.chassis_mode, 0U);
+    app_vision_load_to_txbuffer(VisionTx.pillar_flag, 1U);
+    app_vision_load_to_txbuffer(VisionTx.Vx, 2);
+	app_vision_load_to_txbuffer(VisionTx.Px, 6);
+    app_vision_SendTxbuffer(STA_CHASSIS);
 }
 ///回调函数，直接执行接收到的小主机指令
 void VisionRxHandle(void)
@@ -377,6 +513,50 @@ void CloudVisonTxRoutine(void)
     ROBOT_ERR_Tx();
     STA_CHASSIS_Tx();
 }
+
+
+	int ans=0;
+
+uint8_t data[30] = {0xff ,0x13 ,0x9a, 0x99, 0x99 ,0x3f, 0x9a, 0x99 ,0x59, 0x40 ,0x01, 0x02 ,0x00, 0x00, 0x00, 0x00 ,0xf9, 0x0d};
+uint8_t data2[30]= {0xff, 0x01, 0x9a, 0x99, 0x99, 0x3f, 0x9a, 0x99, 0x59, 0x40, 0x01, 0x98, 0x00, 0x00, 0x00, 0x00, 0x7d, 0x0d};
+uint8_t data3[30] = {0x13, 0x9a ,0x99,0x99, 0x3f,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
+void vision_test()
+{
+	memcpy(&Vision_Rxbuffer , &data3,30);
+	while(app_vision_Analysis())
+	{
+		ans++;
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif //USE_VISION
 
@@ -466,7 +646,7 @@ void CloudVisonTxRoutine(void)
 //    memcpy(&VisionRx.Px, Vision_Rxbuffer + Array_index + 2, 4);
 //    memcpy(&VisionRx.SpeedLimit, Vision_Rxbuffer + Array_index + 6, 4);
 //}
-//HAL_StatusTypeDef bsp_vision_SendData(uint8_t _Functionword)
+//HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword)
 //{
 //    int16_t _check_sum = 0;         //和校验用变量
 //    memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次

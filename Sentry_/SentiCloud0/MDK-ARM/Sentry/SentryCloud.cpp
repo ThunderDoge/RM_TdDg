@@ -11,7 +11,7 @@
 #include "SentryCloud.hpp"
 
 // ---------------------------------离线检测用 函数定义---------------------------
-// ?? 使用用了大量宏定义，请小心阅读
+// !!!使用用了大量宏定义，请小心阅读
 // 宏定义(1)：定义函数：调用 MotorObj 的 isOffline。将此函数指针传给 CheckDevice_Type 
 #define DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(MotorObj)	\
 uint8_t func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj(void) \
@@ -41,21 +41,44 @@ CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_
 CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
 
 // ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
-//Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
-//Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
+app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
+app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
 
+/**
+ * @brief 进入机械角
+ * 避免突变
+ */
 void EnterModeCloudCtrlMech(void)
 {
     CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
     CloudEntity.TargetYaw = CloudEntity.RealYaw;
     CloudEntity.Mode = absolute_cloud; //视为绝对角控制
 }
+/**
+ * @brief 运行机械角时，数据持续维护 逻辑。
+ * 陀螺仪跟随机械角数据
+ */
 void RunModeCloudCtrlMech(void)
 {
-    
+    // 平时依赖陀螺仪积分数据。但是有机械角的时候强制陀螺仪跟随机械角数据
+    app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//注意负号。
+    app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//注意负号。
 }
-void EnterModeCloudCtrlGyro(void);
-void RunModeCloudCtrlGyro(void);
+/**
+ * @brief 
+ * 
+ */
+void EnterModeCloudCtrlGyro(void)
+{
+    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+    CloudEntity.TargetYaw = CloudEntity.RealYaw;
+    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+
+}
+void RunModeCloudCtrlGyro(void)
+{
+
+}
 
 
 
@@ -88,7 +111,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),
+	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
@@ -132,6 +155,37 @@ void SentryCloud::Handle()
 	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
 	RealPitch = - PitchMotor.RealAngle;	//注意负号
 
+    // 分模式逻辑
+    {
+        switch (Mode)   // 根据 Mode 选择模式
+        {
+
+
+            case absolute_gyro_cloud:
+            case relative_gyro_cloud:
+                CurrentCloudMode = &ModeCloudCtrlGyro;
+                break;
+
+
+            case absolute_cloud:
+            case relative_cloud:
+            default:
+                CurrentCloudMode = &ModeCloudCtrlMech;
+                break;
+
+
+        }
+
+        if(LastCloudMode != CurrentCloudMode)   // 如果模式更新
+        {
+            LastCloudMode->Exit();              // 使用模式切换用函数
+            CurrentCloudMode->Enter();
+        }
+        CurrentCloudMode->Run();            // 正常执行模式内逻辑
+
+        LastCloudMode = CurrentCloudMode;   //  检查模式更新
+    }
+
 //CANSend会在主逻辑统一调用
 //    manager::CANSend();
 
@@ -161,6 +215,79 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
     TargetYaw = yaw;
     PitchMotor.Gyro_Angle_Set(-TargetPitch);
     YawMotor.Gyro_Angle_Set(TargetYaw);
+}
+
+/**
+ * @brief 根据所在角度，切换角度控制位置环反馈源的逻辑。
+ * 
+ * @param     current_pitch     现在的俯仰角
+ * @param     current_yaw       现在的航向角
+ * @return enum _cloud_ctrl_mode 
+ */
+static enum _cloud_ctrl_mode decide_mode_by_angle(float current_pitch, float current_yaw)
+{
+    float mechanic_pitch,mechanic_yaw;
+
+    mechanic_pitch = app_math_fLimitPeriod(current_pitch,180.0f,-180.0f);
+    mechanic_yaw = app_math_fLimitPeriod(current_yaw,180.0f,-180.0f);
+
+    // if  // 转换为陀螺仪模式的条件：YAW行至会抖动的角度
+    // ( 
+    //     IS_IN_INTERVAL(mechanic_yaw,30,40)
+    // )
+    // {return absolute_gyro_cloud;}
+
+    return absolute_cloud;
+}
+
+
+/**
+ * @brief 通用的，可调模式的控制角度。包含【自适应选择反馈】逻辑，已解决抖动问题
+ * 
+ * @param     pitch 输入的俯仰角
+ * @param     yaw   输入的航向角
+ * @param     mode  选中的反馈模式，取值见 @see enum _cloud_ctrl_mode
+ */
+void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode)
+{
+    switch(mode)
+	{
+		case relative_auto_cloud:	// xx_auto 模式下会自动切换 机械/陀螺仪 获取最佳控制方式
+			pitch	+=	RealPitch;
+			yaw		+=	RealYaw;
+		case absolute_auto_cloud:
+			{
+
+                _cloud_ctrl_mode auto_decided_mode = decide_mode_by_angle(RealPitch, RealYaw);
+                
+                SenAngleTo_Generic(pitch,yaw,auto_decided_mode);
+
+            }
+			break;
+		
+		case save_cloud:
+			Safe_Set();
+			break;
+			
+		case absolute_cloud:
+			SetAngleTo(pitch,yaw);
+			break;
+			
+		case relative_cloud:
+			SetAngleTo(pitch+RealPitch, yaw+RealYaw);
+			break;
+			
+		case absolute_gyro_cloud:
+			SetAngleTo_Gyro(pitch,yaw);
+			break;
+			
+		case relative_gyro_cloud:
+			SetAngleTo_Gyro(pitch+RealPitch, yaw+RealYaw);
+			
+		default:
+			Safe_Set();
+			break;
+	}
 }
 ///安全模式
 void SentryCloud::Safe_Set()

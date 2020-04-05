@@ -1,5 +1,5 @@
 /**
- * @file task_SentiCloud.cpp
+ * @file task_SentryDownCloud.cpp
  * @author ThunderDoge (thunderdoge@qq.com)
  * @brief Tasks of SentryCloud
  * @version 0.1
@@ -9,11 +9,13 @@
  * 
  */
 
-#include "task_SentiCloud.hpp"
+#include "task_SentryDownCloud.hpp"
 
-TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
+TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle,task_CheckDevice_Handle;
 uint32_t mark1, mark2;
 
+
+static uint8_t is_cloud_inited=0;   // 哨兵初始化标志位
 
 /**
   * @brief  云台总初始化函数
@@ -21,18 +23,19 @@ uint32_t mark1, mark2;
   * @param[in]
   * @retval  
   */
-void Cloud_Init(void)
+void DownCloud_Init(void)
 {
     bsp_spi_Icm20602Init(); //陀螺仪Icm20602初始化，在SPI上
+	
     app_imu_Init();         //陀螺仪数据处理app_imu初始化
+	
 #ifndef	MIGRATE_F407ZG
     bsp_can_Init();  //CAN总线初始化函数
 #endif //MIGRATE_F407ZG
-    bsp_dbus_Init(); //DBUS初始化
-	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
-	bsp_vision_Init();              //视觉串口接收初始化
+
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
 	
+	// 离线检测初始化
 	app_sentry_CheckDevice_Init();
 	// 设备添加到设备列表
     app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
@@ -45,7 +48,8 @@ void Cloud_Init(void)
 	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
 
-
+	// 初始化标识变量
+    is_cloud_inited = 1;
 }
 /**
   * @brief  主任务
@@ -61,7 +65,7 @@ void Cloud_Init(void)
     while (1)
     {
         app_imu_So3thread();    //获取陀螺仪数据
-		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
+		DownCloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
         manager::CANSend();     //统一的CAN电机控制
         vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
@@ -84,7 +88,7 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-		CloudVisonTxRoutine();  //云台视觉串口发送
+		// CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
 		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2ms
 		
@@ -101,7 +105,9 @@ void task_CommuRoutine(void *param)
   */
 void TaskStarter(void)
 {
-    Cloud_Init();
+    if(!is_cloud_inited){   // 确认初始化
+        DownCloud_Init();
+    }
     xTaskCreate((TaskFunction_t)	task_Main,		//任务代码
 				(char*)				"task_Main",	//任务名
 				(uint16_t)			512,			//堆栈深度
@@ -109,19 +115,19 @@ void TaskStarter(void)
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
-//	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
-//				(char*)				"task_CommuRoutine",
-//				(uint16_t)			512,
-//				(void*)				NULL,
-//				(UBaseType_t)		4,
-//				(TaskHandle_t*)		&task_CommuRoutine_Handle);
-				
-	xTaskCreate((TaskFunction_t)	task_CheckDevice,
-				(char*)				"task_CheckDevice",
+	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+				(char*)				"task_CommuRoutine",
 				(uint16_t)			512,
 				(void*)				NULL,
 				(UBaseType_t)		4,
-				(TaskHandle_t*)		&task_CheckDevice_Handle);
+				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+				
+	// xTaskCreate((TaskFunction_t)	task_CheckDevice,
+	// 			(char*)				"task_CheckDevice",
+	// 			(uint16_t)			512,
+	// 			(void*)				NULL,
+	// 			(UBaseType_t)		4,
+	// 			(TaskHandle_t*)		&task_CheckDevice_Handle);
 }
 //CAN线测试
 // int16_t test_data[4];

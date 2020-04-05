@@ -13,14 +13,14 @@
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
-#include "SentryCloudLogic.hpp"
-#include "SentryCloudCommu.hpp"
+#include "SentryDownCloudLogic.hpp"
+#include "SentryDownCloudCommu.hpp"
 #include "sentry_config.hpp"
 
 // #include "SentryCommu.hpp"
-// #include "SentryCloud.hpp"
+// #include "SentryDownCloud.hpp"
 // #include "SentryCanCommu.hpp"
-// #include "SentryCloudVision.hpp"
+// #include "SentryDownCloudVision.hpp"
 // #include "SentryTroubleShooter.hpp"
 
 #endif // __SENTRY_HPP_

@@ -10,6 +10,7 @@
       <TargetName>SentiCloudDown</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -337,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Bsp;.\App;.\App_Sentry;.\Task;..\..\CommonForSentry\App;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;..\..\CommonForSentry\App_Sentry</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;..\..\CommonForSentry\App;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;..\..\CommonForSentry\App_Sentry;.\Sentry</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -725,10 +726,42 @@
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App_Sentry\sentry_can_commom.cpp</FilePath>
             </File>
+            <File>
+              <FileName>Sentry.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\Sentry.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryDownCloud.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryDownCloud.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryDownCloudCan.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryDownCloudCan.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryDownCloudCommu.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryDownCloudCommu.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryDownCloudLogic.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryDownCloudLogic.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Task</GroupName>
+          <Files>
+            <File>
+              <FileName>task_SentryDownCloud.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Task\task_SentryDownCloud.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

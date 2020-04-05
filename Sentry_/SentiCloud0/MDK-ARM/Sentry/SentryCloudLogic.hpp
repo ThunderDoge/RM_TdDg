@@ -34,14 +34,14 @@ enum GlobalModeName : uint8_t
 // extern CommandSourceName CommandSource;
 extern SentryCloud CloudEntity;
 
-extern Mode* CurrentMode,*LastMode;
+extern app_Mode* CurrentMode,*LastMode;
 
 /**
  * @defgroup RemoteDebugModes
  * @addtogroup RemoteDebugModes
  * @{
  */
-extern Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
+extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
 
 void ModeSelect(); ///主逻辑-模式选择
 

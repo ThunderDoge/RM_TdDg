@@ -81,7 +81,7 @@ void MX_FREERTOS_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+//	vision_test();
   /* USER CODE END 1 */
   
 

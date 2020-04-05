@@ -25,10 +25,10 @@ enum mode_status_enum:uint8_t{
 /**
   * @brief  废案重启 Mode类定义
   */
-class Mode
+class app_Mode
 {
 public:
-    Mode(vivoFuncPtr entry, vivoFuncPtr runner, vivoFuncPtr exit) : ///< 构造函数Constructor，参数为三个函数的指针，分别对应Enter,Run,Exit。函数体需要用户自行定义。
+    app_Mode(vivoFuncPtr entry, vivoFuncPtr runner, vivoFuncPtr exit) : ///< 构造函数Constructor，参数为三个函数的指针，分别对应Enter,Run,Exit。函数体需要用户自行定义。
     status(MODE_EXITED), EnterCallback(entry), RunningCallback(runner), ExitCallback(exit){};
 
     void Enter();   ///<进入函数

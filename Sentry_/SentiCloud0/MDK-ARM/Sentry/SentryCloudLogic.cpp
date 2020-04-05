@@ -15,17 +15,17 @@
 // CommandSourceName CommandSource;
 
 //模式定义
-Mode ModeManualChassis(NULL, ManualChassis, NULL);
-Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
-Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
-Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
-Mode ModeVisionControl(VisionControlEnter, VisionControl, VisionControlExit);
-Mode ModeAutoMove(nullptr, nullptr, nullptr);
-Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
-Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
+app_Mode ModeManualChassis(NULL, ManualChassis, NULL);
+app_Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
+app_Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
+app_Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
+app_Mode ModeVisionControl(VisionControlEnter, VisionControl, VisionControlExit);
+app_Mode ModeAutoMove(nullptr, nullptr, nullptr);
+app_Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
+app_Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
 
-Mode *LastMode = &ModeGlobalSafe;
-Mode *CurrentMode = &ModeGlobalSafe;
+app_Mode *LastMode = &ModeGlobalSafe;
+app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
 /**

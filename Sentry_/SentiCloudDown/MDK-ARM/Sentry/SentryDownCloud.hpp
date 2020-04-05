@@ -14,7 +14,6 @@
 #include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
 #include "app_imu.h"
-//#include "app_vision.hpp"
 #include "app_mode.hpp"
 #include "app_sentry_check_device.hpp"
 #include "app_AmmoFeed.hpp"
@@ -112,7 +111,7 @@ private:
     //板间CAN通讯相关
 };
 
-extern SentryCloud CloudEntity; ///云台物理实体对象。包含电机激光器等设备。
+extern SentryCloud DownCloudEntity; ///云台物理实体对象。包含电机激光器等设备。
 
 // 设备对象。离线检测用
 extern CheckDevice_Type UpCloudLeftFric_CheckDevice;
@@ -127,8 +126,8 @@ extern CheckDevice_Type UpCloudFeedMotor_CheckDevice;
 //void EnterModeCloudCtrlGyro(void);
 //void RunModeCloudCtrlGyro(void);
 
-//extern Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
-//extern Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
+//extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
+//extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
 
 /// PID运算回调。用于PITCH重力前馈 逻辑
 void pidPitchCallBack(pid* self);

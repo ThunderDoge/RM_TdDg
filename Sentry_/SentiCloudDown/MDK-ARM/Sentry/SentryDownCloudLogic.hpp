@@ -1,5 +1,5 @@
 /**
-  * @file   SentryCloudLogic.hpp
+  * @file   SentryDownCloudLogic.hpp
   * @brief    哨兵控制逻辑
   * @details  Encoding - GB2312
   * @author   
@@ -15,8 +15,8 @@
 #endif // __PROJECT_SENTRY_CLOUD_
 
 #include "bsp_dbus.h"
-#include "SentryCloud.hpp"
-#include "SentryCloudCommu.hpp"
+#include "SentryDownCloud.hpp"
+#include "SentryDownCloudCommu.hpp"
 #include "app_mode.hpp"
 
 enum GlobalModeName : uint8_t
@@ -41,7 +41,7 @@ extern Mode* CurrentMode,*LastMode;
  * @addtogroup RemoteDebugModes
  * @{
  */
-extern Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
+extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
 
 void ModeSelect(); ///主逻辑-模式选择
 
