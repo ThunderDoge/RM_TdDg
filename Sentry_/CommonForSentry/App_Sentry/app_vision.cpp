@@ -36,7 +36,7 @@ uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数
 
 ///关键状态变量
 static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
-static int not_analysed_index_in_buffer=0;                  /// Vision_Rxbuffer中从[0]到[not_analysed_index_in_buffer]的内容都未曾解析。
+static int not_analysed_index=0;                  /// Vision_Rxbuffer中从[0]到[not_analysed_index -1]的内容都未曾解析。
 
 
 
@@ -119,22 +119,22 @@ static uint8_t app_vision_analysis_intgrated(void)
 {
     int16_t _check_sum = 0;                         //和校验用变量
     
-    uint32_t head_index_buf_under_analyze=0;            //指示目前正在解析的段的起始。
-    uint32_t end_index_buf_under_analyze=Frame_end;            //指示目前正在解析的段的结束。
+    uint32_t head_index=0;            //指示目前正在解析的段的起始。
+    uint32_t end_index=Frame_end;            //指示目前正在解析的段的结束。
 
     uint8_t frame_solved=0;
 
-    if( not_analysed_index_in_buffer < end_index_buf_under_analyze )   // 本来收到的数据根本不够解析一个帧
+    if( not_analysed_index-1 < end_index )   // 本来收到的数据根本不够解析一个帧
     {   return 0;   }
 
     // 遍历 Vision_Rxbuffer
     for(;
-    end_index_buf_under_analyze <= not_analysed_index_in_buffer;    // 检查未超过已收到的数据的下标
-    head_index_buf_under_analyze++ , end_index_buf_under_analyze++) // 指示变量后移
+    end_index < not_analysed_index;    // 检查未超过已收到的数据的下标
+    head_index++ , end_index++) // 指示变量后移
     {
          /* 不满足帧头帧尾条件 */ 
-        if(!((Vision_Rxbuffer [ head_index_buf_under_analyze ] == FRAME_HEADER_DATA)        
-            && (Vision_Rxbuffer [ end_index_buf_under_analyze ] == FRAME_END_DATA)))
+        if(!((Vision_Rxbuffer [ head_index ] == FRAME_HEADER_DATA)        
+            && (Vision_Rxbuffer [ end_index ] == FRAME_END_DATA)))
 
             {continue;   }//跳过到下一个
 
@@ -143,9 +143,9 @@ static uint8_t app_vision_analysis_intgrated(void)
 
 
             // 计算校验和
-            for (int i = head_index_buf_under_analyze; i <= end_index_buf_under_analyze; i++)   
+            for (int i = head_index; i <= end_index; i++)   
             {
-                if (i != head_index_buf_under_analyze+Sum_check)
+                if (i != head_index+Sum_check)
                     _check_sum += Vision_Rxbuffer[i];
                 _check_sum &= 0xff;
             }
@@ -154,15 +154,15 @@ static uint8_t app_vision_analysis_intgrated(void)
 
 
             // 如果校验和符合
-            if (_check_sum == Vision_Rxbuffer[ head_index_buf_under_analyze + Sum_check ] ) // 和校验符合
+            if (_check_sum == Vision_Rxbuffer[ head_index + Sum_check ] ) // 和校验符合
             {
                 //帧头帧尾正确，和校验正确，开始解析
                 VisionRx.Ready_flag ++; //标记数据就绪
                 frame_solved++;          //解出的帧的计数
-                SentryVisionUartRxAll(Vision_Rxbuffer + head_index_buf_under_analyze);   //解析数据帧
+                SentryVisionUartRxAll(Vision_Rxbuffer + head_index);   //解析数据帧
                 //运行到这里就表示解析已经成功，一帧有效数据已经解出
-                head_index_buf_under_analyze = end_index_buf_under_analyze;
-                end_index_buf_under_analyze += 18;
+                head_index = end_index+1;
+                end_index += 18;
             }
 
             else
@@ -176,13 +176,13 @@ static uint8_t app_vision_analysis_intgrated(void)
 
     // 将未解析的数据移到前面
     int i,j;
-    for(i =head_index_buf_under_analyze,j=0;
-        i<=not_analysed_index_in_buffer;
+    for(i =head_index,j=0;
+        i<not_analysed_index;
         i++,j++)
     {
         Vision_Rxbuffer[j] = Vision_Rxbuffer[i];
     }
-    not_analysed_index_in_buffer = j;
+    not_analysed_index = j;
 
 
     // 返回解析出的帧的数量。
@@ -221,17 +221,6 @@ void app_vision_Init(void)
 
 
 
-/**
- * @brief 小主机通信 串口中断接收/DMA接收完成 回调函数。
- * 在 HAL_UART_RxCpltCallback 中调用此函数，前面要加上 if huart1。
- * 由于在初始化时是接收直到末尾的。
- * 启动数据解析。
- * 
- */
-void app_vision_dma_cpltcallback(void)
-{
-
-}
 
 
 /**
@@ -255,6 +244,60 @@ void app_vision_It(void)
         HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
     }
 }
+
+
+
+/**
+ * @brief 接收的数量
+ * 
+ */
+void app_vision_dma_abort_in_idle(void)
+{
+    // 将已收到的数据登记到未解析数据
+    not_analysed_index += BSP_VISION_UART.RxXferSize -BSP_VISION_UART.RxXferCount;
+    
+    HAL_UART_AbortReceive_IT(&BSP_VISION_UART); // 停止收
+
+    app_vision_analysis_intgrated();            //解析
+    
+    HAL_UART_Receive_DMA(&BSP_VISION_UART,      //重启接收
+        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        BSP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+    
+    return ;
+}
+
+
+/**
+ * @brief 小主机通信 串口中断接收/DMA接收完成 回调函数。
+ * 在 HAL_UART_RxCpltCallback 中调用此函数，前面要加上 if huart1。
+ * 由于在初始化时是接收直到末尾的。
+ * 启动数据解析。
+ * 
+ */
+void app_vision_dma_cpltcallback(void)
+{
+    app_vision_analysis_intgrated();            //解析
+    
+    HAL_UART_Receive_DMA(&BSP_VISION_UART,      //重启接收
+        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        BSP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+
+    return ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 * @brief  视觉串口发送函数

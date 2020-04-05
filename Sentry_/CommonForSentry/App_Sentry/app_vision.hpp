@@ -130,7 +130,7 @@ extern uint8_t Vision_Txbuffer[18];         ///串口发送暂存数组
 void app_vision_Init(void);                                   ///视觉串口初始化
 void app_vision_It(void);                                     ///视觉串口中断处理
 void app_vision_dma_cpltcallback(void);
-void app_vision
+void app_vision_dma_abort_in_idle(void);
 // HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword); ///视觉传口发送函数
 HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword);
 void app_vision_load_to_txbuffer(uint8_t u8data, int loaction_at_buffdata); ///将数据装入缓存Vision_Txbuffer中

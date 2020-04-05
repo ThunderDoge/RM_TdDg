@@ -568,11 +568,6 @@
               <FilePath>.\Sentry\SentryCloudVision.cpp</FilePath>
             </File>
             <File>
-              <FileName>app_vision.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\CommonForSentry\App_Sentry\app_vision.cpp</FilePath>
-            </File>
-            <File>
               <FileName>sentry_can_commom.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App_Sentry\sentry_can_commom.cpp</FilePath>
@@ -581,6 +576,11 @@
               <FileName>app_sentry_check_device.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App_Sentry\app_sentry_check_device.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_vision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App_Sentry\app_vision.cpp</FilePath>
             </File>
           </Files>
         </Group>
