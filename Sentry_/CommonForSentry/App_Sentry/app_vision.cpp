@@ -468,7 +468,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 	CMD_GIMBAL_SPEED_CONTROL_Rx(Vision_Rxbuffer);
 }
 ///视觉串口发送函数
-void CMD_GET_MCU_STATE_Tx()
+void CMD_GET_MCU_STATE_Tx(float pitch,float ,float yaw_soft,uint8_t cloud_mode,uint8_t shoot_mode)
 {
 	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
@@ -476,15 +476,15 @@ void CMD_GET_MCU_STATE_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    app_vision_load_to_txbuffer((uint8_t)VisionTx.Cloud_mode, 0U);
-    app_vision_load_to_txbuffer(VisionTx.Pitch, 1);
-    app_vision_load_to_txbuffer(VisionTx.Yaw, 5);
-    app_vision_load_to_txbuffer(VisionTx.YawSoft, 9U);
-    app_vision_load_to_txbuffer(VisionTx.Shoot_mode, 13U);
+    app_vision_load_to_txbuffer(cloud_mode, 0U);
+    app_vision_load_to_txbuffer(pitch, 1);
+    app_vision_load_to_txbuffer(yaw_mech, 5);
+    app_vision_load_to_txbuffer(yaw_soft, 9U);
+    app_vision_load_to_txbuffer(shoot_mode, 13U);
     app_vision_SendTxbuffer(CMD_GET_MCU_STATE);
 }
 ///串口发送到小主机日志系统
-void ROBOT_ERR_Tx()
+void ROBOT_ERR_Tx(uint8_t err_code)
 {
 	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
@@ -492,11 +492,11 @@ void ROBOT_ERR_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    app_vision_load_to_txbuffer(VisionTx.Error_code, 0U);
+    app_vision_load_to_txbuffer(err_code, 0U);
     app_vision_SendTxbuffer(ROBOT_ERR);
 }
 ///发送底盘状态
-void STA_CHASSIS_Tx()
+void STA_CHASSIS_Tx(uint8_t chassis_mode,uint8_t pillar_flag,float velocity,float position)
 {
 		while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
@@ -504,57 +504,11 @@ void STA_CHASSIS_Tx()
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    app_vision_load_to_txbuffer(VisionTx.chassis_mode, 0U);
-    app_vision_load_to_txbuffer(VisionTx.pillar_flag, 1U);
-    app_vision_load_to_txbuffer(VisionTx.Vx, 2);
-	app_vision_load_to_txbuffer(VisionTx.Px, 6);
+    app_vision_load_to_txbuffer(chassis_mode, 0U);
+    app_vision_load_to_txbuffer(pillar_flag, 1U);
+    app_vision_load_to_txbuffer(velocity, 2);
+	app_vision_load_to_txbuffer(position, 6);
     app_vision_SendTxbuffer(STA_CHASSIS);
-}
-///回调函数，直接执行接收到的小主机指令
-void VisionRxHandle(void)
-{
-    //云台指令处理
-    switch (VisionRx.cloud_ctrl_mode)
-    {
-        case relative_cloud:
-            CloudEntity.SetAngleTo(CloudEntity.RealPitch + VisionRx.Pitch,
-                            CloudEntity.RealYaw + VisionRx.Yaw);
-            break;
-        case absolute_cloud:
-            CloudEntity.SetAngleTo(VisionRx.Pitch, VisionRx.Yaw);
-			break;
-		case speed_cloud:
-			CloudEntity.PitchMotor.Angle_Set(CloudEntity.RealPitch + VisionRx.Pitch);
-			CloudEntity.YawMotor.Speed_Set(VisionRx.Yaw);
-			break;
-        default:
-            break;
-    }
-    VisionRx.cloud_ctrl_mode = 0;    //处理完成标志。因为一个命令只会处理一次，处理后置0
-}
-///与小主机通信任务用的回调函数
-void CloudVisonTxRoutine(void)
-{
-    //装载各种信息
-    VisionTx.Cloud_mode = CloudEntity.Mode;
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag;
-    VisionTx.Pitch = CloudEntity.RealPitch;
-    VisionTx.YawSoft = CloudEntity.RealYaw;
-	VisionTx.Yaw = CloudEntity.MechanicYaw;
-    VisionTx.Shoot_speed = 0;
-
-    VisionTx.Error_code = 0;
-
-    VisionTx.chassis_mode = VisionRx.chassis_mode;
-    VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
-    VisionTx.pillar_flag = CanRx.Pillar_flag;
-    VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
-	VisionTx.pillar_flag = CanRx.Pillar_flag;
-
-    //串口发送
-    CMD_GET_MCU_STATE_Tx();
-    ROBOT_ERR_Tx();
-    STA_CHASSIS_Tx();
 }
 
 
@@ -573,6 +527,28 @@ void vision_test()
 	
 }
 
+void JUD_GAME_STATUS(uint8_t game_progress,uint16_t stage_remain_time )
+{
+    while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	{
+//		vTaskDelay(1);
+	}
+
+    memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
+    app_vision_load_to_txbuffer(chassis_mode, 0U);
+    app_vision_load_to_txbuffer(pillar_flag, 1U);
+    app_vision_load_to_txbuffer(velocity, 2);
+	app_vision_load_to_txbuffer(position, 6);
+    app_vision_SendTxbuffer(STA_CHASSIS);
+}
+void JUD_ENY_HP(uint16_t hp);
+void JUD_GAME_EVENT();      // 待定
+void JUD_SELF_HP(uint16_t hp);         
+void JUD_GUN_CHASSIS_HEAT(float chassis_power,uint16_t cha_pwr_buf,uint16_t gun_heat);
+void JUD_SELF_BUFF(uint8_t buff_code);
+void JUD_TAKING_DMG(uint8_t armor_id_enum,uint8_t hurt_type_enum);
+void JUD_SHOOTING(uint8_t bullet_freq, float bullet_speed);
+void JUD_AMMO_LEFT(uint16_t bulelt_left);
 
 
 
