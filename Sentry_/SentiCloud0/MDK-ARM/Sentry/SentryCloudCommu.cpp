@@ -49,10 +49,9 @@ void CloudVisonTxRoutine(void)
     VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
     VisionTx.pillar_flag = CanRx.Pillar_flag;
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
-    VisionTx.pillar_flag = CanRx.Pillar_flag;
 
     //´®¿Ú·¢ËÍ
-    CMD_GET_MCU_STATE_Tx();
-    ROBOT_ERR_Tx();
-    STA_CHASSIS_Tx();
+    CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
+    ROBOT_ERR_Tx(VisionTx.Error_code);
+    STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);
 }

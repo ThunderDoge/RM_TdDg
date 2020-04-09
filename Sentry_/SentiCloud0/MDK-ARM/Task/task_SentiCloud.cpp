@@ -53,8 +53,7 @@ void Cloud_Init(void)
   * @param[in]  
   * @retval  
   */
-    void
-    task_Main(void *param)
+void task_Main(void *param)
 {
 
     TickType_t LastTick = xTaskGetTickCount();

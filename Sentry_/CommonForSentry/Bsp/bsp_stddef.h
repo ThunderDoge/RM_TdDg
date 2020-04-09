@@ -12,14 +12,28 @@
 
 #include "stm32f4xx_hal.h"
 
-//#define __USER_GETTICK_TO(variable) \
-//	{   	\
-//		#ifdef _CMSIS_OS_H					\
-//		variable = xTaskGetTickCount();   	\
-//		#else								\
-//		variable = HAL_GetTick();			\
-//		#endif								\
-//	}										\
+#include <stdio.h>
 
+
+// define user fputc() implement for printf()
+#ifdef __stdio_h
+
+#ifdef __GNUC__
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
+
+PUTCHAR_PROTOTYPE
+{
+	if(HAL_UART_Transmit(&huart1,(uint8_t*)&ch,1,0xff) == HAL_OK)
+		return ch;
+	else
+		return EOF;
+}
+
+#undef PUTCHAR_PROTOTYPE
+
+#endif //__stdio_h
 
 #endif // __BSP_STDDEF_H_

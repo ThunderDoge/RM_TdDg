@@ -14,13 +14,23 @@
 #include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
 #include "app_imu.h"
-//#include "app_vision.hpp"
+#include "app_vision.hpp"
 #include "app_mode.hpp"
 #include "app_sentry_check_device.hpp"
 #include "app_AmmoFeed.hpp"
 
 extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
 extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
+
+//extern app_Mode ModeDualPitch;
+//extern app_Mode ModeSinglePitch;
+
+
+enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
+	__cloud_main_pitch,
+	__cloud_second_pitch,
+	__cloud_dual_pitch,
+};
 
 
 /**
@@ -32,7 +42,8 @@ class SentryCloud
 public:
     //Initializer & Destructor 云台物理实体类 构造与删除函数
     SentryCloud(uint8_t yaw_can_num,uint16_t yaw_can_id, 
-    uint8_t pitch_can_num, uint16_t pitch_can_id, 
+    uint8_t pitch_can_num, uint16_t pitch_can_id,
+	uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
     uint8_t fric_l_can_num, uint16_t fric_l_can_id,
     uint8_t fric_r_can_num,uint16_t fric_r_can_id,
     uint8_t feed_can_num,uint16_t feed_can_id);
@@ -43,6 +54,11 @@ public:
     pid PitchPosition;      ///<Pitch电机机械角 位置环
     pid PitchGyroPosition;  ///<Pitch电机陀螺仪 位置环
     pid PitchGyroSpeed;     ///<Pitch电机陀螺仪 速度环
+	
+	pid Pitch2ndSpeed;         ///<Pitch电机机械角 速度环
+    pid Pitch2ndPosition;      ///<Pitch电机机械角 位置环
+    pid Pitch2ndGyroPosition;  ///<Pitch电机陀螺仪 位置环
+    pid Pitch2ndGyroSpeed;     ///<Pitch电机陀螺仪 速度环
 
     pid YawSpeed;           ///<Yaw电机机械角 速度环
     pid YawPosition;        ///<Yaw电机机械角 位置环
@@ -57,6 +73,7 @@ public:
 
     softcloud YawMotor;     ///<Yaw轴电机对象_CAN1上
     softcloud PitchMotor;   ///<Pitch轴电机对象_CAN1上
+	softcloud PitchSecondMotor;		///<从动Pitch轴电机对象_CAN2上
 
     motor FricLeftMotor;    ///< 左边摩擦轮
     motor FricRightMotor;   ///< 右边摩擦轮
@@ -79,9 +96,14 @@ public:
     int Mode;   ///<云台状态指示
     app_Mode* LastCloudMode=&ModeCloudCtrlMech,*CurrentCloudMode=&ModeCloudCtrlMech;  // 模式指针
     uint8_t force_use_mech_gyro=0;
-    uint8_t err_flags=0;    ///<错误标志位。每一位的定义见：
+	
+//    uint8_t err_flags=0;    ///<错误标志位。每一位的定义见：
+
+
 	int shoot_flag=0;   ///<“正在射击”指示位
     int32_t Shoot_Speed=7000;   ///<摩擦轮的设定速度。
+	
+	
     float RealYaw;  ///< Yaw软角度
 	float MechanicYaw;  ///< Yaw机械角度
     float RealPitch;    ///< Pitch软角度
@@ -107,6 +129,18 @@ private:
     //基本状态
     uint8_t shoot_is_permitted=0; ///<“允许射击”指示位。只能通过ShooterSwitchCmd开启。为0时不允许使用摩擦轮和拨弹电机。
     uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; // 强行指定的控制模式
+	
+	// 内部运行函数：双PITCH控制相关
+//	app_Mode* pitch_mode_ptr=&ModeSinglePitch;
+//	app_Mode* last_pitch_mode_ptr=&ModeSinglePitch;
+	void EnterModeDualPitch(void);
+	void RunModeDualPitch(void);
+	void ExitModeDualPitch(void);
+	
+	uint8_t pitch_ctrl_mode = 0;
+	uint8_t last_pitch_ctrl_mode = 0;
+	void PitchModeCtrl(void);
+
     //PITCH重力补偿
     float g_A=0;  //重力补偿之系数
     float g_phi=0;    //重力补偿初相
@@ -133,6 +167,14 @@ void RunModeCloudCtrlGyro(void);
 
 extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
 extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
+
+//// 双PITCH控制相关
+//void PitchModeCtrl(void);
+
+
+//extern app_Mode ModeDualPitch;
+//extern app_Mode ModeSinglePitch;
+//extern app_Mode ModeSecondPitch;
 
 /// PID运算回调。用于PITCH重力前馈 逻辑
 void pidPitchCallBack(pid* self);

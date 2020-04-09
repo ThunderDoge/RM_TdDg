@@ -246,7 +246,7 @@ public:
           float *SpeedSource = NULL,
           float *PositionSource = NULL); //!<构造函数，指针指向位置或速度???
     virtual void Safe_Set(void);         //!<设定电机进入安全模式，即发送电????0
-
+    virtual void InsertCurrent(void); //!<将运算好的电流按列表储存进发送缓存区???
 protected:
     int16_t CLOUD_STD; //!<该云台在指向原点时的编码器的???
 
@@ -261,7 +261,6 @@ protected:
     virtual void Handle(void);           //!<数据处理函数，用于判???状态，?????PID
     virtual void Speed_Run(void);        //!<使用速度??????定电??? 为PID运算??????
     virtual void Position_Run(void);     //!<使用位置??????定电??? 为PID运算??????
-    virtual void InsertCurrent(void); //!<将运算好的电流按列表储存进发送缓存区???
 };
 class softcloud : public cloud ///??????程云台类 for 6020
 {

@@ -48,11 +48,11 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>SentiCloud0\</OutputDirectory>
+          <OutputDirectory>.\SentiCloud0\</OutputDirectory>
           <OutputName>SentiCloud0</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath></ListingPath>
@@ -394,7 +394,7 @@
           <Files>
             <File>
               <FileName>main.c</FileName>
-              <FileType>1</FileType>
+              <FileType>8</FileType>
               <FilePath>../Src/main.c</FilePath>
             </File>
             <File>
@@ -414,7 +414,7 @@
             </File>
             <File>
               <FileName>freertos.c</FileName>
-              <FileType>1</FileType>
+              <FileType>8</FileType>
               <FilePath>../Src/freertos.c</FilePath>
             </File>
             <File>
@@ -429,7 +429,7 @@
             </File>
             <File>
               <FileName>stm32f4xx_it.c</FileName>
-              <FileType>1</FileType>
+              <FileType>8</FileType>
               <FilePath>../Src/stm32f4xx_it.c</FilePath>
             </File>
             <File>

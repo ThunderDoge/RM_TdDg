@@ -41,8 +41,12 @@ CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_
 CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
 
 // ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
-app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,nullptr);
-app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,nullptr);
+app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,NULL);
+app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,NULL);
+
+// ---------------------------------云台 双PITCH相关
+//app_Mode ModeDualPitch(EnterModeDualPitch,RunModeDualPitch,NULL);
+//app_Mode ModeSinglePitch(EnterModeSinglePitch,RunModeSinglePitch,NULL);
 
 /**
  * @brief 进入机械角
@@ -82,18 +86,138 @@ void RunModeCloudCtrlGyro(void)
 
 
 
+//------------------------双PITCH模式相关-----------------------------------------
+float pid_param_backup[24];     // 单PITCH参数备份存在此。在初始化时备份
+float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
+{-3, 0, -8, 2000, 30000, 500,
+-15, -1, 0, 1800, 10000,120,
+100, 0, 0, 2000, 10000,3000,
+-10, 0, 0, 2000, 30000,500};
+// 参照一下参数设定
+//   PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
+//   PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+//   PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
+//   PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
+
+static void copy_pid_param_to_array(float* destination,pid* source)
+{
+	destination[0] = source->P;
+	destination[1] = source->I;
+	destination[2] = source->D;
+	destination[3] = source->IMax;
+	destination[4] = source->PIDMax;
+	destination[5] = source->I_Limited;
+}
+static void copy_array_to_pid_param(pid* desti,float* src)
+{
+	desti->P = src[0];
+	desti->I = src[1];
+	desti->D = src[2];
+	desti->IMax = src[3];
+	desti->PIDMax = src[4];
+	desti->I_Limited = src[5];
+}
+
+///备份单PITCH参数到 pid_param_backup. BackupSingleMotorParam
+static void copy_cloud_param_to_backup(softcloud* src)
+{
+    copy_pid_param_to_array(&pid_param_backup[0],src->PID_In);
+	copy_pid_param_to_array(&pid_param_backup[6],src->PID_Out);
+	copy_pid_param_to_array(&pid_param_backup[12],src->Gyro_PID_In);
+    copy_pid_param_to_array(&pid_param_backup[18],src->Gyro_PID_Out);
+}
+///复制数组中的参数到云台电机PID
+static void copy_array_to_cloud_param(softcloud* desti,float* src)
+{
+    copy_array_to_pid_param(desti->PID_In,&src[0]);
+    copy_array_to_pid_param(desti->PID_Out,&src[6]);
+    copy_array_to_pid_param(desti->Gyro_PID_In,&src[12]);
+    copy_array_to_pid_param(desti->Gyro_PID_Out,&src[18]);
+}
+/**
+ * @brief 进入双PITCH模式
+ * 
+ */
+void SentryCloud::EnterModeDualPitch(void)
+{
+    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
+
+    PitchSecondMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
+    // 它的输出值电流值会在运行时复制PitchMotor的电流输出值
+}
+/**
+ * @brief 退出双PITCH模式，恢复单PITCH模式
+ * 
+ */
+void SentryCloud::ExitModeDualPitch(void)
+{
+    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入单PITCH参数 WriteDualMotorParam();
+
+    PitchSecondMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
+    // 但是此函数在某一PITCH掉线时才会调用。
+}
+/**
+ * @brief 运行双PITCH模式
+ * 从动PITCH电机的输出值电流值会在运行时复制PitchMotor的电流输出值
+ */
+void SentryCloud::RunModeDualPitch()
+{
+    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
+    PitchSecondMotor.InsertCurrent();   // 写入电流值
+}
+/**
+ * @brief PITCH模式控制。在Handle()中调用
+ * 
+ */
+void SentryCloud::PitchModeCtrl(void)
+{
+	last_pitch_ctrl_mode = pitch_ctrl_mode;
+	
+	// 更新模式PITCH的规则
+	if(PitchMotor.Is_Offline() == 0 && PitchSecondMotor.Is_Offline() ==0)
+	{
+		pitch_ctrl_mode = __cloud_dual_pitch;
+	}
+	else 
+	{
+		pitch_ctrl_mode = __cloud_main_pitch;
+	}
+	
+	// 进行模式切换及运行
+	switch( (pitch_ctrl_mode*10)+(last_pitch_ctrl_mode) )
+	{
+	case __cloud_dual_pitch*10 + __cloud_dual_pitch:
+		{			RunModeDualPitch();		}
+		break;
+		
+	case __cloud_main_pitch*10 + __cloud_main_pitch:
+		{/*DO NOTHING*/}
+		break;
+		
+	case __cloud_dual_pitch*10 + __cloud_main_pitch:
+	default:
+		{			ExitModeDualPitch();		}
+		break;
+		
+	case __cloud_main_pitch*10 + __cloud_dual_pitch:
+		{			EnterModeDualPitch();		}
+		break;
+	}
+}
+
 // 电机型号类
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud CloudEntity(1, 0x206, 1, 0x205, 1, 0x202, 1, 0x203, 1, 0x204);
+SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x207, 1, 0x202, 1, 0x203, 1, 0x204);
 
 
 /// 云台物理实体类 构造与删除函数
 SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t pitch_can_num, uint16_t pitch_can_id,
+						 uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
                          uint8_t fric_l_can_num, uint16_t fric_l_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
@@ -102,6 +226,10 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndSpeed(6, 0, 8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
       YawPosition(10, 1,-0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(15, 0, 0, 2000, 30000, 10, 10, 500),
@@ -110,10 +238,14 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
+
+        //!!!!!!!!!!!>>>>>>>>>>>>>要调节双PITCH参数请到 dual_pitch_pid_param
+
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
+      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
+	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
 {
@@ -122,15 +254,17 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
     PitchPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
     PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
+	copy_cloud_param_to_backup(&PitchMotor);
 };
 void SentryCloud::Handle()
 {
+    //------------------------安全模式激光灯自动关闭-------------------------
 	if(Mode != save_cloud)
 		LazerSwitchCmd(1);  
     else
-        LazerSwitchCmd(0);  //安全模式激光灯自动关闭
+        LazerSwitchCmd(0);  
 	
-	
+	//-----------------------------陀螺仪数据处理---------------------------------------
 	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
 		app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//注意负号。
@@ -155,7 +289,11 @@ void SentryCloud::Handle()
 	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
 	RealPitch = - PitchMotor.RealAngle;	//注意负号
 
-    // 分模式逻辑
+
+    //--------------------------单/双PITCH模式控制逻辑--------------------------
+    PitchModeCtrl();    
+
+    // -------------------------------分模式逻辑-------------------------------
     {
         switch (Mode)   // 根据 Mode 选择模式
         {
@@ -189,6 +327,7 @@ void SentryCloud::Handle()
 //CANSend会在主逻辑统一调用
 //    manager::CANSend();
 
+// --------------------------------射击许可开关----------------------------
 	if(shoot_is_permitted <1)   //检查射击许可，不许可 则回到安全
 	{
 		FricLeftMotor.Safe_Set();
@@ -197,7 +336,11 @@ void SentryCloud::Handle()
 	}
 
     shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
+
+    
 }
+
+
 ///设定机械角控制角度
 void SentryCloud::SetAngleTo(float pitch, float yaw)
 {
@@ -357,6 +500,44 @@ void pidPitchCallBack(pid* self)
     self->PIDout+=CloudEntity.gravity_feedforward(CloudEntity.RealPitch);
 }
 
+/**
+ * @brief       读取PID参数的回调函数。由外面实现
+ * 
+ * @param     pid_id    PID编号
+ * @param     p         读取后写入P的地址
+ * @param     i         读取后写入I的地址
+ * @param     d         读取后写入D的地址
+ * @return 状态值。正常返回HAL_OK, 异常返回HAL_ERROR 
+ */
+HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* i,float* d)
+{
+    switch (pid_id)
+    {
+    case __cloud_pitch_position_pid:
+        *p = CloudEntity.PitchPosition.P;
+		*i = CloudEntity.PitchPosition.I;
+		*d = CloudEntity.PitchPosition.D;
+        break;
+    case __cloud_yaw_position_pid:
+        *p = CloudEntity.YawPosition.P;
+		*i = CloudEntity.YawPosition.I;
+		*d = CloudEntity.YawPosition.D;
+        break;
+    case __cloud_pitch_speed_pid:
+        *p = CloudEntity.PitchSpeed.P;
+		*i = CloudEntity.PitchSpeed.I;
+		*d = CloudEntity.PitchSpeed.D;
+        break;
+    case __cloud_yaw_speed_pid:
+        *p = CloudEntity.YawSpeed.P;
+		*i = CloudEntity.YawSpeed.I;
+		*d = CloudEntity.YawSpeed.D;	
+        break;
+    default:
+        break;
+    }
+	return HAL_OK;
+}
 #undef DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ
 #undef FUNC_NAME
 

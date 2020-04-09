@@ -36,7 +36,7 @@ uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///´®¿Ú½ÓÊÕÊı¾İ»º´æÊı
 
 ///¹Ø¼ü×´Ì¬±äÁ¿
 static int8_t Array_index = 0;                             ///»º³åÇøÊı¾İ¼ì²âÓÃÖ¸Õë
-static int not_analysed_index=0;                  /// Vision_RxbufferÖĞ´Ó[0]µ½[not_analysed_index -1]µÄÄÚÈİ¶¼Î´Ôø½âÎö¡£
+int not_analysed_index=0;                  /// Vision_RxbufferÖĞ´Ó[0]µ½[not_analysed_index -1]µÄÄÚÈİ¶¼Î´Ôø½âÎö¡£
 
 
 
@@ -59,7 +59,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);   ///Í³Ò»µÄ½ÓÊÕ»º´æ´¦Àíº¯Ê
 * @param  NULL
 * @retval  uint8_t 1»¹Ã»ÓĞ½âÎöÍêÕû¸ö»º³å³ØÊı¾İ 0½âÎöÒÑ¾­Íê³É
 */
-static uint8_t app_vision_Analysis(void)
+uint8_t app_vision_Analysis(void)
 {
     int16_t _check_sum = 0;                         //ºÍĞ£ÑéÓÃ±äÁ¿
     if (Array_index <= BSP_VISION_BUFFER_SIZE - 18) //¼ì²éÎ´³¬¹ıÏÂ±ê
@@ -115,12 +115,14 @@ static uint8_t app_vision_Analysis(void)
 * @param  NULL
 * @retval  uint8_t 1»¹Ã»ÓĞ½âÎöÍêÕû¸ö»º³å³ØÊı¾İ 0½âÎöÒÑ¾­Íê³É
 */
-static uint8_t app_vision_analysis_intgrated(void)
+uint8_t app_vision_analysis_intgrated(void)
 {
     int16_t _check_sum = 0;                         //ºÍĞ£ÑéÓÃ±äÁ¿
     
     uint32_t head_index=0;            //Ö¸Ê¾Ä¿Ç°ÕıÔÚ½âÎöµÄ¶ÎµÄÆğÊ¼¡£
     uint32_t end_index=Frame_end;            //Ö¸Ê¾Ä¿Ç°ÕıÔÚ½âÎöµÄ¶ÎµÄ½áÊø¡£
+	
+	int first_0xFF=-1;		// -1 ÊÂ³õÊ¼Öµ,±íÊ¾Ã»ÓĞ
 
     uint8_t frame_solved=0;
 
@@ -132,57 +134,84 @@ static uint8_t app_vision_analysis_intgrated(void)
     end_index < not_analysed_index;    // ¼ì²éÎ´³¬¹ıÒÑÊÕµ½µÄÊı¾İµÄÏÂ±ê
     head_index++ , end_index++) // Ö¸Ê¾±äÁ¿ºóÒÆ
     {
-         /* ²»Âú×ãÖ¡Í·Ö¡Î²Ìõ¼ş */ 
-        if(!((Vision_Rxbuffer [ head_index ] == FRAME_HEADER_DATA)        
-            && (Vision_Rxbuffer [ end_index ] == FRAME_END_DATA)))
+		if( Vision_Rxbuffer [ head_index ] == FRAME_HEADER_DATA )   // ÊÇ0XFF
+		{
+            if(Vision_Rxbuffer [ end_index ] == FRAME_END_DATA)     // Ö¡Î²ÊÇ 0X0D
+            {
 
-            {continue;   }//Ìø¹ıµ½ÏÂÒ»¸ö
+                // ¼ÆËãĞ£ÑéºÍ
+                for (int i = head_index; i <= end_index; i++)   
+                {
+                    if (i != head_index+Sum_check)
+                        _check_sum += Vision_Rxbuffer[i];
+                    _check_sum &= 0xff;
+                }
 
-        else    // Âú×ãÖ¡Î²Ìõ¼ş
+
+                // Èç¹ûĞ£ÑéºÍ·ûºÏ
+                if (_check_sum == Vision_Rxbuffer[ head_index + Sum_check ] ) // ºÍĞ£Ñé·ûºÏ
+                {
+                    //Ö¡Í·Ö¡Î²ÕıÈ·£¬ºÍĞ£ÑéÕıÈ·£¬¿ªÊ¼½âÎö
+                    VisionRx.Ready_flag ++; //±ê¼ÇÊı¾İ¾ÍĞ÷
+                    frame_solved++;          //½â³öµÄÖ¡µÄ¼ÆÊı
+                    SentryVisionUartRxAll(Vision_Rxbuffer + head_index);   //½âÎöÊı¾İÖ¡
+                    //ÔËĞĞµ½ÕâÀï¾Í±íÊ¾½âÎöÒÑ¾­³É¹¦£¬Ò»Ö¡ÓĞĞ§Êı¾İÒÑ¾­½â³ö
+                    head_index = end_index;
+                    end_index += Frame_end;
+
+                    // Èç¹ûÖ®Ç°±ê¼ÇÁË first_0xFF£¬ÒªÖØÖÃËü
+                    first_0xFF = -1;
+                }
+                else
+                {
+                    continue;   //Ìø¹ıµ½ÏÂÒ»¸ö
+                }
+
+            }
+            else    // ·ûºÏÖ¡Í·µ«ÊÇ²»·ûºÏÖ¡Î²
+            {
+                if(first_0xFF == -1)    // ¼ÇÂ¼µÚÒ»¸ö 0XFF
+                {
+                    first_0xFF = head_index;
+                }
+            }
+		}
+        else    // ²»ÊÇ 0XFF
         {
-
-
-            // ¼ÆËãĞ£ÑéºÍ
-            for (int i = head_index; i <= end_index; i++)   
-            {
-                if (i != head_index+Sum_check)
-                    _check_sum += Vision_Rxbuffer[i];
-                _check_sum &= 0xff;
-            }
-
-
-
-
-            // Èç¹ûĞ£ÑéºÍ·ûºÏ
-            if (_check_sum == Vision_Rxbuffer[ head_index + Sum_check ] ) // ºÍĞ£Ñé·ûºÏ
-            {
-                //Ö¡Í·Ö¡Î²ÕıÈ·£¬ºÍĞ£ÑéÕıÈ·£¬¿ªÊ¼½âÎö
-                VisionRx.Ready_flag ++; //±ê¼ÇÊı¾İ¾ÍĞ÷
-                frame_solved++;          //½â³öµÄÖ¡µÄ¼ÆÊı
-                SentryVisionUartRxAll(Vision_Rxbuffer + head_index);   //½âÎöÊı¾İÖ¡
-                //ÔËĞĞµ½ÕâÀï¾Í±íÊ¾½âÎöÒÑ¾­³É¹¦£¬Ò»Ö¡ÓĞĞ§Êı¾İÒÑ¾­½â³ö
-                head_index = end_index+1;
-                end_index += 18;
-            }
-
-            else
-            {continue;}   //Ìø¹ıµ½ÏÂÒ»¸ö
-
-
-
+            continue;   //Ìø¹ıµ½ÏÂÒ»¸ö
         }
     }
     // ±éÀúµ½´Ë½áÊø
 
     // ½«Î´½âÎöµÄÊı¾İÒÆµ½Ç°Ãæ
-    int i,j;
-    for(i =head_index,j=0;
-        i<not_analysed_index;
-        i++,j++)
+	
+	// µÚÒ»¸ö0XFF ¿ÉÄÜÔÚ ²»¹»¹¹³ÉÒ»¸öÖ¡µÄ³¤¶ÈÀïÃæ.±éÀú£¬¼ì²éÒ»ÏÂ.
+	if(first_0xFF == 0)
+	{
+		for(int i=head_index;i<not_analysed_index;i++)
+		{
+			if(Vision_Rxbuffer[i] == 0xff)
+			{
+				first_0xFF = i;
+				break;		// ÕÒµ½¾ÍÍËÁË
+			}
+		}
+	}
+	//»¹ÊÇÃ»ÓĞ
+	if(first_0xFF == -1)
+	{
+		first_0xFF = not_analysed_index;	// ÕâÑùËµÃ÷¸ù±¾Ã»ÓĞ0XFF,Ö±½ÓÈÓµô¼´¿É
+	}
+	
+	// ÒÆ¶¯Êı¾İµ½»º´æÍ·²¿£¬µ«ÊÇµÚÒ»¸ö0XFFÖ®Ç°µÄ²»Òª
+    int from_index,to_index;
+    for(from_index =first_0xFF,to_index=0;
+        from_index < not_analysed_index;
+        from_index++,to_index++)
     {
-        Vision_Rxbuffer[j] = Vision_Rxbuffer[i];
+        Vision_Rxbuffer[to_index] = Vision_Rxbuffer[from_index];
     }
-    not_analysed_index = j;
+    not_analysed_index = to_index;
 
 
     // ·µ»Ø½âÎö³öµÄÖ¡µÄÊıÁ¿¡£
@@ -256,27 +285,30 @@ void app_vision_dma_abort_in_idle(void)
     // ½«ÒÑÊÕµ½µÄÊı¾İµÇ¼Çµ½Î´½âÎöÊı¾İ
     not_analysed_index += BSP_VISION_UART.RxXferSize -BSP_VISION_UART.RxXferCount;
     
-    HAL_UART_AbortReceive_IT(&BSP_VISION_UART); // Í£Ö¹ÊÕ
+    HAL_UART_AbortReceive_IT(&BSP_VISION_UART); // Í£Ö¹ÊÕ£¬Õâ¸öº¯Êı¿ÉÒÔÓÃÓÚDMA½ÓÊÕºÍÖĞ¶Ï½ÓÊÕµÄÍ£Ö¹¡£Ïê¼û´Ëº¯Êı×¢ÊÍ¡£
 
-    app_vision_analysis_intgrated();            //½âÎö
+    app_vision_analysis_intgrated();            //½âÎö. ÔÚÀïÃæ not_analysed_index ¸üĞÂÁË
     
     HAL_UART_Receive_DMA(&BSP_VISION_UART,      //ÖØÆô½ÓÊÕ
         Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer ´¦¿ªÊ¼Ğ´
-        BSP_VISION_BUFFER_SIZE-not_analysed_index+1); // ½ÓÊÕµÄÊıÁ¿Ò»Ö±µ½ÌîÂú Vision_Rxbuffer
+        BSP_VISION_BUFFER_SIZE-not_analysed_index); // ½ÓÊÕµÄÊıÁ¿Ò»Ö±µ½ÌîÂú Vision_Rxbuffer
     
     return ;
 }
 
 
 /**
- * @brief Ğ¡Ö÷»úÍ¨ĞÅ ´®¿ÚÖĞ¶Ï½ÓÊÕ/DMA½ÓÊÕÍê³É »Øµ÷º¯Êı¡£
+ * @brief Ğ¡Ö÷»úÍ¨ĞÅ ´®¿ÚÖĞ¶ÏDMA½ÓÊÕÍê³É »Øµ÷º¯Êı¡£
  * ÔÚ HAL_UART_RxCpltCallback ÖĞµ÷ÓÃ´Ëº¯Êı£¬Ç°ÃæÒª¼ÓÉÏ if huart1¡£
- * ÓÉÓÚÔÚ³õÊ¼»¯Ê±ÊÇ½ÓÊÕÖ±µ½Ä©Î²µÄ¡£
+ * 
+ * ÕıÈ·ÔËĞĞÓ¦¸Ã½ÓÊÕÂúÕû¸ö»º´æ²Å»áµ÷ÓÃ´Ë»Øµ÷º¯Êı¡£
  * Æô¶¯Êı¾İ½âÎö¡£
  * 
  */
 void app_vision_dma_cpltcallback(void)
 {
+	not_analysed_index = BSP_VISION_BUFFER_SIZE;	// Ö±½ÓÉè¶¨Õû¸ö»º´æÎªÎªÎ´½âÎö¡£ÒòÎªDMA/IT½ÓÊÕÆô¶¯Ê± Éè¶¨ÊÇ½ÓÊÜÂú»º´æ²Å»á½ÓÊÕÍê³É·µ»Ø¡£
+	
     app_vision_analysis_intgrated();            //½âÎö
     
     HAL_UART_Receive_DMA(&BSP_VISION_UART,      //ÖØÆô½ÓÊÕ
@@ -455,9 +487,93 @@ void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(uint8_t *Vision_Rxbuffer)
         VisionRx.UpdateTime = HAL_GetTick();
     }
 }
+
+
+
+/**
+ * @brief       ¶ÁÈ¡PID²ÎÊıµÄ»Øµ÷º¯Êı¡£ÓÉÍâÃæÊµÏÖ
+ * 
+ * @param     pid_id    PID±àºÅ
+ * @param     p         ¶ÁÈ¡ºóĞ´ÈëPµÄµØÖ·
+ * @param     i         ¶ÁÈ¡ºóĞ´ÈëIµÄµØÖ·
+ * @param     d         ¶ÁÈ¡ºóĞ´ÈëDµÄµØÖ·
+ * @return ×´Ì¬Öµ¡£Õı³£·µ»ØHAL_OK, Òì³£·µ»ØHAL_ERROR 
+ */
+__weak HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* i,float* d)
+{
+    //ÔÚÕâÀïÌí¼ÓÄã×Ô¼ºµÄÊµÏÖ¡£
+    UNUSED(pid_id);
+    UNUSED(p);
+    UNUSED(i);
+    UNUSED(d);
+    return HAL_ERROR;
+}
+
+
+
+/**
+ * @brief       ·¢ËÍ CMD_READ_PID ÃüÁî·µ»ØÖµµÄº¯Êı
+ * 
+ * @param     pid_id    PID±àºÅ
+ * @param     p         ¶ÁÈ¡µ½µÄP
+ * @param     i         ¶ÁÈ¡µ½µÄI
+ * @param     d         ¶ÁÈ¡µ½µÄD
+ */
+void CMD_READ_PID_Tx(uint8_t pid_id,float p,float i,float d)
+{
+	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	{
+//		vTaskDelay(1);
+	}
+
+    memset(Vision_Txbuffer, 0, 18); //·¢ËÍÖ®Ç°ÏÈÇå¿ÕÒ»´Î
+    app_vision_load_to_txbuffer((uint8_t)pid_id, 0U);
+    app_vision_load_to_txbuffer((float)p, 1U);
+    app_vision_load_to_txbuffer((float)i, 5U);
+    app_vision_load_to_txbuffer((float)d, 9U);
+    app_vision_SendTxbuffer(CMD_READ_PID);
+}
+
+
+
+/**
+ * @brief ½ÓÊÕ²¢´¦Àí CMD_READ_PID ÃüÁîµÄº¯Êı
+ * 
+ * @param     Vision_Rxbuffer ´ı´¦ÀíµÄ»º´æ
+ */
+void CMD_READ_PID_Rx(uint8_t *Vision_Rxbuffer)
+{
+    if (Vision_Rxbuffer[Function_word] == CMD_READ_PID)
+    {
+        float p,i,d;
+		uint8_t pid_id = Vision_Rxbuffer[2];
+        if( pid_id < __app_vision_pid_id_count )   // ÑéÖ¤²ÎÊıÓĞĞ§
+        {
+            if( CMD_READ_PID_Rx_GetPidCallback(pid_id,&p,&i,&d) == HAL_OK ) // ¶ÁÈ¡£¬²¢È·ÈÏ¶ÁÈ¡Õı³£·ñ
+            {
+                CMD_READ_PID_Tx(Vision_Rxbuffer[2],p,i,d);  //·¢ËÍ
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ///È«ÃüÁî½ÓÊÕ	ĞÂÔöµÄ¹¦ÄÜ×Ö½ÓÊÕº¯ÊıÇëÔÚÕâÀïÃæµ÷ÓÃ
 ///ÊÓ¾õ´®¿ÚÖĞ¶Ï½ÓÊÕº¯Êı
-void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
+static void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 {
     CMD_GIMBAL_RELATIVE_CONTROL_Rx(Vision_Rxbuffer);
     CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(Vision_Rxbuffer);
@@ -466,9 +582,10 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
     CMD_CHASSIS_LOACTION_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(Vision_Rxbuffer);
 	CMD_GIMBAL_SPEED_CONTROL_Rx(Vision_Rxbuffer);
+    CMD_READ_PID_Rx(Vision_Rxbuffer);
 }
 ///ÊÓ¾õ´®¿Ú·¢ËÍº¯Êı
-void CMD_GET_MCU_STATE_Tx(float pitch,float ,float yaw_soft,uint8_t cloud_mode,uint8_t shoot_mode)
+void CMD_GET_MCU_STATE_Tx(float pitch,float yaw_mech,float yaw_soft,uint8_t cloud_mode,uint8_t shoot_mode)
 {
 	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
@@ -512,43 +629,24 @@ void STA_CHASSIS_Tx(uint8_t chassis_mode,uint8_t pillar_flag,float velocity,floa
 }
 
 
-	int ans=0;
 
-uint8_t data[30] = {0xff ,0x13 ,0x9a, 0x99, 0x99 ,0x3f, 0x9a, 0x99 ,0x59, 0x40 ,0x01, 0x02 ,0x00, 0x00, 0x00, 0x00 ,0xf9, 0x0d};
-uint8_t data2[30]= {0xff, 0x01, 0x9a, 0x99, 0x99, 0x3f, 0x9a, 0x99, 0x59, 0x40, 0x01, 0x98, 0x00, 0x00, 0x00, 0x00, 0x7d, 0x0d};
-uint8_t data3[30] = {0x13, 0x9a ,0x99,0x99, 0x3f,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
-void vision_test()
-{
-	memcpy(&Vision_Rxbuffer , &data3,30);
-	while(app_vision_Analysis())
-	{
-		ans++;
-	}
-	
-}
-
-void JUD_GAME_STATUS(uint8_t game_progress,uint16_t stage_remain_time )
+void JUD_GAME_STATUS_Tx(uint8_t game_progress,uint16_t stage_remain_time )
 {
     while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
-
+    
     memset(Vision_Txbuffer, 0, 18); //·¢ËÍÖ®Ç°ÏÈÇå¿ÕÒ»´Î
-    app_vision_load_to_txbuffer(chassis_mode, 0U);
-    app_vision_load_to_txbuffer(pillar_flag, 1U);
-    app_vision_load_to_txbuffer(velocity, 2);
-	app_vision_load_to_txbuffer(position, 6);
-    app_vision_SendTxbuffer(STA_CHASSIS);
 }
-void JUD_ENY_HP(uint16_t hp);
-void JUD_GAME_EVENT();      // ´ı¶¨
-void JUD_SELF_HP(uint16_t hp);         
-void JUD_GUN_CHASSIS_HEAT(float chassis_power,uint16_t cha_pwr_buf,uint16_t gun_heat);
-void JUD_SELF_BUFF(uint8_t buff_code);
-void JUD_TAKING_DMG(uint8_t armor_id_enum,uint8_t hurt_type_enum);
-void JUD_SHOOTING(uint8_t bullet_freq, float bullet_speed);
-void JUD_AMMO_LEFT(uint16_t bulelt_left);
+void JUD_ENY_HP_Tx(uint16_t hp);
+void JUD_GAME_EVENT_Tx();      // ´ı¶¨
+void JUD_SELF_HP_Tx(uint16_t hp);         
+void JUD_GUN_CHASSIS_HEAT_Tx(float chassis_power,uint16_t cha_pwr_buf,uint16_t gun_heat);
+void JUD_SELF_BUFF_Tx(uint8_t buff_code);
+void JUD_TAKING_DMG_Tx(uint8_t armor_id_enum,uint8_t hurt_type_enum);
+void JUD_SHOOTING_Tx(uint8_t bullet_freq, float bullet_speed);
+void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 
 
 
