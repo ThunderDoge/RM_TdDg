@@ -439,7 +439,22 @@ void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         VisionRx.UpdateTime = HAL_GetTick();
 	}
 }
-///射击控制
+/**
+ * @brief       触发射击，执行回调函数
+ * 以下的参数的具体含义需要在定义处写明
+ * 您不应该修改此定义。您应该在另处实现此函数的功能，因为此处的定义是WEAK的
+ * @param     bullet_speed  子弹飞行速度
+ * @param     fire_freq     子弹射击频率
+ * @param     shoot_mode    子弹射击模式。
+ */
+__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode)
+{
+	// 您不应该修改此函数。您应该在另处实现此函数的功能，因为此处的定义是WEAK的
+	UNUSED(bullet_speed);
+	UNUSED(fire_freq);
+	UNUSED(shoot_mode);
+}
+
 void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
 {
     if (Vision_Rxbuffer[Function_word] == CMD_SHOOT)
@@ -450,6 +465,7 @@ void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + 6, 1);  //射击频率
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 7, 1);  //射击模式
         VisionRx.UpdateTime = HAL_GetTick();
+		CMD_SHOOT_ExecuteCallback(VisionRx.Shoot_speed,VisionRx.Shoot_freq,VisionRx.Shoot_mode);
     }
 }
 ///底盘运动控制

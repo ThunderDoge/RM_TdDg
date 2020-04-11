@@ -135,7 +135,7 @@ void SentryCloud::Handle()
 //CANSend会在主逻辑统一调用
 //    manager::CANSend();
 
-	if(shoot_is_permitted <1)   //检查射击许可，不许可 则回到安全
+	if(feed_is_permitted <1)   //检查射击许可，不许可 则回到安全
 	{
 		FricLeftMotor.Safe_Set();
 		FricRightMotor.Safe_Set();
@@ -178,15 +178,15 @@ void SentryCloud::Safe_Set()
 
 //供弹函数经过包装。需要shoot_is_permitted==1才能运行供弹电机
 void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
-    if(shoot_is_permitted)
+    if(feed_is_permitted)
     Feed2nd.Free_Fire_Set(FreeSpeed);
 }
 void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
-    if(shoot_is_permitted)
+    if(feed_is_permitted)
     Feed2nd.Burst_Set(ShootCnt,DiscreDelay,trig);
 }
 void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
-    if(shoot_is_permitted)
+    if(feed_is_permitted)
     Feed2nd.Free_Once_Set(DiscreDelay,trig);
 }
 void SentryCloud::Feed_Safe_Set(){
@@ -209,14 +209,14 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 {
 	if(NewState == 0)
 	{
-		shoot_is_permitted=0;    //不允许射击
+		feed_is_permitted=0;    //不允许射击
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
         DownCloudEntity.Feed2nd.Safe_Set();
 	}
 	else
 	{
-		shoot_is_permitted=1;
+		feed_is_permitted=1;
         FricLeftMotor.Speed_Set(-Shoot_Speed);
         FricRightMotor.Speed_Set(Shoot_Speed);
 	}

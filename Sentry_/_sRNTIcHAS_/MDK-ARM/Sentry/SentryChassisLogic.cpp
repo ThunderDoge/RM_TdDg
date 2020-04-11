@@ -10,9 +10,9 @@ GlobalModeName GetGlobalMode()
 }
 
 //模式定义
-app_app_Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
-//app_app_Mode ModeAutonomousDrive()
-app_app_Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
+app_Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
+//app_Mode ModeAutonomousDrive()
+app_Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
 //模式指针
 app_Mode *CurrentMode=&ModeGlobalSafe;
 app_Mode *LastMode=&ModeGlobalSafe;

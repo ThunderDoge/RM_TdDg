@@ -1,4 +1,5 @@
 /**
+  * @file       app_AmmoFeed.hpp
   * @brief    通用拨弹电机库
   * @details  
   * @author   ThunderDoge & Asn
@@ -21,6 +22,10 @@
 #include "bsp_dbus.h"
 #include "app_math.h"
 
+/**
+ * @brief AmmoFeed类运行模式 枚举量
+ * 
+ */
 enum ammofeed_status_enum {
 	AMMOFEED_FREE_FIRE,
 	AMMOFEED_BURST,
@@ -30,8 +35,8 @@ enum ammofeed_status_enum {
 
 class AmmoFeed : public softmotor
 {
-    friend class SentryCloud;   //使得仅有SentryCloud可以调用供弹控制函数
-    friend class SentryChassis; 
+    friend class SentryCloud;   ///使得SentryCloud可以调用供弹控制函数
+    friend class SentryChassis;     
     public:
 			AmmoFeed(uint8_t can_num,
 							 uint16_t _can_id,
@@ -42,23 +47,22 @@ class AmmoFeed : public softmotor
 							 pid* PID_Out=NULL
 							 )
 					:softmotor(can_num, _can_id, motor_type, PID_In, PID_Out) ,
-					 feeder_division(RamerDiv) , rammer_direction(rammer_direction){}//构造函数				
+					 feeder_division(RamerDiv) , rammer_direction(rammer_direction){}///<构造函数				
 						 
 
 						 
-			int32_t ramming_speed = 0;		//速度控制的运行速度
+			int32_t ramming_speed = 0;		///<PID速度环的目标速度。
 						 
-			int32_t	ramming_discrete_delay = 10;		//路程控制，每个隔得停顿时间 注：N连发模式下间隔时间需要较长
+			int32_t	ramming_discrete_delay = 10;		//路程控制时，每个隔的停顿时间 注：N连发模式下间隔时间需要较长
 					// 停顿时间值"2"可用 12-2-16：13-Eno
-			uint8_t feeder_division = 7;		//拨弹有几个格
+			uint8_t feeder_division = 7;		//拨弹轮有几个格
 					 
 			int32_t rammer_step_left = 0;			//拨弹剩余步数。路程控制会消耗这个计数。
 										 
 			float soft_target_angle = 0;			//软路程角度设定值
 					
 						 
-			float rev_angle_when_blocked = 30;	//堵转时回转的角度,默认30度
-			uint8_t is_block_in_handle = 0;//用于反转堵转检测
+			float rev_angle_when_blocked = 20;	//堵转时回转的角度,默认20度
 						 
 			int8_t rammer_direction = 1;					//位置控制，指示转动方向。正负随电机编码器增长方向。
 			
@@ -82,7 +86,9 @@ class AmmoFeed : public softmotor
 	
 			void Free_Fire(void);			//流畅运转模式
 			void Burst(void);				//N连发模式，N=burst_shoot_cnt
-			void Free_Once(void);		//连续单发
+			void Free_Once(void);		    //连续单发
+            //内部状态变量
+			uint8_t is_block_in_handle = 0;     //用于反转堵转检测
 		
 };
 

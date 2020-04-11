@@ -1,4 +1,5 @@
 /**
+  * @file       app_AmmoFeed.cpp
   * @brief    通用拨弹电机库
   * @details  
   * @author   ThunderDoge & Asn
@@ -8,14 +9,15 @@
   * v1.0.0  2019/11/29  实现基本功能
   * v1.0.1  2019/12/6   Asn进行了部分简化，使其易于使用。
   * v1.0.2  2019/12/13  修正了部分多余的依赖，以及一些语法错误。拨弹回转处理部分Blocked_Reaction仍存在死锁风险，可以PID参数解决。
-	*	v1.0.3  2019/12.27  修正堵转判断逻辑，并统一用外部cansend函数，然后更新命名，使其更规范
-	* v1.0.4  2019/12/31  把原来的Pr_Handle函数移植到Handle中，使Set完模式之后只需要调用manager::CANSend()就好了
+  *	v1.0.3  2019/12.27  修正堵转判断逻辑，并统一用外部cansend函数，然后更新命名，使其更规范
+  * v1.0.4  2019/12/31  把原来的Pr_Handle函数移植到Handle中，使Set完模式之后只需要调用manager::CANSend()就好了
+  * v1.0.5  2020/4/10   修正了部分注释, by ThunderDoge
   */
 
 #include "app_AmmoFeed.hpp"
 
 /** 
-    * @brief 周期执行的函数
+* @brief 周期执行的函数，自动管理拨弹电机
 */
 void AmmoFeed::Handle(void)
 {
@@ -51,16 +53,13 @@ void AmmoFeed::Handle(void)
 
 
 /** 
-* @brief  堵转处理函数
-* @param[in]   无 
-* @retval   是否在处理堵住的标志位 1代表在处理，0表示没有开启堵转或者没有堵转
-* @par 日志 
-*
-*/
+ * @brief  堵转处理函数
+ * @retval   是否在处理堵住的标志位 1代表在处理，0表示未堵转
+ */
 uint8_t AmmoFeed::Blocked_Reaction(void)
 {
 	if(block == NULL)
-		return 0;
+		while(1){;}     // 暴露错误，堵转为未初始化为
 	if(block->IsBlock)
 	{
 		if( !is_block_in_handle )	//堵转，未处理
@@ -96,7 +95,7 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 }
 
 /** 
-    * @brief 按步数运行的函数
+* @brief 按步数运行的函数
 */
 void AmmoFeed::Step_Run(void)
 {
@@ -125,11 +124,9 @@ void AmmoFeed::Step_Run(void)
 
 /****************************模式配置函数*********************************/
 /** 
-* @brief  自由开火模式配置函数
-* @param[in]   期望速度
-* @retval  
-* @par 日志 
-*
+* @brief  自由开火模式配置函数。自由开火模式的发射速率直接取决于拨弹轮转动速率。
+* @param   设定拨弹轮速度
+*这个函数会改变拨弹轮的速度。你可能需要用完之后改回来。
 */
 void AmmoFeed::Free_Fire_Set(int32_t FreeSpeed)
 {
@@ -138,10 +135,8 @@ void AmmoFeed::Free_Fire_Set(int32_t FreeSpeed)
 }
 /** 
 * @brief  N连发模式配置函数
-* @param[in]   DiscreDelay 每走一步间隔时间   trig N连发的触发条件 
-* @retval   
-* @par 日志 
-*
+* @param    DiscreDelay 每发间歇时间(毫秒)
+* @param 	trig N连发的触发条件，在调用时应当填入触发触发条件表达式。如果直接触发则填入1.
 */
 void AmmoFeed::Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig)
 {
@@ -152,10 +147,8 @@ void AmmoFeed::Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig)
 }
 /** 
 * @brief  单步连发模式配置函数
-* @param[in]   DiscreDelay 每走一步间隔时间   trig 连发的触发条件 
-* @retval   
-* @par 日志 
-*
+* @param    DiscreDelay 每发间歇时间(毫秒)
+* @param 	trig N连发的触发条件，在调用时应当填入触发触发条件表达式。如果直接触发则填入1.
 */
 void AmmoFeed::Free_Once_Set(int32_t	DiscreDelay,int16_t trig)
 {
@@ -253,7 +246,10 @@ void AmmoFeed::Burst(void)
 	Step_Run();
 }
 
-
+/**
+ * @brief 拨弹电机安全模式：立即停止。
+ * 
+ */
 void AmmoFeed::Safe_Set(void){
 	Speed_Set(0);
 	rammer_step_left = 0;

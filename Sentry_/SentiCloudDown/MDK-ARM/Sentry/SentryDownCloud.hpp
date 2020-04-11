@@ -59,7 +59,7 @@ public:
     motor FricRightMotor;   ///< 右边摩擦轮
     AmmoFeed Feed2nd;       ///< 供弹轮电机
 public:
-    //为了安全，提供了包装供弹轮函数，需要确认shoot_is_permitted才能运行供弹轮。提不要直接使用Feed2nd
+    //为了安全，提供了包装供弹轮函数，需要确认shoot_is_pfeed_is_permitted要直接使用Feed2nd
     void Feed_Free_Fire_Set(int32_t FreeSpeed);                 ///< 供弹轮：连续转动设置
     void Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);  ///< 供弹轮：n连发设置
     void Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig);  ///< 供弹轮：单发设置
@@ -100,7 +100,7 @@ public:
 private:
     static const float RotationMatrix[3][3];    ///<旋转矩阵陀螺仪到云台枪口方向。现在没用 
     //基本状态
-    uint8_t shoot_is_permitted=0; ///<“允许射击”指示位。只能通过ShooterSwitchCmd开启。为0时不允许使用摩擦轮和拨弹电机。
+    uint8_t feed_is_permitted=0; ///<“允许射击”指示位。只能通过ShooterSwitchCmd开启。为0时不允许使用摩擦轮和拨弹电机。
     uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; // 强行指定的控制模式
     //PITCH重力补偿
     float g_A=0;  //重力补偿之系数

@@ -764,6 +764,26 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Motor</GroupName>
+          <Files>
+            <File>
+              <FileName>app_AmmoFeed.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\app_AmmoFeed.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_motor.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_motor.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_universe.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_universe.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>

@@ -10,9 +10,9 @@
 #ifndef __SENTRY_CLOUD_LOGIC_HPP
 #define __SENTRY_CLOUD_LOGIC_HPP
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
-#define __PROJECT_SENTRY_CLOUD_
-#endif // __PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //定义工程标识符__PROJECT_SENTRY_DOWN_CLOUD_
+#define __PROJECT_SENTRY_DOWN_CLOUD_
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
 #include "bsp_dbus.h"
 #include "SentryDownCloud.hpp"
@@ -34,7 +34,7 @@ enum GlobalModeName : uint8_t
 // extern CommandSourceName CommandSource;
 extern SentryCloud CloudEntity;
 
-extern Mode* CurrentMode,*LastMode;
+extern app_Mode* CurrentMode,*LastMode;
 
 /**
  * @defgroup RemoteDebugModes

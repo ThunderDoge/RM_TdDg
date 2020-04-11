@@ -24,8 +24,8 @@ app_Mode ModeAutoMove(nullptr, nullptr, nullptr);
 app_Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
 app_Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
 
-Mode *LastMode = &ModeGlobalSafe;
-Mode *CurrentMode = &ModeGlobalSafe;
+app_Mode *LastMode = &ModeGlobalSafe;
+app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
 /**

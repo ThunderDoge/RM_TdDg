@@ -11,9 +11,9 @@
 #ifndef __SENTRY_CLOUD_COMMU_HPP_
 #define __SENTRY_CLOUD_COMMU_HPP_
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
-#define __PROJECT_SENTRY_CLOUD_
-#endif // __PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //定义工程标识符__PROJECT_SENTRY_DOWN_CLOUD_
+#define __PROJECT_SENTRY_DOWN_CLOUD_
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
 ///依赖的文件
 #include "app_vision.hpp"

@@ -186,9 +186,8 @@ int main(void)
   MX_FREERTOS_Init(); 
 
   /* Start scheduler */
-  #ifndef __MAIN_DEBUG
   osKernelStart();
-  #endif // __MAIN_DEBUG
+  
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
