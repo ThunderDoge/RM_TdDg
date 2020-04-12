@@ -16,7 +16,8 @@
                 "${workspaceFolder}../CommonForSentry/App",
                 "${workspaceFolder}../CommonForSentry/App_Sentry",
                 "${workspaceFolder}../CommonForSentry/Bsp",
-                "${workspaceFolder}../CommonForSentry/Motor"
+                "${workspaceFolder}../CommonForSentry/Motor",
+                "${workspaceFolder}/SentiCloud0/Inc"
             ],
             
             "defines": [

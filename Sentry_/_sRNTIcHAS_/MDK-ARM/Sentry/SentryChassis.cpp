@@ -1,13 +1,30 @@
 /**
-  * @file  SentryChassis.cpp
-  * @brief    哨兵底盘类
-  * @details  
-  * @author   ThunderDoge
-  * @date     2019/11/
-  * @version  v1.2.0
-  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  *     2019/12/23  v1.2.0  加入功率控制，跟bsp_motor联动 参见宏 __RM2020_SENTRY
-  */
+ * @file        SentryChassis.cpp
+ * @brief       哨兵底盘物理实体
+ * @details     
+ *  哨兵底盘主要功能硬件有：
+ *  - 底盘主动轮电机，板上有功率检测芯片检测它的实时电流与功率
+ *  - 与底盘固定的陀螺仪
+ *  - 沿轨道左右各一：GY-53/VL531LX廉价激光测距模块。测距范围2000mm，精度在10mm
+ *  - 沿轨道左右各一：弹簧。允许以不超过X.X mm/s的速度撞击轨道，并保护底盘主体不受撞击
+ *      - 上下云台归云台自己控制，底盘不控制。
+ *      - 底盘
+ *  需要实现以下功能：
+ *  - 根据现有传感器尽可能精确估计轨上位置
+ *  - 底盘主动轮控制。含功率控制
+ * 
+ * @author   ThunderDoge
+ * @date      2020-4-11
+ * @version   v1.0
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+ * Using encoding: gb2312
+ * 注：在2019-12月之前的哨兵底盘具有不同的结构：
+ * 弹药舱装在底盘，底盘有两个拨弹轮分别向上下拨弹；另有一摩擦轮辅助向上云台供弹管 推弹丸。
+ * 在2019-1月之前被废弃。代码上可能有残留部分，但大部分已经注释。
+ *  verison|    date|       author|         change|
+ *  1.2         2019-12-13  ThunderDoge     添加了柴小龙式功率控制
+ *  2.0         2020-4-11   ThunderDoge     添加了更详细的注释;添加了激光测距模块的支持
+ */
 #include "SentryChassis.hpp"
 
 //电机类型
@@ -18,36 +35,46 @@ float SpeedMax = 16000;
 //系统变量
 SentryChassis *SentryChassis::pointer=NULL;
 //本体
-SentryChassis ChassisEntity(2, 0x201,
-                   2, 0x203,
-                   1, 0x202,
-                   1, 0x201,
-                   1, 0x203);
+SentryChassis ChassisEntity(2, 0x201);
+//                   2, 0x203,
+//                   1, 0x202,
+//                   1, 0x201,
+//                   1, 0x203);
 //初始化函数
-SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id,
-                             uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
-                             uint8_t up_feed_can_num, uint16_t up_feed_can_id,
-                             uint8_t down_feed_can_num, uint16_t down_feed_can_id,
-                             uint8_t up_fric_can_num, uint16_t up_fric_can_id)
+SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
+//                             uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
+//                             uint8_t up_feed_can_num, uint16_t up_feed_can_id,
+//                             uint8_t down_feed_can_num, uint16_t down_feed_can_id,
+//                             uint8_t up_fric_can_num, uint16_t up_fric_can_id)
     : pidDriveSpeed(1, 0, 0, 1000, 16000, 100, 300),
       pidDriveLocation(0.035, 0, 0, 1000, SpeedMax, 10, 200),
-      FricSpeed(20, 0, 1, 1000, 7000),
-      FricLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-      FeedUpSpeed(20, 0, 1, 1000, 7000),
-      FeedUpLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-      FeedDownSpeed(20, 0, 1, 1000, 7000),
-      FeedDownLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
+//      FricSpeed(20, 0, 1, 1000, 7000),
+//      FricLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
+//      FeedUpSpeed(20, 0, 1, 1000, 7000),
+//      FeedUpLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
+//      FeedDownSpeed(20, 0, 1, 1000, 7000),
+//      FeedDownLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
       pidDriveCurrent(2,0.1, 0, 2500, 10000, 10, 10),
       pidPowerFeedback(0,0,0,1000,10000,10,10),
-      DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation),
-      Fric(up_fric_can_num, up_fric_can_id, &DJI_2006, &FricSpeed, &FricLocation),
-      FeedUp(up_feed_can_num, up_feed_can_id, &DJI_2006, 7, -1, &FeedUpSpeed, &FeedUpLocation),
-      FeedDown(down_feed_can_num, down_feed_can_id, &DJI_2006, 7, -1, &FeedDownSpeed, &FeedDownLocation)
+      DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation)
+//      ,Fric(up_fric_can_num, up_fric_can_id, &DJI_2006, &FricSpeed, &FricLocation),
+//      FeedUp(up_feed_can_num, up_feed_can_id, &DJI_2006, 7, -1, &FeedUpSpeed, &FeedUpLocation),
+//      FeedDown(down_feed_can_num, down_feed_can_id, &DJI_2006, 7, -1, &FeedDownSpeed, &FeedDownLocation)
 {
-    FeedUp.Enable_Block(4000, 200, 5);
-    FeedDown.Enable_Block(4000, 200, 5);
+//    FeedUp.Enable_Block(4000, 200, 5);
+//    FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
     app_math_Lpf2set(&lpf , 1000.0f, 10.0f);
+	
+	// 初始化激光测距模块，并且通过串口设置合适的参数
+	bsp_GY53L1_Object_Init( &RangingLeft, &RANGING_LEFT_UART );
+	bsp_GY53L1_Object_Init( &RangingRight, &RANGING_RIGHT_UART );
+	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_CONTINUOUS_OUTPUT );
+	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_TIME_55MS_CONFIG );
+	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_MID_RANGE_CONFIG );
+	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_CONTINUOUS_OUTPUT );
+	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_TIME_55MS_CONFIG );
+	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_MID_RANGE_CONFIG );
 };
 
 void SentryChassis::Handle()
