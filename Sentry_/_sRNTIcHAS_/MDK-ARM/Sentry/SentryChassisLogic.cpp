@@ -37,7 +37,7 @@ void ModeSelect(void)
     //     ChassisEntity.Safe_Set();
     //     break;
     // }
-    if
+
 }
 
 void ChassisCanRxHandle(void);	//声明将要调用的函数

@@ -15,6 +15,7 @@
 #include "app_imu.h"
 #include "app_math.h"
 #include "Sentry.hpp"
+#include "app_sentry_check_device.hpp"
 
 void TaskStarter(void);     /// ?????
 void RoboInit(void);        /// ?????

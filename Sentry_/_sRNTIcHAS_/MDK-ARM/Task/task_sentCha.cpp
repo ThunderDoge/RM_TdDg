@@ -76,6 +76,11 @@ void task_Commu(void* param)
 	}
 }
 
+
+
+
+
+
 /**
  * @brief   ÀëÏß¼ì²âÈÎÎñ
  * 

@@ -17,10 +17,10 @@
 typedef __packed struct
 {
     uint8_t SOF;
-    uint16 data_length;
+    uint16_t data_length;
     uint8_t seq;
     uint8_t CRC8;
-}
+}FrameHead;
 
 typedef __packed struct 
 { 
@@ -44,12 +44,12 @@ typedef __packed struct
     uint16_t red_7_robot_HP;   
     uint16_t red_base_HP;   
     uint16_t blue_1_robot_HP;   
-    uint16_t blue _2_robot_HP;   
-    uint16_t blue _3_robot_HP;   
-    uint16_t blue _4_robot_HP;   
-    uint16_t blue _5_robot_HP;   
-    uint16_t blue _7_robot_HP;   
-    uint16_t blue _base_HP; 
+    uint16_t blue_2_robot_HP;   
+    uint16_t blue_3_robot_HP;   
+    uint16_t blue_4_robot_HP;   
+    uint16_t blue_5_robot_HP;   
+    uint16_t blue_7_robot_HP;   
+    uint16_t blue_base_HP; 
 } ext_game_robot_HP_t; 
 
 typedef __packed struct 
@@ -115,7 +115,7 @@ typedef __packed struct
  typedef __packed struct 
 { 
     uint8_t power_rune_buff; 
-}ext_buff _t; 
+}ext_buff_t; 
 
 typedef __packed struct 
 { 

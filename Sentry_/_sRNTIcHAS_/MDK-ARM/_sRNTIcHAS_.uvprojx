@@ -587,6 +587,16 @@
               <FileType>8</FileType>
               <FilePath>.\Sentry\SentryChassisCommu.cpp</FilePath>
             </File>
+            <File>
+              <FileName>SentryChassisUart.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryChassisUart.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryChassisCan.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryChassisCan.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -18,6 +18,12 @@
 #include "sentry_config.hpp"
 
 
+// 离线检测设备
+extern CheckDevice_Type Connection_UpCloud;
+extern CheckDevice_Type Connection_DownCloud;
+
+
+
 void ChassisCanCommuRoutine(void);  ///底盘定时发送的板间CAN通信
 void ChassisCanFilterConfig(void);    ///云台用 设定CAN过滤器，以过滤不需要的ID号
 void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///云台用 板间通讯CAN回调函数
