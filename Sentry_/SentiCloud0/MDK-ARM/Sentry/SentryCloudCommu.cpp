@@ -10,10 +10,10 @@
  */
 #include "SentryCloudCommu.hpp"
 
-///»Øµ÷º¯Êı£¬Ö±½ÓÖ´ĞĞ½ÓÊÕµ½µÄĞ¡Ö÷»úÖ¸Áî
+///å›è°ƒå‡½æ•°ï¼Œç›´æ¥æ‰§è¡Œæ¥æ”¶åˆ°çš„å°ä¸»æœºæŒ‡ä»¤
 void VisionRxHandle(void)
 {
-    //ÔÆÌ¨Ö¸Áî´¦Àí
+    //äº‘å°æŒ‡ä»¤å¤„ç†
     switch (VisionRx.cloud_ctrl_mode)
     {
     case relative_cloud:
@@ -30,12 +30,12 @@ void VisionRxHandle(void)
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //´¦ÀíÍê³É±êÖ¾¡£ÒòÎªÒ»¸öÃüÁîÖ»»á´¦ÀíÒ»´Î£¬´¦ÀíºóÖÃ0
+    VisionRx.cloud_ctrl_mode = 0; //å¤„ç†å®Œæˆæ ‡å¿—ã€‚å› ä¸ºä¸€ä¸ªå‘½ä»¤åªä¼šå¤„ç†ä¸€æ¬¡ï¼Œå¤„ç†åç½®0
 }
-///ÓëĞ¡Ö÷»úÍ¨ĞÅÈÎÎñÓÃµÄ»Øµ÷º¯Êı
+///ä¸å°ä¸»æœºé€šä¿¡ä»»åŠ¡ç”¨çš„å›è°ƒå‡½æ•°
 void CloudVisonTxRoutine(void)
 {
-    //×°ÔØ¸÷ÖÖĞÅÏ¢
+    //è£…è½½å„ç§ä¿¡æ¯
     VisionTx.Cloud_mode = CloudEntity.Mode;
     VisionTx.Shoot_mode = CloudEntity.shoot_flag;
     VisionTx.Pitch = CloudEntity.RealPitch;
@@ -50,7 +50,7 @@ void CloudVisonTxRoutine(void)
     VisionTx.pillar_flag = CanRx.Pillar_flag;
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
 
-    //´®¿Ú·¢ËÍ
+    //ä¸²å£å‘é€
     CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
     ROBOT_ERR_Tx(VisionTx.Error_code);
     STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);

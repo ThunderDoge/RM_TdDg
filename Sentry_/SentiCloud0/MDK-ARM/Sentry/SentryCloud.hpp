@@ -1,6 +1,6 @@
 /**
  * @file SentryCloud.hpp
- * @brief    ÉÚ±øÔÆÌ¨µç»ú¿ØÖÆ¼¯ºÏ Sentry Cloud Motors Control
+ * @brief    å“¨å…µäº‘å°ç”µæœºæ§åˆ¶é›†åˆ Sentry Cloud Motors Control
  * @details     Encoding - GB2312
  * @author   ThunderDoge
  * @date     2019/12/1
@@ -10,7 +10,7 @@
 #ifndef __SENTRY_CLOUD_HPP_
 #define __SENTRY_CLOUD_HPP_
 
-// ÒÀÀµµÄÎÄ¼ş
+// ä¾èµ–çš„æ–‡ä»¶
 #include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
 #include "app_imu.h"
@@ -19,8 +19,8 @@
 #include "app_sentry_check_device.hpp"
 #include "app_AmmoFeed.hpp"
 
-extern app_Mode ModeCloudCtrlMech;  // »úĞµ½ÇÎ»ÖÃ»·£¬ÍÓÂİÒÇËÙ¶È»·
-extern app_Mode ModeCloudCtrlGyro;  // ÍÓÂİÒÇ Î»ÖÃ»·&ËÙ¶È»·
+extern app_Mode ModeCloudCtrlMech;  // æœºæ¢°è§’ä½ç½®ç¯ï¼Œé™€èºä»ªé€Ÿåº¦ç¯
+extern app_Mode ModeCloudCtrlGyro;  // é™€èºä»ª ä½ç½®ç¯&é€Ÿåº¦ç¯
 
 //extern app_Mode ModeDualPitch;
 //extern app_Mode ModeSinglePitch;
@@ -34,110 +34,110 @@ enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
 
 
 /**
- * @brief ÔÆÌ¨ÎïÀíÊµÌåÀà£¬°üº¬ ²Ù×İÔÆÌ¨½øĞĞÎïÀíÔË¶¯µÄº¯Êı ºÍ ÎïÀíĞÅÏ¢£¬ÒÔ¼°Ïà¹ØÅäÖÃĞÅÏ¢
+ * @brief äº‘å°ç‰©ç†å®ä½“ç±»ï¼ŒåŒ…å« æ“çºµäº‘å°è¿›è¡Œç‰©ç†è¿åŠ¨çš„å‡½æ•° å’Œ ç‰©ç†ä¿¡æ¯ï¼Œä»¥åŠç›¸å…³é…ç½®ä¿¡æ¯
  * 
  */
 class SentryCloud   
 {
 public:
-    //Initializer & Destructor ÔÆÌ¨ÎïÀíÊµÌåÀà ¹¹ÔìÓëÉ¾³ıº¯Êı
+    //Initializer & Destructor äº‘å°ç‰©ç†å®ä½“ç±» æ„é€ ä¸åˆ é™¤å‡½æ•°
     SentryCloud(uint8_t yaw_can_num,uint16_t yaw_can_id, 
     uint8_t pitch_can_num, uint16_t pitch_can_id,
 	uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
     uint8_t fric_l_can_num, uint16_t fric_l_can_id,
     uint8_t fric_r_can_num,uint16_t fric_r_can_id,
     uint8_t feed_can_num,uint16_t feed_can_id);
-    //Method to Handle ¿ØÖÆ·½·¨
-	//¾¯¸æ£¡WARNING!³ÉÔ±±äÁ¿½«ÒÔÉùÃ÷µÄË³Ğò³õÊ¼»¯
+    //Method to Handle æ§åˆ¶æ–¹æ³•
+	//è­¦å‘Šï¼WARNING!æˆå‘˜å˜é‡å°†ä»¥å£°æ˜çš„é¡ºåºåˆå§‹åŒ–
 	//warning:  #1299-D: members and base-classes will be initialized in declaration order, not in member initialisation list order
-	pid PitchSpeed;         ///<Pitchµç»ú»úĞµ½Ç ËÙ¶È»·
-    pid PitchPosition;      ///<Pitchµç»ú»úĞµ½Ç Î»ÖÃ»·
-    pid PitchGyroPosition;  ///<Pitchµç»úÍÓÂİÒÇ Î»ÖÃ»·
-    pid PitchGyroSpeed;     ///<Pitchµç»úÍÓÂİÒÇ ËÙ¶È»·
+	pid PitchSpeed;         ///<Pitchç”µæœºæœºæ¢°è§’ é€Ÿåº¦ç¯
+    pid PitchPosition;      ///<Pitchç”µæœºæœºæ¢°è§’ ä½ç½®ç¯
+    pid PitchGyroPosition;  ///<Pitchç”µæœºé™€èºä»ª ä½ç½®ç¯
+    pid PitchGyroSpeed;     ///<Pitchç”µæœºé™€èºä»ª é€Ÿåº¦ç¯
 	
-	pid Pitch2ndSpeed;         ///<Pitchµç»ú»úĞµ½Ç ËÙ¶È»·
-    pid Pitch2ndPosition;      ///<Pitchµç»ú»úĞµ½Ç Î»ÖÃ»·
-    pid Pitch2ndGyroPosition;  ///<Pitchµç»úÍÓÂİÒÇ Î»ÖÃ»·
-    pid Pitch2ndGyroSpeed;     ///<Pitchµç»úÍÓÂİÒÇ ËÙ¶È»·
+	pid Pitch2ndSpeed;         ///<Pitchç”µæœºæœºæ¢°è§’ é€Ÿåº¦ç¯
+    pid Pitch2ndPosition;      ///<Pitchç”µæœºæœºæ¢°è§’ ä½ç½®ç¯
+    pid Pitch2ndGyroPosition;  ///<Pitchç”µæœºé™€èºä»ª ä½ç½®ç¯
+    pid Pitch2ndGyroSpeed;     ///<Pitchç”µæœºé™€èºä»ª é€Ÿåº¦ç¯
 
-    pid YawSpeed;           ///<Yawµç»ú»úĞµ½Ç ËÙ¶È»·
-    pid YawPosition;        ///<Yawµç»ú»úĞµ½Ç Î»ÖÃ»·
-    pid YawGyroSpeed;       ///<Yawµç»úÍÓÂİÒÇ ËÙ¶È»·
-    pid YawGyroPosition;    ///<Yawµç»úÍÓÂİÒÇ Î»ÖÃ»·
+    pid YawSpeed;           ///<Yawç”µæœºæœºæ¢°è§’ é€Ÿåº¦ç¯
+    pid YawPosition;        ///<Yawç”µæœºæœºæ¢°è§’ ä½ç½®ç¯
+    pid YawGyroSpeed;       ///<Yawç”µæœºé™€èºä»ª é€Ÿåº¦ç¯
+    pid YawGyroPosition;    ///<Yawç”µæœºé™€èºä»ª ä½ç½®ç¯
 
-    pid FricLeftSpeed;      ///<×ó±ßÄ¦²ÁÂÖ ËÙ¶È»·
-    pid FricRightSpeed;     ///<ÓÒ±ßÄ¦²ÁÂÖ ËÙ¶È»·
+    pid FricLeftSpeed;      ///<å·¦è¾¹æ‘©æ“¦è½® é€Ÿåº¦ç¯
+    pid FricRightSpeed;     ///<å³è¾¹æ‘©æ“¦è½® é€Ÿåº¦ç¯
 
-    pid FeedSpeed;          ///<¹©µ¯ÂÖ ËÙ¶È»·
-    pid FeedPositon;        ///<¹©µ¯ÂÖ Î»ÖÃ»·
+    pid FeedSpeed;          ///<ä¾›å¼¹è½® é€Ÿåº¦ç¯
+    pid FeedPositon;        ///<ä¾›å¼¹è½® ä½ç½®ç¯
 
-    softcloud YawMotor;     ///<YawÖáµç»ú¶ÔÏó_CAN1ÉÏ
-    softcloud PitchMotor;   ///<PitchÖáµç»ú¶ÔÏó_CAN1ÉÏ
-	softcloud PitchSecondMotor;		///<´Ó¶¯PitchÖáµç»ú¶ÔÏó_CAN2ÉÏ
+    softcloud YawMotor;     ///<Yawè½´ç”µæœºå¯¹è±¡_CAN1ä¸Š
+    softcloud PitchMotor;   ///<Pitchè½´ç”µæœºå¯¹è±¡_CAN1ä¸Š
+	softcloud PitchSecondMotor;		///<ä»åŠ¨Pitchè½´ç”µæœºå¯¹è±¡_CAN2ä¸Š
 
-    motor FricLeftMotor;    ///< ×ó±ßÄ¦²ÁÂÖ
-    motor FricRightMotor;   ///< ÓÒ±ßÄ¦²ÁÂÖ
-    AmmoFeed Feed2nd;       ///< ¹©µ¯ÂÖµç»ú
+    motor FricLeftMotor;    ///< å·¦è¾¹æ‘©æ“¦è½®
+    motor FricRightMotor;   ///< å³è¾¹æ‘©æ“¦è½®
+    AmmoFeed Feed2nd;       ///< ä¾›å¼¹è½®ç”µæœº
 public:
-    //ÎªÁË°²È«£¬Ìá¹©ÁË°ü×°¹©µ¯ÂÖº¯Êı£¬ĞèÒªÈ·ÈÏfeed_is_permitted²ÅÄÜÔËĞĞ¹©µ¯ÂÖ¡£Ìá²»ÒªÖ±½ÓÊ¹ÓÃFeed2nd
-    void Feed_Free_Fire_Set(int32_t FreeSpeed);                 ///< ¹©µ¯ÂÖ£ºÁ¬Ğø×ª¶¯ÉèÖÃ
-    void Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);  ///< ¹©µ¯ÂÖ£ºnÁ¬·¢ÉèÖÃ
-    void Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig);  ///< ¹©µ¯ÂÖ£ºµ¥·¢ÉèÖÃ
-    void Feed_Safe_Set();   ///< ¹©µ¯ÂÖÍ£Ö¹
+    //ä¸ºäº†å®‰å…¨ï¼Œæä¾›äº†åŒ…è£…ä¾›å¼¹è½®å‡½æ•°ï¼Œéœ€è¦ç¡®è®¤feed_is_permittedæ‰èƒ½è¿è¡Œä¾›å¼¹è½®ã€‚æä¸è¦ç›´æ¥ä½¿ç”¨Feed2nd
+    void Feed_Free_Fire_Set(int32_t FreeSpeed);                 ///< ä¾›å¼¹è½®ï¼šè¿ç»­è½¬åŠ¨è®¾ç½®
+    void Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);  ///< ä¾›å¼¹è½®ï¼šnè¿å‘è®¾ç½®
+    void Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig);  ///< ä¾›å¼¹è½®ï¼šå•å‘è®¾ç½®
+    void Feed_Safe_Set();   ///< ä¾›å¼¹è½®åœæ­¢
 
 
 
-    //ÍÓÂİÒÇÊı¾İ¾­¹ıĞı×ª¼ÆËã£¬´¢´æÔÚÕâÀï¡£ÖÜÆÚĞÔ¸üĞÂ¡£
-    float RotatedImuAngle[3];   ///<ÔÆÌ¨Ç¹¿Ú³¯Ïò£ºRoll,Pitch,Yaw
-    float RotatedImuAngleRate[3];   ///<ÔÆÌ¨Ç¹¿Ú³¯Ïò½ÇËÙ¶ÈRoll,Pitch,Yaw
-    float BaseImuAngleRate[3];      ///< ÔÆÌ¨Ë®Æ½µ××ù³¯Ïò
+    //é™€èºä»ªæ•°æ®ç»è¿‡æ—‹è½¬è®¡ç®—ï¼Œå‚¨å­˜åœ¨è¿™é‡Œã€‚å‘¨æœŸæ€§æ›´æ–°ã€‚
+    float RotatedImuAngle[3];   ///<äº‘å°æªå£æœå‘ï¼šRoll,Pitch,Yaw
+    float RotatedImuAngleRate[3];   ///<äº‘å°æªå£æœå‘è§’é€Ÿåº¦Roll,Pitch,Yaw
+    float BaseImuAngleRate[3];      ///< äº‘å°æ°´å¹³åº•åº§æœå‘
 
-    //Public ×´Ì¬
-    int Mode;   ///<ÔÆÌ¨×´Ì¬Ö¸Ê¾
-    app_Mode* LastCloudMode=&ModeCloudCtrlMech,*CurrentCloudMode=&ModeCloudCtrlMech;  // Ä£Ê½Ö¸Õë
+    //Public çŠ¶æ€
+    int Mode;   ///<äº‘å°çŠ¶æ€æŒ‡ç¤º
+    app_Mode* LastCloudMode=&ModeCloudCtrlMech,*CurrentCloudMode=&ModeCloudCtrlMech;  // æ¨¡å¼æŒ‡é’ˆ
     uint8_t force_use_mech_gyro=0;
 	
-//    uint8_t err_flags=0;    ///<´íÎó±êÖ¾Î»¡£Ã¿Ò»Î»µÄ¶¨Òå¼û£º
+//    uint8_t err_flags=0;    ///<é”™è¯¯æ ‡å¿—ä½ã€‚æ¯ä¸€ä½çš„å®šä¹‰è§ï¼š
 
 
-	int shoot_flag=0;   ///<¡°ÕıÔÚÉä»÷¡±Ö¸Ê¾Î»
-    int32_t Shoot_Speed=7000;   ///<Ä¦²ÁÂÖµÄÉè¶¨ËÙ¶È¡£
+	int shoot_flag=0;   ///<â€œæ­£åœ¨å°„å‡»â€æŒ‡ç¤ºä½
+    int32_t Shoot_Speed=7000;   ///<æ‘©æ“¦è½®çš„è®¾å®šé€Ÿåº¦ã€‚
 
-    uint32_t heat_remain=2000;  ///< Ê£ÓàÈÈÁ¿¡£´Ó²ÃÅĞÏµÍ³»ñµÃ¡£Èç¹ûÃ»ÓĞ²ÃÅĞÏµÍ³£¬Ôò×ÔĞĞ¹À¼Æ.
+    uint32_t heat_remain=2000;  ///< å‰©ä½™çƒ­é‡ã€‚ä»è£åˆ¤ç³»ç»Ÿè·å¾—ã€‚å¦‚æœæ²¡æœ‰è£åˆ¤ç³»ç»Ÿï¼Œåˆ™è‡ªè¡Œä¼°è®¡.
 	
 	
-    float RealYaw;  ///< YawÈí½Ç¶È
-	float MechanicYaw;  ///< Yaw»úĞµ½Ç¶È
-    float RealPitch;    ///< PitchÈí½Ç¶È
-    float TargetYaw;    ///< ÊÜ¿ØÖÆµÄÊ±ºòÉè¶¨µÄ½Ç¶È£¬ DEBUGÓÃ
-    float TargetPitch;  ///< ÊÜ¿ØÖÆµÄÊ±ºòÉè¶¨µÄ½Ç¶È£¬ DEBUGÓÃ
+    float RealYaw;  ///< Yawè½¯è§’åº¦
+	float MechanicYaw;  ///< Yawæœºæ¢°è§’åº¦
+    float RealPitch;    ///< Pitchè½¯è§’åº¦
+    float TargetYaw;    ///< å—æ§åˆ¶çš„æ—¶å€™è®¾å®šçš„è§’åº¦ï¼Œ DEBUGç”¨
+    float TargetPitch;  ///< å—æ§åˆ¶çš„æ—¶å€™è®¾å®šçš„è§’åº¦ï¼Œ DEBUGç”¨
 
 
-	// ¿ØÖÆÓÃº¯Êı
-    void Handle();  ///< ÔÆÌ¨×Ô¶¯¿ØÖÆº¯Êı£¬°üº¬×ÅËùÓĞÊı¾İµÄ»ñÈ¡¡¢´¦ÀíºÍÀıĞĞÖ´ĞĞ¡£Ó¦µ±ÔÚÖ÷Âß¼­ÈÎÎñÖĞµ÷ÓÃ¡£>>>>>>>>>>>>>>>>>ÖØÒª<<<<<<<<<<<<<<
-    void Safe_Set();    ///<°²È«Ä£Ê½
-    void SetAngleTo(float pitch, float yaw);    ///<»úĞµ½Ç¶ÈÉè¶¨
-//    void SetSoftAngleTo(float soft_pitch, float soft_yaw);  ///<Èí½Ç¶ÈÉè¶¨-Î´ÊµÏÖ
-//    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< Ç¿ÖÆÉè¶¨¿ØÖÆÄ£Ê½
-    void SetAngleTo_Gyro(float pitch, float yaw);   ///<½Ç¶ÈÉè¶¨ ÍÓÂİÒÇ¿ØÖÆÄ£Ê½
+	// æ§åˆ¶ç”¨å‡½æ•°
+    void Handle();  ///< äº‘å°è‡ªåŠ¨æ§åˆ¶å‡½æ•°ï¼ŒåŒ…å«ç€æ‰€æœ‰æ•°æ®çš„è·å–ã€å¤„ç†å’Œä¾‹è¡Œæ‰§è¡Œã€‚åº”å½“åœ¨ä¸»é€»è¾‘ä»»åŠ¡ä¸­è°ƒç”¨ã€‚>>>>>>>>>>>>>>>>>é‡è¦<<<<<<<<<<<<<<
+    void Safe_Set();    ///<å®‰å…¨æ¨¡å¼
+    void SetAngleTo(float pitch, float yaw);    ///<æœºæ¢°è§’åº¦è®¾å®š
+//    void SetSoftAngleTo(float soft_pitch, float soft_yaw);  ///<è½¯è§’åº¦è®¾å®š-æœªå®ç°
+//    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< å¼ºåˆ¶è®¾å®šæ§åˆ¶æ¨¡å¼
+    void SetAngleTo_Gyro(float pitch, float yaw);   ///<è§’åº¦è®¾å®š é™€èºä»ªæ§åˆ¶æ¨¡å¼
     void SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode);
 	void Shoot(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode);
 
-	void LazerSwitchCmd(int OnOrOff);   ///<¿ª¹Ø¼¤¹âµÆ
-    void ShooterSwitchCmd(int OnOrOff); ///<¿ª¹ØÉä»÷Ğí¿ÉÎ»ºÍÄ¦²ÁÂÖ
-    float gravity_feedforward(float pitch){ ///< ÖØÁ¦Ç°À¡²¹³¥º¯Êı£¬ÄÚ²¿Ê¹ÓÃ
+	void LazerSwitchCmd(int OnOrOff);   ///<å¼€å…³æ¿€å…‰ç¯
+    void ShooterSwitchCmd(int OnOrOff); ///<å¼€å…³å°„å‡»è®¸å¯ä½å’Œæ‘©æ“¦è½®
+    float gravity_feedforward(float pitch){ ///< é‡åŠ›å‰é¦ˆè¡¥å¿å‡½æ•°ï¼Œå†…éƒ¨ä½¿ç”¨
         return g_A*cos(pitch+g_phi);
     }
 
 private:
-    static const float RotationMatrix[3][3];    ///<Ğı×ª¾ØÕóÍÓÂİÒÇµ½ÔÆÌ¨Ç¹¿Ú·½Ïò¡£ÏÖÔÚÃ»ÓÃ 
-    //»ù±¾×´Ì¬
-    uint8_t feed_is_permitted=0; ///<¡°ÔÊĞíÉä»÷¡±Ö¸Ê¾Î»¡£Ö»ÄÜÍ¨¹ıShooterSwitchCmd¿ªÆô¡£Îª0Ê±²»ÔÊĞíÊ¹ÓÃÄ¦²ÁÂÖºÍ²¦µ¯µç»ú¡£
-    uint8_t fric_power_permitted=0; /// ÔÊĞíÄ¦²ÁÂÖ×ª¶¯
-    uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; /// Ç¿ĞĞÖ¸¶¨ÔÆÌ¨¿ØÖÆÄ£Ê½
+    static const float RotationMatrix[3][3];    ///<æ—‹è½¬çŸ©é˜µé™€èºä»ªåˆ°äº‘å°æªå£æ–¹å‘ã€‚ç°åœ¨æ²¡ç”¨ 
+    //åŸºæœ¬çŠ¶æ€
+    uint8_t feed_is_permitted=0; ///<â€œå…è®¸å°„å‡»â€æŒ‡ç¤ºä½ã€‚åªèƒ½é€šè¿‡ShooterSwitchCmdå¼€å¯ã€‚ä¸º0æ—¶ä¸å…è®¸ä½¿ç”¨æ‘©æ“¦è½®å’Œæ‹¨å¼¹ç”µæœºã€‚
+    uint8_t fric_power_permitted=0; /// å…è®¸æ‘©æ“¦è½®è½¬åŠ¨
+    uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; /// å¼ºè¡ŒæŒ‡å®šäº‘å°æ§åˆ¶æ¨¡å¼
 	
-	// ÄÚ²¿ÔËĞĞº¯Êı£º
-    // Ë«PITCH¿ØÖÆÏà¹Ø
+	// å†…éƒ¨è¿è¡Œå‡½æ•°ï¼š
+    // åŒPITCHæ§åˆ¶ç›¸å…³
 	void EnterModeDualPitch(void);
 	void RunModeDualPitch(void);
 	void ExitModeDualPitch(void);
@@ -146,41 +146,41 @@ private:
 	uint8_t last_pitch_ctrl_mode = 0;
 	void PitchModeCtrl(void);
 
-    // Éä»÷¿ØÖÆÂß¼­ Ö´ĞĞº¯Êı£¬ÔÚHandleÖĞµ÷ÓÃ
+    // å°„å‡»æ§åˆ¶é€»è¾‘ æ‰§è¡Œå‡½æ•°ï¼Œåœ¨Handleä¸­è°ƒç”¨
     void ShootCtrl(void);
 
-	//ÍÓÂİÒÇÊı¾İ´¦Àí
+	//é™€èºä»ªæ•°æ®å¤„ç†
 	void ImuDataProcessHandle(void);
 	
 	
-    //PITCHÖØÁ¦²¹³¥
-    float g_A=0;  //ÖØÁ¦²¹³¥Ö®ÏµÊı
-    float g_phi=0;    //ÖØÁ¦²¹³¥³õÏà
-    //²ÃÅĞÏµÍ³Ïà¹Ø
-    int RobotHP;    //ÏÖÔÚµÄHP
-    //ÊÓ¾õĞ¡Ö÷»úÍ¨Ñ¶Ïà¹Ø
-    //°å¼äCANÍ¨Ñ¶Ïà¹Ø
+    //PITCHé‡åŠ›è¡¥å¿
+    float g_A=0;  //é‡åŠ›è¡¥å¿ä¹‹ç³»æ•°
+    float g_phi=0;    //é‡åŠ›è¡¥å¿åˆç›¸
+    //è£åˆ¤ç³»ç»Ÿç›¸å…³
+    int RobotHP;    //ç°åœ¨çš„HP
+    //è§†è§‰å°ä¸»æœºé€šè®¯ç›¸å…³
+    //æ¿é—´CANé€šè®¯ç›¸å…³
 };
 
-extern SentryCloud CloudEntity; ///ÔÆÌ¨ÎïÀíÊµÌå¶ÔÏó¡£°üº¬µç»ú¼¤¹âÆ÷µÈÉè±¸¡£
+extern SentryCloud CloudEntity; ///äº‘å°ç‰©ç†å®ä½“å¯¹è±¡ã€‚åŒ…å«ç”µæœºæ¿€å…‰å™¨ç­‰è®¾å¤‡ã€‚
 
-// Éè±¸¶ÔÏó¡£ÀëÏß¼ì²âÓÃ
+// è®¾å¤‡å¯¹è±¡ã€‚ç¦»çº¿æ£€æµ‹ç”¨
 extern CheckDevice_Type UpCloudLeftFric_CheckDevice;
 extern CheckDevice_Type UpCloudRightFric_CheckDevice;
 extern CheckDevice_Type UpCloudYawMotor_CheckDevice;
 extern CheckDevice_Type UpCloudPitchMotor_CheckDevice;
 extern CheckDevice_Type UpCloudFeedMotor_CheckDevice;
 
-//ÔÆÌ¨¿ØÖÆÄ£Ê½Ïà¹Ø
+//äº‘å°æ§åˆ¶æ¨¡å¼ç›¸å…³
 void EnterModeCloudCtrlMech(void);
 void RunModeCloudCtrlMech(void);
 void EnterModeCloudCtrlGyro(void);
 void RunModeCloudCtrlGyro(void);
 
-extern app_Mode ModeCloudCtrlMech;  // »úĞµ½ÇÎ»ÖÃ»·£¬ÍÓÂİÒÇËÙ¶È»·
-extern app_Mode ModeCloudCtrlGyro;  // ÍÓÂİÒÇ Î»ÖÃ»·&ËÙ¶È»·
+extern app_Mode ModeCloudCtrlMech;  // æœºæ¢°è§’ä½ç½®ç¯ï¼Œé™€èºä»ªé€Ÿåº¦ç¯
+extern app_Mode ModeCloudCtrlGyro;  // é™€èºä»ª ä½ç½®ç¯&é€Ÿåº¦ç¯
 
-//// Ë«PITCH¿ØÖÆÏà¹Ø
+//// åŒPITCHæ§åˆ¶ç›¸å…³
 //void PitchModeCtrl(void);
 
 
@@ -188,7 +188,7 @@ extern app_Mode ModeCloudCtrlGyro;  // ÍÓÂİÒÇ Î»ÖÃ»·&ËÙ¶È»·
 //extern app_Mode ModeSinglePitch;
 //extern app_Mode ModeSecondPitch;
 
-/// PIDÔËËã»Øµ÷¡£ÓÃÓÚPITCHÖØÁ¦Ç°À¡ Âß¼­
+/// PIDè¿ç®—å›è°ƒã€‚ç”¨äºPITCHé‡åŠ›å‰é¦ˆ é€»è¾‘
 void pidPitchCallBack(pid* self);
 
 #endif // __SENTRY_CLOUD_HPP_

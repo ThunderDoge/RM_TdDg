@@ -1,8 +1,8 @@
 /**
  * @file SentryCloudVision.hpp
-  * @brief     ÔÆÌ¨ÊÓ¾õ´®¿ÚÍ¨ĞÅ
-  * @details  Ìá¹©Ò»¸öÔÆÌ¨ÓëËûµÄĞ¡Ö÷»úÂèÂè½øĞĞUARTÍ¨Ñ¶µÄËùÓĞº¯Êı¡£°üº¬½ÓÊÜµ½µÄĞÅÏ¢£º´¦Àí-´¢´æ£¬½«Òª·¢ËÍµÄĞÅÏ¢£º´ò°ü£¬·¢ËÍ¡£
-  * ½ö½öÒÀÀµÓÚapp_vision¡£×¢Òâapp_vision¡£ÕâÒâÎ¶×ÅËı²»ÄÜ¹»Ö÷¶¯µ÷ÓÃÆäËûµÄ×é¼şµÄº¯Êı¡£ËùÒÔÄã½«¿´µ½ºÜ¶àµÄ**»Øµ÷º¯Êı**µÄĞ´·¨
+  * @brief     äº‘å°è§†è§‰ä¸²å£é€šä¿¡
+  * @details  æä¾›ä¸€ä¸ªäº‘å°ä¸ä»–çš„å°ä¸»æœºå¦ˆå¦ˆè¿›è¡ŒUARTé€šè®¯çš„æ‰€æœ‰å‡½æ•°ã€‚åŒ…å«æ¥å—åˆ°çš„ä¿¡æ¯ï¼šå¤„ç†-å‚¨å­˜ï¼Œå°†è¦å‘é€çš„ä¿¡æ¯ï¼šæ‰“åŒ…ï¼Œå‘é€ã€‚
+  * ä»…ä»…ä¾èµ–äºapp_visionã€‚æ³¨æ„app_visionã€‚è¿™æ„å‘³ç€å¥¹ä¸èƒ½å¤Ÿä¸»åŠ¨è°ƒç”¨å…¶ä»–çš„ç»„ä»¶çš„å‡½æ•°ã€‚æ‰€ä»¥ä½ å°†çœ‹åˆ°å¾ˆå¤šçš„**å›è°ƒå‡½æ•°**çš„å†™æ³•
   * @author   ThunderDoge
   * @date     
   * @version  
@@ -11,26 +11,26 @@
 #ifndef __SENTRY_CLOUD_VISION_HPP_
 #define __SENTRY_CLOUD_VISION_HPP_
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //¶¨Òå¹¤³Ì±êÊ¶·û__PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_CLOUD_     //å®šä¹‰å·¥ç¨‹æ ‡è¯†ç¬¦__PROJECT_SENTRY_CLOUD_
 #define __PROJECT_SENTRY_CLOUD_
 #endif // __PROJECT_SENTRY_CLOUD_
 
 
-///ÒÀÀµµÄÎÄ¼ş
+///ä¾èµ–çš„æ–‡ä»¶
 #include "stm32f4xx.h"
 #include "app_vision.hpp"
 #include "SentryCloudCan.hpp"
 
 
 /**
- * @brief ÉÚ±øÊÓ¾õÊı¾İ»º´æ½á¹¹Ìå
+ * @brief å“¨å…µè§†è§‰æ•°æ®ç¼“å­˜ç»“æ„ä½“
  * 
  */
 
-extern sentry_vision_data VisionTx,VisionRx;    ///´¢´æÓÃ½á¹¹Ìå
+extern sentry_vision_data VisionTx,VisionRx;    ///å‚¨å­˜ç”¨ç»“æ„ä½“
 
-extern void CloudVisonTxRoutine(void);  ///Ö÷Âß¼­»Øµ÷º¯Êı¡£ÏòĞ¡Ö÷»ú·¢ËÍÒ»´ÎVisionTxµÄÈ«²¿ĞÅÏ¢¡£
-void CloudVisionSendFrame(uint8_t funcword,uint8_t* pData); ///×èÈûÊ½UART·¢ËÍ£¬Á¢¼´ÏòĞ¡Ö÷»ú·¢ËÍÒ»¸öÊı¾İÖ¡¡£
+extern void CloudVisonTxRoutine(void);  ///ä¸»é€»è¾‘å›è°ƒå‡½æ•°ã€‚å‘å°ä¸»æœºå‘é€ä¸€æ¬¡VisionTxçš„å…¨éƒ¨ä¿¡æ¯ã€‚
+void CloudVisionSendFrame(uint8_t funcword,uint8_t* pData); ///é˜»å¡å¼UARTå‘é€ï¼Œç«‹å³å‘å°ä¸»æœºå‘é€ä¸€ä¸ªæ•°æ®å¸§ã€‚
 
 #endif // __SENTRY_CLOUD_VISION_HPP_
 
@@ -46,38 +46,38 @@ void CloudVisionSendFrame(uint8_t funcword,uint8_t* pData); ///×èÈûÊ½UART·¢ËÍ£¬Á
 
 
 /**
- * @brief ÊÓ¾õ´«ÊäÊı¾İ½âÎö½á¹¹Ìå
+ * @brief è§†è§‰ä¼ è¾“æ•°æ®è§£æç»“æ„ä½“
  * @addtogroup Sentry_Vision
  */
 // struct Sentry_vision_data
 // {
 //     uint8_t Frame_header = FRAME_HEADER_DATA;
 //     uint8_t Frame_end = FRAME_END_DATA;
-//     uint8_t Function_word; ///<Êı¾İÖ¡¹¦ÄÜ×Ö
-//     ///µ×ÅÌÊı¾İ
-//     float Vx;         ///<µ×ÅÌXÖáËÙ¶È
-//     float Vy;         ///<µ×ÅÌYÖáËÙ¶È
-//     float Px;         ///<µ×ÅÌXÖáÂ·³Ì
-//     float Py;         ///<µ×ÅÌYÖáÂ·³Ì
-//     float SpeedLimit; ///<µ×ÅÌÏŞËÙ
+//     uint8_t Function_word; ///<æ•°æ®å¸§åŠŸèƒ½å­—
+//     ///åº•ç›˜æ•°æ®
+//     float Vx;         ///<åº•ç›˜Xè½´é€Ÿåº¦
+//     float Vy;         ///<åº•ç›˜Yè½´é€Ÿåº¦
+//     float Px;         ///<åº•ç›˜Xè½´è·¯ç¨‹
+//     float Py;         ///<åº•ç›˜Yè½´è·¯ç¨‹
+//     float SpeedLimit; ///<åº•ç›˜é™é€Ÿ
 //     uint8_t pillar_flag;
 //     uint8_t chassis_mode;
-//     ///ÔÆÌ¨Êı¾İ
-//     float Yaw;          ///<YawÖá½Ç¶È
+//     ///äº‘å°æ•°æ®
+//     float Yaw;          ///<Yawè½´è§’åº¦
 // 	float YawSoft;
-//     float Pitch;        ///<PitchÖá½Ç¶È
-//     uint8_t Cloud_mode; ///<ÔÆÌ¨Ä£Ê½
+//     float Pitch;        ///<Pitchè½´è§’åº¦
+//     uint8_t Cloud_mode; ///<äº‘å°æ¨¡å¼
 //     uint8_t cloud_ctrl_mode;
-//     ///Éä»÷Êı¾İ
-//     uint8_t Shoot_mode; ///<Éä»÷Ä£Ê½
-//     float Shoot_speed;  ///<Éä»÷ËÙ¶È
-//     uint8_t Shoot_freq; ///<Éä»÷ÆµÂÊ
-//     ///Êı¾İ±êÖ¾
+//     ///å°„å‡»æ•°æ®
+//     uint8_t Shoot_mode; ///<å°„å‡»æ¨¡å¼
+//     float Shoot_speed;  ///<å°„å‡»é€Ÿåº¦
+//     uint8_t Shoot_freq; ///<å°„å‡»é¢‘ç‡
+//     ///æ•°æ®æ ‡å¿—
 //     uint32_t UpdateTime;
-//     ///ÈÕÖ¾ÏµÍ³Ê¹ÓÃ
-//     uint8_t Error_code = 0;          ///<´íÎó´úÂë
-//     int16_t CAN1_motorlist = 0xffff; ///<CAN1µç»úÁĞ±í
-//     int16_t CAN2_motorlist = 0xffff; ///<CAN2µç»úÁĞ±í
+//     ///æ—¥å¿—ç³»ç»Ÿä½¿ç”¨
+//     uint8_t Error_code = 0;          ///<é”™è¯¯ä»£ç 
+//     int16_t CAN1_motorlist = 0xffff; ///<CAN1ç”µæœºåˆ—è¡¨
+//     int16_t CAN2_motorlist = 0xffff; ///<CAN2ç”µæœºåˆ—è¡¨
 // };
 
-///ROBOT_ERR µÄ´íÎóÂëÁĞ±í
+///ROBOT_ERR çš„é”™è¯¯ç åˆ—è¡¨

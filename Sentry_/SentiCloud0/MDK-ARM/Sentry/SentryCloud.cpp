@@ -1,7 +1,7 @@
 /**
  * 
  * @file SentryCloud.cpp
- * @brief    ÉÚ±øÔÆÌ¨µç»ú¿ØÖÆ¼¯ºÏ Sentry Cloud Motors Control
+ * @brief    å“¨å…µäº‘å°ç”µæœºæ§åˆ¶é›†åˆ Sentry Cloud Motors Control
  * @details     Encoding - GB2312
  * @author   ThunderDoge
  * @date     2019/12/1
@@ -10,63 +10,63 @@
  */
 #include "SentryCloud.hpp"
 
-// ---------------------------------ÀëÏß¼ì²âÓÃ º¯Êı¶¨Òå---------------------------
-// !!!Ê¹ÓÃÓÃÁË´óÁ¿ºê¶¨Òå£¬ÇëĞ¡ĞÄÔÄ¶Á
-// ºê¶¨Òå(1)£º¶¨Òåº¯Êı£ºµ÷ÓÃ MotorObj µÄ isOffline¡£½«´Ëº¯ÊıÖ¸Õë´«¸ø CheckDevice_Type 
+// ---------------------------------ç¦»çº¿æ£€æµ‹ç”¨ å‡½æ•°å®šä¹‰---------------------------
+// !!!ä½¿ç”¨ç”¨äº†å¤§é‡å®å®šä¹‰ï¼Œè¯·å°å¿ƒé˜…è¯»
+// å®å®šä¹‰(1)ï¼šå®šä¹‰å‡½æ•°ï¼šè°ƒç”¨ MotorObj çš„ isOfflineã€‚å°†æ­¤å‡½æ•°æŒ‡é’ˆä¼ ç»™ CheckDevice_Type 
 #define DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(MotorObj)	\
 uint8_t func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj(void) \
 {		\
 	return CloudEntity.MotorObj.Is_Offline();	\
 }
 
-// ºê¶¨Òå(2)£º¸ø³öÉÏÃæ¶¨ÒåµÄº¯ÊıµÄº¯ÊıÃû
+// å®å®šä¹‰(2)ï¼šç»™å‡ºä¸Šé¢å®šä¹‰çš„å‡½æ•°çš„å‡½æ•°å
 #define FUNC_NAME(MotorObj) \
 	func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj
 
-// (3):Ê¹ÓÃºê¶¨Òå(1) ¶¨Òåº¯Êı
+// (3):ä½¿ç”¨å®å®šä¹‰(1) å®šä¹‰å‡½æ•°
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(PitchMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(YawMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricLeftMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricRightMotor)
 DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(Feed2nd)
 
-//¶¨Òå¸÷¸öÉè±¸½á¹¹Ìå£¬ËûÃÇÊ¹ÓÃÁË(3)ÖĞ¶¨ÒåµÄº¯ÊıµÄÖ¸Õë
+//å®šä¹‰å„ä¸ªè®¾å¤‡ç»“æ„ä½“ï¼Œä»–ä»¬ä½¿ç”¨äº†(3)ä¸­å®šä¹‰çš„å‡½æ•°çš„æŒ‡é’ˆ
 CheckDevice_Type UpCloudLeftFric_CheckDevice(
-                (CheckDeviceID_Enum)         UpCloudLeftFricDevice,  // Éè±¸ID
-                                            100,                    // ÔÊĞíÀëÏßÊ±¼ä
-                                            FUNC_NAME(FricLeftMotor) ); // ÀëÏß¼ì²âº¯Êı º¯ÊıÃû
+                (CheckDeviceID_Enum)         UpCloudLeftFricDevice,  // è®¾å¤‡ID
+                                            100,                    // å…è®¸ç¦»çº¿æ—¶é—´
+                                            FUNC_NAME(FricLeftMotor) ); // ç¦»çº¿æ£€æµ‹å‡½æ•° å‡½æ•°å
 CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,100,FUNC_NAME(FricRightMotor));
 CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,100,FUNC_NAME(YawMotor));
 CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_NAME(PitchMotor));
 CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
 
-// ---------------------------------ÔÆÌ¨ »úĞµ½Ç¿ØÖÆ&ÍÓÂİÒÇ¿ØÖÆ Ïà¹Ø---------------------------
+// ---------------------------------äº‘å° æœºæ¢°è§’æ§åˆ¶&é™€èºä»ªæ§åˆ¶ ç›¸å…³---------------------------
 app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,NULL);
 app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,NULL);
 
-// ---------------------------------ÔÆÌ¨ Ë«PITCHÏà¹Ø
+// ---------------------------------äº‘å° åŒPITCHç›¸å…³
 //app_Mode ModeDualPitch(EnterModeDualPitch,RunModeDualPitch,NULL);
 //app_Mode ModeSinglePitch(EnterModeSinglePitch,RunModeSinglePitch,NULL);
 
 /**
- * @brief ½øÈë»úĞµ½Ç
- * ±ÜÃâÍ»±ä
+ * @brief è¿›å…¥æœºæ¢°è§’
+ * é¿å…çªå˜
  */
 void EnterModeCloudCtrlMech(void)
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //ÖØÖÃ Ä¿±ê½Ç¶ÈÎªµ±Ç°½Ç¶È¡£ÓÃÒÔ·ÀÖ¹Ä£Ê½ÇĞ»»Ê±½Ç¶ÈÍ»±ä¡£
+    CloudEntity.TargetPitch = CloudEntity.RealPitch; //é‡ç½® ç›®æ ‡è§’åº¦ä¸ºå½“å‰è§’åº¦ã€‚ç”¨ä»¥é˜²æ­¢æ¨¡å¼åˆ‡æ¢æ—¶è§’åº¦çªå˜ã€‚
     CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.Mode = absolute_cloud; //ÊÓÎª¾ø¶Ô½Ç¿ØÖÆ
+    CloudEntity.Mode = absolute_cloud; //è§†ä¸ºç»å¯¹è§’æ§åˆ¶
 }
 /**
- * @brief ÔËĞĞ»úĞµ½ÇÊ±£¬Êı¾İ³ÖĞøÎ¬»¤ Âß¼­¡£
- * ÍÓÂİÒÇ¸úËæ»úĞµ½ÇÊı¾İ
+ * @brief è¿è¡Œæœºæ¢°è§’æ—¶ï¼Œæ•°æ®æŒç»­ç»´æŠ¤ é€»è¾‘ã€‚
+ * é™€èºä»ªè·Ÿéšæœºæ¢°è§’æ•°æ®
  */
 void RunModeCloudCtrlMech(void)
 {
-    // Æ½Ê±ÒÀÀµÍÓÂİÒÇ»ı·ÖÊı¾İ¡£µ«ÊÇÓĞ»úĞµ½ÇµÄÊ±ºòÇ¿ÖÆÍÓÂİÒÇ¸úËæ»úĞµ½ÇÊı¾İ
-    app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//×¢Òâ¸ººÅ¡£
-    app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//×¢Òâ¸ººÅ¡£
+    // å¹³æ—¶ä¾èµ–é™€èºä»ªç§¯åˆ†æ•°æ®ã€‚ä½†æ˜¯æœ‰æœºæ¢°è§’çš„æ—¶å€™å¼ºåˆ¶é™€èºä»ªè·Ÿéšæœºæ¢°è§’æ•°æ®
+    app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//æ³¨æ„è´Ÿå·ã€‚
+    app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//æ³¨æ„è´Ÿå·ã€‚
 }
 /**
  * @brief 
@@ -74,9 +74,9 @@ void RunModeCloudCtrlMech(void)
  */
 void EnterModeCloudCtrlGyro(void)
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //ÖØÖÃ Ä¿±ê½Ç¶ÈÎªµ±Ç°½Ç¶È¡£ÓÃÒÔ·ÀÖ¹Ä£Ê½ÇĞ»»Ê±½Ç¶ÈÍ»±ä¡£
+    CloudEntity.TargetPitch = CloudEntity.RealPitch; //é‡ç½® ç›®æ ‡è§’åº¦ä¸ºå½“å‰è§’åº¦ã€‚ç”¨ä»¥é˜²æ­¢æ¨¡å¼åˆ‡æ¢æ—¶è§’åº¦çªå˜ã€‚
     CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.Mode = absolute_cloud; //ÊÓÎª¾ø¶Ô½Ç¿ØÖÆ
+    CloudEntity.Mode = absolute_cloud; //è§†ä¸ºç»å¯¹è§’æ§åˆ¶
 
 }
 void RunModeCloudCtrlGyro(void)
@@ -101,14 +101,14 @@ void RunModeCloudCtrlGyro(void)
                                                                                                               
                                                                                                               
 
-//------------------------Ë«PITCHÄ£Ê½Ïà¹Ø-----------------------------------------
-float pid_param_backup[24];     // µ¥PITCH²ÎÊı±¸·İ´æÔÚ´Ë¡£ÔÚ³õÊ¼»¯Ê±±¸·İ
-float dual_pitch_pid_param[24]=     //Ë«PITCH²ÎÊıÔÚ´Ëµ÷½Ú
+//------------------------åŒPITCHæ¨¡å¼ç›¸å…³-----------------------------------------
+float pid_param_backup[24];     // å•PITCHå‚æ•°å¤‡ä»½å­˜åœ¨æ­¤ã€‚åœ¨åˆå§‹åŒ–æ—¶å¤‡ä»½
+float dual_pitch_pid_param[24]=     //åŒPITCHå‚æ•°åœ¨æ­¤è°ƒèŠ‚
 {-3, 0, -8, 2000, 30000, 500,
 -15, -1, 0, 1800, 10000,120,
 100, 0, 0, 2000, 10000,3000,
 -10, 0, 0, 2000, 30000,500};
-// ²ÎÕÕÒ»ÏÂ²ÎÊıÉè¶¨
+// å‚ç…§ä¸€ä¸‹å‚æ•°è®¾å®š
 //   PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 //   PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
 //   PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
@@ -133,7 +133,7 @@ static void copy_array_to_pid_param(pid* desti,float* src)
 	desti->I_Limited = src[5];
 }
 
-///±¸·İµ¥PITCH²ÎÊıµ½ pid_param_backup. BackupSingleMotorParam
+///å¤‡ä»½å•PITCHå‚æ•°åˆ° pid_param_backup. BackupSingleMotorParam
 static void copy_cloud_param_to_backup(softcloud* src)
 {
     copy_pid_param_to_array(&pid_param_backup[0],src->PID_In);
@@ -141,7 +141,7 @@ static void copy_cloud_param_to_backup(softcloud* src)
 	copy_pid_param_to_array(&pid_param_backup[12],src->Gyro_PID_In);
     copy_pid_param_to_array(&pid_param_backup[18],src->Gyro_PID_Out);
 }
-///¸´ÖÆÊı×éÖĞµÄ²ÎÊıµ½ÔÆÌ¨µç»úPID
+///å¤åˆ¶æ•°ç»„ä¸­çš„å‚æ•°åˆ°äº‘å°ç”µæœºPID
 static void copy_array_to_cloud_param(softcloud* desti,float* src)
 {
     copy_array_to_pid_param(desti->PID_In,&src[0]);
@@ -150,45 +150,45 @@ static void copy_array_to_cloud_param(softcloud* desti,float* src)
     copy_array_to_pid_param(desti->Gyro_PID_Out,&src[18]);
 }
 /**
- * @brief ½øÈëË«PITCHÄ£Ê½
+ * @brief è¿›å…¥åŒPITCHæ¨¡å¼
  * 
  */
 void SentryCloud::EnterModeDualPitch(void)
 {
-    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //Ğ´ÈëË«PITCH²ÎÊı WriteDualMotorParam();
+    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //å†™å…¥åŒPITCHå‚æ•° WriteDualMotorParam();
 
-    PitchSecondMotor.cooperative = 1;       //Éè¶¨¸±PITCHÎªºÏ×÷Ä£Ê½£¬ÕâÑù»á½ûÓÃËüµÄPIDÔËËã¡£
-    // ËüµÄÊä³öÖµµçÁ÷Öµ»áÔÚÔËĞĞÊ±¸´ÖÆPitchMotorµÄµçÁ÷Êä³öÖµ
+    PitchSecondMotor.cooperative = 1;       //è®¾å®šå‰¯PITCHä¸ºåˆä½œæ¨¡å¼ï¼Œè¿™æ ·ä¼šç¦ç”¨å®ƒçš„PIDè¿ç®—ã€‚
+    // å®ƒçš„è¾“å‡ºå€¼ç”µæµå€¼ä¼šåœ¨è¿è¡Œæ—¶å¤åˆ¶PitchMotorçš„ç”µæµè¾“å‡ºå€¼
 }
 /**
- * @brief ÍË³öË«PITCHÄ£Ê½£¬»Ö¸´µ¥PITCHÄ£Ê½
+ * @brief é€€å‡ºåŒPITCHæ¨¡å¼ï¼Œæ¢å¤å•PITCHæ¨¡å¼
  * 
  */
 void SentryCloud::ExitModeDualPitch(void)
 {
-    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //Ğ´Èëµ¥PITCH²ÎÊı WriteDualMotorParam();
+    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //å†™å…¥å•PITCHå‚æ•° WriteDualMotorParam();
 
-    PitchSecondMotor.cooperative = 0;       //¹Ø±Õ¸±PITCHÎªºÏ×÷Ä£Ê½£¬»Ö¸´ËüµÄPIDÔËËã¡£
-    // µ«ÊÇ´Ëº¯ÊıÔÚÄ³Ò»PITCHµôÏßÊ±²Å»áµ÷ÓÃ¡£
+    PitchSecondMotor.cooperative = 0;       //å…³é—­å‰¯PITCHä¸ºåˆä½œæ¨¡å¼ï¼Œæ¢å¤å®ƒçš„PIDè¿ç®—ã€‚
+    // ä½†æ˜¯æ­¤å‡½æ•°åœ¨æŸä¸€PITCHæ‰çº¿æ—¶æ‰ä¼šè°ƒç”¨ã€‚
 }
 /**
- * @brief ÔËĞĞË«PITCHÄ£Ê½
- * ´Ó¶¯PITCHµç»úµÄÊä³öÖµµçÁ÷Öµ»áÔÚÔËĞĞÊ±¸´ÖÆPitchMotorµÄµçÁ÷Êä³öÖµ
+ * @brief è¿è¡ŒåŒPITCHæ¨¡å¼
+ * ä»åŠ¨PITCHç”µæœºçš„è¾“å‡ºå€¼ç”µæµå€¼ä¼šåœ¨è¿è¡Œæ—¶å¤åˆ¶PitchMotorçš„ç”µæµè¾“å‡ºå€¼
  */
 void SentryCloud::RunModeDualPitch()
 {
-    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // ¸´ÖÆµçÁ÷Öµ
-    PitchSecondMotor.InsertCurrent();   // Ğ´ÈëµçÁ÷Öµ
+    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // å¤åˆ¶ç”µæµå€¼
+    PitchSecondMotor.InsertCurrent();   // å†™å…¥ç”µæµå€¼
 }
 /**
- * @brief PITCHÄ£Ê½¿ØÖÆ¡£ÔÚHandle()ÖĞµ÷ÓÃ
+ * @brief PITCHæ¨¡å¼æ§åˆ¶ã€‚åœ¨Handle()ä¸­è°ƒç”¨
  * 
  */
 void SentryCloud::PitchModeCtrl(void)
 {
 	last_pitch_ctrl_mode = pitch_ctrl_mode;
 	
-	// ¸üĞÂÄ£Ê½PITCHµÄ¹æÔò
+	// æ›´æ–°æ¨¡å¼PITCHçš„è§„åˆ™
 	if(PitchMotor.Is_Offline() == 0 && PitchSecondMotor.Is_Offline() ==0)
 	{
 		pitch_ctrl_mode = __cloud_dual_pitch;
@@ -198,7 +198,7 @@ void SentryCloud::PitchModeCtrl(void)
 		pitch_ctrl_mode = __cloud_main_pitch;
 	}
 	
-	// ½øĞĞÄ£Ê½ÇĞ»»¼°ÔËĞĞ
+	// è¿›è¡Œæ¨¡å¼åˆ‡æ¢åŠè¿è¡Œ
 	switch( (pitch_ctrl_mode*10)+(last_pitch_ctrl_mode) )
 	{
 	case __cloud_dual_pitch*10 + __cloud_dual_pitch:
@@ -286,23 +286,23 @@ void SentryCloud::PitchModeCtrl(void)
 // ]]]]]]]]]]]]]]]]]]]]`]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 // @\\@/@//@O/@@=@/^O*OO.\@@@\`@/O@@@O=^@O`@@,\\@/O/=@/`O/\O@O/=@@=,=^//.=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-// µç»úĞÍºÅÀà
+// ç”µæœºå‹å·ç±»
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
-// µç»úÊµÌå¶¨Òå >>>>>>>>>>>>>>>>ÖØÒª<<<<<<<<<<<<<
+// ç”µæœºå®ä½“å®šä¹‰ >>>>>>>>>>>>>>>>é‡è¦<<<<<<<<<<<<<
 SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x207, 1, 0x202, 1, 0x203, 1, 0x204);
 
 
-/// ÔÆÌ¨ÎïÀíÊµÌåÀà ¹¹ÔìÓëÉ¾³ıº¯Êı
+/// äº‘å°ç‰©ç†å®ä½“ç±» æ„é€ ä¸åˆ é™¤å‡½æ•°
 SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t pitch_can_num, uint16_t pitch_can_id,
 						 uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
                          uint8_t fric_l_can_num, uint16_t fric_l_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
-        // ³õÊ¼»¯¸÷ÏîPID²ÎÊı
+        // åˆå§‹åŒ–å„é¡¹PIDå‚æ•°
     : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
@@ -320,22 +320,22 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
 
-        //!!!!!!!!!!!>>>>>>>>>>>>>Òªµ÷½ÚË«PITCH²ÎÊıÇëµ½ dual_pitch_pid_param
+        //!!!!!!!!!!!>>>>>>>>>>>>>è¦è°ƒèŠ‚åŒPITCHå‚æ•°è¯·åˆ° dual_pitch_pid_param
 
-        // ³õÊ¼»¯¸÷µç»ú²ÎÊı
-	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // Çë×¢ÒâYAWÖáÎ»ÖÃ»·Ö±½Ó²ÉÈ¡µÄÊÇµ××ùµÄ³¯Ïò
+        // åˆå§‹åŒ–å„ç”µæœºå‚æ•°
+	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // è¯·æ³¨æ„YAWè½´ä½ç½®ç¯ç›´æ¥é‡‡å–çš„æ˜¯åº•åº§çš„æœå‘
       PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
 {
-	Feed2nd.Enable_Block(4000,200,5);                       // ³õÊ¼»¯¶Â×ª¼ì²â
-	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  // Éè¶¨Î¢·ÖÀ´Ô´ÎªÍÓÂİÒÇ
-	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // Éè¶¨Î¢·ÖÀ´Ô´ÎªÍÓÂİÒÇ
-    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // Î»ÖÃ»·PIDµÄÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êı¡£¼ÓÈëÖØÁ¦Ç°À¡º¯Êı¡£
-    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //Î»ÖÃ»·PIDµÄÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êı¡£¼ÓÈëÖØÁ¦Ç°À¡º¯Êı¡£
-	copy_cloud_param_to_backup(&PitchMotor);				// ¸´ÖÆÔÆÌ¨PITCHÖá²ÎÊıµ½±¸·İÊı×é¡£ÒÔ´ıÔËĞĞÊ±Ê¹ÓÃ¡£
+	Feed2nd.Enable_Block(4000,200,5);                       // åˆå§‹åŒ–å µè½¬æ£€æµ‹
+	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  // è®¾å®šå¾®åˆ†æ¥æºä¸ºé™€èºä»ª
+	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // è®¾å®šå¾®åˆ†æ¥æºä¸ºé™€èºä»ª
+    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // ä½ç½®ç¯PIDçš„ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ã€‚åŠ å…¥é‡åŠ›å‰é¦ˆå‡½æ•°ã€‚
+    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //ä½ç½®ç¯PIDçš„ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ã€‚åŠ å…¥é‡åŠ›å‰é¦ˆå‡½æ•°ã€‚
+	copy_cloud_param_to_backup(&PitchMotor);				// å¤åˆ¶äº‘å°PITCHè½´å‚æ•°åˆ°å¤‡ä»½æ•°ç»„ã€‚ä»¥å¾…è¿è¡Œæ—¶ä½¿ç”¨ã€‚
 };
 
 
@@ -348,22 +348,22 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
 void SentryCloud::Handle()
 {
-    //------------------------°²È«Ä£Ê½¼¤¹âµÆ×Ô¶¯¹Ø±Õ-------------------------
+    //------------------------å®‰å…¨æ¨¡å¼æ¿€å…‰ç¯è‡ªåŠ¨å…³é—­-------------------------
 	if(Mode != save_cloud)
 		LazerSwitchCmd(1);  
     else
         LazerSwitchCmd(0);  
 	
-    // ÍÓÂİÒÇÊı¾İ´¦Àí
+    // é™€èºä»ªæ•°æ®å¤„ç†
     ImuDataProcessHandle();
-    //--------------------------µ¥/Ë«PITCHÄ£Ê½¿ØÖÆÂß¼­--------------------------
+    //--------------------------å•/åŒPITCHæ¨¡å¼æ§åˆ¶é€»è¾‘--------------------------
     PitchModeCtrl();    
-    //--------------------------------Éä»÷¿ØÖÆÂß¼­-----------------------------------
+    //--------------------------------å°„å‡»æ§åˆ¶é€»è¾‘-----------------------------------
     ShootCtrl();
 
-    // -------------------------------·ÖÄ£Ê½Âß¼­-------------------------------
+    // -------------------------------åˆ†æ¨¡å¼é€»è¾‘-------------------------------
     {
-        switch (Mode)   // ¸ù¾İ Mode Ñ¡ÔñÄ£Ê½
+        switch (Mode)   // æ ¹æ® Mode é€‰æ‹©æ¨¡å¼
         {
 
             case absolute_gyro_cloud:
@@ -379,64 +379,64 @@ void SentryCloud::Handle()
 
         }
 
-        if(LastCloudMode != CurrentCloudMode)   // Èç¹ûÄ£Ê½¸üĞÂ
+        if(LastCloudMode != CurrentCloudMode)   // å¦‚æœæ¨¡å¼æ›´æ–°
         {
-            LastCloudMode->Exit();              // Ê¹ÓÃÄ£Ê½ÇĞ»»ÓÃº¯Êı
+            LastCloudMode->Exit();              // ä½¿ç”¨æ¨¡å¼åˆ‡æ¢ç”¨å‡½æ•°
             CurrentCloudMode->Enter();
         }
-        CurrentCloudMode->Run();            // Õı³£Ö´ĞĞÄ£Ê½ÄÚÂß¼­
+        CurrentCloudMode->Run();            // æ­£å¸¸æ‰§è¡Œæ¨¡å¼å†…é€»è¾‘
 
-        LastCloudMode = CurrentCloudMode;   //  ¼ì²éÄ£Ê½¸üĞÂ
+        LastCloudMode = CurrentCloudMode;   //  æ£€æŸ¥æ¨¡å¼æ›´æ–°
     }
 
-//CANSend»áÔÚÖ÷Âß¼­Í³Ò»µ÷ÓÃ
+//CANSendä¼šåœ¨ä¸»é€»è¾‘ç»Ÿä¸€è°ƒç”¨
 //    manager::CANSend();
 
 
     
 }
 /**
- * @brief ÍÓÂİÒÇÊı¾İ´¦Àí
+ * @brief é™€èºä»ªæ•°æ®å¤„ç†
  * 
  */
 void SentryCloud::ImuDataProcessHandle()
 {
-	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)  //²»ÔÚÍÓÂİÒÇ¿ØÖÆÄ£Ê½ÖĞÊ±£¬ÍÓÂİÒÇ½Ç¶ÈÊ¼ÖÕ¸úËæ»úĞµ½Ç½Ç¶È£¨µ«ÊÇÒªĞı×ª»ØÍÓÂİÒÇ½Ç¶È£©
+	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)  //ä¸åœ¨é™€èºä»ªæ§åˆ¶æ¨¡å¼ä¸­æ—¶ï¼Œé™€èºä»ªè§’åº¦å§‹ç»ˆè·Ÿéšæœºæ¢°è§’è§’åº¦ï¼ˆä½†æ˜¯è¦æ—‹è½¬å›é™€èºä»ªè§’åº¦ï¼‰
 	{
-		app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//×¢Òâ¸ººÅ¡£
-		app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//×¢Òâ¸ººÅ¡£
+		app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//æ³¨æ„è´Ÿå·ã€‚
+		app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//æ³¨æ„è´Ÿå·ã€‚
 	}
-	//¡ı¡ı¡ıÍÓÂİÒÇ½Ç¶ÈĞı×ªµ½Ç¹¿Ú·½Ïò¡ı¡ı¡ı
+	//â†“â†“â†“é™€èºä»ªè§’åº¦æ—‹è½¬åˆ°æªå£æ–¹å‘â†“â†“â†“
 	RotatedImuAngle[0] = -app_imu_data.integral.Roll;
     RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
 	RotatedImuAngle[2] = -app_imu_data.integral.Yaw;
-	//¡ı¡ı¡ıÍÓÂİÒÇ¼ÓËÙ¶ÈĞı×ªµ½Ç¹¿Ú·½Ïò¡ı¡ı¡ı
+	//â†“â†“â†“é™€èºä»ªåŠ é€Ÿåº¦æ—‹è½¬åˆ°æªå£æ–¹å‘â†“â†“â†“
 	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[0];
     RotatedImuAngleRate[1] = -app_imu_data.Angle_Rate[1];
 	RotatedImuAngleRate[2] = -app_imu_data.Angle_Rate[2];
-    //¡ı¡ı¡ıÍÓÂİÒÇ½ÇËÙ¶ÈĞı×ªµ½ÅÚËş·½Ïò£¬¼´Roll,PitchË®Æ½£¬YawËæÇ¹¿ÚYaw¡ı¡ı¡ı
+    //â†“â†“â†“é™€èºä»ªè§’é€Ÿåº¦æ—‹è½¬åˆ°ç‚®å¡”æ–¹å‘ï¼Œå³Roll,Pitchæ°´å¹³ï¼ŒYawéšæªå£Yawâ†“â†“â†“
     float Cp = cosf(RealPitch), Sp = sinf(RealPitch);
 
     BaseImuAngleRate[0] = Cp*RotatedImuAngleRate[0] + Sp*RotatedImuAngleRate[2];
     BaseImuAngleRate[1] = RotatedImuAngleRate[1];
     BaseImuAngleRate[2] = -Sp*RotatedImuAngleRate[0] + Cp*RotatedImuAngleRate[2];
-    //¸üĞÂÔÆÌ¨µÄYaw,Pitch½Ç¶È
-	RealYaw = YawMotor.RealAngle;   //¾ÍÊÇµç»úµÄ½Ç¶È
-	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//¸ù¾İ»úĞµ½Ç¼ÆËã³öµÄÕæÊµ½Ç¶È
-	RealPitch = - PitchMotor.RealAngle;	//×¢Òâ¸ººÅ
+    //æ›´æ–°äº‘å°çš„Yaw,Pitchè§’åº¦
+	RealYaw = YawMotor.RealAngle;   //å°±æ˜¯ç”µæœºçš„è§’åº¦
+	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//æ ¹æ®æœºæ¢°è§’è®¡ç®—å‡ºçš„çœŸå®è§’åº¦
+	RealPitch = - PitchMotor.RealAngle;	//æ³¨æ„è´Ÿå·
 }
 
 
-///Éè¶¨»úĞµ½Ç¿ØÖÆ½Ç¶È
+///è®¾å®šæœºæ¢°è§’æ§åˆ¶è§’åº¦
 void SentryCloud::SetAngleTo(float pitch, float yaw)
 {
 	Mode = absolute_cloud;
     TargetPitch = pitch;
     TargetYaw = yaw;
-    PitchMotor.Angle_Set(-TargetPitch);	//×¢Òâ¸ººÅ
+    PitchMotor.Angle_Set(-TargetPitch);	//æ³¨æ„è´Ÿå·
     YawMotor.Angle_Set(TargetYaw);
 }
-///Éè¶¨ÍÓÂİÒÇ¿ØÖÆ½Ç¶È
+///è®¾å®šé™€èºä»ªæ§åˆ¶è§’åº¦
 void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 {
 	Mode = absolute_gyro_cloud;
@@ -448,10 +448,10 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 
 
 /**
- * @brief ¸ù¾İËùÔÚ½Ç¶È£¬ÇĞ»»½Ç¶È¿ØÖÆÎ»ÖÃ»··´À¡Ô´µÄÂß¼­¡£
+ * @brief æ ¹æ®æ‰€åœ¨è§’åº¦ï¼Œåˆ‡æ¢è§’åº¦æ§åˆ¶ä½ç½®ç¯åé¦ˆæºçš„é€»è¾‘ã€‚
  * 
- * @param     current_pitch     ÏÖÔÚµÄ¸©Ñö½Ç
- * @param     current_yaw       ÏÖÔÚµÄº½Ïò½Ç
+ * @param     current_pitch     ç°åœ¨çš„ä¿¯ä»°è§’
+ * @param     current_yaw       ç°åœ¨çš„èˆªå‘è§’
  * @return enum _cloud_ctrl_mode 
  */
 static enum _cloud_ctrl_mode decide_mode_by_angle(float current_pitch, float current_yaw)
@@ -461,7 +461,7 @@ static enum _cloud_ctrl_mode decide_mode_by_angle(float current_pitch, float cur
     mechanic_pitch = app_math_fLimitPeriod(current_pitch,180.0f,-180.0f);
     mechanic_yaw = app_math_fLimitPeriod(current_yaw,180.0f,-180.0f);
 
-    // if  // ×ª»»ÎªÍÓÂİÒÇÄ£Ê½µÄÌõ¼ş£ºYAWĞĞÖÁ»á¶¶¶¯µÄ½Ç¶È
+    // if  // è½¬æ¢ä¸ºé™€èºä»ªæ¨¡å¼çš„æ¡ä»¶ï¼šYAWè¡Œè‡³ä¼šæŠ–åŠ¨çš„è§’åº¦
     // ( 
     //     IS_IN_INTERVAL(mechanic_yaw,30,40)
     // )
@@ -472,17 +472,17 @@ static enum _cloud_ctrl_mode decide_mode_by_angle(float current_pitch, float cur
 
 
 /**
- * @brief Í¨ÓÃµÄ£¬¿Éµ÷Ä£Ê½µÄ¿ØÖÆ½Ç¶È¡£°üº¬¡¾×ÔÊÊÓ¦Ñ¡Ôñ·´À¡¡¿Âß¼­£¬ÒÑ½â¾ö¶¶¶¯ÎÊÌâ
+ * @brief é€šç”¨çš„ï¼Œå¯è°ƒæ¨¡å¼çš„æ§åˆ¶è§’åº¦ã€‚åŒ…å«ã€è‡ªé€‚åº”é€‰æ‹©åé¦ˆã€‘é€»è¾‘ï¼Œå·²è§£å†³æŠ–åŠ¨é—®é¢˜
  * 
- * @param     pitch ÊäÈëµÄ¸©Ñö½Ç
- * @param     yaw   ÊäÈëµÄº½Ïò½Ç
- * @param     mode  Ñ¡ÖĞµÄ·´À¡Ä£Ê½£¬È¡Öµ¼û @see enum _cloud_ctrl_mode
+ * @param     pitch è¾“å…¥çš„ä¿¯ä»°è§’
+ * @param     yaw   è¾“å…¥çš„èˆªå‘è§’
+ * @param     mode  é€‰ä¸­çš„åé¦ˆæ¨¡å¼ï¼Œå–å€¼è§ @see enum _cloud_ctrl_mode
  */
 void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode)
 {
     switch(mode)
 	{
-		case relative_auto_cloud:	// xx_auto Ä£Ê½ÏÂ»á×Ô¶¯ÇĞ»» »úĞµ/ÍÓÂİÒÇ »ñÈ¡×î¼Ñ¿ØÖÆ·½Ê½
+		case relative_auto_cloud:	// xx_auto æ¨¡å¼ä¸‹ä¼šè‡ªåŠ¨åˆ‡æ¢ æœºæ¢°/é™€èºä»ª è·å–æœ€ä½³æ§åˆ¶æ–¹å¼
 			pitch	+=	RealPitch;
 			yaw		+=	RealYaw;
 		case absolute_auto_cloud:
@@ -522,17 +522,17 @@ void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mo
 
 
 /**
- * @brief Æô¶¯Éä»÷
+ * @brief å¯åŠ¨å°„å‡»
  * 
- * @param     bullet_speed  ³öÌËµ¯ËÙ¡£Ä¿Ç°´Ë²ÎÊı¿ØÖÆµÄÊÇÄ¦²ÁÂÖµç»úµÄ×ªËÙ
- * @param     fire_freq     ·¢ÉäÆµÂÊ¡£Õâ¸ö¿ØÖÆ¡£
- * @param     Shoot_mode    Éä»÷Ä£Ê½¡£Õâ¸ö±£Áô±¸ÓÃ¡£
+ * @param     bullet_speed  å‡ºè¶Ÿå¼¹é€Ÿã€‚ç›®å‰æ­¤å‚æ•°æ§åˆ¶çš„æ˜¯æ‘©æ“¦è½®ç”µæœºçš„è½¬é€Ÿ
+ * @param     fire_freq     å‘å°„é¢‘ç‡ã€‚è¿™ä¸ªæ§åˆ¶ã€‚
+ * @param     Shoot_mode    å°„å‡»æ¨¡å¼ã€‚è¿™ä¸ªä¿ç•™å¤‡ç”¨ã€‚
  */
 void SentryCloud::Shoot(float bullet_speed, uint8_t fire_freq, uint8_t Shoot_mode)
 {
-	Shoot_Speed = bullet_speed;     // Éè¶¨Ä¦²ÁÂÖËÙÂÊ
+	Shoot_Speed = bullet_speed;     // è®¾å®šæ‘©æ“¦è½®é€Ÿç‡
 
-	ShooterSwitchCmd(1);            // Æô¶¯Ä¦²ÁÂÖºÍÉä»÷Ğí¿É
+	ShooterSwitchCmd(1);            // å¯åŠ¨æ‘©æ“¦è½®å’Œå°„å‡»è®¸å¯
 
 	if(fire_freq!=0)
     {
@@ -546,7 +546,7 @@ void SentryCloud::Shoot(float bullet_speed, uint8_t fire_freq, uint8_t Shoot_mod
 }
 
 
-///°²È«Ä£Ê½
+///å®‰å…¨æ¨¡å¼
 void SentryCloud::Safe_Set()
 {
 	Mode = save_cloud;
@@ -561,10 +561,10 @@ void SentryCloud::Safe_Set()
 }
 
 
-//ÏÂÃæÈı¸öº¯ÊıÎª²¦µ¯µç»úº¯ÊıµÄ°ü×°¡£ĞèÒªfeed_is_permitted==1²ÅÄÜÔËĞĞ¹©µ¯µç»ú
+//ä¸‹é¢ä¸‰ä¸ªå‡½æ•°ä¸ºæ‹¨å¼¹ç”µæœºå‡½æ•°çš„åŒ…è£…ã€‚éœ€è¦feed_is_permitted==1æ‰èƒ½è¿è¡Œä¾›å¼¹ç”µæœº
  /**
-  * @brief      ¾­°ü×°µÄÁ¬Ğø²¦µ¯º¯Êı
-  * @param     FreeSpeed Éè¶¨²¦µ¯ÂÖËÙ¶È
+  * @brief      ç»åŒ…è£…çš„è¿ç»­æ‹¨å¼¹å‡½æ•°
+  * @param     FreeSpeed è®¾å®šæ‹¨å¼¹è½®é€Ÿåº¦
   */
 void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
     if(feed_is_permitted)
@@ -583,7 +583,7 @@ void SentryCloud::Feed_Safe_Set(){
 }
 
 
-///¼¤¹âµÆ¿ª¹Ø
+///æ¿€å…‰ç¯å¼€å…³
 void SentryCloud::LazerSwitchCmd( int NewState )
 {
 	if(NewState == 0)
@@ -598,12 +598,12 @@ void SentryCloud::LazerSwitchCmd( int NewState )
 
 
 
-///Éä»÷Ğí¿É¿ª¹Ø£¬Ä¦²ÁÂÖ¿ª¹Ø
+///å°„å‡»è®¸å¯å¼€å…³ï¼Œæ‘©æ“¦è½®å¼€å…³
 void SentryCloud::ShooterSwitchCmd(int NewState )
 {
 	if(NewState == 0)
 	{
-		feed_is_permitted=0;    //²»ÔÊĞíÉä»÷
+		feed_is_permitted=0;    //ä¸å…è®¸å°„å‡»
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
         CloudEntity.Feed2nd.Safe_Set();
@@ -618,7 +618,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 
 
 /**
- * @brief PITCHÔËĞĞ»Øµ÷º¯Êı¡£ÖØÁ¦Ç°À¡¡£
+ * @brief PITCHè¿è¡Œå›è°ƒå‡½æ•°ã€‚é‡åŠ›å‰é¦ˆã€‚
  * 
  */
 void pidPitchCallBack(pid* self)
@@ -653,9 +653,9 @@ void pidPitchCallBack(pid* self)
 //     **    ****    ************=@@@@@@@^*********** **@@@@@@@@************************************************************************
 //        *          **********************  ************,@@`******      ***************************************************************
 
-//------------------------------------Éä»÷¿ØÖÆÏà¹Ø-------------------------------------------
+//------------------------------------å°„å‡»æ§åˆ¶ç›¸å…³-------------------------------------------
 /**
- * @brief ÔÆÌ¨ÄÚ²¿ Éä»÷¿ØÖÆÂß¼­
+ * @brief äº‘å°å†…éƒ¨ å°„å‡»æ§åˆ¶é€»è¾‘
  */
 void SentryCloud::ShootCtrl()
 {
@@ -665,29 +665,29 @@ void SentryCloud::ShootCtrl()
     // }
 
 
-// --------------------------------Éä»÷Ğí¿É¿ª¹Ø----------------------------
-    if(feed_is_permitted != 1)   //¼ì²éÉä»÷Ğí¿É£¬²»Ğí¿É Ôò»Øµ½°²È«
+// --------------------------------å°„å‡»è®¸å¯å¼€å…³----------------------------
+    if(feed_is_permitted != 1)   //æ£€æŸ¥å°„å‡»è®¸å¯ï¼Œä¸è®¸å¯ åˆ™å›åˆ°å®‰å…¨
 	{
 		Feed2nd.Safe_Set();
 	}
-    if(!fric_power_permitted != 1)   // ¼ì³µÄ¦²ÁÂÖĞí¿É
+    if(!fric_power_permitted != 1)   // æ£€è½¦æ‘©æ“¦è½®è®¸å¯
     {
         FricLeftMotor.Safe_Set();
 		FricRightMotor.Safe_Set();
     }
 
-    shoot_flag = Feed2nd.feed_mode; //Ğ´ÈëÉä»÷×´Ì¬Îª²¦µ¯µç»ú×´Ì¬
+    shoot_flag = Feed2nd.feed_mode; //å†™å…¥å°„å‡»çŠ¶æ€ä¸ºæ‹¨å¼¹ç”µæœºçŠ¶æ€
 
 }
 
 /**
- * @brief       ¶ÁÈ¡PID²ÎÊıµÄ»Øµ÷º¯Êı¡£ÓÉÍâÃæÊµÏÖ
+ * @brief       è¯»å–PIDå‚æ•°çš„å›è°ƒå‡½æ•°ã€‚ç”±å¤–é¢å®ç°
  * 
- * @param     pid_id    PID±àºÅ
- * @param     p         ¶ÁÈ¡ºóĞ´ÈëPµÄµØÖ·
- * @param     i         ¶ÁÈ¡ºóĞ´ÈëIµÄµØÖ·
- * @param     d         ¶ÁÈ¡ºóĞ´ÈëDµÄµØÖ·
- * @return ×´Ì¬Öµ¡£Õı³£·µ»ØHAL_OK, Òì³£·µ»ØHAL_ERROR 
+ * @param     pid_id    PIDç¼–å·
+ * @param     p         è¯»å–åå†™å…¥Pçš„åœ°å€
+ * @param     i         è¯»å–åå†™å…¥Içš„åœ°å€
+ * @param     d         è¯»å–åå†™å…¥Dçš„åœ°å€
+ * @return çŠ¶æ€å€¼ã€‚æ­£å¸¸è¿”å›HAL_OK, å¼‚å¸¸è¿”å›HAL_ERROR 
  */
 HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* i,float* d)
 {
@@ -720,11 +720,11 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
 }
 
 /**
- * @brief ÊµÏÖ´¥·¢Éä»÷ »Øµ÷º¯Êı
+ * @brief å®ç°è§¦å‘å°„å‡» å›è°ƒå‡½æ•°
  * 
- * @param     bullet_speed  ×Óµ¯·ÉĞĞËÙ¶È¡£Êµ¼ÊÊÇÔÆÌ¨Ä¦²ÁÂÖµç»ú
- * @param     fire_freq     ×Óµ¯Éä»÷ÆµÂÊ£¬µ¥Î»ÊÇRPM¡£ÊµÏÖÉÏÊÇ°ÑÔÆÌ¨¹©µ¯ÔİÍ£Ê±¼ä¸ÄÎª 60*1000/fire_freq
- * @param     shoot_mode    ×Óµ¯Éä»÷Ä£Ê½¡£±£Áô±¸ÓÃ¡£
+ * @param     bullet_speed  å­å¼¹é£è¡Œé€Ÿåº¦ã€‚å®é™…æ˜¯äº‘å°æ‘©æ“¦è½®ç”µæœº
+ * @param     fire_freq     å­å¼¹å°„å‡»é¢‘ç‡ï¼Œå•ä½æ˜¯RPMã€‚å®ç°ä¸Šæ˜¯æŠŠäº‘å°ä¾›å¼¹æš‚åœæ—¶é—´æ”¹ä¸º 60*1000/fire_freq
+ * @param     shoot_mode    å­å¼¹å°„å‡»æ¨¡å¼ã€‚ä¿ç•™å¤‡ç”¨ã€‚
  */
 void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode){
 	CloudEntity.Shoot(bullet_speed,fire_freq,shoot_mode);

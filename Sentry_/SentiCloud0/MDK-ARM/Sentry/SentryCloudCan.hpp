@@ -4,7 +4,7 @@
 
 /** 
  * @file SentryCloudCan.hpp
-  * @brief    ÉÚ±øÔÆÌ¨CANÍ¨ĞÅ
+  * @brief    å“¨å…µäº‘å°CANé€šä¿¡
   * @details  
   * @author   ThunderDoge
   * @date     2019/12/7
@@ -12,11 +12,11 @@
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //¶¨Òå¹¤³Ì±êÊ¶·û__PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_CLOUD_     //å®šä¹‰å·¥ç¨‹æ ‡è¯†ç¬¦__PROJECT_SENTRY_CLOUD_
 #define __PROJECT_SENTRY_CLOUD_
 #endif // __PROJECT_SENTRY_CLOUD_
 
-//CAN°å¼äÍ¨ĞÅ¶¨Òå£¬Èç¹ûĞŞCAN¿ÚÇëĞŞ¸Ä´Ë´¦ºê¶¨Òå
+//CANæ¿é—´é€šä¿¡å®šä¹‰ï¼Œå¦‚æœä¿®CANå£è¯·ä¿®æ”¹æ­¤å¤„å®å®šä¹‰
 #define CAN_INTERBOARD hcan2
 
 #include "can.h"
@@ -26,9 +26,9 @@
 
 
 
-void UpCloudCanCommuRoutine(void);  ///ÔÆÌ¨¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ - ÉÏÔÆÌ¨
-void CloudCanFilterConfig(void);    ///ÔÆÌ¨ÓÃ Éè¶¨CAN¹ıÂËÆ÷£¬ÒÔ¹ıÂË²»ĞèÒªµÄIDºÅ
-void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///ÔÆÌ¨ÓÃ °å¼äÍ¨Ñ¶CAN»Øµ÷º¯Êı
+void UpCloudCanCommuRoutine(void);  ///äº‘å°å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡ - ä¸Šäº‘å°
+void CloudCanFilterConfig(void);    ///äº‘å°ç”¨ è®¾å®šCANè¿‡æ»¤å™¨ï¼Œä»¥è¿‡æ»¤ä¸éœ€è¦çš„IDå·
+void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///äº‘å°ç”¨ æ¿é—´é€šè®¯CANå›è°ƒå‡½æ•°
 // void ChassisCanRxHandle(void);
 
 

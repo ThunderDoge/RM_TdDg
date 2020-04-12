@@ -1,6 +1,6 @@
 /**
   * @file   SentryCloudLogic.cpp
-  * @brief    ÉÚ±ø¿ØÖÆÂß¼­
+  * @brief    å“¨å…µæ§åˆ¶é€»è¾‘
   * @details  Encoding - GB2312
   * @author   
   * @date     
@@ -9,12 +9,12 @@
   */
 #include "SentryCloudLogic.hpp"
 
-//Ä£Ê½±êÖ¾±äÁ¿¶¨Òå
+//æ¨¡å¼æ ‡å¿—å˜é‡å®šä¹‰
 // GlobalModeName GlobalMode;
 // GlobalModeName LastGlobalMode;
 // CommandSourceName CommandSource;
 
-//Ä£Ê½¶¨Òå
+//æ¨¡å¼å®šä¹‰
 app_Mode ModeManualChassis(NULL, ManualChassis, NULL);
 app_Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
 app_Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
@@ -29,7 +29,7 @@ app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
 /**
-  * @brief  Ä£Ê½Ñ¡Ôñº¯Êı£¬¿ØÖÆÂß¼­Ô´ÓÚ´Ë
+  * @brief  æ¨¡å¼é€‰æ‹©å‡½æ•°ï¼Œæ§åˆ¶é€»è¾‘æºäºæ­¤
   */
 void ModeSelect(void)
 {
@@ -39,35 +39,35 @@ void ModeSelect(void)
 
     switch (mode)
     {
-    case 32: //ÖĞ-ÏÂ£ºÊÖ¶¯¿Øµ×ÅÌ
+    case 32: //ä¸­-ä¸‹ï¼šæ‰‹åŠ¨æ§åº•ç›˜
         CurrentMode = &ModeManualChassis;
         break;
-    case 12: //ÉÏ-ÏÂ£ºÊÖ¶¯¿ØÔÆÌ¨
+    case 12: //ä¸Š-ä¸‹ï¼šæ‰‹åŠ¨æ§äº‘å°
         CurrentMode = &ModeManualShoot;
         break;
-    case 33: //Ë«ÖĞ£ºÊÓ¾õ¿ØÖÆÔÆÌ¨×ª¶¯
+    case 33: //åŒä¸­ï¼šè§†è§‰æ§åˆ¶äº‘å°è½¬åŠ¨
         CurrentMode = &ModeVisionControl;
         break;
-    case 31: //ÖĞÉÏ£ºÊÓ¾õ¿ØÖÆÔÆÌ¨£¬ÊÖ¶¯¹©µ¯Éä»÷£¨ÓÒÒ¡¸ËÓÒ²¦Îª°â»ú£©
+    case 31: //ä¸­ä¸Šï¼šè§†è§‰æ§åˆ¶äº‘å°ï¼Œæ‰‹åŠ¨ä¾›å¼¹å°„å‡»ï¼ˆå³æ‘‡æ†å³æ‹¨ä¸ºæ‰³æœºï¼‰
         // CurrentMode = MODE_VIISON_SHOOTING_TEST;
         // VisionControl();
         // ManualFeed();
         CurrentMode = &ModeVisionFeed;
         break;
-    case 13: //ÉÏ-ÖĞ£ºÒ£¿ØÆ÷²âÊÔÔÆÌ¨ ÍÓÂİÒÇÄ£Ê½¡¾Î´Íê³É¡¿
+    case 13: //ä¸Š-ä¸­ï¼šé¥æ§å™¨æµ‹è¯•äº‘å° é™€èºä»ªæ¨¡å¼ã€æœªå®Œæˆã€‘
         // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
         // ManualShoot_Gyro();
         CurrentMode = &ModeManualShootGyro;
         break;
-    case 11: //ÉÏ-ÉÏ£ºÊÖ¶¯¿ØÔÆÌ¨£¬ÊÖ¶¯¹©µ¯Éä»÷£¨ÓÒÒ¡¸ËÓÒ²¦Îª°â»ú£©
+    case 11: //ä¸Š-ä¸Šï¼šæ‰‹åŠ¨æ§äº‘å°ï¼Œæ‰‹åŠ¨ä¾›å¼¹å°„å‡»ï¼ˆå³æ‘‡æ†å³æ‹¨ä¸ºæ‰³æœºï¼‰
         // CurrentMode = MODE_FRIC_TEST;
         // ManualFeed();
         CurrentMode = &ModeManualFeed;
         break;
-    case 22: //Ë«ÏÂ
+    case 22: //åŒä¸‹
     case 23:
-    case 21: //×óÏÂ
-    default: //Ä¬ÈÏ
+    case 21: //å·¦ä¸‹
+    default: //é»˜è®¤
         // CurrentMode = MODE_SAFE;
         // GlobalSafe();
         CurrentMode = &ModeGlobalSafe;
@@ -83,11 +83,11 @@ void ModeSelect(void)
 
 
 /**
-  * @brief  ÊÓ¾õ¿ØÖÆÔÆÌ¨
+  * @brief  è§†è§‰æ§åˆ¶äº‘å°
   */
 void VisionControl(void)
 {
-    //ÔÆÌ¨Ö¸Áî´¦Àí
+    //äº‘å°æŒ‡ä»¤å¤„ç†
 
     switch (VisionRx.cloud_ctrl_mode)
     {
@@ -105,7 +105,7 @@ void VisionControl(void)
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //´¦ÀíÍê³É±êÖ¾¡£ÒòÎªÒ»¸öÃüÁîÖ»»á´¦ÀíÒ»´Î£¬´¦ÀíºóÖÃ0
+    VisionRx.cloud_ctrl_mode = 0; //å¤„ç†å®Œæˆæ ‡å¿—ã€‚å› ä¸ºä¸€ä¸ªå‘½ä»¤åªä¼šå¤„ç†ä¸€æ¬¡ï¼Œå¤„ç†åç½®0
 
 
     // 		float pitch;
@@ -141,42 +141,42 @@ void VisionControlExit(){
     IS_SUPERIOR_VISION_CTRL =0;
 }
 /**
-  * @brief  Ò£¿ØÆ÷²âÊÔÔÆÌ¨
+  * @brief  é¥æ§å™¨æµ‹è¯•äº‘å°
   */
 const float dbus_rate = -0.00005;
 void ManualShootEnter()
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //ÖØÖÃ Ä¿±ê½Ç¶ÈÎªµ±Ç°½Ç¶È¡£ÓÃÒÔ·ÀÖ¹Ä£Ê½ÇĞ»»Ê±½Ç¶ÈÍ»±ä¡£
+    CloudEntity.TargetPitch = CloudEntity.RealPitch; //é‡ç½® ç›®æ ‡è§’åº¦ä¸ºå½“å‰è§’åº¦ã€‚ç”¨ä»¥é˜²æ­¢æ¨¡å¼åˆ‡æ¢æ—¶è§’åº¦çªå˜ã€‚
     CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.Mode = absolute_cloud; //ÊÓÎª¾ø¶Ô½Ç¿ØÖÆ
+    CloudEntity.Mode = absolute_cloud; //è§†ä¸ºç»å¯¹è§’æ§åˆ¶
 }
 void ManualShoot()
 {
-    //ÔÚÕâÖ®Ç°Ó¦µ±ÒÑµ÷ÓÃManualShootEnter()º¯Êı
-    //Ä¿±êpitchºÍyawÊÜÁéÃô¶Èdbus_rate*Ò¡¸ËÖµ¿ØÖÆ
-    float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //ºÜ¶à¸ººÅ¡£ÕâĞ©¶¼ÊÇµ÷³öÀ´µÄ¡£
+    //åœ¨è¿™ä¹‹å‰åº”å½“å·²è°ƒç”¨ManualShootEnter()å‡½æ•°
+    //ç›®æ ‡pitchå’Œyawå—çµæ•åº¦dbus_rate*æ‘‡æ†å€¼æ§åˆ¶
+    float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //å¾ˆå¤šè´Ÿå·ã€‚è¿™äº›éƒ½æ˜¯è°ƒå‡ºæ¥çš„ã€‚
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 }
 /**
-  * @brief  Ò£¿ØÆ÷²âÊÔÔÆÌ¨£¬ÍÓÂİÒÇÄ£Ê½
+  * @brief  é¥æ§å™¨æµ‹è¯•äº‘å°ï¼Œé™€èºä»ªæ¨¡å¼
   */
 void ManualShoot_Gyro()
 {
-    float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //ºÜ¶à¸ººÅ¡£ÕâĞ©¶¼ÊÇµ÷³öÀ´µÄ¡£
+    float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //å¾ˆå¤šè´Ÿå·ã€‚è¿™äº›éƒ½æ˜¯è°ƒå‡ºæ¥çš„ã€‚
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
     CloudEntity.SetAngleTo_Gyro(up_pitch, up_yaw);
 }
 void ManualShoot_Gyro_Enter()
 {
-    CloudEntity.TargetPitch = CloudEntity.RotatedImuAngle[1]; //ÖØÖÃ Ä¿±ê½Ç¶ÈÎªµ±Ç°½Ç¶È¡£ÓÃÒÔ·ÀÖ¹Ä£Ê½ÇĞ»»Ê±½Ç¶ÈÍ»±ä¡£
+    CloudEntity.TargetPitch = CloudEntity.RotatedImuAngle[1]; //é‡ç½® ç›®æ ‡è§’åº¦ä¸ºå½“å‰è§’åº¦ã€‚ç”¨ä»¥é˜²æ­¢æ¨¡å¼åˆ‡æ¢æ—¶è§’åº¦çªå˜ã€‚
     CloudEntity.TargetYaw = CloudEntity.RotatedImuAngle[2];
-    CloudEntity.Mode = absolute_gyro_cloud; //ÊÓÎª¾ø¶Ô½Ç¿ØÖÆ
+    CloudEntity.Mode = absolute_gyro_cloud; //è§†ä¸ºç»å¯¹è§’æ§åˆ¶
 }
 /**
-  * @brief  Ò£¿ØÆ÷²âÊÔµ×ÅÌ
+  * @brief  é¥æ§å™¨æµ‹è¯•åº•ç›˜
   */
-void ManualChassis() //ÊÖ¶¯µ×ÅÌ
+void ManualChassis() //æ‰‹åŠ¨åº•ç›˜
 {
     SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
                   (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
@@ -187,7 +187,7 @@ void ManualChassisEnter(){
 }
 
 /**
-  * @brief  Ò£¿ØÆ÷²âÊÔ²¦µ¯
+  * @brief  é¥æ§å™¨æµ‹è¯•æ‹¨å¼¹
   */
 // float feed_speed;
 void ManualFeed()
@@ -197,25 +197,25 @@ void ManualFeed()
     // CloudEntity.FricRightMotor.Speed_Set(Shoot_Speed);
     // CloudEntity.Feed2nd.Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200));
 
-    CloudEntity.ShooterSwitchCmd(1);                                 //Æô¶¯Éä»÷¡£
-    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //¹©µ¯Ö¸Áî
+    CloudEntity.ShooterSwitchCmd(1);                                 //å¯åŠ¨å°„å‡»ã€‚
+    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //ä¾›å¼¹æŒ‡ä»¤
 
-    // if (bsp_dbus_Data.CH_0 > 200)    //×´Ì¬ĞÅÏ¢·¢ËÍµ½VisionTx
+    // if (bsp_dbus_Data.CH_0 > 200)    //çŠ¶æ€ä¿¡æ¯å‘é€åˆ°VisionTx
     //     VisionTx.Shoot_mode = 1;
     // else
     //     VisionTx.Shoot_mode = 0;
 
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag; //×´Ì¬ĞÅÏ¢·¢ËÍµ½VisionTx
+    VisionTx.Shoot_mode = CloudEntity.shoot_flag; //çŠ¶æ€ä¿¡æ¯å‘é€åˆ°VisionTx
     
 }
 /**
- * @brief ÊÓ¾õ¿ØÖÆÔÆÌ¨£¬ÊÖ¶¯²¦µ¯
+ * @brief è§†è§‰æ§åˆ¶äº‘å°ï¼Œæ‰‹åŠ¨æ‹¨å¼¹
  */
 void VisionFeed()
 {
-    CloudEntity.ShooterSwitchCmd(1);                                 //Æô¶¯Éä»÷¡£
-    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //¹©µ¯Ö¸Áî
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //×´Ì¬ĞÅÏ¢·¢ËÍµ½VisionTx
+    CloudEntity.ShooterSwitchCmd(1);                                 //å¯åŠ¨å°„å‡»ã€‚
+    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //ä¾›å¼¹æŒ‡ä»¤
+    VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //çŠ¶æ€ä¿¡æ¯å‘é€åˆ°VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
     {
@@ -233,15 +233,15 @@ void VisionFeed()
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //´¦ÀíÍê³É±êÖ¾¡£ÒòÎªÒ»¸öÃüÁîÖ»»á´¦ÀíÒ»´Î£¬´¦Àíºó ÖÃ0
+    VisionRx.cloud_ctrl_mode = 0; //å¤„ç†å®Œæˆæ ‡å¿—ã€‚å› ä¸ºä¸€ä¸ªå‘½ä»¤åªä¼šå¤„ç†ä¸€æ¬¡ï¼Œå¤„ç†å ç½®0
 }
 /**
-  * @brief  È«¾Ö°²È«Ä£Ê½
+  * @brief  å…¨å±€å®‰å…¨æ¨¡å¼
   */
-void GlobalSafe() //°²È«Ä£Ê½
+void GlobalSafe() //å®‰å…¨æ¨¡å¼
 {
-    CloudEntity.Safe_Set();                         //ËùÓĞµç»ú°²È«Ä£Ê½
-    uint8_t data[8] = {0};                          //·¢ËÍ¿Õ×Ö½Ú¡£Ö®ºó»á¸ÄµôµÄ
-    SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]); //Í¨¹ıCANÏòÆäËûµÄMCU·¢ËÍ°²È«Ä£Ê½Ö¸Áî
+    CloudEntity.Safe_Set();                         //æ‰€æœ‰ç”µæœºå®‰å…¨æ¨¡å¼
+    uint8_t data[8] = {0};                          //å‘é€ç©ºå­—èŠ‚ã€‚ä¹‹åä¼šæ”¹æ‰çš„
+    SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]); //é€šè¿‡CANå‘å…¶ä»–çš„MCUå‘é€å®‰å…¨æ¨¡å¼æŒ‡ä»¤
 }
 

@@ -1,8 +1,8 @@
 /**
  * @file SentryCloudVision.cpp
-  * @brief     ÔÆÌ¨ÊÓ¾õ´®¿ÚÍ¨ÐÅ
-  * @details  Ìá¹©Ò»¸öÔÆÌ¨ÓëËûµÄÐ¡Ö÷»úÂèÂè½øÐÐUARTÍ¨Ñ¶µÄËùÓÐº¯Êý¡£°üº¬½ÓÊÜµ½µÄÐÅÏ¢£º´¦Àí-´¢´æ£¬½«Òª·¢ËÍµÄÐÅÏ¢£º´ò°ü£¬·¢ËÍ¡£
-  * ½ö½öÒÀÀµÓÚapp_vision¡£×¢Òâapp_vision¡£ÕâÒâÎ¶×ÅËý²»ÄÜ¹»Ö÷¶¯µ÷ÓÃÆäËûµÄ×é¼þµÄº¯Êý¡£ËùÒÔÄã½«¿´µ½ºÜ¶àµÄ**»Øµ÷º¯Êý**µÄÐ´·¨
+  * @brief     äº‘å°è§†è§‰ä¸²å£é€šä¿¡
+  * @details  æä¾›ä¸€ä¸ªäº‘å°ä¸Žä»–çš„å°ä¸»æœºå¦ˆå¦ˆè¿›è¡ŒUARTé€šè®¯çš„æ‰€æœ‰å‡½æ•°ã€‚åŒ…å«æŽ¥å—åˆ°çš„ä¿¡æ¯ï¼šå¤„ç†-å‚¨å­˜ï¼Œå°†è¦å‘é€çš„ä¿¡æ¯ï¼šæ‰“åŒ…ï¼Œå‘é€ã€‚
+  * ä»…ä»…ä¾èµ–äºŽapp_visionã€‚æ³¨æ„app_visionã€‚è¿™æ„å‘³ç€å¥¹ä¸èƒ½å¤Ÿä¸»åŠ¨è°ƒç”¨å…¶ä»–çš„ç»„ä»¶çš„å‡½æ•°ã€‚æ‰€ä»¥ä½ å°†çœ‹åˆ°å¾ˆå¤šçš„**å›žè°ƒå‡½æ•°**çš„å†™æ³•
   * @author   ThunderDoge
   * @date     2020-2-20
   * @version  0.1

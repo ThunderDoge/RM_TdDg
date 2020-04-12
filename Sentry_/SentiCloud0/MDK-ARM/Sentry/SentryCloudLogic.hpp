@@ -1,6 +1,6 @@
 /**
   * @file   SentryCloudLogic.hpp
-  * @brief    ÉÚ±ø¿ØÖÆÂß¼­
+  * @brief    å“¨å…µæ§åˆ¶é€»è¾‘
   * @details  Encoding - GB2312
   * @author   
   * @date     
@@ -10,7 +10,7 @@
 #ifndef __SENTRY_CLOUD_LOGIC_HPP
 #define __SENTRY_CLOUD_LOGIC_HPP
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //¶¨Òå¹¤³Ì±êÊ¶·û__PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_CLOUD_     //å®šä¹‰å·¥ç¨‹æ ‡è¯†ç¬¦__PROJECT_SENTRY_CLOUD_
 #define __PROJECT_SENTRY_CLOUD_
 #endif // __PROJECT_SENTRY_CLOUD_
 
@@ -41,29 +41,29 @@ extern app_Mode* CurrentMode,*LastMode;
  * @addtogroup RemoteDebugModes
  * @{
  */
-extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///Ä£Ê½¶ÔÏóÁĞ±í
+extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///æ¨¡å¼å¯¹è±¡åˆ—è¡¨
 
-void ModeSelect(); ///Ö÷Âß¼­-Ä£Ê½Ñ¡Ôñ
+void ModeSelect(); ///ä¸»é€»è¾‘-æ¨¡å¼é€‰æ‹©
 
-void ManualChassis(); ///ÊÖ¶¯µ×ÅÌ
-void ManualShoot();   ///ÊÖ¶¯²ÙÅÚÉä»÷
+void ManualChassis(); ///æ‰‹åŠ¨åº•ç›˜
+void ManualShoot();   ///æ‰‹åŠ¨æ“ç‚®å°„å‡»
 void ManualShootEnter();
 void ManualShoot_Gyro();
 void ManualShoot_Gyro_Enter();
 void ManualFeed();
 void VisionFeed();
 
-void VisionControl(); ///ÊÓ¾õµ÷ÊÔ
+void VisionControl(); ///è§†è§‰è°ƒè¯•
 void VisionControlEnter();
 void VisionControlExit();
-void AutoMove();      ///È«×Ô¶¯ÒÆ¶¯
-void GlobalSafe();    ///°²È«Ä£Ê½
+void AutoMove();      ///å…¨è‡ªåŠ¨ç§»åŠ¨
+void GlobalSafe();    ///å®‰å…¨æ¨¡å¼
 
 /** @} */
 #endif // __SENTRY_CLOUD_LOGIC_HPP
 
 /**
-  * @brief  ·Ï°¸ Abandonded Code
+  * @brief  åºŸæ¡ˆ Abandonded Code
   */
 // enum CommandSourceName
 // {

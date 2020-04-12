@@ -14,13 +14,13 @@ void app_sentry_diag_cloud_Init()
 {
     memset(&OfflineListBytes, 0, APP_SENTRY_DIAG_OFFLINE_LIST_LENGTH_IN_BYTE);
 }
-static manager *diag_motorCheckList[5] = {  //½«Òª¼ì²éµÄDJI_CANµç»úµÄÁĞ±í
+static manager *diag_motorCheckList[5] = {  //å°†è¦æ£€æŸ¥çš„DJI_CANç”µæœºçš„åˆ—è¡¨
     &CloudEntity.PitchMotor,
     &CloudEntity.YawMotor,
     &CloudEntity.Feed2nd,
     &CloudEntity.FricLeftMotor,
     &CloudEntity.FricRightMotor};
-static uint8_t diag_motorCheckDcode[5] = {  //ÓëÃ¿¸öµç»ú¶ÔÓ¦µÄDCODE¡£ĞòºÅÏàÍ¬¡£
+static uint8_t diag_motorCheckDcode[5] = {  //ä¸æ¯ä¸ªç”µæœºå¯¹åº”çš„DCODEã€‚åºå·ç›¸åŒã€‚
     DCODE_UPCLOUD_PITCH,
     DCODE_UPCLOUD_YAW,
     DCODE_UPCLOUD_FEEDER,
@@ -29,7 +29,7 @@ static uint8_t diag_motorCheckDcode[5] = {  //ÓëÃ¿¸öµç»ú¶ÔÓ¦µÄDCODE¡£ĞòºÅÏàÍ¬¡£
 } void
 app_sentry_diag_cloud_Handle()
 {
-    //¼ì²éµç»úµôÏß
+    //æ£€æŸ¥ç”µæœºæ‰çº¿
     for (size_t i = 0; i < 5; i++)
     {
         app_sentry_diag_SetDevice(

@@ -1,7 +1,7 @@
 //
 /**
   * @file SentryCloudCan.cpp
-  * @brief    ÉÚ±øÔÆÌ¨CANÍ¨ĞÅ
+  * @brief    å“¨å…µäº‘å°CANé€šä¿¡
   * @details  
   * @author   ThunderDoge
   * @date     2019/12/7
@@ -13,17 +13,17 @@
 
 
 
-//È«¾ÖCAN½ÓÊÕ±äÁ¿
+//å…¨å±€CANæ¥æ”¶å˜é‡
 /**
- * @brief ÔÆÌ¨ÓÃ£¬MCU¼äCANÍ¨Ñ¶£¬CAN»Øµ÷º¯Êı
+ * @brief äº‘å°ç”¨ï¼ŒMCUé—´CANé€šè®¯ï¼ŒCANå›è°ƒå‡½æ•°
  * 
- * @param     _hcan Ì×ÓÃ
+ * @param     _hcan å¥—ç”¨
  * @param     RxHead 
  * @param     Data 
  */
 void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 {
-    // ÉÏÔÆÌ¨²»ĞèÒª½ÓÊÕ×Ô¼ºµÄĞÅÏ¢
+    // ä¸Šäº‘å°ä¸éœ€è¦æ¥æ”¶è‡ªå·±çš„ä¿¡æ¯
     // UP_CLOUD_STATES_CanRx();
     DOWN_CLOUD_STATES_CanRx(RxHead->StdId, Data);
     CHASSIS_STATES_CanRx(RxHead->StdId, Data);
@@ -32,7 +32,7 @@ void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTy
 
 
 /**
- * @brief Éè¶¨CANÆÁ±ÎÆ÷Éè¶¨
+ * @brief è®¾å®šCANå±è”½å™¨è®¾å®š
  * 
  */
 void CloudCanFilterConfig()
@@ -43,8 +43,8 @@ void CloudCanFilterConfig()
 
 
 /**
-* @brief  CAN½ÓÊÕÖĞ¶Ï
-* @details  ÖØĞÂ¶¨Òå½ÓÊÕÖĞ¶Ï£¬»á×Ô¶¯ÔÚCANÖĞ¶ÏÖĞµ÷ÓÃ£¬²»ĞèÒªÊÖ¶¯Ìí¼Ó,Ê¹ÓÃµÄÊ±ºò×ÔĞĞÔÚ´Ëº¯ÊıÖĞÌæ»»½âÎöº¯Êı
+* @brief  CANæ¥æ”¶ä¸­æ–­
+* @details  é‡æ–°å®šä¹‰æ¥æ”¶ä¸­æ–­ï¼Œä¼šè‡ªåŠ¨åœ¨CANä¸­æ–­ä¸­è°ƒç”¨ï¼Œä¸éœ€è¦æ‰‹åŠ¨æ·»åŠ ,ä½¿ç”¨çš„æ—¶å€™è‡ªè¡Œåœ¨æ­¤å‡½æ•°ä¸­æ›¿æ¢è§£æå‡½æ•°
 * @param  NULL
 * @retval  NULL
 */
@@ -53,11 +53,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 	static CAN_RxHeaderTypeDef bsp_can_Rx;
 	uint8_t CAN_RxData[8];
 	
-	if(HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0)!=0) //ÅĞ¶ÏÖĞ¶Ï²úÉú
+	if(HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0)!=0) //åˆ¤æ–­ä¸­æ–­äº§ç”Ÿ
 	{
-		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//»ñÈ¡CAN±¨ÎÄ
-		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//µç»úĞÅÏ¢¸üĞÂ
-		CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//°å¼äCANÍ¨ĞÅĞÅÏ¢¸üĞÂ
+		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//è·å–CANæŠ¥æ–‡
+		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//ç”µæœºä¿¡æ¯æ›´æ–°
+		CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//æ¿é—´CANé€šä¿¡ä¿¡æ¯æ›´æ–°
 	}
 }
 
