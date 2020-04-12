@@ -13,10 +13,7 @@
 #include "sentry_config.hpp"
 
 #include "SentryChassis.hpp"
-// #include "SentryCanCommu.hpp"
 #include "SentryChassisLogic.hpp"
-//#include "SentryDownCloudVision.hpp"
-// #include "SentryCommu.hpp"
 #include "SentryChassisCommu.hpp"
 
 #endif // __SENTRY_HPP_

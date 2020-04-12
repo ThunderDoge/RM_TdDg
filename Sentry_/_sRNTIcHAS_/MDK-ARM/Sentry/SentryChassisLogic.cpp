@@ -1,13 +1,14 @@
+/**
+ * @file      SentryChassisLogic.cpp
+ * @brief     哨兵底盘运行逻辑
+ * @details   
+ * @author   ThunderDoge
+ * @date      2020-4-12
+ * @version   1.0
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+ * Using encoding: gb2312
+ */
 #include "SentryChassisLogic.hpp"
-
-GlobalModeName GlobalMode;
-GlobalModeName LastGlobalMode;
-//CommandSourceName CommandSource;
-GlobalModeName RecvCMD;
-GlobalModeName GetGlobalMode()
-{
-    return GlobalMode;
-}
 
 //模式定义
 app_Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
@@ -17,20 +18,26 @@ app_Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
 app_Mode *CurrentMode=&ModeGlobalSafe;
 app_Mode *LastMode=&ModeGlobalSafe;
 
+
+/**
+ * @brief 模式选择器。此为所有逻辑起始处
+ * 
+ */
 void ModeSelect(void)
 {
-	if((CanRx.SuperCon_ChassisMode != _chassis_save)/* && (HAL_GetTick()-CanRx.RecvUpdateTime) <1000 */)
-		GlobalMode = MODE_VIISON_SHOOTING_TEST;
+	// if((CanRx.SuperCon_ChassisMode != _chassis_save)/* && (HAL_GetTick()-CanRx.RecvUpdateTime) <1000 */)
+	// 	GlobalMode = MODE_VIISON_SHOOTING_TEST;
 	
-    switch (GlobalMode)
-    {
-    case MODE_VIISON_SHOOTING_TEST:
-        SuperiorControl();
-        break;
-    default:
-        ChassisEntity.Safe_Set();
-        break;
-    }
+    // switch (GlobalMode)
+    // {
+    // case MODE_VIISON_SHOOTING_TEST:
+    //     SuperiorControl();
+    //     break;
+    // default:
+    //     ChassisEntity.Safe_Set();
+    //     break;
+    // }
+    if
 }
 
 void ChassisCanRxHandle(void);	//声明将要调用的函数

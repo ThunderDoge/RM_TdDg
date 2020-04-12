@@ -8,6 +8,10 @@
  */
  
  #include "task_sentCha.hpp"
+
+ /**
+  * @brief 统一的任务启动器
+  */
 void TaskStarter(void)
 {
 	RoboInit();
@@ -35,7 +39,7 @@ void RoboInit()
 	manager::CANSelect(&hcan1,&hcan2);
 }
 /**
- * @brief  主任务
+ * @brief  主任务,1KHZ
  * @details  
  */
 void task_Main(void* param)
@@ -50,22 +54,55 @@ void task_Main(void* param)
         ChassisEntity.Handle();
 		ModeSelect();
 //		manager::CANSend();	
-		vTaskDelayUntil(&LastTick,1);
+		vTaskDelayUntil(&LastTick,1/portTICK_PERIOD_MS);
 	}
 }
 
 void ChassisCanCommuRoutine(void);	//声明一下，避免麻烦的文件包含
+
+/**
+ * @brief 板间通讯用任务，200HZ
+ * 
+ * @param     param 
+ */
 void task_Commu(void* param)
 {
 	TickType_t LastTick = xTaskGetTickCount();
 
 	while(1)
 	{
-		ChassisCanCommuRoutine();
-		vTaskDelayUntil(&LastTick,5);
-
+		ChassisCanCommuRoutine();       // 板间CAN通讯发送
+		vTaskDelayUntil(&LastTick,5/portTICK_PERIOD_MS);   
 	}
 }
+
+/**
+ * @brief   离线检测任务
+ * 
+ * @param     param 
+ */
+void task_OfflineCheck(void *param)
+{
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Aborted code following
 

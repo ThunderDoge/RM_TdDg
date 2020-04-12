@@ -12,6 +12,7 @@
 
 //ÒÀÀµµÄÎÄ¼ş
 #include "SentryChassisCan.hpp"
+#include "SentryChassisUart.hpp"
 
 extern CanCommuRecv_t CanRx, CanTx;
 
