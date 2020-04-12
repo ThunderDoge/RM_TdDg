@@ -12,8 +12,8 @@
 
 #define BSP_SC_RGB
 
-#define _USE_SOFTWARE_TIMER    //Ê¹ÓÃRTOSÈí¼þ¶¨Ê±Æ÷
-// #define _USE_HARDWARE_TIMER      //Ê¹ÓÃÓ²¼þ¶¨Ê±Æ÷
+#define _USE_SOFTWARE_TIMER    //ä½¿ç”¨RTOSè½¯ä»¶å®šæ—¶å™¨
+// #define _USE_HARDWARE_TIMER      //ä½¿ç”¨ç¡¬ä»¶å®šæ—¶å™¨
 
 #ifdef _USE_SOFTWARE_TIMER 
 #include "cmsis_os.h"

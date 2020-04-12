@@ -7,7 +7,7 @@
   * @par Copyright (c):  
   *       WMD,Onion rain
   *				Evan-GH
-  * @par ÈÕÖ¾¼ûcpp
+  * @par æ—¥å¿—è§cpp
   */
 #ifndef __BSP_MOTOR_HPP
 #define __BSP_MOTOR_HPP
@@ -19,27 +19,27 @@ using namespace std;
 
 typedef struct str_Motor_t
 {
-    str_Motor_t(){}; //±ÜÃâ´´½¨?????Ïó²»?????
+    str_Motor_t(){}; //é¿å…åˆ›å»º?????è±¡ä¸?????
     str_Motor_t(uint16_t a, uint8_t b) : max_mechanical_position(a), Reduction_ratio(b){};
-    uint16_t max_mechanical_position = 8192; //!<????????×î????,?????0x2000
-    uint8_t Reduction_ratio = 19;            //!<¼õËÙ±È,?????19:1
-} Motor_t;                                   //!<µç»ú(µçµ÷)²ÎÊı½á¹¹Ìå£¬?????ÖµÎª3508µç»ú¼°Æä?????C620µçµ÷
+    uint16_t max_mechanical_position = 8192; //!<????????æœ€????,?????0x2000
+    uint8_t Reduction_ratio = 19;            //!<å‡é€Ÿæ¯”,?????19:1
+} Motor_t;                                   //!<ç”µæœº(ç”µè°ƒ)å‚æ•°ç»“æ„ä½“ï¼Œ?????å€¼ä¸º3508ç”µæœºåŠå…¶?????C620ç”µè°ƒ
 
-class pid; //ÏÈÉùÃ÷Ò»?? by thunderdoge 2020-2-27
+class pid; //å…ˆå£°æ˜ä¸€?? by thunderdoge 2020-2-27
 /**
- * @brief ÓÃÓÚÅäÖÃPIDµÄÓÃ»§×Ô¶¨Òå»Øµ÷º¯ÊıµÄÖ¸??
+ * @brief ç”¨äºé…ç½®PIDçš„ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°çš„æŒ‡??
  */
 typedef void (*pvPidCallBack)(pid*);
-//PID???ÒÔËãpidÊä³ö ???ÒÔÅäÖÃpid
+//PID???ä»¥ç®—pidè¾“å‡º ???ä»¥é…ç½®pid
 class pid
 {
 public:
-    float *Custom_Diff = NULL; //!<???¶¨Òå??????????µãĞÍ???·ÖÊı??? ³£ÓÃÓÚÂ·³Ì»·µÄÎ¢·Ö»·???(¼´ËÙ¶È???)
+    float *Custom_Diff = NULL; //!<???å®šä¹‰??????????ç‚¹å‹???åˆ†æ•°??? å¸¸ç”¨äºè·¯ç¨‹ç¯çš„å¾®åˆ†ç¯???(å³é€Ÿåº¦???)
     pvPidCallBack pid_run_CallBack=nullptr; 
-    uint16_t I_Time;           //!<pidÊ±¼ä²ÎÊı ???msÎªµ¥??? plus×¨Êô,???·ÖÊ±???
-    uint16_t D_Time;           //!<???·ÖÊ±¼ä£¬msÎªµ¥???
-    uint16_t I_Limited;        //!<????????Ğ¡ÓÚI_LimitedÊ±²Å?????IÊä³ö plus×¨Êô
-    float ap = 0, bp = 0, cp;  //ap==0 && bp==0ËµÃ÷²»ÊÇ·ÇÏß???pid
+    uint16_t I_Time;           //!<pidæ—¶é—´å‚æ•° ???msä¸ºå•??? plusä¸“å±,???åˆ†æ—¶???
+    uint16_t D_Time;           //!<???åˆ†æ—¶é—´ï¼Œmsä¸ºå•???
+    uint16_t I_Limited;        //!<????????å°äºI_Limitedæ—¶æ‰?????Iè¾“å‡º plusä¸“å±
+    float ap = 0, bp = 0, cp;  //ap==0 && bp==0è¯´æ˜ä¸æ˜¯éçº¿???pid
     float ai = 0, ci;
     float ad = 0, bd = 0, cd, dd;
     float P;
@@ -48,193 +48,193 @@ public:
     float IMax;
     float PIDMax;
 
-    //???¹²º¯???
-    pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //´«Í³pid¹¹Ôìº¯???
+    //???å…±å‡½???
+    pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //ä¼ ç»Ÿpidæ„é€ å‡½???
     pid(float ap, float bp, float cp,
         float ai, float ci,
         float ad, float bd, float cd, float dd,
-        float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //·ÇÏß???pid¹¹Ôìº¯???
+        float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //éçº¿???pidæ„é€ å‡½???
     float pid_run(float err);
     float nonlinear_pid_run(float err);
     float sech(float in);
 
 //private:
-    //ÔËËã´¢´æ???
+    //è¿ç®—å‚¨å­˜???
     float Pout;
     float Iout;
     float Dout;
-    float Dout_Accumulative; //ÒòÎªÓĞÎ¢·ÖÊ±¼äÖØ¶¨Òå,?????¼ÓÈëÒ»???±äÁ¿?????ÓÃÓÚÊä³öD,Ô´DoutÓÃ×÷????????????
+    float Dout_Accumulative; //å› ä¸ºæœ‰å¾®åˆ†æ—¶é—´é‡å®šä¹‰,?????åŠ å…¥ä¸€???å˜é‡?????ç”¨äºè¾“å‡ºD,æºDoutç”¨ä½œ????????????
     float PIDout;
     float CurrentError;
     float LastError;
-    uint32_t I_start_time; //!<???·Ö¿ªÊ¼Ê±¼ä´Á£¬ÓÃÓÚ´øÊ±¼ä²ÎÊıµÄpid   plus×¨Êô
-    uint32_t D_start_time; //!<???·Ö¿ªÊ¼Ê±¼ä´Á£¬ÓÃÓÚ´øÊ±¼ä²ÎÊıµÄpid
+    uint32_t I_start_time; //!<???åˆ†å¼€å§‹æ—¶é—´æˆ³ï¼Œç”¨äºå¸¦æ—¶é—´å‚æ•°çš„pid   plusä¸“å±
+    uint32_t D_start_time; //!<???åˆ†å¼€å§‹æ—¶é—´æˆ³ï¼Œç”¨äºå¸¦æ—¶é—´å‚æ•°çš„pid
 };
 
 /** 
-	* @brief ¶Â×ª¼ì²âÀà 
-	* @details ÒªÇóÔÚ³õÊ¼»¯µÄÊ±ºò¸ø¶¨Ğè?????²â¶Â??µÄµçÁ÷ÒıÓÃºÍÎ»ÖÃÒıÓÃ \n
-	*		  Ò»???²»»áµ¥¶ÀÊ¹ÓÃ¸ÃÀà£¬µç??????????³Ö¶Â???¼ì²â¹¦ÄÜµÄ»°»áÔÚÆäÄÚ²¿ÓĞÒ»???¶Â×ª¼ì²âµÄÖ¸Õë \n
-	*		  ???????ÓÃµç»úµÄ¶Â×ª¼ì²â¹¦ÄÜµÄ»°Ê¹??????Ó¦µç»úÀàÄÚÌá¹©µÄ³õ???»¯º¯Êı \n
-	*		  ¾ßÌå¼ì²â»¹ĞèÒªÌá¹©¶Â???ÈÏ¶¨µçÁ÷£¬¶Â???ÈÏ¶¨Ê±¼ä£¬¶Â???Ê±¼äÄÚÔÊĞíµÄµç»ú½Ç¶ÈÆ«ÒÆ??? \n
-	*		  ???ÒÔÍ¨¹ı @see block_type::IsBlock ±äÁ¿À´È·ÈÏµç»úÊÇ·ñ¶Â??? \n 
-	*		  ???ÒÔÍ¨¹ı @see block_type::Clear_BlockFlag() À´Çå³ı¶Â???±êÖ¾
+	* @brief å µè½¬æ£€æµ‹ç±» 
+	* @details è¦æ±‚åœ¨åˆå§‹åŒ–çš„æ—¶å€™ç»™å®šéœ€?????æµ‹å µ??çš„ç”µæµå¼•ç”¨å’Œä½ç½®å¼•ç”¨ \n
+	*		  ä¸€???ä¸ä¼šå•ç‹¬ä½¿ç”¨è¯¥ç±»ï¼Œç”µ??????????æŒå µ???æ£€æµ‹åŠŸèƒ½çš„è¯ä¼šåœ¨å…¶å†…éƒ¨æœ‰ä¸€???å µè½¬æ£€æµ‹çš„æŒ‡é’ˆ \n
+	*		  ???????ç”¨ç”µæœºçš„å µè½¬æ£€æµ‹åŠŸèƒ½çš„è¯ä½¿??????åº”ç”µæœºç±»å†…æä¾›çš„åˆ???åŒ–å‡½æ•° \n
+	*		  å…·ä½“æ£€æµ‹è¿˜éœ€è¦æä¾›å µ???è®¤å®šç”µæµï¼Œå µ???è®¤å®šæ—¶é—´ï¼Œå µ???æ—¶é—´å†…å…è®¸çš„ç”µæœºè§’åº¦åç§»??? \n
+	*		  ???ä»¥é€šè¿‡ @see block_type::IsBlock å˜é‡æ¥ç¡®è®¤ç”µæœºæ˜¯å¦å µ??? \n 
+	*		  ???ä»¥é€šè¿‡ @see block_type::Clear_BlockFlag() æ¥æ¸…é™¤å µ???æ ‡å¿—
 */
 class block_type
 {
 public:
-    void Block_Init(uint16_t Limit, uint16_t time, float err_num);                                 //!<??????????²ÎÊı???????
-    block_type(int16_t &_Current, float &_RealAngle) : Current(_Current), RealAngle(_RealAngle) {} //!¹¹Ôìº¯???
-    void Block_Check(void);                                                                        //!<¼ì²é¶Â???µÄº¯???
-    void Clear_BlockFlag(void);                                                                    //!<È¥³ı¶Â×ª±êÖ¾
-    uint8_t IsBlock;                                                                               //!<???·ñ¶Â???µÄ±êÖ¾£¬1ÎªÒÑ¾­¶Â???£¬ĞèÒªÈËÎªÊ¹ÓÃClear_BlockFlagÏû¶Â???±êÖ¾
+    void Block_Init(uint16_t Limit, uint16_t time, float err_num);                                 //!<??????????å‚æ•°???????
+    block_type(int16_t &_Current, float &_RealAngle) : Current(_Current), RealAngle(_RealAngle) {} //!æ„é€ å‡½???
+    void Block_Check(void);                                                                        //!<æ£€æŸ¥å µ???çš„å‡½???
+    void Clear_BlockFlag(void);                                                                    //!<å»é™¤å µè½¬æ ‡å¿—
+    uint8_t IsBlock;                                                                               //!<???å¦å µ???çš„æ ‡å¿—ï¼Œ1ä¸ºå·²ç»å µ???ï¼Œéœ€è¦äººä¸ºä½¿ç”¨Clear_BlockFlagæ¶ˆå µ???æ ‡å¿—
 private:
     int16_t &Current;
     float &RealAngle;
-    float block_Angle;            //!<¶Â×ªÊ±µÄÎ»ÖÃ
-    uint16_t block_Current_Limit; //!<¶Â×ª¼ì²â×îµÍÃÅÏŞµç???
-    uint32_t block_time;          //!<¶Â×ª¿ªÊ¼Ê±µÄÊ±¼ä´Á
-    uint32_t block_Time_Limit;    //!<¶Â×ª¼ì²âÊ±?????µÄ¶Â??Ê±¼ä
-    float block_err_num;          //!<¶Â×ª?????²âÔÊ???µÄ???ÈÌ??????
-    uint8_t block_flag = 0;       //!<´¦ÓÚ¼ì²â¶Â???µÄ±êÖ¾£¬²»¶Â??????¶¯»Ö¸´Îª0
+    float block_Angle;            //!<å µè½¬æ—¶çš„ä½ç½®
+    uint16_t block_Current_Limit; //!<å µè½¬æ£€æµ‹æœ€ä½é—¨é™ç”µ???
+    uint32_t block_time;          //!<å µè½¬å¼€å§‹æ—¶çš„æ—¶é—´æˆ³
+    uint32_t block_Time_Limit;    //!<å µè½¬æ£€æµ‹æ—¶?????çš„å µ??æ—¶é—´
+    float block_err_num;          //!<å µè½¬?????æµ‹å…???çš„???å¿??????
+    uint8_t block_flag = 0;       //!<å¤„äºæ£€æµ‹å µ???çš„æ ‡å¿—ï¼Œä¸å µ??????åŠ¨æ¢å¤ä¸º0
 };
 
-class manager //µç»ú?????³éÏó??
+class manager //ç”µæœº?????æŠ½è±¡??
 {
 public:
-    //!< ?????ĞÔ¸Ä???£¬ÔÚÏßÁĞ±íµÄÊı¾İÀàĞÍ???¸Äµ½int16_t
-    //!<CAN1ÔÚÏßµÄIDÁĞ±í?????ĞÔ¸üĞÂ£¬ÊÊÅäGM6020µÄID»á³¬???0x208£¬ÏÖÔÚ[0:10]·Ö±ğ???0x201???0x20Bµç»úÔÚÏß????
-    static int16_t CAN1_OnlineID; //!<CAN1ÔÚÏßµÄIDÁĞ±í£¬[0:7]·Ö±ğ???0x201???0x207µÄµç»úÔÚÏß×´???(???????¾ÉµÄËµÃ÷)
-    //!<CAN2ÔÚÏßµÄIDÁĞ±í?????ĞÔ¸üĞÂ£¬ÊÊÅäGM6020µÄID»á³¬???0x208£¬ÏÖÔÚ[0:10]·Ö±ğ???0x201???0x20Bµç»úÔÚÏß????
-    static int16_t CAN2_OnlineID; //!<CAN2ÔÚÏßµÄIDÁĞ±í£¬[0:7]·Ö±ğ???0x201???0x207µÄµç»úÔÚÏß×´???(???????¾ÉµÄËµÃ÷)
-    RunState_t RunState = Stop;   //!<µç»úµÄÔËĞĞ×´???
-    //!µç»ú???·ñÊÇĞ­Í¬¹¤×÷µÄ£¬Èç¹ûÊôÓÚÄ³»ú¹¹µÄÒ»²¿·Ö£¬Ôò¸ÃÖµ¿ÉÒÔÖÃ1?????Ê±Handle()º¯Êı²»»áÓÉCANSend?????£¬ĞèÒª×Ô¼ºÊµÏÖ£¬´Ó¶øÍê³Éµç»ú×éºÏÂß¼­
+    //!< ?????æ€§æ”¹???ï¼Œåœ¨çº¿åˆ—è¡¨çš„æ•°æ®ç±»å‹???æ”¹åˆ°int16_t
+    //!<CAN1åœ¨çº¿çš„IDåˆ—è¡¨?????æ€§æ›´æ–°ï¼Œé€‚é…GM6020çš„IDä¼šè¶…???0x208ï¼Œç°åœ¨[0:10]åˆ†åˆ«???0x201???0x20Bç”µæœºåœ¨çº¿????
+    static int16_t CAN1_OnlineID; //!<CAN1åœ¨çº¿çš„IDåˆ—è¡¨ï¼Œ[0:7]åˆ†åˆ«???0x201???0x207çš„ç”µæœºåœ¨çº¿çŠ¶???(???????æ—§çš„è¯´æ˜)
+    //!<CAN2åœ¨çº¿çš„IDåˆ—è¡¨?????æ€§æ›´æ–°ï¼Œé€‚é…GM6020çš„IDä¼šè¶…???0x208ï¼Œç°åœ¨[0:10]åˆ†åˆ«???0x201???0x20Bç”µæœºåœ¨çº¿????
+    static int16_t CAN2_OnlineID; //!<CAN2åœ¨çº¿çš„IDåˆ—è¡¨ï¼Œ[0:7]åˆ†åˆ«???0x201???0x207çš„ç”µæœºåœ¨çº¿çŠ¶???(???????æ—§çš„è¯´æ˜)
+    RunState_t RunState = Stop;   //!<ç”µæœºçš„è¿è¡ŒçŠ¶???
+    //!ç”µæœº???å¦æ˜¯ååŒå·¥ä½œçš„ï¼Œå¦‚æœå±äºæŸæœºæ„çš„ä¸€éƒ¨åˆ†ï¼Œåˆ™è¯¥å€¼å¯ä»¥ç½®1?????æ—¶Handle()å‡½æ•°ä¸ä¼šç”±CANSend?????ï¼Œéœ€è¦è‡ªå·±å®ç°ï¼Œä»è€Œå®Œæˆç”µæœºç»„åˆé€»è¾‘
     uint8_t cooperative;
-    uint8_t Is_Offline(void); //!<ÅĞ¶Ïµ±Ç°µç»ú????????ÓÚ???Ïß????
-    //!È«¾ÖµÄCANÊÕ·¢º¯Êı,±ØĞë±ØĞë±ØĞëÏÈµ÷ÓÃCANSelect()ÇÒ±ØĞëÔÚCAN½ÓÊÕ´ò¿ªÇ°µ÷ÓÃ±¾º¯Êı???ÈÏ½ÓÊÕ¾ä??? Updateº¯Êı·ÅÔÚCAN½ÓÊÕ»Øµ÷ÀïÃæ,Send±£Ö¤ÖÜÆÚ?????,
+    uint8_t Is_Offline(void); //!<åˆ¤æ–­å½“å‰ç”µæœº????????äº???çº¿????
+    //!å…¨å±€çš„CANæ”¶å‘å‡½æ•°,å¿…é¡»å¿…é¡»å¿…é¡»å…ˆè°ƒç”¨CANSelect()ä¸”å¿…é¡»åœ¨CANæ¥æ”¶æ‰“å¼€å‰è°ƒç”¨æœ¬å‡½æ•°???è®¤æ¥æ”¶å¥??? Updateå‡½æ•°æ”¾åœ¨CANæ¥æ”¶å›è°ƒé‡Œé¢,Sendä¿è¯å‘¨æœŸ?????,
     static void CANSelect(CAN_HandleTypeDef *canhandle1, CAN_HandleTypeDef *canhandle2);
-    static void CANUpdate(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data); //!<È«¾ÖµÄ½Ó?????Àíº¯??,Í³Ò»¹ÜÅäËùÓĞµç???
-    static void UserProcess(void);                                                               //!<ÔÚPIDÅÜÍê ·¢ËÍÇ°?????µÄÊı??´¦Àíº¯Êı£¬½¨???ÒÔÖØĞ´µÄĞÎÊ½?????ĞÂµÄ?????
-    static uint8_t CANSend(void);                                                                //!<È«¾ÖµÄ·¢ËÍº¯Êı£¬Í³Ò»¹ÜÅäËùÓĞµç???
-    void Speed_F_Set(float f);                                                                   //!<Éè¶¨??????? ÊäÈëµç»úµÄĞÂ????
-    virtual void Safe_Set(void) = 0;                                                             //!<×ÓÀà±ØĞëÊµÏÖµÄ´¿Ğéº¯???
+    static void CANUpdate(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data); //!<å…¨å±€çš„æ¥?????ç†å‡½??,ç»Ÿä¸€ç®¡é…æ‰€æœ‰ç”µ???
+    static void UserProcess(void);                                                               //!<åœ¨PIDè·‘å®Œ å‘é€å‰?????çš„æ•°??å¤„ç†å‡½æ•°ï¼Œå»º???ä»¥é‡å†™çš„å½¢å¼?????æ–°çš„?????
+    static uint8_t CANSend(void);                                                                //!<å…¨å±€çš„å‘é€å‡½æ•°ï¼Œç»Ÿä¸€ç®¡é…æ‰€æœ‰ç”µ???
+    void Speed_F_Set(float f);                                                                   //!<è®¾å®š??????? è¾“å…¥ç”µæœºçš„æ–°????
+    virtual void Safe_Set(void) = 0;                                                             //!<å­ç±»å¿…é¡»å®ç°çš„çº¯è™šå‡½???
 protected:
-    uint8_t can_code;                     //!<CAN???,ÒÔÊ®½øÖÆ´æ´¢,°ÙÎ»ÊıÏÔÊ¾ÊÇcan¼¸£¬ºóÃæÁ½Î»Êı±íÊ¾id???-1£¬·¶???0~10
-    static CAN_HandleTypeDef *CanHandle1; //!<CAN?????1µÄÖ¸???
-    static CAN_HandleTypeDef *CanHandle2; //!<CAN?????2µÄÖ¸???
-    static manager *CAN1MotorList[11];    //!<CAN1µç»úµØÖ·ÁĞ±í£¬ÓÉ8¸Ä¶¯???11
-    static int16_t CAN1CurrentList[11];   //!<CAN1µç»ú´ı·¢ËÍµçÁ÷ÁĞ???£¬ÓÉ8¸Ä¶¯???11
-    static manager *CAN2MotorList[11];    //!<CAN2µç»úµØÖ·ÁĞ±í£¬ÓÉ8¸Ä¶¯???11
-    static int16_t CAN2CurrentList[11];   //!<CAN2µçÁ÷ÁĞ±í£¬ÓÉ8¸Ä¶¯???11
-    uint32_t LastUpdateTime;              //!<?????¸üĞÂµÄÊ±??
-    float Speed_LPF;                      //!<ËÙ¶È?????µÍÍ¨ÂË²¨Æ÷
-    float Speed_F;                        //!<ËÙ¶È??????????
+    uint8_t can_code;                     //!<CAN???,ä»¥åè¿›åˆ¶å­˜å‚¨,ç™¾ä½æ•°æ˜¾ç¤ºæ˜¯canå‡ ï¼Œåé¢ä¸¤ä½æ•°è¡¨ç¤ºid???-1ï¼ŒèŒƒ???0~10
+    static CAN_HandleTypeDef *CanHandle1; //!<CAN?????1çš„æŒ‡???
+    static CAN_HandleTypeDef *CanHandle2; //!<CAN?????2çš„æŒ‡???
+    static manager *CAN1MotorList[11];    //!<CAN1ç”µæœºåœ°å€åˆ—è¡¨ï¼Œç”±8æ”¹åŠ¨???11
+    static int16_t CAN1CurrentList[11];   //!<CAN1ç”µæœºå¾…å‘é€ç”µæµåˆ—???ï¼Œç”±8æ”¹åŠ¨???11
+    static manager *CAN2MotorList[11];    //!<CAN2ç”µæœºåœ°å€åˆ—è¡¨ï¼Œç”±8æ”¹åŠ¨???11
+    static int16_t CAN2CurrentList[11];   //!<CAN2ç”µæµåˆ—è¡¨ï¼Œç”±8æ”¹åŠ¨???11
+    uint32_t LastUpdateTime;              //!<?????æ›´æ–°çš„æ—¶??
+    float Speed_LPF;                      //!<é€Ÿåº¦?????ä½é€šæ»¤æ³¢å™¨
+    float Speed_F;                        //!<é€Ÿåº¦??????????
 
-    virtual void update(uint8_t Data[]) = 0; //!<×ÓÀà±ØĞëÊµÏÖµÄ´¿Ğéº¯???
-    virtual void Handle(void) = 0;           //!<×ÓÀà±ØĞëÊµÏÖµÄ·¢?????Àíº¯??
+    virtual void update(uint8_t Data[]) = 0; //!<å­ç±»å¿…é¡»å®ç°çš„çº¯è™šå‡½???
+    virtual void Handle(void) = 0;           //!<å­ç±»å¿…é¡»å®ç°çš„å‘?????ç†å‡½??
 };
-class motor : public manager //!???Í¨µç»úÀà???
+class motor : public manager //!???é€šç”µæœºç±»???
 {
 public:
-    int16_t RealCurrent;      //±àÂëÆ÷·´À¡×ª¾Øµç???
-    int16_t LastRealCurrent;  //±àÂëÆ÷·´À¡×ª¾Øµç???
-    float RealAngle;          //!<¸ù¾İ???????????Ëã³öµÄÕæÊµ???¶È
-    int16_t TargetCurrent;    //!<???±êµç????
-    int16_t RealPosition;     //!<ÕæÊµÎ»ÖÃ(±àÂë???)
-    int16_t TargetPosition;   //!<???±êÎ»???
-    int16_t RealSpeed;        //!<Êµ¼ÊËÙ¶È(±àÂë???)
-    int16_t TargetSpeed;      //!<???±êËÙ¶È
-    Motor_t *MotorType;       //!<µç»ú(µçµ÷)²ÎÊı
-    block_type *block = NULL; //!<¶Â×ª¶ÔÏóÖ¸Õë£¬ÔÚÊ¹ÓÃ¶Â×ª¼ì²âÊ±»áÉú?????Ïó²¢´¢´æÖ¸ÕëÔÚÕâ??
-    motor(void){};            //!<½öÓÃÓÚÄ¬ÈÏ¹¹Ôìº¯???
+    int16_t RealCurrent;      //ç¼–ç å™¨åé¦ˆè½¬çŸ©ç”µ???
+    int16_t LastRealCurrent;  //ç¼–ç å™¨åé¦ˆè½¬çŸ©ç”µ???
+    float RealAngle;          //!<æ ¹æ®???????????ç®—å‡ºçš„çœŸå®???åº¦
+    int16_t TargetCurrent;    //!<???æ ‡ç”µ????
+    int16_t RealPosition;     //!<çœŸå®ä½ç½®(ç¼–ç ???)
+    int16_t TargetPosition;   //!<???æ ‡ä½???
+    int16_t RealSpeed;        //!<å®é™…é€Ÿåº¦(ç¼–ç ???)
+    int16_t TargetSpeed;      //!<???æ ‡é€Ÿåº¦
+    Motor_t *MotorType;       //!<ç”µæœº(ç”µè°ƒ)å‚æ•°
+    block_type *block = NULL; //!<å µè½¬å¯¹è±¡æŒ‡é’ˆï¼Œåœ¨ä½¿ç”¨å µè½¬æ£€æµ‹æ—¶ä¼šç”Ÿ?????è±¡å¹¶å‚¨å­˜æŒ‡é’ˆåœ¨è¿™??
+    motor(void){};            //!<ä»…ç”¨äºé»˜è®¤æ„é€ å‡½???
     motor(uint8_t can_num,
           uint16_t _can_id,
           Motor_t *motor_type,
           pid *_PID_In,
-          pid *_PID_Out = NULL);                                                  //!<¹¹Ôì·½Ê½Ö®Ò»£¬Ö»Ìá¹©ËÙ¶È»·pid
-    void Speed_Set(int16_t);                                                      //!<Éè¶¨ËÙ¶È£¬ÆäÊµ¿ÉÒÔÖ±?????¶¨TargetSpeed
-    void Angle_Set(float);                                                        //!<Éè¶¨Î»ÖÃ£¬ÆäÊµ¿ÉÒÔÖ±?????¶¨TargetPosition
-    virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<µ½Ê±ºòĞ´??? ×¢Òâ¸ºÊı ???¿ÓÁË
-    virtual void Safe_Set(void);                                                  //!<Éè¶¨µç»ú½øÈë°²È«Ä£Ê½£¬¼´·¢ËÍµç????0
+          pid *_PID_Out = NULL);                                                  //!<æ„é€ æ–¹å¼ä¹‹ä¸€ï¼Œåªæä¾›é€Ÿåº¦ç¯pid
+    void Speed_Set(int16_t);                                                      //!<è®¾å®šé€Ÿåº¦ï¼Œå…¶å®å¯ä»¥ç›´?????å®šTargetSpeed
+    void Angle_Set(float);                                                        //!<è®¾å®šä½ç½®ï¼Œå…¶å®å¯ä»¥ç›´?????å®šTargetPosition
+    virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<åˆ°æ—¶å€™å†™??? æ³¨æ„è´Ÿæ•° ???å‘äº†
+    virtual void Safe_Set(void);                                                  //!<è®¾å®šç”µæœºè¿›å…¥å®‰å…¨æ¨¡å¼ï¼Œå³å‘é€ç”µ????0
 protected:
-    class pid *PID_In;    //!<PIDÄÚ»·
-    class pid *PID_Out;   //!<PIDÍâ»·
+    class pid *PID_In;    //!<PIDå†…ç¯
+    class pid *PID_Out;   //!<PIDå¤–ç¯
     int16_t LastPosition; //!<??????????
-    int16_t LastSpeed;    //!<?????ËÙ¶È
+    int16_t LastSpeed;    //!<?????é€Ÿåº¦
 
-    virtual void update(uint8_t Data[]); //!<Ö±½ÓDataÊı×éµÄupdateº¯Êı
-    virtual void Handle(void);           //!<Êı¾İ´¦Àíº¯Êı£¬ÓÃÓÚÅĞ???×´Ì¬£¬?????PID
-    virtual void Position_Run(void);     //!<Ê¹ÓÃÎ»ÖÃ??????¶¨ËÙ¶È ÎªPIDÔËËã??????
-    virtual void Speed_Run(void);        //!<Ê¹ÓÃËÙ¶È??????¶¨µç??? ÎªPIDÔËËã??????
+    virtual void update(uint8_t Data[]); //!<ç›´æ¥Dataæ•°ç»„çš„updateå‡½æ•°
+    virtual void Handle(void);           //!<æ•°æ®å¤„ç†å‡½æ•°ï¼Œç”¨äºåˆ¤???çŠ¶æ€ï¼Œ?????PID
+    virtual void Position_Run(void);     //!<ä½¿ç”¨ä½ç½®??????å®šé€Ÿåº¦ ä¸ºPIDè¿ç®—??????
+    virtual void Speed_Run(void);        //!<ä½¿ç”¨é€Ÿåº¦??????å®šç”µ??? ä¸ºPIDè¿ç®—??????
 public:
-    virtual void InsertCurrent(void);    //!<½«ÔËËãºÃµÄµçÁ÷°´ÁĞ±í´¢´æ½ø·¢ËÍ»º´æÇø???
+    virtual void InsertCurrent(void);    //!<å°†è¿ç®—å¥½çš„ç”µæµæŒ‰åˆ—è¡¨å‚¨å­˜è¿›å‘é€ç¼“å­˜åŒº???
 	virtual void InsertCurrentBy(int16_t tar_cur);
 };
 /** 
-    * @brief ??????³Ìµç??? \n
-		* ??????????:°Ñµç»úÃæ¶Ô×Ô??? ÄæÊ±Õë×ª¶¯µÄ???? ????????Êı???¼Ó 
+    * @brief ??????ç¨‹ç”µ??? \n
+		* ??????????:æŠŠç”µæœºé¢å¯¹è‡ª??? é€†æ—¶é’ˆè½¬åŠ¨çš„???? ????????æ•°???åŠ  
     */
 class softmotor : public motor
 {
-    friend class chassis; //ÉùÃ÷µ×ÅÌÀàĞÍÎªµç»úµÄÓÑÔªÀà£¬ÈÃµ×ÅÌÄÜ???????µç»ú?????ÓĞ³É??
+    friend class chassis; //å£°æ˜åº•ç›˜ç±»å‹ä¸ºç”µæœºçš„å‹å…ƒç±»ï¼Œè®©åº•ç›˜èƒ½???????ç”µæœº?????æœ‰æˆ??
 public:
-    int32_t Soft_RealPosition = 0; //!<???ÕæÊµ???³Ì£¬ÕâÀïÊµ¼ÊÒâÒå??????×Ó×ª¹ıµÄÈ¦Êı
-    int32_t Soft_TargetPosition;   //!<??????±êÂ·³Ì£¬Êµ¼ÊÒâÒåÎªÂÖ???????µÄÈ¦???
-    float SoftAngle;               //!<???½Ç¶È£¬¸ù??????¹ıÈ¦ÊıÀ´?????????? RealAngleÏÖÔÚ???µ¥È¦??????????
+    int32_t Soft_RealPosition = 0; //!<???çœŸå®???ç¨‹ï¼Œè¿™é‡Œå®é™…æ„ä¹‰??????å­è½¬è¿‡çš„åœˆæ•°
+    int32_t Soft_TargetPosition;   //!<??????æ ‡è·¯ç¨‹ï¼Œå®é™…æ„ä¹‰ä¸ºè½®???????çš„åœˆ???
+    float SoftAngle;               //!<???è§’åº¦ï¼Œæ ¹??????è¿‡åœˆæ•°æ¥?????????? RealAngleç°åœ¨???å•åœˆ??????????
 
-    softmotor() : motor() {} //±ÜÃâÔÚ¹¹Ôì¿Õ¶ÔÏóÊ±²»³É¹¦
+    softmotor() : motor() {} //é¿å…åœ¨æ„é€ ç©ºå¯¹è±¡æ—¶ä¸æˆåŠŸ
     softmotor(uint8_t can_num,
               uint16_t _can_id,
               Motor_t *motor_type,
               pid *PID_In,
               pid *PID_Out = NULL)
-        : motor(can_num, _can_id, motor_type, PID_In, PID_Out) {}                 //!<¹¹Ôìº¯???
-    void Limit(float _max, float _min);                                           //!<ÉèÖÃ???¼şÏŞ???
-    void Angle_Set(float);                                                        //!<ÉèÖÃ???³ÌÄ¿???????
-    virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<µ½Ê±ºòĞ´??? ×¢Òâ¸ºÊı ???¿ÓÁË
+        : motor(can_num, _can_id, motor_type, PID_In, PID_Out) {}                 //!<æ„é€ å‡½???
+    void Limit(float _max, float _min);                                           //!<è®¾ç½®???ä»¶é™???
+    void Angle_Set(float);                                                        //!<è®¾ç½®???ç¨‹ç›®???????
+    virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<åˆ°æ—¶å€™å†™??? æ³¨æ„è´Ÿæ•° ???å‘äº†
 protected:
     virtual void update(uint8_t Data[]);
     virtual void Position_Run(void);
-    float max = 99999999999;  //!<½Ç¶È×î????
-    float min = -99999999999; //!<½Ç¶È×î????
+    float max = 99999999999;  //!<è§’åº¦æœ€????
+    float min = -99999999999; //!<è§’åº¦æœ€????
 private:
-    uint8_t running_flag = 0; //!<ÓÃÀ´±£Ö¤???Ò»´ÎµÄ??????³Ì²»Í»±ä ÒòÎª¿ª»úÊ±LastPosition???¶¨ÊÇ0???ÄÜ»áµ¼ÖÂÒ»???????
+    uint8_t running_flag = 0; //!<ç”¨æ¥ä¿è¯???ä¸€æ¬¡çš„??????ç¨‹ä¸çªå˜ å› ä¸ºå¼€æœºæ—¶LastPosition???å®šæ˜¯0???èƒ½ä¼šå¯¼è‡´ä¸€???????
 };
-class cloud : public manager //!À©Õ¹:ÔÆÌ¨???(6623)
+class cloud : public manager //!æ‰©å±•:äº‘å°???(6623)
 {
 public:
-    Motor_t *MotorType; //!<µç»ú(µçµ÷)²ÎÊı
-    float RealAngle;    //!<¸ù¾İ???????????Ëã³öµÄÕæÊµ???¶È
-    //µçÁ÷???
-    int16_t TargetCurrent; //!<·¢ËÍ¸øµç»úµÄµç????
-    int16_t RealCurrent;   //!<Êµ¼Ê???¾Øµç???(±àÂë???)
-    //ËÙ¶È???
-    float RealSpeed;        //!<Êµ¼ÊËÙ¶È(ÍÓÂİÒÇ/±àÂë???)
-    float TargetSpeed;      //!<???±êËÙ¶È
-    float *Gyro_RealSpeed;  //!<Ö¸ÏòÍÓÂİÒÇ?????ËÙ¶ÈµÄÖ¸???
-    float Gyro_TargetSpeed; //!<ÍÓÂİÒÇÉèÖÃ???±ê×ª???
-    //Î»ÖÃ???
-    int16_t RealPosition;     //!<ÕæÊµÎ»ÖÃ(±àÂë???)
-    int16_t OriginalPosition; //!<??????????(±àÂë???)£¬Ã»ÓĞ¾­¹ıĞ£???
-    int16_t TargetPosition;   //!<???±êÎ»???
-    float *Gyro_RealAngle;    //!<Ö¸ÏòÍÓÂİÒÇ????????¶ÈµÄ?????
-    float Gyro_TargetAngle;   //!<ÍÓÂİÒÇÉèÖÃ??????????
+    Motor_t *MotorType; //!<ç”µæœº(ç”µè°ƒ)å‚æ•°
+    float RealAngle;    //!<æ ¹æ®???????????ç®—å‡ºçš„çœŸå®???åº¦
+    //ç”µæµ???
+    int16_t TargetCurrent; //!<å‘é€ç»™ç”µæœºçš„ç”µ????
+    int16_t RealCurrent;   //!<å®é™…???çŸ©ç”µ???(ç¼–ç ???)
+    //é€Ÿåº¦???
+    float RealSpeed;        //!<å®é™…é€Ÿåº¦(é™€èºä»ª/ç¼–ç ???)
+    float TargetSpeed;      //!<???æ ‡é€Ÿåº¦
+    float *Gyro_RealSpeed;  //!<æŒ‡å‘é™€èºä»ª?????é€Ÿåº¦çš„æŒ‡???
+    float Gyro_TargetSpeed; //!<é™€èºä»ªè®¾ç½®???æ ‡è½¬???
+    //ä½ç½®???
+    int16_t RealPosition;     //!<çœŸå®ä½ç½®(ç¼–ç ???)
+    int16_t OriginalPosition; //!<??????????(ç¼–ç ???)ï¼Œæ²¡æœ‰ç»è¿‡æ ¡???
+    int16_t TargetPosition;   //!<???æ ‡ä½???
+    float *Gyro_RealAngle;    //!<æŒ‡å‘é™€èºä»ª????????åº¦çš„?????
+    float Gyro_TargetAngle;   //!<é™€èºä»ªè®¾ç½®??????????
 
-    pid *PID_In;       //!<????????PIDËÙ¶È???
-    pid *PID_Out;      //!<????????PIDÎ»ÖÃ???
-    pid *Gyro_PID_In;  //!<ÍÓÂİÒÇPIDËÙ¶È???
-    pid *Gyro_PID_Out; //!<ÍÓÂİÒÇPIDÎ»ÖÃ???
+    pid *PID_In;       //!<????????PIDé€Ÿåº¦???
+    pid *PID_Out;      //!<????????PIDä½ç½®???
+    pid *Gyro_PID_In;  //!<é™€èºä»ªPIDé€Ÿåº¦???
+    pid *Gyro_PID_Out; //!<é™€èºä»ªPIDä½ç½®???
 
-    void Pid_Select(pid *PID_In_Select, pid *PID_Out_Select);                //!<????????pidÑ¡Ôñ
-    void Gyro_Pid_Select(pid *Gyro_PID_In_Select, pid *Gyro_PID_Out_Select); //!<ÍÓÂİÒÇpidÑ¡Ôñ
-    void Speed_Set(float);                                                   //!<Éè¶¨ËÙ¶È£¬Í¨¹ı?????????????
-    void Angle_Set(float);                                                   //!<Éè¶¨½Ç¶È£¬Í¨¹ı?????????????
-    void Gyro_Speed_Set(float TargetSpeed);                                  //!<Éè¶¨ËÙ¶È£¬Í¨¹ıÍÓÂİÒÇµ÷½Ú
-    void Gyro_Angle_Set(float TargetPosition);                               //!<Éè¶¨½Ç¶È£¬Í¨¹ıÍÓÂİÒÇµ÷½Ú
-    void Limit(float _max, float _min);                                      //!<ÉèÖÃ???¼şÏŞ???
-    void Gyro_Speed_Run(void);                                               //!PIDÔËËãº¯Êı£¬managerÀàµ÷???
-    void Gyro_Position_Run(void);                                            //!PIDÔËËãº¯Êı£¬managerÀàµ÷???
-    cloud();                                                                 //!<?????¹¹Ôìº¯???
+    void Pid_Select(pid *PID_In_Select, pid *PID_Out_Select);                //!<????????pidé€‰æ‹©
+    void Gyro_Pid_Select(pid *Gyro_PID_In_Select, pid *Gyro_PID_Out_Select); //!<é™€èºä»ªpidé€‰æ‹©
+    void Speed_Set(float);                                                   //!<è®¾å®šé€Ÿåº¦ï¼Œé€šè¿‡?????????????
+    void Angle_Set(float);                                                   //!<è®¾å®šè§’åº¦ï¼Œé€šè¿‡?????????????
+    void Gyro_Speed_Set(float TargetSpeed);                                  //!<è®¾å®šé€Ÿåº¦ï¼Œé€šè¿‡é™€èºä»ªè°ƒèŠ‚
+    void Gyro_Angle_Set(float TargetPosition);                               //!<è®¾å®šè§’åº¦ï¼Œé€šè¿‡é™€èºä»ªè°ƒèŠ‚
+    void Limit(float _max, float _min);                                      //!<è®¾ç½®???ä»¶é™???
+    void Gyro_Speed_Run(void);                                               //!PIDè¿ç®—å‡½æ•°ï¼Œmanagerç±»è°ƒ???
+    void Gyro_Position_Run(void);                                            //!PIDè¿ç®—å‡½æ•°ï¼Œmanagerç±»è°ƒ???
+    cloud();                                                                 //!<?????æ„é€ å‡½???
     cloud(uint8_t can_num,
           uint16_t _can_id,
           int16_t _CLOUD_STD,
@@ -244,32 +244,32 @@ public:
           pid *G_In,
           pid *G_Out,
           float *SpeedSource = NULL,
-          float *PositionSource = NULL); //!<¹¹Ôìº¯Êı£¬Ö¸ÕëÖ¸ÏòÎ»ÖÃ»òËÙ¶È???
-    virtual void Safe_Set(void);         //!<Éè¶¨µç»ú½øÈë°²È«Ä£Ê½£¬¼´·¢ËÍµç????0
-    virtual void InsertCurrent(void); //!<½«ÔËËãºÃµÄµçÁ÷°´ÁĞ±í´¢´æ½ø·¢ËÍ»º´æÇø???
+          float *PositionSource = NULL); //!<æ„é€ å‡½æ•°ï¼ŒæŒ‡é’ˆæŒ‡å‘ä½ç½®æˆ–é€Ÿåº¦???
+    virtual void Safe_Set(void);         //!<è®¾å®šç”µæœºè¿›å…¥å®‰å…¨æ¨¡å¼ï¼Œå³å‘é€ç”µ????0
+    virtual void InsertCurrent(void); //!<å°†è¿ç®—å¥½çš„ç”µæµæŒ‰åˆ—è¡¨å‚¨å­˜è¿›å‘é€ç¼“å­˜åŒº???
 protected:
-    int16_t CLOUD_STD; //!<¸ÃÔÆÌ¨ÔÚÖ¸ÏòÔ­µãÊ±µÄ±àÂëÆ÷µÄ???
+    int16_t CLOUD_STD; //!<è¯¥äº‘å°åœ¨æŒ‡å‘åŸç‚¹æ—¶çš„ç¼–ç å™¨çš„???
 
     int16_t LastTorque;                  //!<??????????
-    float LastSpeed;                     //!<?????ËÙ¶È(????????)
+    float LastSpeed;                     //!<?????é€Ÿåº¦(????????)
     int16_t LastPosition;                //!<??????????(????????)
-    float Gyro_LastSpeed;                //!<?????ËÙ¶È(ÍÓÂİÒÇ)
-    float Gyro_LastPosition;             //!<??????????(ÍÓÂİÒÇ)
-    float max = 99999999999;             //!<½Ç¶È×î????
-    float min = -99999999999;            //!<½Ç¶È×î????
-    virtual void update(uint8_t Data[]); //!<Ö±½ÓDataÊı×éµÄupdateº¯Êı
-    virtual void Handle(void);           //!<Êı¾İ´¦Àíº¯Êı£¬ÓÃÓÚÅĞ???×´Ì¬£¬?????PID
-    virtual void Speed_Run(void);        //!<Ê¹ÓÃËÙ¶È??????¶¨µç??? ÎªPIDÔËËã??????
-    virtual void Position_Run(void);     //!<Ê¹ÓÃÎ»ÖÃ??????¶¨µç??? ÎªPIDÔËËã??????
+    float Gyro_LastSpeed;                //!<?????é€Ÿåº¦(é™€èºä»ª)
+    float Gyro_LastPosition;             //!<??????????(é™€èºä»ª)
+    float max = 99999999999;             //!<è§’åº¦æœ€????
+    float min = -99999999999;            //!<è§’åº¦æœ€????
+    virtual void update(uint8_t Data[]); //!<ç›´æ¥Dataæ•°ç»„çš„updateå‡½æ•°
+    virtual void Handle(void);           //!<æ•°æ®å¤„ç†å‡½æ•°ï¼Œç”¨äºåˆ¤???çŠ¶æ€ï¼Œ?????PID
+    virtual void Speed_Run(void);        //!<ä½¿ç”¨é€Ÿåº¦??????å®šç”µ??? ä¸ºPIDè¿ç®—??????
+    virtual void Position_Run(void);     //!<ä½¿ç”¨ä½ç½®??????å®šç”µ??? ä¸ºPIDè¿ç®—??????
 };
-class softcloud : public cloud ///??????³ÌÔÆÌ¨Àà for 6020
+class softcloud : public cloud ///??????ç¨‹äº‘å°ç±» for 6020
 {
 public:
-    float TargetAngle;             //!<¸ù¾İ???????????Ëã³öµÄÕæÊµ???¶È
-    int32_t Soft_RealPosition = 0; //!<???ÕæÊµ???³Ì£¬ÕâÀïÊµ¼ÊÒâÒå???ÔÆÌ¨???¹ıµÄÈ¦Êı
-    int32_t Soft_TargetPosition;   //!<??????±êÂ·³Ì£¬Êµ¼ÊÒâÒåÎªÂÖ???????µÄÈ¦???
+    float TargetAngle;             //!<æ ¹æ®???????????ç®—å‡ºçš„çœŸå®???åº¦
+    int32_t Soft_RealPosition = 0; //!<???çœŸå®???ç¨‹ï¼Œè¿™é‡Œå®é™…æ„ä¹‰???äº‘å°???è¿‡çš„åœˆæ•°
+    int32_t Soft_TargetPosition;   //!<??????æ ‡è·¯ç¨‹ï¼Œå®é™…æ„ä¹‰ä¸ºè½®???????çš„åœˆ???
 
-    softcloud() : cloud() {} //±ÜÃâÔÚ¹¹Ôì¿Õ¶ÔÏóÊ±²»³É¹¦
+    softcloud() : cloud() {} //é¿å…åœ¨æ„é€ ç©ºå¯¹è±¡æ—¶ä¸æˆåŠŸ
     softcloud(uint8_t can_num,
               uint16_t _can_id,
               int16_t _CLOUD_STD,
@@ -280,34 +280,34 @@ public:
               pid *G_Out,
               float *SpeedSource = NULL,
               float *PositionSource = NULL)
-        : cloud(can_num, _can_id, _CLOUD_STD, motor_type, PID_I, PID_O, G_In, G_Out, SpeedSource, PositionSource), SOFTCLOUD_STD(_CLOUD_STD) {} //!<¹¹Ôìº¯Êı£¬Ö¸ÕëÖ¸ÏòÎ»ÖÃ»òËÙ¶È???
-    void Angle_Set(float);                                                                                                                      //!<ÉèÖÃ???³ÌÄ¿???????
+        : cloud(can_num, _can_id, _CLOUD_STD, motor_type, PID_I, PID_O, G_In, G_Out, SpeedSource, PositionSource), SOFTCLOUD_STD(_CLOUD_STD) {} //!<æ„é€ å‡½æ•°ï¼ŒæŒ‡é’ˆæŒ‡å‘ä½ç½®æˆ–é€Ÿåº¦???
+    void Angle_Set(float);                                                                                                                      //!<è®¾ç½®???ç¨‹ç›®???????
 private:
-    virtual void Handle(void);           //!<Êı¾İ´¦Àíº¯Êı£¬ÓÃÓÚÅĞ???×´Ì¬£¬?????PID
-    virtual void update(uint8_t Data[]); //!<Ö±½ÓDataÊı×éµÄupdateº¯Êı
+    virtual void Handle(void);           //!<æ•°æ®å¤„ç†å‡½æ•°ï¼Œç”¨äºåˆ¤???çŠ¶æ€ï¼Œ?????PID
+    virtual void update(uint8_t Data[]); //!<ç›´æ¥Dataæ•°ç»„çš„updateå‡½æ•°
     virtual void Position_Run(void);
-    int16_t SOFTCLOUD_STD;    //!<¸ÃÔÆÌ¨ÔÚÖ¸ÏòÔ­µãÊ±µÄ±àÂëÆ÷µÄ???
-    uint8_t running_flag = 0; //!<ÓÃÀ´±£Ö¤???Ò»´ÎµÄ??????³Ì²»Í»±ä ÒòÎª¿ª»úÊ±LastPosition???¶¨ÊÇ0???ÄÜ»áµ¼ÖÂÒ»???????
-    //		float max=99999999999;//!<½Ç¶È×î????
-    //		float min=-99999999999;//!<½Ç¶È×î????
+    int16_t SOFTCLOUD_STD;    //!<è¯¥äº‘å°åœ¨æŒ‡å‘åŸç‚¹æ—¶çš„ç¼–ç å™¨çš„???
+    uint8_t running_flag = 0; //!<ç”¨æ¥ä¿è¯???ä¸€æ¬¡çš„??????ç¨‹ä¸çªå˜ å› ä¸ºå¼€æœºæ—¶LastPosition???å®šæ˜¯0???èƒ½ä¼šå¯¼è‡´ä¸€???????
+    //		float max=99999999999;//!<è§’åº¦æœ€????
+    //		float min=-99999999999;//!<è§’åº¦æœ€????
 };
 /** 
-* @brief  µ×ÅÌµÄ¿ØÖÆÀàĞÍ£¬´ø¹¦ÂÊ¿Ø???
-* @par ÈÕÖ¾ 
-*   2019???3???9???16:43:30 WMD ÒòÎªĞèÒªÔÚËÙ¶È???ºÍµçÁ÷»·Ö®¼ä²åÈë¹¦ÂÊÏŞÖÆµ÷Õûº¯Êı£¬¾­¹ı¿¼ÂÇÖØĞÂ???¸ÄÁËÒ»?????¼Ü£¬½«µç?????Ç¶Èëµ×ÅÌÀàĞÍ£¬¶øÆÕÍ¨µç»úÀàĞÍ²»Éæ¼°µçÁ÷???
+* @brief  åº•ç›˜çš„æ§åˆ¶ç±»å‹ï¼Œå¸¦åŠŸç‡æ§???
+* @par æ—¥å¿— 
+*   2019???3???9???16:43:30 WMD å› ä¸ºéœ€è¦åœ¨é€Ÿåº¦???å’Œç”µæµç¯ä¹‹é—´æ’å…¥åŠŸç‡é™åˆ¶è°ƒæ•´å‡½æ•°ï¼Œç»è¿‡è€ƒè™‘é‡æ–°???æ”¹äº†ä¸€?????æ¶ï¼Œå°†ç”µ?????åµŒå…¥åº•ç›˜ç±»å‹ï¼Œè€Œæ™®é€šç”µæœºç±»å‹ä¸æ¶‰åŠç”µæµ???
 */
 class chassis
 {
 public:
-    float extra_power = 0; //ÀûÓÃ»º³åÄÜÁ¿¼ÆËã³öµÄ??????????
-    pid *Pid_extra_power;  //ÀûÓÃ»º³åÄÜÁ¿¼ÆËã?????¹¦ÂÊµÄpidµÄÖ¸???
+    float extra_power = 0; //åˆ©ç”¨ç¼“å†²èƒ½é‡è®¡ç®—å‡ºçš„??????????
+    pid *Pid_extra_power;  //åˆ©ç”¨ç¼“å†²èƒ½é‡è®¡ç®—?????åŠŸç‡çš„pidçš„æŒ‡???
 
-    static chassis *point; //!<Ö¸Ïòµ±Ç°ÒÑÉùÃ÷µÄµ×ÅÌ£¬Ò»???¹¤³Ì????????Ò»???µ×ÅÌµÄ´æ???  ¸ÃÖ¸ÕëÓÃÓÚÈÕºóÍĞ???????
-    //pid *Turn_PID;  //!<???ÍäPID
-    void Run(void);                            //!<È±Ê¡²ÎÊı ÒÔÉÏ´ÎµÄÄ£Ê½¿ØÖÆµ×ÅÌ
-    void Run(float Vx, float Vy, float Omega); //!<ÒÔËÙ¶È¿ØÖÆµ×ÅÌ
+    static chassis *point; //!<æŒ‡å‘å½“å‰å·²å£°æ˜çš„åº•ç›˜ï¼Œä¸€???å·¥ç¨‹????????ä¸€???åº•ç›˜çš„å­˜???  è¯¥æŒ‡é’ˆç”¨äºæ—¥åæ‰˜???????
+    //pid *Turn_PID;  //!<???å¼¯PID
+    void Run(void);                            //!<ç¼ºçœå‚æ•° ä»¥ä¸Šæ¬¡çš„æ¨¡å¼æ§åˆ¶åº•ç›˜
+    void Run(float Vx, float Vy, float Omega); //!<ä»¥é€Ÿåº¦æ§åˆ¶åº•ç›˜
     void Safe(void);                           //!??????????
-    softmotor *Motor[4];                       //!<ËÄ¸ö???×ÓµÄµç»ú¶ÔÏó
+    softmotor *Motor[4];                       //!<å››ä¸ª???å­çš„ç”µæœºå¯¹è±¡
     chassis(uint8_t can_num,
             uint16_t First_can_id,
             Motor_t *motor_type,
@@ -315,27 +315,27 @@ public:
             //pid* turnpid=NULL,
             pid *current_pid = NULL,
             int16_t *CurrentSource = NULL,
-            pid *extra_power_pid = NULL); //!<Ö±½Ó¿ØÖÆµ×ÅÌµÄ¹¹Ôìº¯???
-    void Handle(void);                    //!<½»ÓÉCANSend?????µÄµ×ÅÌ???Àíº¯Êı
+            pid *extra_power_pid = NULL); //!<ç›´æ¥æ§åˆ¶åº•ç›˜çš„æ„é€ å‡½???
+    void Handle(void);                    //!<äº¤ç”±CANSend?????çš„åº•ç›˜???ç†å‡½æ•°
 private:
-    RunState_t RunState;                            //!<µ±Ç°µ×ÅÌ????
-    pid *Pid_spe[4];                                //!<Ö¸ÏòËÄ¸öµç»úËÙ¶È»·pidµÄÖ¸???
-    pid *Pid_current[4];                            //!<Ö¸ÏòËÄ¸öµç»úµçÁ÷»·pidµÄÖ¸???
-    int16_t *CurrentSource[4];                      //!<Ö¸ÏòµçÁ÷ÕæÊµÊı¾İ???
-    float Last_Vx = 0, Last_Vy = 0, Last_Omega = 0; //!<Ö®Ç°µÄÖµ£¬ÓÃÓÚÈ±Ê¡²ÎÊıÊ±µÄÊ¹ÓÃ
+    RunState_t RunState;                            //!<å½“å‰åº•ç›˜????
+    pid *Pid_spe[4];                                //!<æŒ‡å‘å››ä¸ªç”µæœºé€Ÿåº¦ç¯pidçš„æŒ‡???
+    pid *Pid_current[4];                            //!<æŒ‡å‘å››ä¸ªç”µæœºç”µæµç¯pidçš„æŒ‡???
+    int16_t *CurrentSource[4];                      //!<æŒ‡å‘ç”µæµçœŸå®æ•°æ®???
+    float Last_Vx = 0, Last_Vy = 0, Last_Omega = 0; //!<ä¹‹å‰çš„å€¼ï¼Œç”¨äºç¼ºçœå‚æ•°æ—¶çš„ä½¿ç”¨
 };
-class chassiscontrol //µ×ÅÌ¿ØÖÆÀàforÔÆÌ¨
+class chassiscontrol //åº•ç›˜æ§åˆ¶ç±»foräº‘å°
 {
 public:
     CAN_HandleTypeDef *Canhandle;
     uint16_t Chassis_ID;
-    chassiscontrol(CAN_HandleTypeDef *canhandle, uint16_t chassis_id); //¹¹Ôìº¯???
-    void Run(void);                                                    //!<È±Ê¡²ÎÊı ÒÔÉÏ´ÎµÄÄ£Ê½¿ØÖÆµ×ÅÌ
+    chassiscontrol(CAN_HandleTypeDef *canhandle, uint16_t chassis_id); //æ„é€ å‡½???
+    void Run(void);                                                    //!<ç¼ºçœå‚æ•° ä»¥ä¸Šæ¬¡çš„æ¨¡å¼æ§åˆ¶åº•ç›˜
     void Run(int16_t Vx, int16_t Vy, int16_t Omega, uint8_t Mode,
              uint8_t All_flags = 0);
-    void Safe(void); //!µ×ÅÌ°²È«Ä£Ê½
+    void Safe(void); //!åº•ç›˜å®‰å…¨æ¨¡å¼
 private:
-    int16_t Last_Vx = 0, Last_Vy = 0, Last_Omega = 0; //Ö®Ç°µÄÖµ£¬ÓÃÓÚÈ±Ê¡²ÎÊıÊ±µÄÊ¹ÓÃ
+    int16_t Last_Vx = 0, Last_Vy = 0, Last_Omega = 0; //ä¹‹å‰çš„å€¼ï¼Œç”¨äºç¼ºçœå‚æ•°æ—¶çš„ä½¿ç”¨
     uint8_t Last_Mode = 22;
 };
 

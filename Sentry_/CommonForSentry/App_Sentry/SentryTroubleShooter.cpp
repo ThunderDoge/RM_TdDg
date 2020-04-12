@@ -1,8 +1,8 @@
 /** -- Encoding = GB2312 -- */
 /**
   * @file  SentryTroubleShooter.cpp
-  * @brief    SentryTroubleShooter ÉÚ±ø¹ÊÕÏ×ÔÕï¶Ï¹¦ÄÜ£¬ÊÔ×÷ĞÍ01ºÅ
-  * @details  Ê¹ÓÃRGB
+  * @brief    SentryTroubleShooter å“¨å…µæ•…éšœè‡ªè¯Šæ–­åŠŸèƒ½ï¼Œè¯•ä½œå‹01å·
+  * @details  ä½¿ç”¨RGB
   * @author   ThunderDoge
   * @date     2019/12/25
   * @version  v0.0.1

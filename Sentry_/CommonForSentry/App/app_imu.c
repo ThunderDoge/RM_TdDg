@@ -1,74 +1,74 @@
 /** 
 * @file         app_imu.c
-* @brief        Ê¹ÓÃicm20602×÷Îªapp_imu_data
+* @brief        ä½¿ç”¨icm20602ä½œä¸ºapp_imu_data
 * @details  
 * @author      Asn
-* @date     2019Äê11ÔÂ17ÈÕ
+* @date     2019å¹´11æœˆ17æ—¥
 * @version  
-* @par Copyright (c):  RM2020µç¿Ø
+* @par Copyright (c):  RM2020ç”µæ§
 *  
-* @par ÈÕÖ¾
-*	2019.11.17 Asn V1.0 ÒÆÖ²mpu9250¿â
+* @par æ—¥å¿—
+*	2019.11.17 Asn V1.0 ç§»æ¤mpu9250åº“
 
-*						 Asn V1.1 ¸ü¸ÄmahonyËã·¨µÄPI¿ØÖÆ²ÎÊı
+*						 Asn V1.1 æ›´æ”¹mahonyç®—æ³•çš„PIæ§åˆ¶å‚æ•°
 
-*						 Asn V1.2 ·¢ÏÖÖ®Ç°ÍÓÂİÒÇÓ²¼şÂË²¨²ÎÊıÓĞ´íÎó£¬ÒÑĞŞÕı
+*						 Asn V1.2 å‘ç°ä¹‹å‰é™€èºä»ªç¡¬ä»¶æ»¤æ³¢å‚æ•°æœ‰é”™è¯¯ï¼Œå·²ä¿®æ­£
 
-*	2019.11.28 Asn V2.0 ÏÖÒÑ¼ÓÈë´ÅÁ¦¼Æ£¬²¢ÓÅ»¯ÁËËã·¨£¬¼Ó¿ìÁË³õÊ¼»¯ÊÕÁ²ËÙ¶È
+*	2019.11.28 Asn V2.0 ç°å·²åŠ å…¥ç£åŠ›è®¡ï¼Œå¹¶ä¼˜åŒ–äº†ç®—æ³•ï¼ŒåŠ å¿«äº†åˆå§‹åŒ–æ”¶æ•›é€Ÿåº¦
 
-*						 Asn V2.1 ÕıÊ½¸üÃûapp_filterÎªapp_math£¬²¢°ÑlimitºÍinvsqrtÒÆ½øÈ¥
+*						 Asn V2.1 æ­£å¼æ›´åapp_filterä¸ºapp_mathï¼Œå¹¶æŠŠlimitå’Œinvsqrtç§»è¿›å»
 
-*	2019.12.6  Asn V2.2 ÓÅ»¯PI¿ØÖÆÆ÷²ÎÊı£¬²¢¼ÓÈëÎó²îÔ¤´¦Àí£¬µ±¼ÓËÙ¶ÈÄ£Á¿¹ı´ó»ò¹ıĞ¡¶¼ÉáÆúÎó²î
+*	2019.12.6  Asn V2.2 ä¼˜åŒ–PIæ§åˆ¶å™¨å‚æ•°ï¼Œå¹¶åŠ å…¥è¯¯å·®é¢„å¤„ç†ï¼Œå½“åŠ é€Ÿåº¦æ¨¡é‡è¿‡å¤§æˆ–è¿‡å°éƒ½èˆå¼ƒè¯¯å·®
 
-*	2019.12.11 Asn V2.3 Ôö¼ÓÁËsoft½Ç¶È½âËãÌõ¼ş£¬±ÜÃâÒ»¿ªÊ¼ÊÕÁ²¹ı³ÌÖĞÀÛ»ıÈ¦Êı£¬Ôö¼ÓÁËÌõ¼ş±àÒë£¬½â¾ö²»ÓÃ´ÅÁ¦¼ÆµÄ¾¯¸æ
-* 2019.12.24 Asn V2.4 ¸ü¸ÄÁË¼ÓËÙ¶È¼ÆÂË²¨²ÎÊı
+*	2019.12.11 Asn V2.3 å¢åŠ äº†softè§’åº¦è§£ç®—æ¡ä»¶ï¼Œé¿å…ä¸€å¼€å§‹æ”¶æ•›è¿‡ç¨‹ä¸­ç´¯ç§¯åœˆæ•°ï¼Œå¢åŠ äº†æ¡ä»¶ç¼–è¯‘ï¼Œè§£å†³ä¸ç”¨ç£åŠ›è®¡çš„è­¦å‘Š
+* 2019.12.24 Asn V2.4 æ›´æ”¹äº†åŠ é€Ÿåº¦è®¡æ»¤æ³¢å‚æ•°
 */  
 #include "app_imu.h"
 #include "app_math.h"
 #include "bsp_spi.h"
 #include "app_sentry_check_device.hpp"
 
-// ÀëÏß¼ì²â ½á¹¹Ìå
+// ç¦»çº¿æ£€æµ‹ ç»“æ„ä½“
 struct CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,100);
 
  
-#define USE_LPF           //Ê¹ÓÃµÍÍ¨ÂË²¨
+#define USE_LPF           //ä½¿ç”¨ä½é€šæ»¤æ³¢
 #define MAG_OFFSET
-#define USE_OFFSET				//Ê¹ÓÃÁãµãĞ£Õı
-#define DYNAMIC_OFFSET    //Ê¹ÓÃ¶¯Ì¬Ğ£ÕıÁãµã£¬Õâ¸ö¿ÉÒÔÊ¹ÓÃ£¬imu»¹ÊÇÖ÷ÒªÊÜÉÏÃæµÄÓ°Ïì
-// Ğèµ÷ÕûµÄ±äÁ¿,µ÷Íê¿ÉÒÔÊ¹ÓÃstatic 
+#define USE_OFFSET				//ä½¿ç”¨é›¶ç‚¹æ ¡æ­£
+#define DYNAMIC_OFFSET    //ä½¿ç”¨åŠ¨æ€æ ¡æ­£é›¶ç‚¹ï¼Œè¿™ä¸ªå¯ä»¥ä½¿ç”¨ï¼Œimuè¿˜æ˜¯ä¸»è¦å—ä¸Šé¢çš„å½±å“
+// éœ€è°ƒæ•´çš„å˜é‡,è°ƒå®Œå¯ä»¥ä½¿ç”¨static 
 #ifdef USE_MAG
-float so3_comp_params_Kp = 2.0f ;            //< ËÄÔªÊıĞ£ÕıPI²ÎÊı
+float so3_comp_params_Kp = 2.0f ;            //< å››å…ƒæ•°æ ¡æ­£PIå‚æ•°
 float so3_comp_params_Ki = 0.05f; 
 float so3_comp_params_mKp = 1.6f; 
 #else
-float so3_comp_params_Kp = 2.35f ;            //< ËÄÔªÊıĞ£ÕıPI²ÎÊı
+float so3_comp_params_Kp = 2.35f ;            //< å››å…ƒæ•°æ ¡æ­£PIå‚æ•°
 float so3_comp_params_Ki = 0.05f; 
 #endif
-uint16_t Zero_Threshold[3] = {100,100,100};  //< ÓÃÓÚÁãµãĞ£Õı£¬ÅĞ¶ÏÊı¾İÊÇ·ñÎª¾²Ö¹Êı¾İ------------------------> 100×ã¹»´óÁË£¬×îºÃ¿´Ò»ÏÂÔ­Ê¼Êı¾İ£¬¿´¿´¹»²»¹»£¨ÆäÊµÓĞµã´ó£©<--------------------½¨Òé¸ü¸Ä£¬ÌáÉı×Ô¼ìÒªÇó
-float  Dynamic_Zero_Thre = 4.0f;             //< ¶¯Ì¬Ğ£ÕıµÄÁãµããĞÖµ
-float Offset_Coeff[3] = {1.0f,1.0f,1.0f};    //< ¶ÔÁ¿³Ì½øĞĞĞ£Õı£¬½ÇËÙ¶ÈĞ£ÕıÏµÊı           £¡£¡£¡£¡£¡£¡ÔÚ´Ë±ê×¼»¯Á¿³Ì£¬¼´×ªÒ»¸öÖ±½Ç£¬ÏÔÊ¾90¶ÈµÄĞ§¹û£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡
-float manualOffsetGyro[3] = {0,0,0};         //< ÊÖ¶¯Ìí¼ÓĞ£ÕıÖµ£¬½â¾öÁãµãÎó²îÔÚ+-1Ö®¼äµÄÎÊÌâ£¬ÒòÎªÔ­Ê¼Êı¾İÊÇint16_tÀàĞÍ£¬Õâ¸ö²ÎÊıÄÜ½â¾öÓĞ¹æÂÉµÄÆ¯ÒÆ,×·ÇóÍêÃÀµÄ¿ÉÒÔÊÔÊÔ
+uint16_t Zero_Threshold[3] = {100,100,100};  //< ç”¨äºé›¶ç‚¹æ ¡æ­£ï¼Œåˆ¤æ–­æ•°æ®æ˜¯å¦ä¸ºé™æ­¢æ•°æ®------------------------> 100è¶³å¤Ÿå¤§äº†ï¼Œæœ€å¥½çœ‹ä¸€ä¸‹åŸå§‹æ•°æ®ï¼Œçœ‹çœ‹å¤Ÿä¸å¤Ÿï¼ˆå…¶å®æœ‰ç‚¹å¤§ï¼‰<--------------------å»ºè®®æ›´æ”¹ï¼Œæå‡è‡ªæ£€è¦æ±‚
+float  Dynamic_Zero_Thre = 4.0f;             //< åŠ¨æ€æ ¡æ­£çš„é›¶ç‚¹é˜ˆå€¼
+float Offset_Coeff[3] = {1.0f,1.0f,1.0f};    //< å¯¹é‡ç¨‹è¿›è¡Œæ ¡æ­£ï¼Œè§’é€Ÿåº¦æ ¡æ­£ç³»æ•°           ï¼ï¼ï¼ï¼ï¼ï¼åœ¨æ­¤æ ‡å‡†åŒ–é‡ç¨‹ï¼Œå³è½¬ä¸€ä¸ªç›´è§’ï¼Œæ˜¾ç¤º90åº¦çš„æ•ˆæœï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+float manualOffsetGyro[3] = {0,0,0};         //< æ‰‹åŠ¨æ·»åŠ æ ¡æ­£å€¼ï¼Œè§£å†³é›¶ç‚¹è¯¯å·®åœ¨+-1ä¹‹é—´çš„é—®é¢˜ï¼Œå› ä¸ºåŸå§‹æ•°æ®æ˜¯int16_tç±»å‹ï¼Œè¿™ä¸ªå‚æ•°èƒ½è§£å†³æœ‰è§„å¾‹çš„æ¼‚ç§»,è¿½æ±‚å®Œç¾çš„å¯ä»¥è¯•è¯•
 
-static int16_t Flash_Val[4];                        //< [0]¼ÇÂ¼FlashĞ´ÈëµÄ´ÎÊı£¬[1-3]ÎªÍÓÂİÒÇÁãµãÖµ
+static int16_t Flash_Val[4];                        //< [0]è®°å½•Flashå†™å…¥çš„æ¬¡æ•°ï¼Œ[1-3]ä¸ºé™€èºä»ªé›¶ç‚¹å€¼
 static float app_imu_OffsetVal[3];
-/* ¹¦ÄÜĞÔº¯Êıºê¶¨Òå */
-#define MICROS() 1000*HAL_GetTick()  //¼ÆÊ±£¬µ¥Î»us,³ı1000000ÊÇÃë
+/* åŠŸèƒ½æ€§å‡½æ•°å®å®šä¹‰ */
+#define MICROS() 1000*HAL_GetTick()  //è®¡æ—¶ï¼Œå•ä½us,é™¤1000000æ˜¯ç§’
 
 
-/* ±äÁ¿ºê¶¨Òå */
-#define SAMPLE_FREQUENCY 1000     //²ÉÑùÆµÂÊ
-#define GYRO_CUT_OFF_FREQUENCY 40    //½ØÖ¹ÆµÂÊ£¬ÕâÀïÒª¸ù¾İÇé¿öºÍĞèÇó¸ü¸Ä  !!!!!!!!!!!!!!Íù½ìÓĞ°Ñ½ØÖ¹ÆµÂÊ¸ÄµÄÌØ±ğĞ¡µÄ£¨10×óÓÒ£©£¬µ×ÅÌÊµ²âÊÕÁ²ºÜÂı£¬»áÔì³É³¬µ÷£¬¹Ê¸Ä´ó¡£¹ı´óµÄ»°¹ıÂË¸ßÆµÔëÉùµÄÄÜÁ¦²î
+/* å˜é‡å®å®šä¹‰ */
+#define SAMPLE_FREQUENCY 1000     //é‡‡æ ·é¢‘ç‡
+#define GYRO_CUT_OFF_FREQUENCY 40    //æˆªæ­¢é¢‘ç‡ï¼Œè¿™é‡Œè¦æ ¹æ®æƒ…å†µå’Œéœ€æ±‚æ›´æ”¹  !!!!!!!!!!!!!!å¾€å±Šæœ‰æŠŠæˆªæ­¢é¢‘ç‡æ”¹çš„ç‰¹åˆ«å°çš„ï¼ˆ10å·¦å³ï¼‰ï¼Œåº•ç›˜å®æµ‹æ”¶æ•›å¾ˆæ…¢ï¼Œä¼šé€ æˆè¶…è°ƒï¼Œæ•…æ”¹å¤§ã€‚è¿‡å¤§çš„è¯è¿‡æ»¤é«˜é¢‘å™ªå£°çš„èƒ½åŠ›å·®
 #define ACCE_CUT_OFF_FREQUENCY 20
 #define MAG_CUT_OFF_FREQUENCY  20
-#define SELF_TEST_T  5           //×Ô¼ìÊ±¼ä£¬µ¥Î»Ãë
-#define G 9.80665f                           //< ÖØÁ¦¼ÓËÙ¶È
-#define TORADIAN   0.0174533f                //< ×ª»»Îª»¡¶ÈÖÆ£¬ËÄÔªÊıµÄ×ËÌ¬½âËãĞèÒªÊ¹ÓÃ ¦Ğ/180
-#define TOANGLE    57.2957795f               //< ×îºó½âËã³öÀ´µÄ»¡¶ÈÖÆ×ª»»Îª½Ç¶È
-#define ACC_RESOLUTION  (16.0f*G/32768.0f)    //< ¼ÓËÙ¶È¼Æ·Ö±æÂÊ m/s^2/LSb
-#define GYRO_RESOLUTION (2000.0f/32768.0f)   //< ÍÓÂİÒÇ·Ö±æÂÊ   dps/LSb 
-#define MAG_RESOLUTION  0.3f*0.001f          //< ´ÅÁ¦¼Æ·Ö±æÂÊ   uT/LSb
-/* ½á¹¹Ìå */
+#define SELF_TEST_T  5           //è‡ªæ£€æ—¶é—´ï¼Œå•ä½ç§’
+#define G 9.80665f                           //< é‡åŠ›åŠ é€Ÿåº¦
+#define TORADIAN   0.0174533f                //< è½¬æ¢ä¸ºå¼§åº¦åˆ¶ï¼Œå››å…ƒæ•°çš„å§¿æ€è§£ç®—éœ€è¦ä½¿ç”¨ Ï€/180
+#define TOANGLE    57.2957795f               //< æœ€åè§£ç®—å‡ºæ¥çš„å¼§åº¦åˆ¶è½¬æ¢ä¸ºè§’åº¦
+#define ACC_RESOLUTION  (16.0f*G/32768.0f)    //< åŠ é€Ÿåº¦è®¡åˆ†è¾¨ç‡ m/s^2/LSb
+#define GYRO_RESOLUTION (2000.0f/32768.0f)   //< é™€èºä»ªåˆ†è¾¨ç‡   dps/LSb 
+#define MAG_RESOLUTION  0.3f*0.001f          //< ç£åŠ›è®¡åˆ†è¾¨ç‡   uT/LSb
+/* ç»“æ„ä½“ */
 MPU_DEF app_imu_data;
 
 LPF2 Acc_LPF[3];
@@ -78,8 +78,8 @@ LPF2 Mag_LPF[3];
 #endif
 
 /** 
-* @brief   ÁãµãÖµ¼ÆËã
-* @remarks ÓÃÓÚÁãµãĞ£Õı£¬²ÉÑù¾ùÖµ,Ö»¶ÔÍÓÂİÒÇ½øĞĞ
+* @brief   é›¶ç‚¹å€¼è®¡ç®—
+* @remarks ç”¨äºé›¶ç‚¹æ ¡æ­£ï¼Œé‡‡æ ·å‡å€¼,åªå¯¹é™€èºä»ªè¿›è¡Œ
 */
 uint8_t app_imu_Init(void){
 
@@ -94,11 +94,11 @@ uint8_t app_imu_Init(void){
 	#endif		
 	}
 #endif
-	static uint8_t flag = 1;  ///<²ÉÑù±êÖ¾Î»
-	static float tick;        ///<ÓÃÓÚ³¬Ê±¼ÆÊı
+	static uint8_t flag = 1;  ///<é‡‡æ ·æ ‡å¿—ä½
+	static float tick;        ///<ç”¨äºè¶…æ—¶è®¡æ•°
 	while(flag){
 		tick = MICROS();
-		for(uint16_t num=0;num<ZERO_SAMPLE_NUM;num++){   /*Áãµã²ÉÑù*/
+		for(uint16_t num=0;num<ZERO_SAMPLE_NUM;num++){   /*é›¶ç‚¹é‡‡æ ·*/
 			app_imu_data.original.Gyro[0] = bsp_spi_ReadReg(MPUREG_GYRO_XOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_XOUT_L);
 			app_imu_data.original.Gyro[1] = bsp_spi_ReadReg(MPUREG_GYRO_YOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_YOUT_L);
 			app_imu_data.original.Gyro[2] = bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_L);		
@@ -111,18 +111,18 @@ uint8_t app_imu_Init(void){
 					for(uint8_t j=0;j<3;j++){
 					  app_imu_data.offset.Gyro[j] = Flash_Val[j+1]/300.0f;
 					  app_imu_data.isThisTimeInvalid[j] = 1;
-						app_imu_data.offset.Cnt[j] = 0;      // Çå³ı¼ÆÊı
+						app_imu_data.offset.Cnt[j] = 0;      // æ¸…é™¤è®¡æ•°
 					}
-					return 0;   //5sÄÚ³õÊ¼»¯²»³É¹¦¾ÍÊ¹ÓÃFlashÄÚ´æµÄÀúÊ·ÁãµãÖµ
+					return 0;   //5så†…åˆå§‹åŒ–ä¸æˆåŠŸå°±ä½¿ç”¨Flashå†…å­˜çš„å†å²é›¶ç‚¹å€¼
 				}
 			}
 			for(uint8_t k=0;k<3;k++){
-				app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]] = app_imu_data.original.Gyro[k]; //<Áãµã²ÉÑùÖµ
-				app_imu_data.offset.Sum[k] += app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]];   //<Áãµã²ÉÑùºÍ
-				app_imu_data.offset.Cnt[k]++;                                          //<²ÉÑù¼ÆÊı
+				app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]] = app_imu_data.original.Gyro[k]; //<é›¶ç‚¹é‡‡æ ·å€¼
+				app_imu_data.offset.Sum[k] += app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]];   //<é›¶ç‚¹é‡‡æ ·å’Œ
+				app_imu_data.offset.Cnt[k]++;                                          //<é‡‡æ ·è®¡æ•°
 			}	
 		}	
-		if (unstable_num > 300){   /*²ÉÑùÊı¾İÎŞĞ§*/  
+		if (unstable_num > 300){   /*é‡‡æ ·æ•°æ®æ— æ•ˆ*/  
 			unstable_num = 0;
 			for(uint8_t i=0;i<3;i++){
 				app_imu_data.offset.Sum[i] = 0;
@@ -130,9 +130,9 @@ uint8_t app_imu_Init(void){
 			}					 
 		}
 		else{
-			for(uint8_t i=0;i<3;i++){  /*²ÉÑùÊı¾İÓĞĞ§*/
+			for(uint8_t i=0;i<3;i++){  /*é‡‡æ ·æ•°æ®æœ‰æ•ˆ*/
 				app_imu_OffsetVal[i] = app_imu_data.offset.Gyro[i] = app_imu_data.offset.Sum[i]/ZERO_SAMPLE_NUM;
-				Flash_Val[i+1] = (int16_t)app_imu_data.offset.Gyro[i]*300;  //¸üĞÂflashµÄÖµ£¬¡Á300µÄÄ¿µÄÊÇÈÃÊıÖµ¸ü×¼Ò»µã£¬±Ï¾¹½«float×ª³ÉÁËint16_t´æÆğÀ´µÄ			
+				Flash_Val[i+1] = (int16_t)app_imu_data.offset.Gyro[i]*300;  //æ›´æ–°flashçš„å€¼ï¼ŒÃ—300çš„ç›®çš„æ˜¯è®©æ•°å€¼æ›´å‡†ä¸€ç‚¹ï¼Œæ¯•ç«Ÿå°†floatè½¬æˆäº†int16_tå­˜èµ·æ¥çš„			
 				app_imu_data.offset.Cnt[i] = 0;
 			}
 			Flash_Val[0]++;		
@@ -143,11 +143,11 @@ uint8_t app_imu_Init(void){
 }
 
 /** 
-* @brief   ¶ÁÈ¡Ô­Ê¼Êı¾İºÍµ¥Î»»»Ëã
+* @brief   è¯»å–åŸå§‹æ•°æ®å’Œå•ä½æ¢ç®—
 * @remarks 
 */
 #ifdef USE_MAG
-int16_t Mag_max[2];  //Æ½ÃæĞ£×¼·¨£¬´ÅÁ¦¼ÆÖ»Ğ£Õıx,ºÍy
+int16_t Mag_max[2];  //å¹³é¢æ ¡å‡†æ³•ï¼Œç£åŠ›è®¡åªæ ¡æ­£x,å’Œy
 int16_t Mag_min[2];
 #endif
 static void MPU_Read_Raw(void)
@@ -158,7 +158,7 @@ static void MPU_Read_Raw(void)
 #endif	
 	static uint8_t mpu_data_buf[14];
 	
-	/* ¶ÁÈ¡¼ÓËÙ¶È¼Æ&ÍÓÂİÒÇ */
+	/* è¯»å–åŠ é€Ÿåº¦è®¡&é™€èºä»ª */
 	bsp_spi_ReadRegs(MPUREG_ACCEL_XOUT_H,mpu_data_buf,14);      
 	app_imu_data.original.Accel[0] = (mpu_data_buf[0]<<8 | mpu_data_buf[1]); 
 	app_imu_data.original.Accel[1] = (mpu_data_buf[2]<<8 | mpu_data_buf[3]);
@@ -169,16 +169,16 @@ static void MPU_Read_Raw(void)
 	app_imu_data.original.Gyro[1] = (mpu_data_buf[10]<<8 | mpu_data_buf[11]);
 	app_imu_data.original.Gyro[2] = (mpu_data_buf[12]<<8 | mpu_data_buf[13]);
 #ifdef USE_MAG	
-	/* ¶ÁÈ¡´ÅÁ¦¼Æ */
+	/* è¯»å–ç£åŠ›è®¡ */
 	bsp_spi_MagReads(AK8975_HXL_REG,akm_data,6);
 	bsp_spi_MagTrig();
 	bsp_spi_MagReads(AK8975_ASAX_REG,bsp_spi_MagAsa,3);
 	bsp_spi_MagTrig();
-	//AK8963_ASA[i++] = (s16)((data - 128.0f) / 256.0f + 1.0f) ;	µ÷½ÚĞ£×¼µÄ¹«Ê½
+	//AK8963_ASA[i++] = (s16)((data - 128.0f) / 256.0f + 1.0f) ;	è°ƒèŠ‚æ ¡å‡†çš„å…¬å¼
 	for(uint8_t i=0;i<3;i++)
 		app_imu_data.original.Mag[i] = (akm_data[i*2+1]<<8 | akm_data[i*2]);	
 #ifdef MAG_OFFSET  
-	for(uint8_t i=0;i<2;i++){  //Ë®Æ½Ğ£Õı´ÅÁ¦¼Æ
+	for(uint8_t i=0;i<2;i++){  //æ°´å¹³æ ¡æ­£ç£åŠ›è®¡
 		Mag_max[i] = app_imu_data.original.Mag[i]>Mag_max[i]?app_imu_data.original.Mag[i]:Mag_max[i];
 		Mag_min[i] = app_imu_data.original.Mag[i]<Mag_min[i]?app_imu_data.original.Mag[i]:Mag_min[i];
 		app_imu_data.offset.Mag[i] = (float)(Mag_max[i] + Mag_min[i])/2;
@@ -186,13 +186,13 @@ static void MPU_Read_Raw(void)
 #endif
 #endif	
 	for(uint8_t i=0;i<3;i++){	
-		/* ½øĞĞ¿¨¶ûÂüÂË²¨ */
+		/* è¿›è¡Œå¡å°”æ›¼æ»¤æ³¢ */
 #ifdef USE_KALMAN		
 		app_imu_data.kalman.Accel[i] = Kalman(&AccFilter[i],(float)app_imu_data.original.Accel[i]);
     app_imu_data.kalman.Gyro[i] = Kalman(&GyroFilter[i],(float)(app_imu_data.original.Gyro[i]));	
-    		/* È¡½ÇËÙ¶È */
+    		/* å–è§’é€Ÿåº¦ */
 		app_imu_data.Angle_Rate[i] = (float)(app_imu_data.kalman.Gyro[i]  - app_imu_data.offset.Gyro[i])*Offset_Coeff[i];  //dps		
-		/* µ¥Î»»¯ */
+		/* å•ä½åŒ– */
 #ifdef USE_OFFSET
 		app_imu_data.unitized.Gyro[i] = app_imu_data.Angle_Rate[i]*GYRO_RESOLUTION*TORADIAN;              //rad/s 		
 #else
@@ -209,9 +209,9 @@ static void MPU_Read_Raw(void)
 #ifdef USE_LPF
 		app_imu_data.LPF.Accel[i] = app_math_Lpf2apply(&Acc_LPF[i],(float)app_imu_data.original.Accel[i]);
     app_imu_data.LPF.Gyro[i] = app_math_Lpf2apply(&Gyro_LPF[i],(float)app_imu_data.original.Gyro[i]);
-		/* È¡½ÇËÙ¶È */
-    app_imu_data.Angle_Rate[i] = (float)(app_imu_data.LPF.Gyro[i] - app_imu_data.offset.Gyro[i] + manualOffsetGyro[i])*Offset_Coeff[i];  //16Î»Á¿³Ì£¬Ö»¶ÔÔ­Ê¼Êı¾İ½øĞĞ²¹³¥ºÍÂË²¨´¦Àí,ĞèÒª¸ù¾İ9250¸Ä		
-    /* µ¥Î»»¯ */		
+		/* å–è§’é€Ÿåº¦ */
+    app_imu_data.Angle_Rate[i] = (float)(app_imu_data.LPF.Gyro[i] - app_imu_data.offset.Gyro[i] + manualOffsetGyro[i])*Offset_Coeff[i];  //16ä½é‡ç¨‹ï¼Œåªå¯¹åŸå§‹æ•°æ®è¿›è¡Œè¡¥å¿å’Œæ»¤æ³¢å¤„ç†,éœ€è¦æ ¹æ®9250æ”¹		
+    /* å•ä½åŒ– */		
 #ifdef 	USE_OFFSET  
     app_imu_data.unitized.Gyro[i] = app_imu_data.Angle_Rate[i]*GYRO_RESOLUTION*TORADIAN;           //rad/s 
 #else
@@ -227,23 +227,23 @@ static void MPU_Read_Raw(void)
 #endif		
 #endif	
 #ifdef DYNAMIC_OFFSET		
-		/*¾²Ö¹Ê±£¬¸üĞÂÁãµã*/
+		/*é™æ­¢æ—¶ï¼Œæ›´æ–°é›¶ç‚¹*/
 		if (APP_MATH_ABS(app_imu_data.Angle_Rate[i]) < Dynamic_Zero_Thre && APP_MATH_ABS(app_imu_data.offset.Gyro[i] - app_imu_data.original.lastGyro[i]) < 3){
 			dynamicFlag[i]++;
-			if(dynamicFlag[i] >= 200)  dynamicFlag[i] = 200; //ÏŞÎ»
+			if(dynamicFlag[i] >= 200)  dynamicFlag[i] = 200; //é™ä½
 	  }
 		else
 			dynamicFlag[i] = 0;
-    if(dynamicFlag[i] >= 50){  //´óÓÚ50¸öÖÜÆÚ¿ªÊ¼¸üĞÂÁãµã
-			app_imu_data.offset.Sum[i] -= app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]];    //< Çå³ı¾ÉÊı¾İ
-			app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]] = app_imu_data.original.Gyro[i];  //< ¸üĞÂÊı¾İ
-			app_imu_data.offset.Sum[i] += app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]];    //< ¼ÓÈëĞÂÊı¾İ
-			if(app_imu_data.isThisTimeInvalid[i] == 0) /* Æô¶¯Ê±²ÉÑù³É¹¦ */
-			  app_imu_data.offset.Gyro[i] = app_math_Limit(app_imu_data.offset.Sum[i] / ZERO_SAMPLE_NUM,app_imu_OffsetVal[i]+0.5f,app_imu_OffsetVal[i]-0.5f);    //< ¸üĞÂÁãµã
+    if(dynamicFlag[i] >= 50){  //å¤§äº50ä¸ªå‘¨æœŸå¼€å§‹æ›´æ–°é›¶ç‚¹
+			app_imu_data.offset.Sum[i] -= app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]];    //< æ¸…é™¤æ—§æ•°æ®
+			app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]] = app_imu_data.original.Gyro[i];  //< æ›´æ–°æ•°æ®
+			app_imu_data.offset.Sum[i] += app_imu_data.offset.Data[i][app_imu_data.offset.Cnt[i]];    //< åŠ å…¥æ–°æ•°æ®
+			if(app_imu_data.isThisTimeInvalid[i] == 0) /* å¯åŠ¨æ—¶é‡‡æ ·æˆåŠŸ */
+			  app_imu_data.offset.Gyro[i] = app_math_Limit(app_imu_data.offset.Sum[i] / ZERO_SAMPLE_NUM,app_imu_OffsetVal[i]+0.5f,app_imu_OffsetVal[i]-0.5f);    //< æ›´æ–°é›¶ç‚¹
 			app_imu_data.offset.Cnt[i]++;
 			if(app_imu_data.offset.Cnt[i] == ZERO_SAMPLE_NUM){
 				app_imu_data.offset.Cnt[i] = 0;
-				app_imu_data.isThisTimeInvalid[i] = 0;  /* ÈôÆô¶¯Ê±Ã»ÓĞ³õÊ¼»¯³É¹¦£¬µÈ´ı¶¯Ì¬²ÉÑù³É¹¦£¬ÆôÓÃ¶¯Ì¬Ğ£ÕıÖµ */
+				app_imu_data.isThisTimeInvalid[i] = 0;  /* è‹¥å¯åŠ¨æ—¶æ²¡æœ‰åˆå§‹åŒ–æˆåŠŸï¼Œç­‰å¾…åŠ¨æ€é‡‡æ ·æˆåŠŸï¼Œå¯ç”¨åŠ¨æ€æ ¡æ­£å€¼ */
 			}
       app_imu_data.Angle_Rate[i] = 0;	
 		}			
@@ -252,8 +252,8 @@ static void MPU_Read_Raw(void)
 	}
 }
 
-/***************************ËÄÔªÊı½âËã²¿·Ö*********************************/
-/* ÎŞĞèµ÷ÕûµÄÈ«¾Ö±äÁ¿ */
+/***************************å››å…ƒæ•°è§£ç®—éƒ¨åˆ†*********************************/
+/* æ— éœ€è°ƒæ•´çš„å…¨å±€å˜é‡ */
 static float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f,q3 = 0.0f;  /** quaternion of sensor frame relative to auxiliary frame */
 static float dq0 = 0.0f, dq1 = 0.0f, dq2 = 0.0f,dq3 = 0.0f;  /** quaternion of sensor frame relative to auxiliary frame */
 static float q0q0, q0q1, q0q2, q0q3,q1q1, q1q2, q1q3,q2q2, q2q3,q3q3;
@@ -262,7 +262,7 @@ static uint8_t bFilterInit;
 //! Using accelerometer, sense the gravity vector.
 //! Using magnetometer, sense yaw.
 static void NonlinearSO3AHRSinit(float ax, float ay, float az, float mx,
-                                 float my, float mz)        //ÆäÊµÕâ¸öº¯ÊıÊÇÃ»Ê²Ã´ÓÃµÄ£¬Ëû±¾Éí¾ÍÊÇÀûÓÃ¼ÓËÙ¶È¼ÆºÍ´ÅÁ¦¼ÆËã³öÆ«º½½Ç£¬ÔÙËã³öËÄÔªÊı£¬µ«ÊÇÒ»°ã²»ÓÃ´ÅÁ¦¼Æ£¬ÀÁµÃ×¢ÊÍ½øºê¶¨ÒåÁË
+                                 float my, float mz)        //å…¶å®è¿™ä¸ªå‡½æ•°æ˜¯æ²¡ä»€ä¹ˆç”¨çš„ï¼Œä»–æœ¬èº«å°±æ˜¯åˆ©ç”¨åŠ é€Ÿåº¦è®¡å’Œç£åŠ›è®¡ç®—å‡ºåèˆªè§’ï¼Œå†ç®—å‡ºå››å…ƒæ•°ï¼Œä½†æ˜¯ä¸€èˆ¬ä¸ç”¨ç£åŠ›è®¡ï¼Œæ‡’å¾—æ³¨é‡Šè¿›å®å®šä¹‰äº†
 {
 	float initialRoll, initialPitch;
 	float cosRoll, sinRoll, cosPitch, sinPitch;
@@ -312,7 +312,7 @@ static void NonlinearSO3AHRSinit(float ax, float ay, float az, float mx,
 	q3q3 = q3 * q3;
 }
 /** 
-* @brief   MahonyËã·¨
+* @brief   Mahonyç®—æ³•
 * @remarks 
 */
 float kp_use = 0.0f,ki_use = 0.0f,mkp_use = 0.0f;
@@ -355,7 +355,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 			halfez += mkp_use*(mx * halfwy - my * halfwx);
     }
 	
-    //Ôö¼ÓÒ»¸öÌõ¼ş£º  ¼ÓËÙ¶ÈµÄÄ£Á¿ÓëGÏà²î²»Ô¶Ê±¡£ 0.75*G < normAcc < 1.25*G
+    //å¢åŠ ä¸€ä¸ªæ¡ä»¶ï¼š  åŠ é€Ÿåº¦çš„æ¨¡é‡ä¸Gç›¸å·®ä¸è¿œæ—¶ã€‚ 0.75*G < normAcc < 1.25*G
     // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
     if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))){
 			float halfvx, halfvy, halfvz;
@@ -474,8 +474,8 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 
 /** 
 * @brief    SoftYaw
-* @remarks  Ã»ÓĞ±ß½çµÄYawÖµ
-* @par ÈÕÖ¾
+* @remarks  æ²¡æœ‰è¾¹ç•Œçš„Yawå€¼
+* @par æ—¥å¿—
 */
 static float Soft_Angle(float angle,uint8_t whichAngle)
 {
@@ -489,26 +489,26 @@ static float Soft_Angle(float angle,uint8_t whichAngle)
 	return  angleCircle[whichAngle]*360 + angle;
 }
 /** 
-* @brief   ×ËÌ¬½âËã
+* @brief   å§¿æ€è§£ç®—
 * @remarks 
 */
 uint32_t tPrev,tNow; 
 void app_imu_So3thread(void)
 {   
-    // ÀëÏß¼ì²â by thunderdoge
+    // ç¦»çº¿æ£€æµ‹ by thunderdoge
     IMU_CheckDevice.update_hook_func(&IMU_CheckDevice);
 
 
     float euler[3] = {0,0,0};            //rad  
     float Rot_matrix[9] = {1.0f,  0.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,  0.0f,  1.0f };       /**< init: identity matrix */
-    /* ¼ÆËãÁ½´Î½âËãÊ±¼ä¼ä¸ô */
+    /* è®¡ç®—ä¸¤æ¬¡è§£ç®—æ—¶é—´é—´éš” */
     tNow = MICROS();
     float dt = (tPrev > 0) ? (tNow - tPrev) / 1000000.0f : 0;
     tPrev = tNow;
-//    if(dt == 0)  return;    // µÚÒ»´ÎÊÇ0Ò²Ã»¹ØÏµ£¬·´ÕıÊÇ»ı·Ö
-    /* ¶ÁÈ¡Êı¾İ(ÒÑ¾­ÂË²¨¡¢Ğ£Õı¡¢µ¥Î»»¯) */
+//    if(dt == 0)  return;    // ç¬¬ä¸€æ¬¡æ˜¯0ä¹Ÿæ²¡å…³ç³»ï¼Œåæ­£æ˜¯ç§¯åˆ†
+    /* è¯»å–æ•°æ®(å·²ç»æ»¤æ³¢ã€æ ¡æ­£ã€å•ä½åŒ–) */
     MPU_Read_Raw();
-    /* ËÄÔªÊı×ËÌ¬ÈÚºÏ */  
+    /* å››å…ƒæ•°å§¿æ€èåˆ */  
     #ifdef USE_MAG		
     NonlinearSO3AHRSupdate(app_imu_data.unitized.Gyro[0],app_imu_data.unitized.Gyro[1],app_imu_data.unitized.Gyro[2],
 													 app_imu_data.unitized.Accel[0],app_imu_data.unitized.Accel[1],app_imu_data.unitized.Accel[2],
@@ -519,7 +519,7 @@ void app_imu_So3thread(void)
 													 0,0,0,so3_comp_params_Kp,so3_comp_params_Ki,0,dt);		
 		#endif
 
-    /* ×ª»»³É·½ÏòÓàÏÒ¾ØÕó */
+    /* è½¬æ¢æˆæ–¹å‘ä½™å¼¦çŸ©é˜µ */
     // Convert q->R, This R converts inertial frame to body frame.
     Rot_matrix[0] = q0q0 + q1q1 - q2q2 - q3q3;// 11
     Rot_matrix[1] = 2.f * (q1 * q2 + q0 * q3); // 12
@@ -530,21 +530,21 @@ void app_imu_So3thread(void)
 //    Rot_matrix[6] = 2.f * (q1 * q3 + q0 * q2); // 31
 //    Rot_matrix[7] = 2.f * (q2 * q3 - q0 * q1); // 32
     Rot_matrix[8] = q0q0 - q1q1 - q2q2 + q3q3;// 33 
-    /* ×ª»»³ÉÅ·À­½Ç */
+    /* è½¬æ¢æˆæ¬§æ‹‰è§’ */
     euler[0] = atan2f(Rot_matrix[5], Rot_matrix[8]);    //! Roll
     euler[1] = -asinf(Rot_matrix[2]);                   //! Pitch
-    euler[2] = atan2f(Rot_matrix[1], Rot_matrix[0]);    //£¡Yaw
-    /* µÃ³ö×ËÌ¬½Ç */
-    app_imu_data.Roll = euler[0] * TOANGLE;            // ¾ø¶Ô½Ç
+    euler[2] = atan2f(Rot_matrix[1], Rot_matrix[0]);    //ï¼Yaw
+    /* å¾—å‡ºå§¿æ€è§’ */
+    app_imu_data.Roll = euler[0] * TOANGLE;            // ç»å¯¹è§’
     app_imu_data.Pitch = euler[1] * TOANGLE;	
     app_imu_data.Yaw = -euler[2] * TOANGLE;
-		if(app_imu_data.reset == 0)//±ÜÃâ³õÊ¼»¯Ê±ÊÕÁ²¹ı³ÌÓ°ÏìsoftµÄÀÛ»ıÈ¦Êı
+		if(app_imu_data.reset == 0)//é¿å…åˆå§‹åŒ–æ—¶æ”¶æ•›è¿‡ç¨‹å½±å“softçš„ç´¯ç§¯åœˆæ•°
 		{
-			app_imu_data.soft.Roll = Soft_Angle(app_imu_data.Roll,0);   // ¾ø¶ÔÂ·³Ì½Ç
+			app_imu_data.soft.Roll = Soft_Angle(app_imu_data.Roll,0);   // ç»å¯¹è·¯ç¨‹è§’
 			app_imu_data.soft.Pitch = Soft_Angle(app_imu_data.Pitch,1);
 			app_imu_data.soft.Yaw = Soft_Angle(app_imu_data.Yaw,2);
 		}
-		app_imu_data.integral.Roll += app_imu_data.Angle_Rate[0]*GYRO_RESOLUTION*dt;  // Ïà¶Ô»ı·Ö½Ç
+		app_imu_data.integral.Roll += app_imu_data.Angle_Rate[0]*GYRO_RESOLUTION*dt;  // ç›¸å¯¹ç§¯åˆ†è§’
 		app_imu_data.integral.Pitch += app_imu_data.Angle_Rate[1]*GYRO_RESOLUTION*dt;
 		app_imu_data.integral.Yaw += app_imu_data.Angle_Rate[2]*GYRO_RESOLUTION*dt;
     if(APP_MATH_ABS(app_imu_data.original.Gyro[0]) <= 1 && APP_MATH_ABS(app_imu_data.original.Gyro[1]) <= 1 && APP_MATH_ABS(app_imu_data.original.Gyro[2]) <= 1 &&

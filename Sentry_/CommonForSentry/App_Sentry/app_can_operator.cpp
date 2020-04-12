@@ -1,6 +1,6 @@
 /**
  * @file      app_can_operator.cpp
- * @brief     class CanOperator ÓÃÓÚ´¦ÀíCAN_ID·¢ËÍ½ÓÊÕºÍ´¦ÀíµÄÀà
+ * @brief     class CanOperator ç”¨äºå¤„ç†CAN_IDå‘é€æ¥æ”¶å’Œå¤„ç†çš„ç±»
  * @details   
  * @author   ThunderDoge
  * @date     2020-2-27
@@ -11,9 +11,9 @@
 #include "app_can_operator.hpp"
 #include <string.h>
 /**
- * @brief Construct a new Can Operator object ´´½¨Ò»¸öĞÂµÄCANÍ¨ĞÅ²Ù×÷Æ÷¡£Ã¿¸öCAN_ID¶ÔÓ¦Ò»¸ö²Ù×÷Êı¡£
+ * @brief Construct a new Can Operator object åˆ›å»ºä¸€ä¸ªæ–°çš„CANé€šä¿¡æ“ä½œå™¨ã€‚æ¯ä¸ªCAN_IDå¯¹åº”ä¸€ä¸ªæ“ä½œæ•°ã€‚
  * 
- * @param     sentry_can_id     ´Ë²Ù×÷Æ÷¶ÔÓ¦µÄCAN_ID
+ * @param     sentry_can_id     æ­¤æ“ä½œå™¨å¯¹åº”çš„CAN_ID
  */
 CanOperator::CanOperator( uint32_t sentry_can_id, (void)(*pfunc)(uint32_t , uint8_t*) ):
 sentry_can_id(sentry_can_id),callback(pfunc),update_time(0)

@@ -1,18 +1,18 @@
 /** 
-* @brief    ÏÄÆÕºìÍâ²â¾àÖ÷Òª¶Ô4¸öÍ¨µÀµÄµçÁ÷Êı¾İ½øĞĞ²É¼¯´¦Àí
-* @details  ADCÖĞ¶Ï»Øµ÷º¯Êı½øĞĞÊı¾İ½ÓÊÕ¡¢ÂË²¨£¨ÒªÄâºÏÔÙ¸ù¾İÊı¾İ´¦Àí£©
+* @brief    å¤æ™®çº¢å¤–æµ‹è·ä¸»è¦å¯¹4ä¸ªé€šé“çš„ç”µæµæ•°æ®è¿›è¡Œé‡‡é›†å¤„ç†
+* @details  ADCä¸­æ–­å›è°ƒå‡½æ•°è¿›è¡Œæ•°æ®æ¥æ”¶ã€æ»¤æ³¢ï¼ˆè¦æ‹Ÿåˆå†æ ¹æ®æ•°æ®å¤„ç†ï¼‰
 * @author   TAOU Monkey
 * @date      2019.11
 * @version  1.0
-* @par Copyright (c):  RM2020µç¿Ø
+* @par Copyright (c):  RM2020ç”µæ§
 * @par 
-* @par     Õâ¸öÎÄ¼şµÄÊäÈëÎªADC1_DMAÖĞ¶ÏÆô¶¯º¯Êı´¦µÃµ½µÄbsp_ADC_Value[400]
-* @par     ×îºó´¦ÀíµÄ½á¹ûÎªbsp_Final_ADC_Volage[4]
-* @par     ×îºóÏÄÆÕºìÍâÄâºÏÊı¾İÎªbsp_ADC1_Sharp_Distance¡¢bsp_ADC2_Sharp_Distance
-*				Ê¹ÓÃ·½·¨£º1.ÔÚÍ·ÎÄ¼şÖĞ¶¨Òå×Ô¼ºÏëÒªµÄADC1/2
-                  2.½«³õÊ¼»¯º¯Êıbsp_ADC_Sensor_Init()³õÊ¼»¯¼´¿É
-*				°æ±¾±ä¸ü:1.0Ïà½ÏÓÚ19½ìÔ­Ê¼°æ±¾¿ÉÒÔ¸ü¼Ó·½±ãµØ¿ØÖÆ×Ô¼ºÏëÓÃµÄADCÍ¨µÀ
-*       2019.11.27  9£º35         1.1°´ÕÕ´úÂë¹æ·¶ÖØĞÂ±àĞ´
+* @par     è¿™ä¸ªæ–‡ä»¶çš„è¾“å…¥ä¸ºADC1_DMAä¸­æ–­å¯åŠ¨å‡½æ•°å¤„å¾—åˆ°çš„bsp_ADC_Value[400]
+* @par     æœ€åå¤„ç†çš„ç»“æœä¸ºbsp_Final_ADC_Volage[4]
+* @par     æœ€åå¤æ™®çº¢å¤–æ‹Ÿåˆæ•°æ®ä¸ºbsp_ADC1_Sharp_Distanceã€bsp_ADC2_Sharp_Distance
+*				ä½¿ç”¨æ–¹æ³•ï¼š1.åœ¨å¤´æ–‡ä»¶ä¸­å®šä¹‰è‡ªå·±æƒ³è¦çš„ADC1/2
+                  2.å°†åˆå§‹åŒ–å‡½æ•°bsp_ADC_Sensor_Init()åˆå§‹åŒ–å³å¯
+*				ç‰ˆæœ¬å˜æ›´:1.0ç›¸è¾ƒäº19å±ŠåŸå§‹ç‰ˆæœ¬å¯ä»¥æ›´åŠ æ–¹ä¾¿åœ°æ§åˆ¶è‡ªå·±æƒ³ç”¨çš„ADCé€šé“
+*       2019.11.27  9ï¼š35         1.1æŒ‰ç…§ä»£ç è§„èŒƒé‡æ–°ç¼–å†™
 
 */
  
@@ -20,44 +20,44 @@
 #include "math.h"
 
 #ifdef bsp_ADC_USE_ADC1
-uint16_t bsp_ADC1_Value[400];   //´æ´¢Æ÷ÖĞ²É¼¯µ½µÄÊı¾İ 
-//·ÖÀë³öµ¥¸öÍ¨µÀ²É¼¯µ½µÄÊı¾İ
+uint16_t bsp_ADC1_Value[400];   //å­˜å‚¨å™¨ä¸­é‡‡é›†åˆ°çš„æ•°æ® 
+//åˆ†ç¦»å‡ºå•ä¸ªé€šé“é‡‡é›†åˆ°çš„æ•°æ®
 uint16_t ADC1_ch1_value[100];
 uint16_t ADC1_ch2_value[100];
 uint16_t ADC1_ch3_value[100];
 uint16_t ADC1_ch4_value[100];
-float ADC1_fixed_ch[4];     //´æ·Å¾ùÖµÂË²¨ºóµÄ4¸öµçÑ¹Êı¾İ  [4][1]
-int   ADC1_adjust_offset=0; //³õÊ¼µçÑ¹¶ÁÈ¡´ÎÊı¼ÆËãÓÃ
-uint16_t ADC1_ch_offset[4] = {0};  //·Å³õÊ¼µçÑ¹
-float 	   ADC1_que[4][10];  //´æ·Å10´ÎµÄ¾ùÖµÂË²¨½á¹û
-float   ADC1_ch_sum[4]={0};  //´æ·ÅÃ¿Ò»¸öÍ¨µÀ10´Î¾ùÖµÂË²¨½á¹ûµÄÆ½¾ùÖµ
-uint16_t bsp_Final_ADC1_Volage[4];  // ×îºó´¦Àí³öÀ´µÄµçÑ¹½á¹û
-float    bsp_ADC1_Sharp_Distance[4];    // ÏÄÆÕºìÍâ²â¾à£¬¾­¹ıÄâºÏµÄ
+float ADC1_fixed_ch[4];     //å­˜æ”¾å‡å€¼æ»¤æ³¢åçš„4ä¸ªç”µå‹æ•°æ®  [4][1]
+int   ADC1_adjust_offset=0; //åˆå§‹ç”µå‹è¯»å–æ¬¡æ•°è®¡ç®—ç”¨
+uint16_t ADC1_ch_offset[4] = {0};  //æ”¾åˆå§‹ç”µå‹
+float 	   ADC1_que[4][10];  //å­˜æ”¾10æ¬¡çš„å‡å€¼æ»¤æ³¢ç»“æœ
+float   ADC1_ch_sum[4]={0};  //å­˜æ”¾æ¯ä¸€ä¸ªé€šé“10æ¬¡å‡å€¼æ»¤æ³¢ç»“æœçš„å¹³å‡å€¼
+uint16_t bsp_Final_ADC1_Volage[4];  // æœ€åå¤„ç†å‡ºæ¥çš„ç”µå‹ç»“æœ
+float    bsp_ADC1_Sharp_Distance[4];    // å¤æ™®çº¢å¤–æµ‹è·ï¼Œç»è¿‡æ‹Ÿåˆçš„
 
 #endif
 
 #ifdef bsp_ADC_USE_ADC2
-uint16_t bsp_ADC2_Value[400];   //´æ´¢Æ÷ÖĞ²É¼¯µ½µÄÊı¾İ 
+uint16_t bsp_ADC2_Value[400];   //å­˜å‚¨å™¨ä¸­é‡‡é›†åˆ°çš„æ•°æ® 
 
 uint16_t ADC2_ch1_value[100];
 uint16_t ADC2_ch2_value[100];
 uint16_t ADC2_ch3_value[100];
 uint16_t ADC2_ch4_value[100];
-float ADC2_fixed_ch[4];     //´æ·Å¾ùÖµÂË²¨ºóµÄ4¸öµçÑ¹Êı¾İ  [4][1]
-int   ADC2_adjust_offset=0; //³õÊ¼µçÑ¹¶ÁÈ¡´ÎÊı¼ÆËãÓÃ
-uint16_t ADC2_ch_offset[4] = {0};  //·Å³õÊ¼µçÑ¹
-float 	   ADC2_que[4][10];  //´æ·Å10´ÎµÄ¾ùÖµÂË²¨½á¹û
-float   ADC2_ch_sum[4]={0};  //´æ·ÅÃ¿Ò»¸öÍ¨µÀ10´Î¾ùÖµÂË²¨½á¹ûµÄÆ½¾ùÖµ
-uint16_t bsp_Final_ADC2_Volage[4];  // ×îºó´¦Àí³öÀ´µÄµçÑ¹½á¹û
-float    bsp_ADC2_Sharp_Distance[4];    // ÏÄÆÕºìÍâ²â¾à£¬¾­¹ıÄâºÏµÄ
+float ADC2_fixed_ch[4];     //å­˜æ”¾å‡å€¼æ»¤æ³¢åçš„4ä¸ªç”µå‹æ•°æ®  [4][1]
+int   ADC2_adjust_offset=0; //åˆå§‹ç”µå‹è¯»å–æ¬¡æ•°è®¡ç®—ç”¨
+uint16_t ADC2_ch_offset[4] = {0};  //æ”¾åˆå§‹ç”µå‹
+float 	   ADC2_que[4][10];  //å­˜æ”¾10æ¬¡çš„å‡å€¼æ»¤æ³¢ç»“æœ
+float   ADC2_ch_sum[4]={0};  //å­˜æ”¾æ¯ä¸€ä¸ªé€šé“10æ¬¡å‡å€¼æ»¤æ³¢ç»“æœçš„å¹³å‡å€¼
+uint16_t bsp_Final_ADC2_Volage[4];  // æœ€åå¤„ç†å‡ºæ¥çš„ç”µå‹ç»“æœ
+float    bsp_ADC2_Sharp_Distance[4];    // å¤æ™®çº¢å¤–æµ‹è·ï¼Œç»è¿‡æ‹Ÿåˆçš„
 #endif
 
 /*******************************************************************************************
   * @Func			get_4ch(unsigned short int *signal,unsigned short int *channel,int length,unsigned char mask)
-  * @Brief    ¸ù¾İmaskµÄÖµ»ñÈ¡ËÄ¸öÍ¨µÀµÄ²ÉÑùÖµ(ÔÚADCµÄ»Øµ÷º¯ÊıÖĞ´¦ÀíÊı¾İÊ¹ÓÃ)
-  * @Param		signalÎª²É¼¯µ½µÄÊı¾İ£¬channelÎª·ÖÀë³öµÄµ¥¸öÍ¨µÀµÄÊı¾İ£¬lengthÎªµ¥¸öÍ¨µÀµÄÊı¾İ³¤¶È
+  * @Brief    æ ¹æ®maskçš„å€¼è·å–å››ä¸ªé€šé“çš„é‡‡æ ·å€¼(åœ¨ADCçš„å›è°ƒå‡½æ•°ä¸­å¤„ç†æ•°æ®ä½¿ç”¨)
+  * @Param		signalä¸ºé‡‡é›†åˆ°çš„æ•°æ®ï¼Œchannelä¸ºåˆ†ç¦»å‡ºçš„å•ä¸ªé€šé“çš„æ•°æ®ï¼Œlengthä¸ºå•ä¸ªé€šé“çš„æ•°æ®é•¿åº¦
   * @Retval		None
-* @Date     2015/11/24    2018Äê10ÔÂ30ÈÕ16:49:07  NankelĞŞ¸Ä
+* @Date     2015/11/24    2018å¹´10æœˆ30æ—¥16:49:07  Nankelä¿®æ”¹
  *******************************************************************************************/
 void get_4ch(unsigned short int *signal,unsigned short int *channel,int length,unsigned char mask)
 {
@@ -65,7 +65,7 @@ void get_4ch(unsigned short int *signal,unsigned short int *channel,int length,u
 		channel[j] = signal[j*4 + mask];
 }
 
-/**********È¥µô×î´óÖµºÍ×îĞ¡ÖµºóÇóÆ½¾ùÖµ************/
+/**********å»æ‰æœ€å¤§å€¼å’Œæœ€å°å€¼åæ±‚å¹³å‡å€¼************/
 float mid_sum_filter(uint16_t *data,uint16_t num)
 {
 	uint8_t i=0;
@@ -90,7 +90,7 @@ float mid_sum_filter(uint16_t *data,uint16_t num)
 }
 
 /** 
-  * @brief      ADCÖĞ¶Ï»Øµ÷º¯Êı£¬½øĞĞÊı¾İ½ÓÊÕºÍÂË²¨
+  * @brief      ADCä¸­æ–­å›è°ƒå‡½æ•°ï¼Œè¿›è¡Œæ•°æ®æ¥æ”¶å’Œæ»¤æ³¢
   * @param[in]  ADC_HandleTypeDef* hadc
   * @retval      
   * @retval       
@@ -111,16 +111,16 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		
 
 		for(int i=0; i<4; i++){
-			for(int k=9; k>0; k--)   //½«[4][10]µÄÊı×éÏòºóÒÆÎ»Ò»¸ñ 
+			for(int k=9; k>0; k--)   //å°†[4][10]çš„æ•°ç»„å‘åç§»ä½ä¸€æ ¼ 
 				ADC1_que[i][k] = ADC1_que[i][k-1];
-			ADC1_que[i][0] = ADC1_fixed_ch[i];	//½«ADC²ÉÑùµ½µÄÆ½¾ùÖµ²åÈëµÚÒ»ÁĞ				
-			for(int m=0; m<10; m++)   //½«Ã¿ĞĞµÄÔªËØ¼ÓÆğÀ´	
+			ADC1_que[i][0] = ADC1_fixed_ch[i];	//å°†ADCé‡‡æ ·åˆ°çš„å¹³å‡å€¼æ’å…¥ç¬¬ä¸€åˆ—				
+			for(int m=0; m<10; m++)   //å°†æ¯è¡Œçš„å…ƒç´ åŠ èµ·æ¥	
 				ADC1_ch_sum[i] += ADC1_que[i][m];					
 			ADC1_ch_sum[i] /= 10.0f;	
 			bsp_Final_ADC1_Volage[i] =  (uint16_t) (ADC1_ch_sum[i] - ADC1_ch_offset[i]);    
 		}
 		for(uint8_t i=0;i<2;i++){
-			if(bsp_Final_ADC1_Volage[i] < 750)  bsp_Final_ADC1_Volage[i] = 750;  // ¶ÔÓ¦60cm×óÓÒ
+			if(bsp_Final_ADC1_Volage[i] < 750)  bsp_Final_ADC1_Volage[i] = 750;  // å¯¹åº”60cmå·¦å³
 			bsp_ADC1_Sharp_Distance[i] = 284486*pow(bsp_Final_ADC1_Volage[i],-1.275);
 		}
 
@@ -140,10 +140,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		
 
 		for(int i=0; i<4; i++){
-			for(int k=9; k>0; k--)   //½«[4][10]µÄÊı×éÏòºóÒÆÎ»Ò»¸ñ 
+			for(int k=9; k>0; k--)   //å°†[4][10]çš„æ•°ç»„å‘åç§»ä½ä¸€æ ¼ 
 				ADC2_que[i][k] = ADC2_que[i][k-1];
-			ADC2_que[i][0] = ADC2_fixed_ch[i];	//½«ADC²ÉÑùµ½µÄÆ½¾ùÖµ²åÈëµÚÒ»ÁĞ				
-			for(int m=0; m<10; m++)   //½«Ã¿ĞĞµÄÔªËØ¼ÓÆğÀ´	
+			ADC2_que[i][0] = ADC2_fixed_ch[i];	//å°†ADCé‡‡æ ·åˆ°çš„å¹³å‡å€¼æ’å…¥ç¬¬ä¸€åˆ—				
+			for(int m=0; m<10; m++)   //å°†æ¯è¡Œçš„å…ƒç´ åŠ èµ·æ¥	
 				ADC2_ch_sum[i] += ADC2_que[i][m];					
 			ADC2_ch_sum[i] /= 10.0f;	
 			bsp_Final_ADC2_Volage[i] =  (uint16_t) (ADC2_ch_sum[i] - ADC2_ch_offset[i]);    
@@ -157,8 +157,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 
 /** 
-  * @brief      ´«¸ĞÆ÷³õÊ¼»¯º¯Êı
-  * @param[in]  ÔÚÄ³¸öµØ·½³õÊ¼»¯¼´¿É
+  * @brief      ä¼ æ„Ÿå™¨åˆå§‹åŒ–å‡½æ•°
+  * @param[in]  åœ¨æŸä¸ªåœ°æ–¹åˆå§‹åŒ–å³å¯
   * @retval      
   * @retval       
   * @pa      
@@ -167,9 +167,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 void bsp_ADC_Sensor_Init()
 {
 	#ifdef bsp_ADC_USE_ADC1
- 	HAL_ADC_Start_DMA(&hadc1,(uint32_t*)bsp_ADC1_Value,400);//ºìÍâ¼¤¹â²â¾àÊı¾İ²É¼¯
+ 	HAL_ADC_Start_DMA(&hadc1,(uint32_t*)bsp_ADC1_Value,400);//çº¢å¤–æ¿€å…‰æµ‹è·æ•°æ®é‡‡é›†
 	#endif
 	#ifdef bsp_ADC_USE_ADC2
-  HAL_ADC_Start_DMA(&hadc2,(uint32_t*)bsp_ADC2_Value,400);//ºìÍâ¼¤¹â²â¾àÊı¾İ²É¼¯
+  HAL_ADC_Start_DMA(&hadc2,(uint32_t*)bsp_ADC2_Value,400);//çº¢å¤–æ¿€å…‰æµ‹è·æ•°æ®é‡‡é›†
 	#endif
 }

@@ -1,6 +1,6 @@
 /**
   * @file  bsp_SC_RGB.c
-  * @brief    ÉÚ±ø×Ô¶¨Òå(SentryCustomized)RGB¿ØÖÆÄ£¿é
+  * @brief    å“¨å…µè‡ªå®šä¹‰(SentryCustomized)RGBæ§åˆ¶æ¨¡å—
   * @details  
   * @author   ThunderDoge
   * @date     

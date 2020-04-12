@@ -1,6 +1,6 @@
 /**
  * @file      app_sentry_check_device.hpp
- * @brief     ÀëÏß¼ì²â¹¦ÄÜ£¬ÔÆÌ¨µ×ÅÌ¹«ÓÃÎÄ¼ş¡£
+ * @brief     ç¦»çº¿æ£€æµ‹åŠŸèƒ½ï¼Œäº‘å°åº•ç›˜å…¬ç”¨æ–‡ä»¶ã€‚
  * @details   
  * @author   ThunderDoge
  * @date      2020-3-12
@@ -11,19 +11,19 @@
 #ifndef __APP_SENTRY_CHECK_DEVICE_H_
 #define __APP_SENTRY_CHECK_DEVICE_H_
 
-//ÒÀÀµµÄÎÄ¼ş
+//ä¾èµ–çš„æ–‡ä»¶
 #include "string.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 
-//DEBUGÓÃºê¶¨Òå
+//DEBUGç”¨å®å®šä¹‰
 #define __APP_CHECK_DEVICE_DEBUG
 
-//----------------------- Ïà¹Ø½á¹¹Ìå/Ã¶¾ÙĞÍ¶¨Òå------------------------
+//----------------------- ç›¸å…³ç»“æ„ä½“/æšä¸¾å‹å®šä¹‰------------------------
 
 /**
- * @brief Éè±¸¶ÔÏóID(¸æ¾¯ID) ½á¹¹Ìå
+ * @brief è®¾å¤‡å¯¹è±¡ID(å‘Šè­¦ID) ç»“æ„ä½“
  */
 typedef enum:uint8_t
 {
@@ -48,13 +48,13 @@ typedef enum:uint8_t
     ChassisPillarDetectDevice,
     DbusDevice,
 
-	CheckDeviceID_EnumLength,  //ÕâÒ»Ïî·ÅÔÚ×îºó£¬ÒÔÖ¸Ê¾IDÏîÊı
+	CheckDeviceID_EnumLength,  //è¿™ä¸€é¡¹æ”¾åœ¨æœ€åï¼Œä»¥æŒ‡ç¤ºIDé¡¹æ•°
 }CheckDeviceID_Enum;
 
 
 
 /**
- * @brief Éè±¸¶ÔÏó±¨¾¯ÓÅÏÈ¼¶
+ * @brief è®¾å¤‡å¯¹è±¡æŠ¥è­¦ä¼˜å…ˆçº§
  */
 typedef enum :int8_t
 {
@@ -74,18 +74,18 @@ typedef enum :uint8_t
 }OfflineReportStates_Enum;
 
 
-//ÏÂÎÄ½«Ê¹ÓÃµÄ¶¨Òå
+//ä¸‹æ–‡å°†ä½¿ç”¨çš„å®šä¹‰
 struct CheckDevice_Type;
 void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_Type* self);
 void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self);
 
 
 /**
- * @brief Éè±¸¶ÔÏó ½á¹¹Ìå
+ * @brief è®¾å¤‡å¯¹è±¡ ç»“æ„ä½“
  */
 struct CheckDevice_Type
 {
-	CheckDevice_Type(															///< ¹¹Ôìº¯Êı
+	CheckDevice_Type(															///< æ„é€ å‡½æ•°
 		CheckDeviceID_Enum id,
         uint16_t allow_time,
 		uint8_t(*ptr_is_offline_func)(void) = NULL,
@@ -93,57 +93,57 @@ struct CheckDevice_Type
 		void (*ptr_state_changed_callback_func)(CheckDevice_Type*self) = Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask,
 		void (*ptr_update_hook_func)(CheckDevice_Type*self) = Default_CheckDevice_UpdateHookFunc
 		);
-	CheckDeviceID_Enum      id = CheckDeviceID_EnumLength;						/** Æ÷¼şID,Îª·ÀÖ¹ID³åÍ»£¬½«ËùÓĞĞè¼ì²âID·ÅÈë @see CheckDeviceID_Enum ±äÁ¿ÖĞ */
-	uint32_t                lastTick = 0;            /* ÉÏ´ÎÔÚÏßÊ±¼ä */
+	CheckDeviceID_Enum      id = CheckDeviceID_EnumLength;						/** å™¨ä»¶ID,ä¸ºé˜²æ­¢IDå†²çªï¼Œå°†æ‰€æœ‰éœ€æ£€æµ‹IDæ”¾å…¥ @see CheckDeviceID_Enum å˜é‡ä¸­ */
+	uint32_t                lastTick = 0;            /* ä¸Šæ¬¡åœ¨çº¿æ—¶é—´ */
 	uint32_t* 				use_ptr_lastTick = NULL;
-	uint16_t                maxAllowTime = 100;	        /* ×î´óÔÊĞíÊ±³¤ */
-	AlarmPriority_Enum      priority = PriorityNormal;		        /* ÓÅÏÈ¼¶ */
-	uint8_t					alarm_enabled = 1;		// ÀëÏß±¨¾¯ÒÑÊ¹ÄÜ
-	uint8_t                 is_offline = 0 ;           /// Æ÷¼şÔÚÏß×´Ì¬
-    uint8_t                 is_change_reported = REPORT_NON;       // ÊÇ·ñÒÑ·¢ËÍ¸æ¾¯ĞÅÏ¢
-    uint8_t(*is_offline_func)(void) = NULL;                //ÀëÏß×´Ì¬¼ì²éº¯Êı
-	void (*state_changed_callback_func)(CheckDevice_Type* self);	// ÀëÏß»Øµ÷º¯Êı¡£¼ì²âµ½ÀëÏßÖ®ºóµ÷ÓÃ´Ëº¯Êı¡£
-	void (*update_hook_func)(CheckDevice_Type* self);		// ×´Ì¬¸üĞÂ¹³×Óº¯Êı¡£ÔÚÉè±¸¸üĞÂÊ±µ÷ÓÃ¡£
+	uint16_t                maxAllowTime = 100;	        /* æœ€å¤§å…è®¸æ—¶é•¿ */
+	AlarmPriority_Enum      priority = PriorityNormal;		        /* ä¼˜å…ˆçº§ */
+	uint8_t					alarm_enabled = 1;		// ç¦»çº¿æŠ¥è­¦å·²ä½¿èƒ½
+	uint8_t                 is_offline = 0 ;           /// å™¨ä»¶åœ¨çº¿çŠ¶æ€
+    uint8_t                 is_change_reported = REPORT_NON;       // æ˜¯å¦å·²å‘é€å‘Šè­¦ä¿¡æ¯
+    uint8_t(*is_offline_func)(void) = NULL;                //ç¦»çº¿çŠ¶æ€æ£€æŸ¥å‡½æ•°
+	void (*state_changed_callback_func)(CheckDevice_Type* self);	// ç¦»çº¿å›è°ƒå‡½æ•°ã€‚æ£€æµ‹åˆ°ç¦»çº¿ä¹‹åè°ƒç”¨æ­¤å‡½æ•°ã€‚
+	void (*update_hook_func)(CheckDevice_Type* self);		// çŠ¶æ€æ›´æ–°é’©å­å‡½æ•°ã€‚åœ¨è®¾å¤‡æ›´æ–°æ—¶è°ƒç”¨ã€‚
 };
 
 
 /**
- * @brief Éè±¸¶ÔÏóÊı×é£¬
+ * @brief è®¾å¤‡å¯¹è±¡æ•°ç»„ï¼Œ
  */
 typedef struct  
 {
-	CheckDevice_Type* deviceArry[CheckDeviceID_EnumLength]; /* Éè±¸Êı×é */
-	int8_t checkDeviceNum;				       /* ±»²âÉè±¸µÄÊıÁ¿£¬ÔËĞĞÊ±.³õÊ¼»¯Ê±È·¶¨¡£ */
+	CheckDevice_Type* deviceArry[CheckDeviceID_EnumLength]; /* è®¾å¤‡æ•°ç»„ */
+	int8_t checkDeviceNum;				       /* è¢«æµ‹è®¾å¤‡çš„æ•°é‡ï¼Œè¿è¡Œæ—¶.åˆå§‹åŒ–æ—¶ç¡®å®šã€‚ */
 }CheckDeviceArry_Type;
 
 
-//----------------------------- Ïà¹ØÈ«¾Ö±äÁ¿-------------------------------
+//----------------------------- ç›¸å…³å…¨å±€å˜é‡-------------------------------
 
 
-extern QueueHandle_t QueueOfflineDevice;     /// ÒÑÀëÏßÉè±¸ÁĞ±í ·¢ËÍ¸øÍ¨ĞÅº¯Êı´¦Àí
-extern CheckDeviceArry_Type CheckDeviceArry;			/// ËùÓĞ±¾»úÉè±¸ÁĞ±í
+extern QueueHandle_t QueueOfflineDevice;     /// å·²ç¦»çº¿è®¾å¤‡åˆ—è¡¨ å‘é€ç»™é€šä¿¡å‡½æ•°å¤„ç†
+extern CheckDeviceArry_Type CheckDeviceArry;			/// æ‰€æœ‰æœ¬æœºè®¾å¤‡åˆ—è¡¨
 extern uint8_t app_sentry_CheckDevice_OfflineList[ CheckDeviceID_EnumLength+2 ];
 
 
 
-//----------------------------- ¶ÔÍâ½Ó¿Úº¯Êı-------------------------------
+//----------------------------- å¯¹å¤–æ¥å£å‡½æ•°-------------------------------
 
-/// ³õÊ¼»¯Éè±¸ÀëÏß¼ì²â¸÷Ïî¹¦ÄÜ
+/// åˆå§‹åŒ–è®¾å¤‡ç¦»çº¿æ£€æµ‹å„é¡¹åŠŸèƒ½
 void app_sentry_CheckDevice_Init(void);
 
-/// ½«Ò»¸öÉè±¸²ÎÊı¶ÔÏó ¼ÓÈëÉè±¸¼ì²âÊı×éÖĞ
+/// å°†ä¸€ä¸ªè®¾å¤‡å‚æ•°å¯¹è±¡ åŠ å…¥è®¾å¤‡æ£€æµ‹æ•°ç»„ä¸­
 HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAdd);
 
-/// Ë¢ĞÂ´íÎóÁĞ±í¡£Í¨¹ıÖØĞÂ½«ËùÓĞµÄÉè±¸·¢ËÍµ½ QueueOfflineDevice À´ÊµÏÖ
+/// åˆ·æ–°é”™è¯¯åˆ—è¡¨ã€‚é€šè¿‡é‡æ–°å°†æ‰€æœ‰çš„è®¾å¤‡å‘é€åˆ° QueueOfflineDevice æ¥å®ç°
 void app_sentry_CheckDevice_CheckAllDevice(void);
 
-/// ÀëÏß¼ì²â¹¦ÄÜÖ´ĞĞ
+/// ç¦»çº¿æ£€æµ‹åŠŸèƒ½æ‰§è¡Œ
 void app_sentry_CheckDevice_Handle(void);
 
-/// Íâ²¿:´Ó¶ÓÁĞ»ñÈ¡ÀëÏßÉè±¸
+/// å¤–éƒ¨:ä»é˜Ÿåˆ—è·å–ç¦»çº¿è®¾å¤‡
 uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, uint8_t* device_isoffline);
 
-/// ´¦ÀíCANÊÕµ½µÄÀëÏßÉè±¸
+/// å¤„ç†CANæ”¶åˆ°çš„ç¦»çº¿è®¾å¤‡
 void app_sentry_CheckDevice_CanRxCallback(uint8_t *ptrData);
 
 

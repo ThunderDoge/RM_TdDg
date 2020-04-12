@@ -1,6 +1,6 @@
 /**
   * @file  sentry_can_commom.cpp
-  * @brief    CANÍ¨Ñ¶¹«¹²ĞÅÏ¢
+  * @brief    CANé€šè®¯å…¬å…±ä¿¡æ¯
   * @details  
   * @author   ThunderDoge
   * @date     2020-2-20
@@ -9,37 +9,37 @@
   */    
 #include "sentry_can_commom.hpp"
 
-CanCommuRecv_t CanRx,CanTx;	///CANĞÅÏ¢»º´æ½á¹¹Ìå
+CanCommuRecv_t CanRx,CanTx;	///CANä¿¡æ¯ç¼“å­˜ç»“æ„ä½“
 
 uint8_t IS_SUPERIOR_VISION_CTRL=0;
 uint8_t IS_SUPERIOR_MANUAL_CTRL=0;
 
-///SENTRY_CAN_ID ´ıÆ¥ÅäÁĞ±í
+///SENTRY_CAN_ID å¾…åŒ¹é…åˆ—è¡¨
 uint32_t SENTRY_CAN_ID_List[SENTRY_CAN_ID_CNT] = {
-    UP_CLOUD_STATES,                           ///< ÉÏÔÆÌ¨×´Ì¬ĞÅÏ¢
-    DOWN_CLOUD_STATES,                         ///< ÏÂÔÆÌ¨×´Ì¬ĞÅÏ¢
-    CHASSIS_STATES,                            ///< µ×ÅÌ×´Ì¬ĞÅÏ¢
-    CHASSIS_PILLAR,                            ///< µ×ÅÌ×²ÖùĞÅÏ¢£¨Ö®ºó»á¸Äµô£©
-    SUPERIOR_UP_RELATIVE_CMD,                  ///< SUPERCMD£¨ÉÏ¼¶Ö¸Áî£©ÉÏÔÆÌ¨Ïà¶Ô½Ç¿ØÖÆ
-    SUPERIOR_UP_ABSOLUTE_CMD,                  ///< SUPERCMDÉÏÔÆÌ¨¾ø¶Ô½Ç¶È¿ØÖÆ
-    SUPERIOR_UP_SPEED_CMD,                     ///< ¡¾Î´ÆôÓÃ¡¿SUPERCMDÉÏÔÆÌ¨×ª¶¯ËÙ¶È¿ØÖÆ
-    SUPERIOR_DOWN_RELATIVE_CMD,                ///< SUPERCMD£¨ÉÏ¼¶Ö¸Áî£©ÉÏÔÆÌ¨Ïà¶Ô½Ç¿ØÖÆ
-    SUPERIOR_DOWN_ABSOLUTE_CMD,                ///< SUPERCMDÉÏÔÆÌ¨¾ø¶Ô½Ç¶È¿ØÖÆ
-    SUPERIOR_DOWN_SPEED_CMD,                   ///< ¡¾Î´ÆôÓÃ¡¿SUPERCMDÉÏÔÆÌ¨×ª¶¯ËÙ¶È¿ØÖÆ
-    SUPERIOR_CHASSIS_MOVE,                     ///< SUPERCMDµ×ÅÌËÙ¶È¿ØÖÆ
-    SUPERIOR_CHASSIS_SET_LOACTION,             ///< µ×ÅÌÎ»ÖÃ¿ØÖÆ
-    SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, ///< µ×ÅÌÎ»ÖÃ¿ØÖÆ¼ÓÏŞËÙ
-    SUPERIOR_SAFE,                             ///< µ×ÅÌ°²È«
-    OFFLINE_LIST,                              ///< ÀëÏßÉè±¸ÁĞ±í
+    UP_CLOUD_STATES,                           ///< ä¸Šäº‘å°çŠ¶æ€ä¿¡æ¯
+    DOWN_CLOUD_STATES,                         ///< ä¸‹äº‘å°çŠ¶æ€ä¿¡æ¯
+    CHASSIS_STATES,                            ///< åº•ç›˜çŠ¶æ€ä¿¡æ¯
+    CHASSIS_PILLAR,                            ///< åº•ç›˜æ’æŸ±ä¿¡æ¯ï¼ˆä¹‹åä¼šæ”¹æ‰ï¼‰
+    SUPERIOR_UP_RELATIVE_CMD,                  ///< SUPERCMDï¼ˆä¸Šçº§æŒ‡ä»¤ï¼‰ä¸Šäº‘å°ç›¸å¯¹è§’æ§åˆ¶
+    SUPERIOR_UP_ABSOLUTE_CMD,                  ///< SUPERCMDä¸Šäº‘å°ç»å¯¹è§’åº¦æ§åˆ¶
+    SUPERIOR_UP_SPEED_CMD,                     ///< ã€æœªå¯ç”¨ã€‘SUPERCMDä¸Šäº‘å°è½¬åŠ¨é€Ÿåº¦æ§åˆ¶
+    SUPERIOR_DOWN_RELATIVE_CMD,                ///< SUPERCMDï¼ˆä¸Šçº§æŒ‡ä»¤ï¼‰ä¸Šäº‘å°ç›¸å¯¹è§’æ§åˆ¶
+    SUPERIOR_DOWN_ABSOLUTE_CMD,                ///< SUPERCMDä¸Šäº‘å°ç»å¯¹è§’åº¦æ§åˆ¶
+    SUPERIOR_DOWN_SPEED_CMD,                   ///< ã€æœªå¯ç”¨ã€‘SUPERCMDä¸Šäº‘å°è½¬åŠ¨é€Ÿåº¦æ§åˆ¶
+    SUPERIOR_CHASSIS_MOVE,                     ///< SUPERCMDåº•ç›˜é€Ÿåº¦æ§åˆ¶
+    SUPERIOR_CHASSIS_SET_LOACTION,             ///< åº•ç›˜ä½ç½®æ§åˆ¶
+    SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED, ///< åº•ç›˜ä½ç½®æ§åˆ¶åŠ é™é€Ÿ
+    SUPERIOR_SAFE,                             ///< åº•ç›˜å®‰å…¨
+    OFFLINE_LIST,                              ///< ç¦»çº¿è®¾å¤‡åˆ—è¡¨
 };
 
 // /**
 //  * @brief 
 //  * 
-//  * @param     _hcan CAN¾ä±ú
-//  * @param     command_id ½«Òª·¢ËÍµÄÏûÏ¢µÄCAN_ID
-//  * @param     ptrData ½«Òª·¢ËÍµÄÏûÏ¢µÄ×Ö½ÚÊı×éµÄÖ¸Õë
-//  * @param     size ½«Òª·¢ËÍµÄÏûÏ¢µÄ×Ö½ÚÊı
+//  * @param     _hcan CANå¥æŸ„
+//  * @param     command_id å°†è¦å‘é€çš„æ¶ˆæ¯çš„CAN_ID
+//  * @param     ptrData å°†è¦å‘é€çš„æ¶ˆæ¯çš„å­—èŠ‚æ•°ç»„çš„æŒ‡é’ˆ
+//  * @param     size å°†è¦å‘é€çš„æ¶ˆæ¯çš„å­—èŠ‚æ•°
 //  * @return HAL_StatusTypeDef 
 //  */
 // HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, uint8_t *ptrData)
@@ -48,18 +48,18 @@ uint32_t SENTRY_CAN_ID_List[SENTRY_CAN_ID_CNT] = {
 //     CAN_TxHeaderTypeDef bsp_can_Tx;
 //     HAL_StatusTypeDef HAL_RESULT;
 
-//     //½«´«ÈëµÄÊı¾İ×ª»»Îª±ê×¼CANÖ¡Êı¾İ
+//     //å°†ä¼ å…¥çš„æ•°æ®è½¬æ¢ä¸ºæ ‡å‡†CANå¸§æ•°æ®
 //     uint8_t Data[8];
 //     if (ptrData != NULL)
 //     {
 //         memcpy(&Data, ptrData, 8);
 //     }
-//     else //²»ÓÃ´«¶«Î÷Ê±
+//     else //ä¸ç”¨ä¼ ä¸œè¥¿æ—¶
 //     {
 //         memset(&Data, 0, 8);
 //     }
 
-//     //ÉèÖÃCANÖ¡ÅäÖÃ
+//     //è®¾ç½®CANå¸§é…ç½®
 //     bsp_can_Tx.StdId = (uint32_t)command_id;
 //     bsp_can_Tx.RTR = CAN_RTR_DATA;
 //     bsp_can_Tx.IDE = CAN_ID_STD;
@@ -67,7 +67,7 @@ uint32_t SENTRY_CAN_ID_List[SENTRY_CAN_ID_CNT] = {
 //     HAL_RESULT = HAL_CAN_AddTxMessage(_hcan, &bsp_can_Tx, Data, &MailBox);
 // #ifndef BSP_CAN_USE_FREERTOS
 //     while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) != 3)
-//         ; //µÈ´ı·¢ËÍÍê³É£¬Èç¹ûÊÇÊ¹ÓÃFreeRTOSÔò¿ÉÒÔ²»ĞèÒªÕâ¾ä,ÒòÎªÈÎÎñµ÷¶È±¾ÉíÊÇĞèÒªÑÓÊ±µÄ
+//         ; //ç­‰å¾…å‘é€å®Œæˆï¼Œå¦‚æœæ˜¯ä½¿ç”¨FreeRTOSåˆ™å¯ä»¥ä¸éœ€è¦è¿™å¥,å› ä¸ºä»»åŠ¡è°ƒåº¦æœ¬èº«æ˜¯éœ€è¦å»¶æ—¶çš„
 // #endif
 
 //     return HAL_RESULT;
@@ -75,10 +75,10 @@ uint32_t SENTRY_CAN_ID_List[SENTRY_CAN_ID_CNT] = {
 /**
  * @brief 
  * 
- * @param     _hcan CAN¾ä±ú
- * @param     command_id ½«Òª·¢ËÍµÄÏûÏ¢µÄCAN_ID
- * @param     ptrData ½«Òª·¢ËÍµÄÏûÏ¢µÄ×Ö½ÚÊı×éµÄÖ¸Õë
- * @param     size ½«Òª·¢ËÍµÄÏûÏ¢µÄ×Ö½ÚÊı
+ * @param     _hcan CANå¥æŸ„
+ * @param     command_id å°†è¦å‘é€çš„æ¶ˆæ¯çš„CAN_ID
+ * @param     ptrData å°†è¦å‘é€çš„æ¶ˆæ¯çš„å­—èŠ‚æ•°ç»„çš„æŒ‡é’ˆ
+ * @param     size å°†è¦å‘é€çš„æ¶ˆæ¯çš„å­—èŠ‚æ•°
  * @return HAL_StatusTypeDef 
  */
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id,
@@ -88,33 +88,33 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id,
     CAN_TxHeaderTypeDef bsp_can_Tx;
     HAL_StatusTypeDef HAL_RESULT;
 
-    //½«´«ÈëµÄÊı¾İ×ª»»Îª±ê×¼CANÖ¡Êı¾İ
+    //å°†ä¼ å…¥çš„æ•°æ®è½¬æ¢ä¸ºæ ‡å‡†CANå¸§æ•°æ®
     uint8_t Data[8];
     if (ptrData != NULL)
     {
         memcpy(&Data, ptrData, size);
     }
 
-    //ÉèÖÃCANÖ¡ÅäÖÃ
+    //è®¾ç½®CANå¸§é…ç½®
     bsp_can_Tx.StdId = (uint32_t)command_id;
     bsp_can_Tx.RTR = CAN_RTR_DATA;
     bsp_can_Tx.IDE = CAN_ID_STD;
-    bsp_can_Tx.DLC = size;      //ÉèÖÃÊı¾İÖ¡ÏûÏ¢¶Î³¤¶È,¼´×Ö½ÚÊı
+    bsp_can_Tx.DLC = size;      //è®¾ç½®æ•°æ®å¸§æ¶ˆæ¯æ®µé•¿åº¦,å³å­—èŠ‚æ•°
     HAL_RESULT = HAL_CAN_AddTxMessage(_hcan, &bsp_can_Tx, Data, &MailBox);
 #ifndef BSP_CAN_USE_FREERTOS
     while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) != 3)
-        ; //µÈ´ı·¢ËÍÍê³É£¬Èç¹ûÊÇÊ¹ÓÃFreeRTOSÔò¿ÉÒÔ²»ĞèÒªÕâ¾ä,ÒòÎªÈÎÎñµ÷¶È±¾ÉíÊÇĞèÒªÑÓÊ±µÄ
+        ; //ç­‰å¾…å‘é€å®Œæˆï¼Œå¦‚æœæ˜¯ä½¿ç”¨FreeRTOSåˆ™å¯ä»¥ä¸éœ€è¦è¿™å¥,å› ä¸ºä»»åŠ¡è°ƒåº¦æœ¬èº«æ˜¯éœ€è¦å»¶æ—¶çš„
 #endif
     return HAL_RESULT;
 }
 /**
- * @brief     CAN·¢ËÍfloatĞÍ²ÎÊı
- * ·¢ËÍÁ½¸öfloat
- * @param     _hcan Òª·¢ËÍµÄCANµÄ¾ä±ú
- * @param     command_id ÃüÁîID£¬¼ûSENTRY_CAN_ID
- * @param     argu1 µÚÒ»¸öfloat
- * @param     argu2 µÚ¶ş¸öfloat
- * @return HAL_StatusTypeDef HAL_OKÎªÕı³£
+ * @brief     CANå‘é€floatå‹å‚æ•°
+ * å‘é€ä¸¤ä¸ªfloat
+ * @param     _hcan è¦å‘é€çš„CANçš„å¥æŸ„
+ * @param     command_id å‘½ä»¤IDï¼Œè§SENTRY_CAN_ID
+ * @param     argu1 ç¬¬ä¸€ä¸ªfloat
+ * @param     argu2 ç¬¬äºŒä¸ªfloat
+ * @return HAL_StatusTypeDef HAL_OKä¸ºæ­£å¸¸
  */
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, float argu1, float argu2)
 {
@@ -125,7 +125,7 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, f
 
 /**
  * @defgroup Can_TxRx_Functions
- * CAN TxRx Functions CAN·¢ËÍºÍ½ÓÊÕº¯Êı¡£ËùÓĞµÄ½ÓÊÕº¯Êı¶¼Ö±½ÓÌ×ÓÃCAN»Øµ÷StdIdºÍptrData
+ * CAN TxRx Functions CANå‘é€å’Œæ¥æ”¶å‡½æ•°ã€‚æ‰€æœ‰çš„æ¥æ”¶å‡½æ•°éƒ½ç›´æ¥å¥—ç”¨CANå›è°ƒStdIdå’ŒptrData
  * @{
  */
 #ifdef __PROJECT_SENTRY_CLOUD_
@@ -133,7 +133,7 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, f
 #endif // __PROJECT_SENTRY_CLOUD
 
 #ifdef __PROJECT_SENTRY_CHASSIS_
-///µ×ÅÌCAN½ÓÊÕº¯Êı
+///åº•ç›˜CANæ¥æ”¶å‡½æ•°
 void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 {
     CHASSIS_SUPERIOR_ALL_CanRx(RxHead->StdId, Data);
@@ -142,16 +142,16 @@ void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeader
 
 /**
  * @defgroup Can_Rx_Functions
- * CAN½ÓÊÕº¯Êı¡£Í³Ò»µÄ²ÎÊıÁĞ±í:
- *  StdId   CAN»Øµ÷º¯ÊıµÄStdId
- *  ptrData CAN»Øµ÷º¯ÊıµÄÊı¾İ
+ * CANæ¥æ”¶å‡½æ•°ã€‚ç»Ÿä¸€çš„å‚æ•°åˆ—è¡¨:
+ *  StdId   CANå›è°ƒå‡½æ•°çš„StdId
+ *  ptrData CANå›è°ƒå‡½æ•°çš„æ•°æ®
  *  @{
  */
 /**
- * @brief CAN½ÓÊÕÉÏÔÆÌ¨×´Ì¬¡£Ê¹ÓÃÊ±Ö±½ÓÔÚCAN»Øµ÷º¯ÊıÀïÃæÌ×ÓÃ
+ * @brief CANæ¥æ”¶ä¸Šäº‘å°çŠ¶æ€ã€‚ä½¿ç”¨æ—¶ç›´æ¥åœ¨CANå›è°ƒå‡½æ•°é‡Œé¢å¥—ç”¨
  * 
- * @param     StdId     CAN»Øµ÷º¯ÊıµÄStdId
- * @param     ptrData   CAN»Øµ÷º¯ÊıµÄÊı¾İ
+ * @param     StdId     CANå›è°ƒå‡½æ•°çš„StdId
+ * @param     ptrData   CANå›è°ƒå‡½æ•°çš„æ•°æ®
  */
 void UP_CLOUD_STATES_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
@@ -175,7 +175,7 @@ void CHASSIS_STATES_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == CHASSIS_STATES)
 	{
-        memcpy(&CanRx.Chassis_SpeedLocation, ptrData, 8);	//Ö±½Ó¸´ÖÆÁ½¸ö¸¡µãÊı½øÈëÊı×é¼´¿É
+        memcpy(&CanRx.Chassis_SpeedLocation, ptrData, 8);	//ç›´æ¥å¤åˆ¶ä¸¤ä¸ªæµ®ç‚¹æ•°è¿›å…¥æ•°ç»„å³å¯
         CanRx.RecvId = CHASSIS_STATES;
         CanRx.CanUpdateTime[tChassis_Info]=CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
 	}
@@ -198,7 +198,7 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
  * 
  * 
  * @defgroup Can_Tx_Functions
- * CAN·¢ËÍº¯Êı¡£Çë¶¨ÒåÁËCAN_INTERBOARDÖ®ºóµ÷ÓÃ
+ * CANå‘é€å‡½æ•°ã€‚è¯·å®šä¹‰äº†CAN_INTERBOARDä¹‹åè°ƒç”¨
  * @{
  */
 #ifdef CAN_INTERBOARD
@@ -243,7 +243,7 @@ void CHASSIS_PILLAR_CanTx()
  */
 #ifdef __PROJECT_SENTRY_CLOUD_
 /**
- * @brief ÔÆÌ¨¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ - ÉÏÔÆÌ¨
+ * @brief äº‘å°å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡ - ä¸Šäº‘å°
  */
 void UpCloudCanCommuRoutine(void)
 {
@@ -264,23 +264,23 @@ void UpCloudCanCommuRoutine(void)
 //     SUPERIOR_CHASSIS_SET_LOACTION_CanTx();
 //     SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx(); //
 
-    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //×°ÔØÊı¾İ
+    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //è£…è½½æ•°æ®
     CanTx.UpCloudPitchYaw[1] = CloudEntity.RealYaw;
-    UP_CLOUD_STATES_CanTx();    //·¢ËÍÊı¾İÖ¡
+    UP_CLOUD_STATES_CanTx();    //å‘é€æ•°æ®å¸§
 }
 /**
- * @brief ÔÆÌ¨¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ - ÏÂÔÆÌ¨
+ * @brief äº‘å°å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡ - ä¸‹äº‘å°
  */
 void DownCloudCanCommuRoutine(void)
 {
-    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //×°ÔØÊı¾İ
+    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //è£…è½½æ•°æ®
     CanTx.UpCloudPitchYaw[1] = CloudEntity.RealYaw;
-    DOWN_CLOUD_STATES_CanTx();  //·¢ËÍÊı¾İÖ¡
+    DOWN_CLOUD_STATES_CanTx();  //å‘é€æ•°æ®å¸§
 }
 #endif  //__PROJECT_SENTRY_CLOUD_
 #ifdef __PROJECT_SENTRY_CHASSIS_
 /**
- * @brief µ×ÅÌ¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ
+ * @brief åº•ç›˜å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡
  * 
  */
 void ChassisCanCommuRoutine(void)
@@ -291,7 +291,7 @@ void ChassisCanCommuRoutine(void)
 	CanTx.Pillar_flag = ChassisEntity.PillarFlag;
 	CHASSIS_PILLAR_CanTx();
 }
-//CANĞÅÏ¢µ×ÅÌÍĞ¹Ü¿ØÖÆ³ÌĞò
+//CANä¿¡æ¯åº•ç›˜æ‰˜ç®¡æ§åˆ¶ç¨‹åº
 void ChassisCanRxHandle(void)
 {
 	ChassisEntity.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
@@ -313,7 +313,7 @@ void ChassisCanRxHandle(void)
 
 /**
  * @defgroup SuperiorCommands
- * ÉÏ¼¶ÃüÁî(SUPERIOR)¹ã²¥¡£ÉÏ¼¶ÃüÁîÖ¸²Ù×İÈ«³µµÄÖ¸Áî
+ * ä¸Šçº§å‘½ä»¤(SUPERIOR)å¹¿æ’­ã€‚ä¸Šçº§å‘½ä»¤æŒ‡æ“çºµå…¨è½¦çš„æŒ‡ä»¤
  * @{
  */
 /**
@@ -346,7 +346,7 @@ void SUPERIOR_DOWN_ABSOLUTE_CMD_CanTx()
                   CanTx.SuperCon_PitchYaw[0],
                   CanTx.SuperCon_PitchYaw[1]);
 }
-///µ×ÅÌÔË¶¯
+///åº•ç›˜è¿åŠ¨
 void SUPERIOR_CHASSIS_MOVE_CanTx()
 {
     if (CanTx.SuperCon_ChassisMode == _chassis_speed)
@@ -354,7 +354,7 @@ void SUPERIOR_CHASSIS_MOVE_CanTx()
                       CanTx.SuperCon_ChassisSpeedLocation[0],
                       CanTx.SuperCon_ChassisSpeedLocation[1]);
 }
-///·¢ËÍCANÖ¸Áî¿ØÖÆµ×ÅÌ°´Î»ÖÃÔË¶¯
+///å‘é€CANæŒ‡ä»¤æ§åˆ¶åº•ç›˜æŒ‰ä½ç½®è¿åŠ¨
 void SUPERIOR_CHASSIS_SET_LOACTION_CanTx()
 {
     if (CanTx.SuperCon_ChassisMode == _chassis_location)
@@ -362,7 +362,7 @@ void SUPERIOR_CHASSIS_SET_LOACTION_CanTx()
                       CanTx.SuperCon_ChassisSpeedLocation[0],
                       CanTx.SuperCon_ChassisSpeedLocation[1]);
 }
-///·¢ËÍCANÖ¸Áî£¬ÉèÖÃµ×ÅÌ¿ØÖÆÎ»ÖÃÇÒÏŞËÙÇ°½ø
+///å‘é€CANæŒ‡ä»¤ï¼Œè®¾ç½®åº•ç›˜æ§åˆ¶ä½ç½®ä¸”é™é€Ÿå‰è¿›
 void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx()
 {
     if (CanTx.SuperCon_ChassisMode == _chassis_location_limit_speed)
@@ -370,7 +370,7 @@ void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx()
                       CanTx.SuperCon_ChassisSpeedLocation[0],
                       CanTx.SuperCon_ChassisSpeedLocation[1]);
 }
-///·¢ËÍCAN°²È«Ä£Ê½Ö¸Áî
+///å‘é€CANå®‰å…¨æ¨¡å¼æŒ‡ä»¤
 void SUPERIOR_SAFE_CanTx()
 {
     SentryCanSend(&CAN_INTERBOARD, SUPERIOR_SAFE, NULL);
@@ -389,7 +389,7 @@ void SUPERIOR_SAFE_CanTx()
  */
 #ifdef __PROJECT_SENTRY_CLOUD_
 
-///ÉÏÔÆÌ¨¿ØÖÆ
+///ä¸Šäº‘å°æ§åˆ¶
 void SUPERIOR_UP_RELATIVE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_UP_RELATIVE_CMD)
@@ -408,7 +408,7 @@ void SUPERIOR_UP_ABSOLUTE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
         CanRx.CanUpdateTime[tSuperCon_UpCloud] = CanRx.CanUpdateTime[tSuperiorControl] =CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
     }
 }
-//ÏÂÔÆÌ¨¿ØÖÆ
+//ä¸‹äº‘å°æ§åˆ¶
 void SUPERIOR_DOWN_RELATIVE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_DOWN_RELATIVE_CMD)
@@ -426,7 +426,7 @@ void SUPERIOR_DOWN_ABSOLUTE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
 #endif // __PROJECT_SENTRY_CLOUD_
 #ifdef __PROJECT_SENTRY_CHASSIS_
 
-///µ×ÅÌÔË¶¯
+///åº•ç›˜è¿åŠ¨
 void SUPERIOR_CHASSIS_MOVE_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_MOVE)
@@ -436,7 +436,7 @@ void SUPERIOR_CHASSIS_MOVE_CanRx(uint32_t StdId, uint8_t *ptrData)
         CanRx.CanUpdateTime[tSuperCon_Chassis] = CanRx.CanUpdateTime[tSuperiorControl] =CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
     }
 }
-///½ÓÊÕCANÏßÉÏÖ¸Áî£¬ÉèÖÃ Ä£Ê½ÎªCAN¿ØÖÆÎ»ÖÃ¿ØÖÆ£¬µÈ´ıÖ´ĞĞ
+///æ¥æ”¶CANçº¿ä¸ŠæŒ‡ä»¤ï¼Œè®¾ç½® æ¨¡å¼ä¸ºCANæ§åˆ¶ä½ç½®æ§åˆ¶ï¼Œç­‰å¾…æ‰§è¡Œ
 void SUPERIOR_CHASSIS_SET_LOACTION_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_SET_LOACTION)
@@ -446,7 +446,7 @@ void SUPERIOR_CHASSIS_SET_LOACTION_CanRx(uint32_t StdId, uint8_t *ptrData)
         CanRx.CanUpdateTime[tSuperCon_Chassis] = CanRx.CanUpdateTime[tSuperiorControl] =CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
     }
 }
-///½ÓÊÕCANÖ¸Áî£¬ÉèÖÃµ×ÅÌ¿ØÖÆÎ»ÖÃÇÒÏŞËÙÇ°½ø
+///æ¥æ”¶CANæŒ‡ä»¤ï¼Œè®¾ç½®åº•ç›˜æ§åˆ¶ä½ç½®ä¸”é™é€Ÿå‰è¿›
 void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED)
@@ -459,7 +459,7 @@ void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanRx(uint32_t StdId, uint8_t *pt
 
 #endif // __PROJECT_SENTRY_CHASSIS_
 
-///½ÓÊÕCAN°²È«Ä£Ê½Ö¸Áî
+///æ¥æ”¶CANå®‰å…¨æ¨¡å¼æŒ‡ä»¤
 void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_SAFE)
@@ -472,7 +472,7 @@ void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 #ifdef __PROJECT_SENTRY_CHASSIS_
 
-///µ÷ÓÃÈ«²¿½ÓÊÕÖ¸ÁîµÄº¯Êı
+///è°ƒç”¨å…¨éƒ¨æ¥æ”¶æŒ‡ä»¤çš„å‡½æ•°
 void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId < 0x200)
@@ -494,7 +494,7 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
  */
 
 
-//¹©µ¯¡£ÒòÎª½á¹¹µ÷Õû¶ø·ÏÆú¡£
+//ä¾›å¼¹ã€‚å› ä¸ºç»“æ„è°ƒæ•´è€ŒåºŸå¼ƒã€‚
 
 /*
 void UP_FEED_CanRx(uint32_t StdId, uint8_t *ptrData)

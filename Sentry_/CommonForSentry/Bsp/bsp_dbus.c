@@ -1,55 +1,55 @@
 /** 
  * @file    bsp_dbus.c
-* @brief    Dbus°å¼¶Ö§³Ö°ü
-* @details  DbusÊı¾İ½ÓÊÕ£¬½âÎö
+* @brief    Dbusæ¿çº§æ”¯æŒåŒ…
+* @details  Dbusæ•°æ®æ¥æ”¶ï¼Œè§£æ
 * @author   Evan-GH
 * @date      2019.10
 * @version  1.3
-* @par Copyright (c):  RM2020µç¿Ø
-* @par 	¾ßÌåÊ¹ÓÃ·½·¨¼ûReadme.md
-				°æ±¾±ä¸ü:
-				1.0		|		µ÷Í¨Dbus×ÜÏßÏà¹ØÖĞ¶Ï´¦Àíº¯Êı,Êı¾İ½âÎöº¯Êı
-				1.1		|		Ìí¼Ó¶Ô½ÓÊÕÊı¾İµÄÓĞĞ§ĞÔºÍÕıÈ·ĞÔµÄĞ£Ñé
-				1.2		|		¼ÓÈëÌõ¼ş±àÒë,·ÖÎªÊ¹ÓÃĞÅºÅÁ¿ºÍÆÕÍ¨ÖĞ¶ÏÁ½ÖÖ
-				1.3		|		Ôö¼Ó¶Ô½ÓÊÕ»º´æÊı×é´¦ÀíÖ®ºóµÄÇå0²Ù×÷£¬È·±£Êı¾İĞ£Ñé×¼È·
-				1.4		|		¸ù¾İ´úÂë¹æ·¶ĞŞ¸ÄÁËÒ»Ğ©º¯ÊıÃû³Æ
-				1.5		|		ĞŞ¸ÄÒ»Ğ©Ğ¡bug
-				2.0		2020-3-18	ThunderDoge		ÕûºÏµ½ÉÚ±ø¹¤³ÌÖĞ¡£¼ÓÈëÁËÀëÏß¼ì²â²¿·Ö¡£
+* @par Copyright (c):  RM2020ç”µæ§
+* @par 	å…·ä½“ä½¿ç”¨æ–¹æ³•è§Readme.md
+				ç‰ˆæœ¬å˜æ›´:
+				1.0		|		è°ƒé€šDbusæ€»çº¿ç›¸å…³ä¸­æ–­å¤„ç†å‡½æ•°,æ•°æ®è§£æå‡½æ•°
+				1.1		|		æ·»åŠ å¯¹æ¥æ”¶æ•°æ®çš„æœ‰æ•ˆæ€§å’Œæ­£ç¡®æ€§çš„æ ¡éªŒ
+				1.2		|		åŠ å…¥æ¡ä»¶ç¼–è¯‘,åˆ†ä¸ºä½¿ç”¨ä¿¡å·é‡å’Œæ™®é€šä¸­æ–­ä¸¤ç§
+				1.3		|		å¢åŠ å¯¹æ¥æ”¶ç¼“å­˜æ•°ç»„å¤„ç†ä¹‹åçš„æ¸…0æ“ä½œï¼Œç¡®ä¿æ•°æ®æ ¡éªŒå‡†ç¡®
+				1.4		|		æ ¹æ®ä»£ç è§„èŒƒä¿®æ”¹äº†ä¸€äº›å‡½æ•°åç§°
+				1.5		|		ä¿®æ”¹ä¸€äº›å°bug
+				2.0		2020-3-18	ThunderDoge		æ•´åˆåˆ°å“¨å…µå·¥ç¨‹ä¸­ã€‚åŠ å…¥äº†ç¦»çº¿æ£€æµ‹éƒ¨åˆ†ã€‚
 */
 #include "bsp_dbus.h"
 
-/// ÀëÏß¼ì²â ½á¹¹Ìå
+/// ç¦»çº¿æ£€æµ‹ ç»“æ„ä½“
 struct CheckDevice_Type Dbus_CheckDevice(DbusDevice,100);
 
 
-bsp_dbus_RC_Data bsp_dbus_Data; //Dbus½âËãÊı¾İ
-static uint8_t Dbus_Rxbuffer[BSP_DBUS_BUFFER_SIZE]={0}; //Dbus½ÓÊÕÊı¾İ»º´æÊı×é
-int16_t Dbus_CHx_StaticOffset[4]={0};	//Ò£¿ØÆ÷´¦ÓÚËÉÊÖ×´Ì¬Ê±µÄÆ«ÒÆ¡£Ä¬ÈÏÎª0.ĞŞ¸Ä´ËÖµ»áÈÃ½áËã³öÀ´µÄbsp_dbus_DataÖµĞŞÕı¡£
+bsp_dbus_RC_Data bsp_dbus_Data; //Dbusè§£ç®—æ•°æ®
+static uint8_t Dbus_Rxbuffer[BSP_DBUS_BUFFER_SIZE]={0}; //Dbusæ¥æ”¶æ•°æ®ç¼“å­˜æ•°ç»„
+int16_t Dbus_CHx_StaticOffset[4]={0};	//é¥æ§å™¨å¤„äºæ¾æ‰‹çŠ¶æ€æ—¶çš„åç§»ã€‚é»˜è®¤ä¸º0.ä¿®æ”¹æ­¤å€¼ä¼šè®©ç»“ç®—å‡ºæ¥çš„bsp_dbus_Dataå€¼ä¿®æ­£ã€‚
 
 /**
-* @brief  Dbus×ÜÏß³õÊ¼»¯
-* @details  ³õÊ¼»¯DbusÖĞ¶ÏÉèÖÃ£¬¿ªÆôDMA½ÓÊÕ¿ÕÏĞÖĞ¶Ï
+* @brief  Dbusæ€»çº¿åˆå§‹åŒ–
+* @details  åˆå§‹åŒ–Dbusä¸­æ–­è®¾ç½®ï¼Œå¼€å¯DMAæ¥æ”¶ç©ºé—²ä¸­æ–­
 * @param  NULL
 * @retval  NULL
 */
 void bsp_dbus_Init(void)
 {																
 	
-	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //Çå³ı¿ÕÏĞÖĞ¶ÏÎ»
-	__HAL_UART_ENABLE_IT(&BSP_DBUS_UART,UART_IT_IDLE); //Ê¹ÄÜDMA½ÓÊÕ¿ÕÏĞÖĞ¶Ï
-	HAL_UART_Receive_DMA(&BSP_DBUS_UART,Dbus_Rxbuffer,BSP_DBUS_BUFFER_SIZE); //¿ªÊ¼DMA½ÓÊÕ
+	__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //æ¸…é™¤ç©ºé—²ä¸­æ–­ä½
+	__HAL_UART_ENABLE_IT(&BSP_DBUS_UART,UART_IT_IDLE); //ä½¿èƒ½DMAæ¥æ”¶ç©ºé—²ä¸­æ–­
+	HAL_UART_Receive_DMA(&BSP_DBUS_UART,Dbus_Rxbuffer,BSP_DBUS_BUFFER_SIZE); //å¼€å§‹DMAæ¥æ”¶
 }
 
 /**
-* @brief  Dbus×ÜÏßÊı¾İĞ£Ñé
-* @details  Ğ£Ñé½ÓÊÕÊı¾İµÄÓĞĞ§ĞÔºÍÕıÈ·ĞÔ
+* @brief  Dbusæ€»çº¿æ•°æ®æ ¡éªŒ
+* @details  æ ¡éªŒæ¥æ”¶æ•°æ®çš„æœ‰æ•ˆæ€§å’Œæ­£ç¡®æ€§
 * @param  NULL
-* @retval  HAL_OK Êı¾İÕı³£  HAL_ERROR Êı¾İÓĞÎó
+* @retval  HAL_OK æ•°æ®æ­£å¸¸  HAL_ERROR æ•°æ®æœ‰è¯¯
 */
 static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 {
 	int i=0;
-	for(i=0;i<18;i++)				//Ê×ÏÈ¼ìÑéÇ°Ãæ18Î»Êı¾İÊÇ·ñÓĞĞ§£¬Èç¹ûÈ«Îª0ÏÔÈ»ÊÇÎŞĞ§Êı¾İ
+	for(i=0;i<18;i++)				//é¦–å…ˆæ£€éªŒå‰é¢18ä½æ•°æ®æ˜¯å¦æœ‰æ•ˆï¼Œå¦‚æœå…¨ä¸º0æ˜¾ç„¶æ˜¯æ— æ•ˆæ•°æ®
 	{
 		if(Dbus_Rxbuffer[i]==0)
 		{
@@ -62,38 +62,38 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 	}
 	if(i==18)
 	{
-		return HAL_ERROR;				//Ç°18Î»Êı¾İÈ«²¿Îª0£¬·µ»Ø´íÎó
+		return HAL_ERROR;				//å‰18ä½æ•°æ®å…¨éƒ¨ä¸º0ï¼Œè¿”å›é”™è¯¯
 	}
-	for(i=18;i<25;i++)											//¶ÔºóÃæµÄÊı¾İ½øĞĞ¼ìÑé£¬Èç¹û²»Îª0ÏÔÈ»Êı¾İ³ö´í
+	for(i=18;i<25;i++)											//å¯¹åé¢çš„æ•°æ®è¿›è¡Œæ£€éªŒï¼Œå¦‚æœä¸ä¸º0æ˜¾ç„¶æ•°æ®å‡ºé”™
 	{
 		if(Dbus_Rxbuffer[i]!=0)
 		{
-			return HAL_ERROR;			//ºóÃæ¼¸Î»Êı¾İ³öÏÖÁË·Ç0£¬ËµÃ÷Êı¾İ³ö´í
+			return HAL_ERROR;			//åé¢å‡ ä½æ•°æ®å‡ºç°äº†é0ï¼Œè¯´æ˜æ•°æ®å‡ºé”™
 		}
 	}
 	return HAL_OK;
 }
 
 /**
-* @brief  DbusÊı¾İ½âÎö
-* @details  ½âÎöDbus½ÓÊÕµ½µÄÊı¾İ²¢¸üĞÂµ½½á¹¹Ìå£¬²¢¹éÒ»»¯
+* @brief  Dbusæ•°æ®è§£æ
+* @details  è§£æDbusæ¥æ”¶åˆ°çš„æ•°æ®å¹¶æ›´æ–°åˆ°ç»“æ„ä½“ï¼Œå¹¶å½’ä¸€åŒ–
 * @param  NULL
 * @retval  NULL
 */
 #ifdef BSP_DBUS_USE_SIGNAL
 	void bsp_dbus_Analysis(void)
 	{
-		// Ò£¿ØÊı¾İÔ­Ê¼½âÎö£¬Õâ²¿·Ö´úÂëÖ±½Ó²Î¿¼¹Ù·½Ê¾Àı´úÂë¼´¿É
-		//Ò£¿ØÆ÷¿ØÖÆ²¿·Ö
+		// é¥æ§æ•°æ®åŸå§‹è§£æï¼Œè¿™éƒ¨åˆ†ä»£ç ç›´æ¥å‚è€ƒå®˜æ–¹ç¤ºä¾‹ä»£ç å³å¯
+		//é¥æ§å™¨æ§åˆ¶éƒ¨åˆ†
 		bsp_dbus_Data.CH_0 = ((int16_t)Dbus_Rxbuffer[0] | (((int16_t)Dbus_Rxbuffer[1]<<8))) & 0x07FF;
 		bsp_dbus_Data.CH_1 = ((int16_t)Dbus_Rxbuffer[1] >> 3 | (((int16_t)Dbus_Rxbuffer[2]<<5))) & 0x07FF;
 		bsp_dbus_Data.CH_2 = ((int16_t)Dbus_Rxbuffer[2] >> 6 | (((int16_t)Dbus_Rxbuffer[3]<<2)) | ((int16_t)Dbus_Rxbuffer[4])<<10) & 0x07FF;
 		bsp_dbus_Data.CH_3 = ((int16_t)Dbus_Rxbuffer[4] >> 1 | (((int16_t)Dbus_Rxbuffer[5]<<7)) ) & 0x07FF;
 		bsp_dbus_Data.S1 = ((Dbus_Rxbuffer[5] >> 4) & 0X000C) >> 2;
 		bsp_dbus_Data.S2 = (Dbus_Rxbuffer[5] >> 4) & 0X0003;			
-		bsp_dbus_Data.Dial = ((int16_t)Dbus_Rxbuffer[16] | ((int16_t)Dbus_Rxbuffer[17] << 8)) & 0x07FF;		//²¦ÂëÅÌÊı¾İ£¬ĞèÒª¸üĞÂÒ£¿ØÆ÷¹Ì¼ş
+		bsp_dbus_Data.Dial = ((int16_t)Dbus_Rxbuffer[16] | ((int16_t)Dbus_Rxbuffer[17] << 8)) & 0x07FF;		//æ‹¨ç ç›˜æ•°æ®ï¼Œéœ€è¦æ›´æ–°é¥æ§å™¨å›ºä»¶
 		
-		//¼üÊó¿ØÖÆ²¿·Ö
+		//é”®é¼ æ§åˆ¶éƒ¨åˆ†
 		bsp_dbus_Data.Mouse.X = ((int16_t)Dbus_Rxbuffer[6]) | ((int16_t)Dbus_Rxbuffer[7] << 8);
 		bsp_dbus_Data.Mouse.Y = ((int16_t)Dbus_Rxbuffer[8]) | ((int16_t)Dbus_Rxbuffer[9] << 8);
 		bsp_dbus_Data.Mouse.Z = ((int16_t)Dbus_Rxbuffer[10]) | ((int16_t)Dbus_Rxbuffer[11] << 8);
@@ -104,17 +104,17 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 #else
 	static void bsp_dbus_Analysis(void)
 	{
-		// Ò£¿ØÊı¾İÔ­Ê¼½âÎö£¬Õâ²¿·Ö´úÂëÖ±½Ó²Î¿¼¹Ù·½Ê¾Àı´úÂë¼´¿É
-		//Ò£¿ØÆ÷¿ØÖÆ²¿·Ö
+		// é¥æ§æ•°æ®åŸå§‹è§£æï¼Œè¿™éƒ¨åˆ†ä»£ç ç›´æ¥å‚è€ƒå®˜æ–¹ç¤ºä¾‹ä»£ç å³å¯
+		//é¥æ§å™¨æ§åˆ¶éƒ¨åˆ†
 		bsp_dbus_Data.CH_0 = ((int16_t)Dbus_Rxbuffer[0] | (((int16_t)Dbus_Rxbuffer[1]<<8))) & 0x07FF;
 		bsp_dbus_Data.CH_1 = ((int16_t)Dbus_Rxbuffer[1] >> 3 | (((int16_t)Dbus_Rxbuffer[2]<<5))) & 0x07FF;
 		bsp_dbus_Data.CH_2 = ((int16_t)Dbus_Rxbuffer[2] >> 6 | (((int16_t)Dbus_Rxbuffer[3]<<2)) | ((int16_t)Dbus_Rxbuffer[4])<<10) & 0x07FF;
 		bsp_dbus_Data.CH_3 = ((int16_t)Dbus_Rxbuffer[4] >> 1 | (((int16_t)Dbus_Rxbuffer[5]<<7)) ) & 0x07FF;
 		bsp_dbus_Data.S1 = ((Dbus_Rxbuffer[5] >> 4) & 0X000C) >> 2;
 		bsp_dbus_Data.S2 = (Dbus_Rxbuffer[5] >> 4) & 0X0003;			
-		bsp_dbus_Data.Dial = ((int16_t)Dbus_Rxbuffer[16] | ((int16_t)Dbus_Rxbuffer[17] << 8)) & 0x07FF;		//²¦ÂëÅÌÊı¾İ£¬ĞèÒª¸üĞÂÒ£¿ØÆ÷¹Ì¼ş
+		bsp_dbus_Data.Dial = ((int16_t)Dbus_Rxbuffer[16] | ((int16_t)Dbus_Rxbuffer[17] << 8)) & 0x07FF;		//æ‹¨ç ç›˜æ•°æ®ï¼Œéœ€è¦æ›´æ–°é¥æ§å™¨å›ºä»¶
 		
-		//¼üÊó¿ØÖÆ²¿·Ö
+		//é”®é¼ æ§åˆ¶éƒ¨åˆ†
 		bsp_dbus_Data.Mouse.X = ((int16_t)Dbus_Rxbuffer[6]) | ((int16_t)Dbus_Rxbuffer[7] << 8);
 		bsp_dbus_Data.Mouse.Y = ((int16_t)Dbus_Rxbuffer[8]) | ((int16_t)Dbus_Rxbuffer[9] << 8);
 		bsp_dbus_Data.Mouse.Z = ((int16_t)Dbus_Rxbuffer[10]) | ((int16_t)Dbus_Rxbuffer[11] << 8);
@@ -122,45 +122,45 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 		bsp_dbus_Data.Mouse.Rightkey = Dbus_Rxbuffer[13];
 		bsp_dbus_Data.Keys = ((int16_t)Dbus_Rxbuffer[14] | (int16_t)Dbus_Rxbuffer[15]<<8);
 		
-		//×Ô¶¨Òå´¦ÀíBy ThunderDoge 2019/11/23
+		//è‡ªå®šä¹‰å¤„ç†By ThunderDoge 2019/11/23
 		bsp_dbus_Data.CH_0 -= 1024+Dbus_CHx_StaticOffset[0];
 		bsp_dbus_Data.CH_1 -= 1024+Dbus_CHx_StaticOffset[1];
 		bsp_dbus_Data.CH_2 -= 1024+Dbus_CHx_StaticOffset[2];
 		bsp_dbus_Data.CH_3 -= 1024+Dbus_CHx_StaticOffset[3];
 		
-		//ÀëÏß¼ì²â¸üĞÂ
+		//ç¦»çº¿æ£€æµ‹æ›´æ–°
 		Dbus_CheckDevice.update_hook_func(&Dbus_CheckDevice);
 	}
 #endif
 
 /**
-* @brief  DbusÖĞ¶Ï´¦Àíº¯Êı
-* @details  ÊÍ·Å¶şÖµĞÅºÅÁ¿ÒÔ¹©ÈÎÎñ½øĞĞÍ¬²½´¦Àí£¬·ÅÔÚDbusËùÊ¹ÓÃµÄ´®¿ÚµÄ×ÜÌåÖĞ¶ÏÖĞµ÷ÓÃ ×¢Òâ¶ÔÊı¾İÓĞĞ§ĞÔºÍÕıÈ·ĞÔ½øĞĞ¼ì²â
+* @brief  Dbusä¸­æ–­å¤„ç†å‡½æ•°
+* @details  é‡Šæ”¾äºŒå€¼ä¿¡å·é‡ä»¥ä¾›ä»»åŠ¡è¿›è¡ŒåŒæ­¥å¤„ç†ï¼Œæ”¾åœ¨Dbusæ‰€ä½¿ç”¨çš„ä¸²å£çš„æ€»ä½“ä¸­æ–­ä¸­è°ƒç”¨ æ³¨æ„å¯¹æ•°æ®æœ‰æ•ˆæ€§å’Œæ­£ç¡®æ€§è¿›è¡Œæ£€æµ‹
 * @param  NULL
 * @retval  NULL
 */
 void bsp_dbus_It(void)
 {
-	if(__HAL_UART_GET_FLAG(&BSP_DBUS_UART,UART_FLAG_IDLE) != RESET)	//Èç¹û²úÉúÁË¿ÕÏĞÖĞ¶Ï
+	if(__HAL_UART_GET_FLAG(&BSP_DBUS_UART,UART_FLAG_IDLE) != RESET)	//å¦‚æœäº§ç”Ÿäº†ç©ºé—²ä¸­æ–­
 	{		
-		HAL_UART_DMAStop(&BSP_DBUS_UART); //¹Ø±ÕDMA
-		//ÔÚ½âÎöÊı¾İÖ®Ç°Ê×ÏÈÈ·¶¨Êı¾İµÄÓĞĞ§ĞÔºÍ×¼È·ĞÔ
+		HAL_UART_DMAStop(&BSP_DBUS_UART); //å…³é—­DMA
+		//åœ¨è§£ææ•°æ®ä¹‹å‰é¦–å…ˆç¡®å®šæ•°æ®çš„æœ‰æ•ˆæ€§å’Œå‡†ç¡®æ€§
 		if(bsp_dbus_Datacheck() == HAL_OK)
 		{			
-			#ifdef BSP_DBUS_USE_SIGNAL		//Èç¹ûÊ¹ÓÃĞÅºÅÁ¿
+			#ifdef BSP_DBUS_USE_SIGNAL		//å¦‚æœä½¿ç”¨ä¿¡å·é‡
 				static BaseType_t Dbus_xHigherPriorityTaskWoken;
-				xSemaphoreGiveFromISR(Dbus_Update_Handle,&Dbus_xHigherPriorityTaskWoken); //ÊÍ·ÅĞÅºÅÁ¿£¬¸üĞÂDbusÊı¾İ
-				xSemaphoreGiveFromISR(Dbus_Check_Handle, &Dbus_xHigherPriorityTaskWoken);	//ÊÍ·ÅDbusÀëÏß¼ì²â¶şÖµĞÅºÅÁ¿
-			#else													//Ã»ÓĞÊ¹ÓÃĞÅºÅÁ¿
-				bsp_dbus_Analysis(); //Ö±½ÓÔÚÖĞ¶ÏÀïÃæ½âÎöÊı¾İ
+				xSemaphoreGiveFromISR(Dbus_Update_Handle,&Dbus_xHigherPriorityTaskWoken); //é‡Šæ”¾ä¿¡å·é‡ï¼Œæ›´æ–°Dbusæ•°æ®
+				xSemaphoreGiveFromISR(Dbus_Check_Handle, &Dbus_xHigherPriorityTaskWoken);	//é‡Šæ”¾Dbusç¦»çº¿æ£€æµ‹äºŒå€¼ä¿¡å·é‡
+			#else													//æ²¡æœ‰ä½¿ç”¨ä¿¡å·é‡
+				bsp_dbus_Analysis(); //ç›´æ¥åœ¨ä¸­æ–­é‡Œé¢è§£ææ•°æ®
 			#endif
 		}
-		memset(Dbus_Rxbuffer,0,BSP_DBUS_BUFFER_SIZE);	//¶Ô½ÓÊÕ»º´æÊı¾İÇå0
-		//µ÷ÊÔµÄÊ±ºò¿ÉÒÔÈ¡ÏûÏÂÃæÓï¾ä×¢ÊÍ°ÑÊı¾İ´òÓ¡³öÀ´¼à¿Ø£¬×¢ÒâprintfÊÇ×èÈûĞÍº¯Êı£¬¿ÉÄÜµ¼ÖÂÏµÍ³¿¨ËÀ£¬¿ÉÒÔ·Å½øÖÜÆÚĞÔº¯ÊıÖĞ´òÓ¡Êı¾İ
-		//×¢Òâ£ºÊ¹ÓÃÏÂÃæÓï¾äµÄÇ°ÌáÊÇÄãÒÑ¾­ÖØ¶¨ÏòÁËprintf£¬²¢ÇÒÃ÷È·ÖªµÀÄÄ¸ö´®¿ÚÊÇÊä³ö£¡
+		memset(Dbus_Rxbuffer,0,BSP_DBUS_BUFFER_SIZE);	//å¯¹æ¥æ”¶ç¼“å­˜æ•°æ®æ¸…0
+		//è°ƒè¯•çš„æ—¶å€™å¯ä»¥å–æ¶ˆä¸‹é¢è¯­å¥æ³¨é‡ŠæŠŠæ•°æ®æ‰“å°å‡ºæ¥ç›‘æ§ï¼Œæ³¨æ„printfæ˜¯é˜»å¡å‹å‡½æ•°ï¼Œå¯èƒ½å¯¼è‡´ç³»ç»Ÿå¡æ­»ï¼Œå¯ä»¥æ”¾è¿›å‘¨æœŸæ€§å‡½æ•°ä¸­æ‰“å°æ•°æ®
+		//æ³¨æ„ï¼šä½¿ç”¨ä¸‹é¢è¯­å¥çš„å‰ææ˜¯ä½ å·²ç»é‡å®šå‘äº†printfï¼Œå¹¶ä¸”æ˜ç¡®çŸ¥é“å“ªä¸ªä¸²å£æ˜¯è¾“å‡ºï¼
 		//printf("CH0:%d CH1:%d CH2:%d CH3:%d\n",bsp_dbus_Data.CH_0,bsp_dbus_Data.CH_1,bsp_dbus_Data.CH_2,bsp_dbus_Data.CH_3);
 		//printf("S1:%d S2:%d\n",bsp_dbus_Data.S1,bsp_dbus_Data.S2);
-		__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //Çå³ı¿ÕÏĞÖĞ¶Ï±êÖ¾Î»
-		HAL_UART_Receive_DMA(&BSP_DBUS_UART, (uint8_t*)Dbus_Rxbuffer, BSP_DBUS_BUFFER_SIZE);//ÖØĞÂ¿ªÆôDMA½ÓÊÕ´«Êä
+		__HAL_UART_CLEAR_IDLEFLAG(&BSP_DBUS_UART); //æ¸…é™¤ç©ºé—²ä¸­æ–­æ ‡å¿—ä½
+		HAL_UART_Receive_DMA(&BSP_DBUS_UART, (uint8_t*)Dbus_Rxbuffer, BSP_DBUS_BUFFER_SIZE);//é‡æ–°å¼€å¯DMAæ¥æ”¶ä¼ è¾“
 	}
 }

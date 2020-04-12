@@ -349,14 +349,14 @@
 #define AK8975_MAG_TO_GAUSS 0.3*0.001 //uT/LSB
 ////////////////////////////////////////////////
 
-uint8_t bsp_spi_ReadReg(uint8_t regAddr);//Ìá¹©¸ø×ËÌ¬½âËãµÄ¶ÁÊı¾İº¯Êı
-void bsp_spi_ReadRegs(uint8_t regAddr,uint8_t *pBuff,uint8_t length);//±ê×¼SPI¶Áº¯Êı
-HAL_StatusTypeDef bsp_spi_Icm20602Init(void);//ICM20602³õÊ¼»¯
+uint8_t bsp_spi_ReadReg(uint8_t regAddr);//æä¾›ç»™å§¿æ€è§£ç®—çš„è¯»æ•°æ®å‡½æ•°
+void bsp_spi_ReadRegs(uint8_t regAddr,uint8_t *pBuff,uint8_t length);//æ ‡å‡†SPIè¯»å‡½æ•°
+HAL_StatusTypeDef bsp_spi_Icm20602Init(void);//ICM20602åˆå§‹åŒ–
 
 #ifdef USE_MAG
-extern uint8_t bsp_spi_MagAsa[3];//¶ÁÈ¡´ÅÁ¦¼ÆASAĞ£Õı¼Ä´æÆ÷
-void bsp_spi_MagTrig(void);//´ÅÁ¦¼Æ´¥·¢
-uint8_t bsp_spi_MagReads(uint8_t regAddr,uint8_t *pBuff,uint8_t length);//´ÅÁ¦¼Æ¶ÁÈ¡
-HAL_StatusTypeDef bsp_spi_Ak8975Init(void);//´ÅÁ¦¼Æ³õÊ¼»¯
+extern uint8_t bsp_spi_MagAsa[3];//è¯»å–ç£åŠ›è®¡ASAæ ¡æ­£å¯„å­˜å™¨
+void bsp_spi_MagTrig(void);//ç£åŠ›è®¡è§¦å‘
+uint8_t bsp_spi_MagReads(uint8_t regAddr,uint8_t *pBuff,uint8_t length);//ç£åŠ›è®¡è¯»å–
+HAL_StatusTypeDef bsp_spi_Ak8975Init(void);//ç£åŠ›è®¡åˆå§‹åŒ–
 #endif
 #endif

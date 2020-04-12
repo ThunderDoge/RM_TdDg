@@ -1,6 +1,6 @@
 /**
   * @file      task_sentry_check_device.h
-  * @brief     ¹«ÓÃÉè±¸ÀëÏß¼ì²âÈÎÎñ
+  * @brief     å…¬ç”¨è®¾å¤‡ç¦»çº¿æ£€æµ‹ä»»åŠ¡
   * @details   
   * @author   ThunderDoge
   * @date      2020-3-18
@@ -12,7 +12,7 @@
 #ifndef __TASK_SENTRY_CHECK_DEVICE_H
 #define __TASK_SENTRY_CHECK_DEVICE_H
 
-//ÒÀÀµµÄÎÄ¼ş
+//ä¾èµ–çš„æ–‡ä»¶
 
 #include "cmsis_os.h"
 #include "app_sentry_check_device.hpp"

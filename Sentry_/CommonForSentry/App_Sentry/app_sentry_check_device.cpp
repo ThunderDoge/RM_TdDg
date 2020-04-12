@@ -1,15 +1,15 @@
 /**
  * @file      app_sentry_check_device.cpp
- * @brief     ÀëÏß¼ì²â¹¦ÄÜ£¬ÔÆÌ¨µ×ÅÌ¹«ÓÃÎÄ¼ş¡£
- * @details   Ê¹ÓÃ·½·¨£º
- * 1.ÈçÒªÌí¼ÓĞÂÉè±¸ ÔÚ CheckDeviceID_Enum ÖĞ¼ÓÈëÉè±¸IDÃ¶¾ÙÁ¿
- * 2.¶¨ÒåÉè±¸¶ÔÏó CheckDevice_Type
- * 3.³õÊ¼»¯º¯ÊıÖĞµ÷ÓÃ app_sentry_CheckDevice_Init()
- * 4.µ÷ÓÃ app_sentry_CheckDevice_AddToArray() ½«Äã¶¨ÒåµÄÉè±¸¶ÔÏó¼Óµ½±¾»úÉè±¸ÁĞ±í
- * 5.ÖÜÆÚµØÔËĞĞ app_sentry_CheckDevice_Handle()
- * 6.ÔÚCAN»Øµ÷º¯ÊıÖĞµ÷ÓÃ app_sentry_CheckDevice_CanRxCallback() ÒÔ¸üĞÂÆäËû°åÉÏµÄÉè±¸µÄ×´Ì¬
- * 7.ÖØÒª>>>>>>>>>>>>>>>>>>ÄúĞèÒª×ÔĞĞ¶¨Òå Í¨¹ıCAN·¢ËÍ±¾»úÀëÏßÉè±¸µÄº¯Êı<<<<<<<<<<<<<<<<<<¡£ 
- *   Äú¿ÉÒÔÍ¨¹ı app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo() »ñÈ¡¶ÓÁĞÖĞ´ı´¦ÀíµÄÀëÏßÉè±¸
+ * @brief     ç¦»çº¿æ£€æµ‹åŠŸèƒ½ï¼Œäº‘å°åº•ç›˜å…¬ç”¨æ–‡ä»¶ã€‚
+ * @details   ä½¿ç”¨æ–¹æ³•ï¼š
+ * 1.å¦‚è¦æ·»åŠ æ–°è®¾å¤‡ åœ¨ CheckDeviceID_Enum ä¸­åŠ å…¥è®¾å¤‡IDæšä¸¾é‡
+ * 2.å®šä¹‰è®¾å¤‡å¯¹è±¡ CheckDevice_Type
+ * 3.åˆå§‹åŒ–å‡½æ•°ä¸­è°ƒç”¨ app_sentry_CheckDevice_Init()
+ * 4.è°ƒç”¨ app_sentry_CheckDevice_AddToArray() å°†ä½ å®šä¹‰çš„è®¾å¤‡å¯¹è±¡åŠ åˆ°æœ¬æœºè®¾å¤‡åˆ—è¡¨
+ * 5.å‘¨æœŸåœ°è¿è¡Œ app_sentry_CheckDevice_Handle()
+ * 6.åœ¨CANå›è°ƒå‡½æ•°ä¸­è°ƒç”¨ app_sentry_CheckDevice_CanRxCallback() ä»¥æ›´æ–°å…¶ä»–æ¿ä¸Šçš„è®¾å¤‡çš„çŠ¶æ€
+ * 7.é‡è¦>>>>>>>>>>>>>>>>>>æ‚¨éœ€è¦è‡ªè¡Œå®šä¹‰ é€šè¿‡CANå‘é€æœ¬æœºç¦»çº¿è®¾å¤‡çš„å‡½æ•°<<<<<<<<<<<<<<<<<<ã€‚ 
+ *   æ‚¨å¯ä»¥é€šè¿‡ app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo() è·å–é˜Ÿåˆ—ä¸­å¾…å¤„ç†çš„ç¦»çº¿è®¾å¤‡
  * @author   ThunderDoge
  * @date      2020-3-12
  * @version   0.2
@@ -20,21 +20,21 @@
 
 
 
-//È«¾Ö±äÁ¿
+//å…¨å±€å˜é‡
 
-static uint8_t checkdevice_is_inited=0;			//¡¾ÒÑ¾­³õÊ¼»¯¡¿±êÖ¾±äÁ¿
+static uint8_t checkdevice_is_inited=0;			//ã€å·²ç»åˆå§‹åŒ–ã€‘æ ‡å¿—å˜é‡
 
-CheckDeviceArry_Type CheckDeviceArry;			//ËùÓĞÉè±¸ÁĞ±í
+CheckDeviceArry_Type CheckDeviceArry;			//æ‰€æœ‰è®¾å¤‡åˆ—è¡¨
 
-QueueHandle_t QueueOfflineDevice;					/// ÒÑÀëÏßÉè±¸ÁĞ±í ·¢ËÍ¸øÍ¨ĞÅº¯Êı´¦Àí
+QueueHandle_t QueueOfflineDevice;					/// å·²ç¦»çº¿è®¾å¤‡åˆ—è¡¨ å‘é€ç»™é€šä¿¡å‡½æ•°å¤„ç†
 
 uint8_t app_sentry_CheckDevice_OfflineList[ CheckDeviceID_EnumLength+2 ] = {1};
 
 
 /**
- * @brief       Ä¬ÈÏµÄ¸üĞÂ¹³×Óº¯Êı¡£¸üĞÂ¹³×Óº¯Êı½«ÔÚ³õÊ¼»¯ÖĞ @see app_sentry_CheckDevice_Type_Init() ÉèÎªÕâ¸ö
+ * @brief       é»˜è®¤çš„æ›´æ–°é’©å­å‡½æ•°ã€‚æ›´æ–°é’©å­å‡½æ•°å°†åœ¨åˆå§‹åŒ–ä¸­ @see app_sentry_CheckDevice_Type_Init() è®¾ä¸ºè¿™ä¸ª
  * 
- * @param     self  À´Ô´
+ * @param     self  æ¥æº
  */
 void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
 {
@@ -48,9 +48,9 @@ void Default_CheckDevice_UpdateHookFunc(CheckDevice_Type* self)
 
 
 /**
- * @brief   Ä¬ÈÏµÄÀëÏß»Øµ÷º¯Êı¡£»á°Ñ±¾Éè±¸ device Ìí¼Óµ½¶ÓÁĞ QueueOfflineDevice
- * ÀëÏßºÍÉÏÏß¶¼Òª
- * @param     device  Ö¸Ïò×Ô¼ºµÄÖ¸Õë¡£ÀëÏß»Øµ÷º¯Êı½«ÔÚ³õÊ¼»¯ÖĞ @see app_sentry_CheckDevice_Type_Init() ÉèÎªÕâ¸ö
+ * @brief   é»˜è®¤çš„ç¦»çº¿å›è°ƒå‡½æ•°ã€‚ä¼šæŠŠæœ¬è®¾å¤‡ device æ·»åŠ åˆ°é˜Ÿåˆ— QueueOfflineDevice
+ * ç¦»çº¿å’Œä¸Šçº¿éƒ½è¦
+ * @param     device  æŒ‡å‘è‡ªå·±çš„æŒ‡é’ˆã€‚ç¦»çº¿å›è°ƒå‡½æ•°å°†åœ¨åˆå§‹åŒ–ä¸­ @see app_sentry_CheckDevice_Type_Init() è®¾ä¸ºè¿™ä¸ª
  */
 void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_Type* device)
 {
@@ -64,37 +64,37 @@ void Default_CheckDevice_OfflineCallbackFunc_AddToQueueToCommuTask(CheckDevice_T
 
 
 /** 
-  * @brief      Æ÷¼şÀëÏßÅĞ¶Ïº¯Êı
-  * @param[in]  device Æ÷¼şÖ¸Õë
+  * @brief      å™¨ä»¶ç¦»çº¿åˆ¤æ–­å‡½æ•°
+  * @param[in]  device å™¨ä»¶æŒ‡é’ˆ
   * @retval     None
   * @author     LittleDragon
-  * @par         ÈÕÖ¾ 
-  *             2020-3-12   v0.1    ThunderDogeÔÄ¶ÁÁËLittleDragonµÄRM2019Ó¢ĞÛ´úÂë£¬¾õµÃÕâÒ»¶ÎºÜºÃ£¬¹Ê²ÉÓÃ
+  * @par         æ—¥å¿— 
+  *             2020-3-12   v0.1    ThunderDogeé˜…è¯»äº†LittleDragonçš„RM2019è‹±é›„ä»£ç ï¼Œè§‰å¾—è¿™ä¸€æ®µå¾ˆå¥½ï¼Œæ•…é‡‡ç”¨
   */
 static void DeviceOffline_Check(CheckDevice_Type* device)
 {	
-    if( device == NULL )    //ÎŞĞ§µÄÉè±¸¡£ºÜ¿ÉÄÜÊÇÔ½½ç
-        while (1){;}        //±©Â¶´íÎó
+    if( device == NULL )    //æ— æ•ˆçš„è®¾å¤‡ã€‚å¾ˆå¯èƒ½æ˜¯è¶Šç•Œ
+        while (1){;}        //æš´éœ²é”™è¯¯
 
 	uint8_t last_offline = app_sentry_CheckDevice_OfflineList[(uint8_t)device->id];
 
-	if( device->is_offline_func != NULL )   //Èç¹ûÓĞÄÚÖÃÀëÏß¼ì²âº¯Êı
+	if( device->is_offline_func != NULL )   //å¦‚æœæœ‰å†…ç½®ç¦»çº¿æ£€æµ‹å‡½æ•°
 	{
-		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = device->is_offline_func();    //¾ÍÖ±½ÓÖ´ĞĞº¯Êı
+		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = device->is_offline_func();    //å°±ç›´æ¥æ‰§è¡Œå‡½æ•°
 	}
-	else                                        //Èç¹ûÃ»ÓĞ
+	else                                        //å¦‚æœæ²¡æœ‰
 	{
-		uint32_t dt = HAL_GetTick() - device->lastTick;     //¼ÆËãÀëÏßÊ±¼ä
-		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = (dt > device->maxAllowTime);    //Ğ´Èë×´Ì¬
+		uint32_t dt = HAL_GetTick() - device->lastTick;     //è®¡ç®—ç¦»çº¿æ—¶é—´
+		app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] = (dt > device->maxAllowTime);    //å†™å…¥çŠ¶æ€
 	}
 	
-	if(app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] != last_offline)	// µÇ¼Ç£ºĞèÒª¸üĞÂ
+	if(app_sentry_CheckDevice_OfflineList[(uint8_t)device->id] != last_offline)	// ç™»è®°ï¼šéœ€è¦æ›´æ–°
 	{device->is_change_reported = REPORT_NEEDED;}
 	
 	if(device->is_change_reported == REPORT_NEEDED)
 	{
 		device->state_changed_callback_func(device);
-		// device->is_change_reported = REPORT_IN_QUEUE;    //ÔÚ state_changed_callback_func ÀïÃæ¸ü¸Ä×´Ì¬
+		// device->is_change_reported = REPORT_IN_QUEUE;    //åœ¨ state_changed_callback_func é‡Œé¢æ›´æ”¹çŠ¶æ€
 	}
     
 }
@@ -102,29 +102,29 @@ static void DeviceOffline_Check(CheckDevice_Type* device)
 
 
 /**
- * @brief     ½«Ò»¸öÉè±¸²ÎÊı¶ÔÏó Ñ¹ÈëÉè±¸¼ì²âÕ»ÖĞ
+ * @brief     å°†ä¸€ä¸ªè®¾å¤‡å‚æ•°å¯¹è±¡ å‹å…¥è®¾å¤‡æ£€æµ‹æ ˆä¸­
  * 
- * @param     id                Æ÷¼ş±àÂë(±¨¾¯ID) @see CheckDeviceID_Enum
- * @param     onLineTickPtr     Éè±¸µÄÔÚÏßÊ±¼ä±äÁ¿Ö¸Õë¡£ÇëÓÃ»§×ÔĞĞ¸üĞÂ¡£
- * @param     maxAllowTime      ×î´óÔÊĞíÀëÏßÊ±³¤¡£³¬¹ı´ËÀëÏßÊ±³¤½«±»±ê¼ÇÎªÀëÏß
- * @param     priority          ±¨¾¯ÓÅÏÈ¼¶
- * @param     status            ×´Ì¬Ö¸Õë£¬Ö¸ÏòÏà¹ØÉè±¸µÄ×´Ì¬±êÖ¾Î»£¬Í¨¹ıÖ¸Õë½øĞĞĞŞ¸Ä. ¿ÉÒÔÎª¿Õ.
- * @param     cmd               ±¨¾¯Ê¹ÄÜ
+ * @param     id                å™¨ä»¶ç¼–ç (æŠ¥è­¦ID) @see CheckDeviceID_Enum
+ * @param     onLineTickPtr     è®¾å¤‡çš„åœ¨çº¿æ—¶é—´å˜é‡æŒ‡é’ˆã€‚è¯·ç”¨æˆ·è‡ªè¡Œæ›´æ–°ã€‚
+ * @param     maxAllowTime      æœ€å¤§å…è®¸ç¦»çº¿æ—¶é•¿ã€‚è¶…è¿‡æ­¤ç¦»çº¿æ—¶é•¿å°†è¢«æ ‡è®°ä¸ºç¦»çº¿
+ * @param     priority          æŠ¥è­¦ä¼˜å…ˆçº§
+ * @param     status            çŠ¶æ€æŒ‡é’ˆï¼ŒæŒ‡å‘ç›¸å…³è®¾å¤‡çš„çŠ¶æ€æ ‡å¿—ä½ï¼Œé€šè¿‡æŒ‡é’ˆè¿›è¡Œä¿®æ”¹. å¯ä»¥ä¸ºç©º.
+ * @param     cmd               æŠ¥è­¦ä½¿èƒ½
  * @author     LittleDragon
- * @par         ÈÕÖ¾ 
- *             2020-3-12   v0.1    ThunderDogeÔÄ¶ÁÁËLittleDragonµÄRM2019Ó¢ĞÛ´úÂë£¬¾õµÃÕâÒ»¶ÎºÜºÃ£¬¹Ê²ÉÓÃ
+ * @par         æ—¥å¿— 
+ *             2020-3-12   v0.1    ThunderDogeé˜…è¯»äº†LittleDragonçš„RM2019è‹±é›„ä»£ç ï¼Œè§‰å¾—è¿™ä¸€æ®µå¾ˆå¥½ï¼Œæ•…é‡‡ç”¨
  */
 
 
 /**
  * @brief Construct a new CheckDevice_Type::CheckDevice_Type object
  * 
- * @param     id    Éè±¸IDºÅ  @see CheckDeviceID_Enum
- * @param     is_inter_brd              ÊÇ·ñÊÇ°åÍâÉè±¸
- * @param     pri                       ÓÅÏÈ¼¶¡£²»ÊäÈëÔòÄ¬ÈÏ
- * @param     ptr_is_offline_func       ÀëÏßº¯Êı
- * @param     ptr_state_changed_callback_func   ÀëÏß/ÉÏÏß»Øµ÷º¯Êı
- * @param     ptr_update_hook_func              Êı¾İ¸üĞÂ¹³×Óº¯Êı
+ * @param     id    è®¾å¤‡IDå·  @see CheckDeviceID_Enum
+ * @param     is_inter_brd              æ˜¯å¦æ˜¯æ¿å¤–è®¾å¤‡
+ * @param     pri                       ä¼˜å…ˆçº§ã€‚ä¸è¾“å…¥åˆ™é»˜è®¤
+ * @param     ptr_is_offline_func       ç¦»çº¿å‡½æ•°
+ * @param     ptr_state_changed_callback_func   ç¦»çº¿/ä¸Šçº¿å›è°ƒå‡½æ•°
+ * @param     ptr_update_hook_func              æ•°æ®æ›´æ–°é’©å­å‡½æ•°
  */
 CheckDevice_Type::CheckDevice_Type(
 	CheckDeviceID_Enum 				id,
@@ -149,18 +149,18 @@ CheckDevice_Type::CheckDevice_Type(
  */
 void app_sentry_CheckDevice_Init(void)
 {
-    CheckDeviceArry.checkDeviceNum=0;           //³õÊ¼»¯Éè±¸¸öÊı
+    CheckDeviceArry.checkDeviceNum=0;           //åˆå§‹åŒ–è®¾å¤‡ä¸ªæ•°
     for(int i=0;i<CheckDeviceID_EnumLength;i++)
     {
-        CheckDeviceArry.deviceArry[i] = NULL;   //³õÊ¼»¯Éè±¸ÁĞ±í
+        CheckDeviceArry.deviceArry[i] = NULL;   //åˆå§‹åŒ–è®¾å¤‡åˆ—è¡¨
     }
 
-    for(int i=0;i< CheckDeviceID_EnumLength+2 ; i++)    //³õÊ¼»¯ÀëÏßÉè±¸ÁĞ±íÎªÈ«1
+    for(int i=0;i< CheckDeviceID_EnumLength+2 ; i++)    //åˆå§‹åŒ–ç¦»çº¿è®¾å¤‡åˆ—è¡¨ä¸ºå…¨1
     {
         app_sentry_CheckDevice_OfflineList[i] = 1U;
     }
 	
-	if(											// È·ÈÏ¶ÓÁĞ´´½¨³É¹¦
+	if(											// ç¡®è®¤é˜Ÿåˆ—åˆ›å»ºæˆåŠŸ
 		(QueueOfflineDevice = 
 			xQueueCreate( CheckDeviceID_EnumLength,
 						  sizeof(CheckDevice_Type*) )
@@ -169,11 +169,11 @@ void app_sentry_CheckDevice_Init(void)
 	)											
 	{
         #ifdef APP_SENTRY_CHECK_DEVICE_DEBUG
-        while(1);                               // Ê§°ÜÔò±©Â¶´íÎó
+        while(1);                               // å¤±è´¥åˆ™æš´éœ²é”™è¯¯
         #endif // APP_SENTRY_CHECK_DEVICE_DEBUG
     }									
 	
-    checkdevice_is_inited = 1;					// ±ê¼ÇÒÑ¾­³õÊ¼»¯
+    checkdevice_is_inited = 1;					// æ ‡è®°å·²ç»åˆå§‹åŒ–
 }
 
 
@@ -182,20 +182,20 @@ void app_sentry_CheckDevice_Init(void)
 
 
 /**
- * @brief ½«Ò»¸öÉè±¸²ÎÊı¶ÔÏó ¼ÓÈëÉè±¸¼ì²âÊı×éÖĞ
+ * @brief å°†ä¸€ä¸ªè®¾å¤‡å‚æ•°å¯¹è±¡ åŠ å…¥è®¾å¤‡æ£€æµ‹æ•°ç»„ä¸­
  * 
- * @param     DeviceToAdd       ½«Òª¼ÓÈëÁĞ±íµÄÉè±¸µÄÖ¸Õë
+ * @param     DeviceToAdd       å°†è¦åŠ å…¥åˆ—è¡¨çš„è®¾å¤‡çš„æŒ‡é’ˆ
  * @return HAL_StatusTypeDef 
  */
 HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAdd)
 {
-    if( ! checkdevice_is_inited )   //¼ì²éÊÇ·ñ³õÊ¼»¯
-        while(1){;}                    //±©Â¶´íÎó
+    if( ! checkdevice_is_inited )   //æ£€æŸ¥æ˜¯å¦åˆå§‹åŒ–
+        while(1){;}                    //æš´éœ²é”™è¯¯
 
     for(int i=0;i<CheckDeviceArry.checkDeviceNum;i++)
     {
-        if( DeviceToAdd->id == CheckDeviceArry.deviceArry[i]->id )  //·¢ÏÖÖØºÏID
-        return HAL_ERROR;            								//»ã±¨´íÎó£¬²»Ìí¼Ó
+        if( DeviceToAdd->id == CheckDeviceArry.deviceArry[i]->id )  //å‘ç°é‡åˆID
+        return HAL_ERROR;            								//æ±‡æŠ¥é”™è¯¯ï¼Œä¸æ·»åŠ 
     }
 
     CheckDeviceArry.deviceArry[CheckDeviceArry.checkDeviceNum] = DeviceToAdd;
@@ -207,24 +207,24 @@ HAL_StatusTypeDef app_sentry_CheckDevice_AddToArray(CheckDevice_Type* DeviceToAd
 
 
 /**
- * @brief Í¨ÓÃÀëÏß¼ì²âÈÎÎñ´úÂë¡£¿ÉÒÔÔÚÌí¼Óµ½Äã×Ô¼ºµÄ£¨Ö¸ÔÆÌ¨»òµ×ÅÌµÄ£©TaskÊµÏÖÖ®ÖĞ¡£Çë×¢ÒâĞèÒªµÄºê¶¨Òå¡£
+ * @brief é€šç”¨ç¦»çº¿æ£€æµ‹ä»»åŠ¡ä»£ç ã€‚å¯ä»¥åœ¨æ·»åŠ åˆ°ä½ è‡ªå·±çš„ï¼ˆæŒ‡äº‘å°æˆ–åº•ç›˜çš„ï¼‰Taskå®ç°ä¹‹ä¸­ã€‚è¯·æ³¨æ„éœ€è¦çš„å®å®šä¹‰ã€‚
  */
 void app_sentry_CheckDevice_Handle(void)
 {
-    for( uint16_t tempDeviceId = 0;tempDeviceId < CheckDeviceArry.checkDeviceNum;tempDeviceId++ )  //±éÀúÉè±¸Êı×é
+    for( uint16_t tempDeviceId = 0;tempDeviceId < CheckDeviceArry.checkDeviceNum;tempDeviceId++ )  //éå†è®¾å¤‡æ•°ç»„
     {
-        DeviceOffline_Check( CheckDeviceArry.deviceArry[tempDeviceId] );       //¼ì²éÉè±¸ÀëÏß¡£ÀëÏß×´Ì¬Ğ´Èë
+        DeviceOffline_Check( CheckDeviceArry.deviceArry[tempDeviceId] );       //æ£€æŸ¥è®¾å¤‡ç¦»çº¿ã€‚ç¦»çº¿çŠ¶æ€å†™å…¥
     }
 }
 
 
 
 /**
- * @brief       ´Ó¶ÓÁĞ»ñÈ¡ÀëÏßÉè±¸
+ * @brief       ä»é˜Ÿåˆ—è·å–ç¦»çº¿è®¾å¤‡
  * 
- * @param     device_id         Éè±¸ID Ğ´µ½ÕâÀï
- * @param     device_isoffline  Éè±¸×´Ì¬Ğ´µ½ÕâÀï
- * @return uint8_t      1Îª»ñÈ¡³É¹¦£¬0Îª¶ÓÁĞ¿Õ»òÕß»ñÈ¡´íÎó
+ * @param     device_id         è®¾å¤‡ID å†™åˆ°è¿™é‡Œ
+ * @param     device_isoffline  è®¾å¤‡çŠ¶æ€å†™åˆ°è¿™é‡Œ
+ * @return uint8_t      1ä¸ºè·å–æˆåŠŸï¼Œ0ä¸ºé˜Ÿåˆ—ç©ºæˆ–è€…è·å–é”™è¯¯
  */
 uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, uint8_t* device_isoffline)
 {
@@ -242,15 +242,15 @@ uint8_t app_sentry_CheckDevice_GetOfflineDeviceFromQueueTo(uint8_t* device_id, u
 }
 
 /**
- * @brief       ´¦ÀíCANÊÕµ½µÄÀëÏßÉè±¸ÏûÏ¢
+ * @brief       å¤„ç†CANæ”¶åˆ°çš„ç¦»çº¿è®¾å¤‡æ¶ˆæ¯
  * 
- * @param     ptrData Ö¸ÏòÊÕµ½Êı¾İ¡£¸ù¾İĞ­Òé£¬[0]×Ö½ÚÎªid£¬[1]×Ö½ÚÎª×´Ì¬
+ * @param     ptrData æŒ‡å‘æ”¶åˆ°æ•°æ®ã€‚æ ¹æ®åè®®ï¼Œ[0]å­—èŠ‚ä¸ºidï¼Œ[1]å­—èŠ‚ä¸ºçŠ¶æ€
  */
 void app_sentry_CheckDevice_CanRxCallback(uint8_t *ptrData)
 {
     
-    if(ptrData[0] < CheckDeviceID_EnumLength)   // ¼ì²é²ÎÊı·¶Î§
-        app_sentry_CheckDevice_OfflineList[ ptrData[0] ] = (uint8_t)(ptrData[1]==1) ;   //Ğ´ÈëÀëÏß×´Ì¬
+    if(ptrData[0] < CheckDeviceID_EnumLength)   // æ£€æŸ¥å‚æ•°èŒƒå›´
+        app_sentry_CheckDevice_OfflineList[ ptrData[0] ] = (uint8_t)(ptrData[1]==1) ;   //å†™å…¥ç¦»çº¿çŠ¶æ€
 
 }
 

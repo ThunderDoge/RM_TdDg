@@ -1,6 +1,6 @@
 /**
   * @file  bsp_encoder.cpp
-  * @brief    RM2020Í¨ÓÃ±àÂëÆ÷
+  * @brief    RM2020é€šç”¨ç¼–ç å™¨
   * @details  
   * @author   ThunderDoge
   * @date     2019/12/20    v0.1
@@ -10,18 +10,18 @@
 
 #include "bsp_encoder.hpp"
 
-uint32_t bsp_encoder_PeriodCount;	//Éè¶¨±àÂëÆ÷Ò»È¦ÊıÖµ
-uint32_t bsp_encoder_UpdateTime;	//¸üĞÂÊ±¼ä´Á
+uint32_t bsp_encoder_PeriodCount;	//è®¾å®šç¼–ç å™¨ä¸€åœˆæ•°å€¼
+uint32_t bsp_encoder_UpdateTime;	//æ›´æ–°æ—¶é—´æˆ³
 uint32_t bsp_encoder_lastupdate;
-int32_t bsp_encoder_Value;		//ÓÃ»§Ê¹ÓÃµÄ±àÂëÆ÷Öµ
+int32_t bsp_encoder_Value;		//ç”¨æˆ·ä½¿ç”¨çš„ç¼–ç å™¨å€¼
 uint32_t bsp_encoder_speed_update_time;
 float bsp_encoder_Speed;
 uint32_t DiffTime = 10;
 int32_t value_before_difftime=0;
 
-int32_t soft_period_passed;	//ÒÑ×ª¹ıµÄÈ¦Êı
+int32_t soft_period_passed;	//å·²è½¬è¿‡çš„åœˆæ•°
 /**
- * @brief  ³õÊ¼»¯±àÂëÆ÷
+ * @brief  åˆå§‹åŒ–ç¼–ç å™¨
  */
 void bsp_encoder_Init(uint32_t period_cnt)
 {
@@ -32,24 +32,24 @@ void bsp_encoder_Init(uint32_t period_cnt)
 	bsp_encoder_SetValue(0);
 }
 /**
- * @brief  Òç³öÖĞ¶Ï´¦Àíº¯Êı
- * @details  ½«´Ëº¯Êı·ÅÔÚBSP_ENCODER_TIMµÄÖĞ¶Ï´¦ÀíÖĞ
+ * @brief  æº¢å‡ºä¸­æ–­å¤„ç†å‡½æ•°
+ * @details  å°†æ­¤å‡½æ•°æ”¾åœ¨BSP_ENCODER_TIMçš„ä¸­æ–­å¤„ç†ä¸­
  */
 
 void bsp_encoder_It()
 {
-	if( __HAL_TIM_GET_FLAG(&BSP_ENCODER_TIM,TIM_FLAG_UPDATE) ) //´¦Àí¶¨Ê±Æ÷Òç³ö(¸üĞÂ)ÖĞ¶Ï
+	if( __HAL_TIM_GET_FLAG(&BSP_ENCODER_TIM,TIM_FLAG_UPDATE) ) //å¤„ç†å®šæ—¶å™¨æº¢å‡º(æ›´æ–°)ä¸­æ–­
 	{
-		soft_period_passed +=  (__HAL_TIM_IS_TIM_COUNTING_DOWN(&BSP_ENCODER_TIM)? -1 : 1)  ;	//ÈíÈ¦ÊıÔö¼Ó·½ÏòÈ¡¾öÓÚ¶¨Ê±Æ÷Òç³ö·½Ïò
-		__HAL_TIM_CLEAR_FLAG(&BSP_ENCODER_TIM,TIM_FLAG_UPDATE);	//Çå¿Õ¼ÆÊıÆ÷
+		soft_period_passed +=  (__HAL_TIM_IS_TIM_COUNTING_DOWN(&BSP_ENCODER_TIM)? -1 : 1)  ;	//è½¯åœˆæ•°å¢åŠ æ–¹å‘å–å†³äºå®šæ—¶å™¨æº¢å‡ºæ–¹å‘
+		__HAL_TIM_CLEAR_FLAG(&BSP_ENCODER_TIM,TIM_FLAG_UPDATE);	//æ¸…ç©ºè®¡æ•°å™¨
 	}
 }
 /**
- * @brief  ÖÜÆÚĞÔµ÷ÓÃ´Ëº¯ÊıÒÔ¸üĞÂ±àÂëÆ÷
+ * @brief  å‘¨æœŸæ€§è°ƒç”¨æ­¤å‡½æ•°ä»¥æ›´æ–°ç¼–ç å™¨
  */
 void bsp_encoder_Handle()
 {
-	//ÊµÊ±¸üĞÂÄãµÄ±àÂëÆ÷Öµ
+	//å®æ—¶æ›´æ–°ä½ çš„ç¼–ç å™¨å€¼
 	bsp_encoder_Value  = soft_period_passed*bsp_encoder_PeriodCount + __HAL_TIM_GetCounter(&BSP_ENCODER_TIM);
 	#ifdef _CMSIS_OS_H
 	bsp_encoder_UpdateTime = xTaskGetTickCount();
@@ -57,24 +57,24 @@ void bsp_encoder_Handle()
 	bsp_encoder_UpdateTime = HAL_GetTick();
 	#endif
 	
-	if(bsp_encoder_lastupdate!=bsp_encoder_UpdateTime){	//È·±£Ã¿TICKÖ»Ö´ĞĞÒ»´Î
-		if(bsp_encoder_UpdateTime - bsp_encoder_speed_update_time > DiffTime)	//Âú×ãÊ±¼äÔòÊä³ö
+	if(bsp_encoder_lastupdate!=bsp_encoder_UpdateTime){	//ç¡®ä¿æ¯TICKåªæ‰§è¡Œä¸€æ¬¡
+		if(bsp_encoder_UpdateTime - bsp_encoder_speed_update_time > DiffTime)	//æ»¡è¶³æ—¶é—´åˆ™è¾“å‡º
 		{
 			#ifdef _CMSIS_OS_H					
-			bsp_encoder_speed_update_time = xTaskGetTickCount();   	//¸üĞÂÊ±¼ä
+			bsp_encoder_speed_update_time = xTaskGetTickCount();   	//æ›´æ–°æ—¶é—´
 			#else								
 			bsp_encoder_speed_update_time = HAL_GetTick();			
 			#endif		
-			bsp_encoder_Speed =((float)(bsp_encoder_Value - value_before_difftime)) /DiffTime;	//Êä³öËÙ¶È
-			value_before_difftime = bsp_encoder_Value;	//¸üĞÂËãËÙ¶ÈÇø¼ä
+			bsp_encoder_Speed =((float)(bsp_encoder_Value - value_before_difftime)) /DiffTime;	//è¾“å‡ºé€Ÿåº¦
+			value_before_difftime = bsp_encoder_Value;	//æ›´æ–°ç®—é€Ÿåº¦åŒºé—´
 		}
 		else
 		{}
 	}
 }
 /**
- * @brief  ÓÃ´Ëº¯ÊıÉè¶¨±àÂëÆ÷Öµ
- * @param[in]  value_to_set ½«ÒªÉè¶¨µÄÖµ
+ * @brief  ç”¨æ­¤å‡½æ•°è®¾å®šç¼–ç å™¨å€¼
+ * @param[in]  value_to_set å°†è¦è®¾å®šçš„å€¼
  */
 
 void bsp_encoder_SetValue(int32_t value_to_set)

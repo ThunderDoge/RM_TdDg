@@ -1,7 +1,7 @@
 /** 
  * @file    bsp_can.hpp
-* @brief    CAN°å¼¶Ö§³Ö°ü
-* @details  CAN×ÜÏßÏà¹ØÉèÖÃ£¬Êı¾İ½ÓÊÕ½âÎöº¯Êı
+* @brief    CANæ¿çº§æ”¯æŒåŒ…
+* @details  CANæ€»çº¿ç›¸å…³è®¾ç½®ï¼Œæ•°æ®æ¥æ”¶è§£æå‡½æ•°
 * @author   Evan-GH
 * @date      2019.11
 * @version  1.8
@@ -20,12 +20,12 @@
 
 
 
-//Ìõ¼ş±àÒë¿ª¹Øºê¶¨Òå£¬²»ĞèÒª¿ªÆôµÄ¾Í×¢ÊÍµôÏà¹Øºê¶¨Òå
+//æ¡ä»¶ç¼–è¯‘å¼€å…³å®å®šä¹‰ï¼Œä¸éœ€è¦å¼€å¯çš„å°±æ³¨é‡Šæ‰ç›¸å…³å®å®šä¹‰
 #define	BSP_CAN_USE_FREERTOS
-//ÍâÉèÏà¹Øºê¶¨Òå,ÒÆÖ²Ê±Èç¹ûĞŞ¸ÄÁËÍâÉèÇëÔÚÕâÀïĞŞ¸Ä
+//å¤–è®¾ç›¸å…³å®å®šä¹‰,ç§»æ¤æ—¶å¦‚æœä¿®æ”¹äº†å¤–è®¾è¯·åœ¨è¿™é‡Œä¿®æ”¹
 #define BSP_CAN_USE_CAN1					hcan1
 #define BSP_CAN_USE_CAN2					hcan2
 
-void bsp_can_Init(void);	//CAN×ÜÏß³õÊ¼»¯º¯Êı
-HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int16_t* Can_Send_Data);	//CAN×ÜÏßÊı¾İ·¢ËÍº¯Êı
+void bsp_can_Init(void);	//CANæ€»çº¿åˆå§‹åŒ–å‡½æ•°
+HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int16_t* Can_Send_Data);	//CANæ€»çº¿æ•°æ®å‘é€å‡½æ•°
 #endif

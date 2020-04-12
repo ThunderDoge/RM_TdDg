@@ -1,15 +1,15 @@
 /**
   * @file       app_AmmoFeed.hpp
-  * @brief    Í¨ÓÃ²¦µ¯µç»ú¿â
+  * @brief    é€šç”¨æ‹¨å¼¹ç”µæœºåº“
   * @details  
   * @author   ThunderDoge & Asn
   * @date     2019/12/13
   * @version  v1.0.3 
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  * v1.0.0  2019/11/29  ÊµÏÖ»ù±¾¹¦ÄÜ
-  * v1.0.1  2019/12/6   Asn½øĞĞÁË²¿·Ö¼ò»¯£¬Ê¹ÆäÒ×ÓÚÊ¹ÓÃ¡£
-  * v1.0.2  2019/12/13  ĞŞÕıÁË²¿·Ö¶àÓàµÄÒÀÀµ£¬ÒÔ¼°Ò»Ğ©Óï·¨´íÎó¡£²¦µ¯»Ø×ª´¦Àí²¿·ÖBlocked_ReactionÈÔ´æÔÚËÀËø·çÏÕ£¬¿ÉÒÔPID²ÎÊı½â¾ö¡£
-	*	v1.0.3  2019/12.27  ĞŞÕı¶Â×ªÅĞ¶ÏÂß¼­£¬²¢Í³Ò»ÓÃÍâ²¿cansendº¯Êı£¬È»ºó¸üĞÂÃüÃû£¬Ê¹Æä¸ü¹æ·¶
+  * v1.0.0  2019/11/29  å®ç°åŸºæœ¬åŠŸèƒ½
+  * v1.0.1  2019/12/6   Asnè¿›è¡Œäº†éƒ¨åˆ†ç®€åŒ–ï¼Œä½¿å…¶æ˜“äºä½¿ç”¨ã€‚
+  * v1.0.2  2019/12/13  ä¿®æ­£äº†éƒ¨åˆ†å¤šä½™çš„ä¾èµ–ï¼Œä»¥åŠä¸€äº›è¯­æ³•é”™è¯¯ã€‚æ‹¨å¼¹å›è½¬å¤„ç†éƒ¨åˆ†Blocked_Reactionä»å­˜åœ¨æ­»é”é£é™©ï¼Œå¯ä»¥PIDå‚æ•°è§£å†³ã€‚
+	*	v1.0.3  2019/12.27  ä¿®æ­£å µè½¬åˆ¤æ–­é€»è¾‘ï¼Œå¹¶ç»Ÿä¸€ç”¨å¤–éƒ¨cansendå‡½æ•°ï¼Œç„¶åæ›´æ–°å‘½åï¼Œä½¿å…¶æ›´è§„èŒƒ
   */
 
 #ifndef	__APP_AMMOFEED_H
@@ -23,7 +23,7 @@
 #include "app_math.h"
 
 /**
- * @brief AmmoFeedÀàÔËĞĞÄ£Ê½ Ã¶¾ÙÁ¿
+ * @brief AmmoFeedç±»è¿è¡Œæ¨¡å¼ æšä¸¾é‡
  * 
  */
 enum ammofeed_status_enum {
@@ -35,7 +35,7 @@ enum ammofeed_status_enum {
 
 class AmmoFeed : public softmotor
 {
-    friend class SentryCloud;   ///Ê¹µÃSentryCloud¿ÉÒÔµ÷ÓÃ¹©µ¯¿ØÖÆº¯Êı
+    friend class SentryCloud;   ///ä½¿å¾—SentryCloudå¯ä»¥è°ƒç”¨ä¾›å¼¹æ§åˆ¶å‡½æ•°
     friend class SentryChassis;     
     public:
 			AmmoFeed(uint8_t can_num,
@@ -47,48 +47,48 @@ class AmmoFeed : public softmotor
 							 pid* PID_Out=NULL
 							 )
 					:softmotor(can_num, _can_id, motor_type, PID_In, PID_Out) ,
-					 feeder_division(RamerDiv) , rammer_direction(rammer_direction){}///<¹¹Ôìº¯Êı				
+					 feeder_division(RamerDiv) , rammer_direction(rammer_direction){}///<æ„é€ å‡½æ•°				
 						 
 
 						 
-			int32_t ramming_speed = 0;		///<PIDËÙ¶È»·µÄÄ¿±êËÙ¶È¡£
+			int32_t ramming_speed = 0;		///<PIDé€Ÿåº¦ç¯çš„ç›®æ ‡é€Ÿåº¦ã€‚
 						 
-			int32_t	ramming_discrete_delay = 10;		//Â·³Ì¿ØÖÆÊ±£¬Ã¿¸ö¸ôµÄÍ£¶ÙÊ±¼ä ×¢£ºNÁ¬·¢Ä£Ê½ÏÂ¼ä¸ôÊ±¼äĞèÒª½Ï³¤
-					// Í£¶ÙÊ±¼äÖµ"2"¿ÉÓÃ 12-2-16£º13-Eno
-			uint8_t feeder_division = 7;		//²¦µ¯ÂÖÓĞ¼¸¸ö¸ñ
+			int32_t	ramming_discrete_delay = 10;		//è·¯ç¨‹æ§åˆ¶æ—¶ï¼Œæ¯ä¸ªéš”çš„åœé¡¿æ—¶é—´ æ³¨ï¼šNè¿å‘æ¨¡å¼ä¸‹é—´éš”æ—¶é—´éœ€è¦è¾ƒé•¿
+					// åœé¡¿æ—¶é—´å€¼"2"å¯ç”¨ 12-2-16ï¼š13-Eno
+			uint8_t feeder_division = 7;		//æ‹¨å¼¹è½®æœ‰å‡ ä¸ªæ ¼
 					 
-			int32_t rammer_step_left = 0;			//²¦µ¯Ê£Óà²½Êı¡£Â·³Ì¿ØÖÆ»áÏûºÄÕâ¸ö¼ÆÊı¡£
+			int32_t rammer_step_left = 0;			//æ‹¨å¼¹å‰©ä½™æ­¥æ•°ã€‚è·¯ç¨‹æ§åˆ¶ä¼šæ¶ˆè€—è¿™ä¸ªè®¡æ•°ã€‚
 										 
-			float soft_target_angle = 0;			//ÈíÂ·³Ì½Ç¶ÈÉè¶¨Öµ
+			float soft_target_angle = 0;			//è½¯è·¯ç¨‹è§’åº¦è®¾å®šå€¼
 					
 						 
-			float rev_angle_when_blocked = 20;	//¶Â×ªÊ±»Ø×ªµÄ½Ç¶È,Ä¬ÈÏ20¶È
+			float rev_angle_when_blocked = 20;	//å µè½¬æ—¶å›è½¬çš„è§’åº¦,é»˜è®¤20åº¦
 						 
-			int8_t rammer_direction = 1;					//Î»ÖÃ¿ØÖÆ£¬Ö¸Ê¾×ª¶¯·½Ïò¡£Õı¸ºËæµç»ú±àÂëÆ÷Ôö³¤·½Ïò¡£
+			int8_t rammer_direction = 1;					//ä½ç½®æ§åˆ¶ï¼ŒæŒ‡ç¤ºè½¬åŠ¨æ–¹å‘ã€‚æ­£è´Ÿéšç”µæœºç¼–ç å™¨å¢é•¿æ–¹å‘ã€‚
 			
-		    uint8_t burst_shoot_cnt = 3;			//NÁ¬·¢µÄN
+		    uint8_t burst_shoot_cnt = 3;			//Nè¿å‘çš„N
 
-			uint8_t Blocked_Reaction(void);	//¶Â×ª·´Ó¦´¦Àí¹ı³Ì
+			uint8_t Blocked_Reaction(void);	//å µè½¬ååº”å¤„ç†è¿‡ç¨‹
 			
-			virtual void Step_Run(void);			//Î»ÖÃ¿ØÖÆÄ£Ê½
+			virtual void Step_Run(void);			//ä½ç½®æ§åˆ¶æ¨¡å¼
 		
 			virtual void  Safe_Set(void) override;
 			
-			int16_t trigger;//Free_OnceºÍBurstµÄ´¥·¢Ìõ¼ş
-			uint8_t feed_mode;		//²¦µ¯Ä£Ê½Ö¸Ê¾
-			uint16_t free_once_trig_time = 150;	//°´×¡ÇĞµ½µ¥²½Á¬·¢ÇĞ»»µÄÑÓÊ±Ê±¼ä
+			int16_t trigger;//Free_Onceå’ŒBurstçš„è§¦å‘æ¡ä»¶
+			uint8_t feed_mode;		//æ‹¨å¼¹æ¨¡å¼æŒ‡ç¤º
+			uint16_t free_once_trig_time = 150;	//æŒ‰ä½åˆ‡åˆ°å•æ­¥è¿å‘åˆ‡æ¢çš„å»¶æ—¶æ—¶é—´
 			
 		protected:	
-			void Free_Fire_Set(int32_t FreeSpeed);			//Á÷³©ÔË×ªÄ£Ê½ÅäÖÃ
-			void Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);				//NÁ¬·¢Ä£Ê½ÅäÖÃ
-			void Free_Once_Set(int32_t	DiscreDelay,int16_t trig);				//µ¥·¢Ä£Ê½ÅäÖÃ
+			void Free_Fire_Set(int32_t FreeSpeed);			//æµç•…è¿è½¬æ¨¡å¼é…ç½®
+			void Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);				//Nè¿å‘æ¨¡å¼é…ç½®
+			void Free_Once_Set(int32_t	DiscreDelay,int16_t trig);				//å•å‘æ¨¡å¼é…ç½®
 			virtual void Handle(void);
 	
-			void Free_Fire(void);			//Á÷³©ÔË×ªÄ£Ê½
-			void Burst(void);				//NÁ¬·¢Ä£Ê½£¬N=burst_shoot_cnt
-			void Free_Once(void);		    //Á¬Ğøµ¥·¢
-            //ÄÚ²¿×´Ì¬±äÁ¿
-			uint8_t is_block_in_handle = 0;     //ÓÃÓÚ·´×ª¶Â×ª¼ì²â
+			void Free_Fire(void);			//æµç•…è¿è½¬æ¨¡å¼
+			void Burst(void);				//Nè¿å‘æ¨¡å¼ï¼ŒN=burst_shoot_cnt
+			void Free_Once(void);		    //è¿ç»­å•å‘
+            //å†…éƒ¨çŠ¶æ€å˜é‡
+			uint8_t is_block_in_handle = 0;     //ç”¨äºåè½¬å µè½¬æ£€æµ‹
 		
 };
 

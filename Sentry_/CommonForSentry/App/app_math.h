@@ -1,6 +1,6 @@
 /**
   * @file      app_math.h
-  * @brief     ÊıÑ§Ïà¹Ø
+  * @brief     æ•°å­¦ç›¸å…³
   * @details   
   * @author   ThunderDoge
   * @date      
@@ -19,14 +19,14 @@
 #define MIN(a,b)    (a<b?a:b)
 #define IS_IN_INTERVAL(x,a,b)   ( (x<= MAX(a,b) ) && (x>= MIN(a,b) ) )
 
-#define Threshold_1     8       //ãĞÖµ1ÓÃÓÚÒ»½×´ø²ÎÂË²¨Æ÷£¬±ä»¯½Ç¶È´óÓÚ´ËÖµÊ±£¬¼ÆÊıÔö¼Ó
-#define Threshold_2     30      //ãĞÖµ2ÓÃÓÚÒ»½×´ø²ÎÂË²¨Æ÷£¬¼ÆÊıÖµ´óÓÚ´ËÖµÊ±£¬Ôö´ó²ÎÊı£¬ÔöÇ¿ÂË²¨¸úËæ
+#define Threshold_1     8       //é˜ˆå€¼1ç”¨äºä¸€é˜¶å¸¦å‚æ»¤æ³¢å™¨ï¼Œå˜åŒ–è§’åº¦å¤§äºæ­¤å€¼æ—¶ï¼Œè®¡æ•°å¢åŠ 
+#define Threshold_2     30      //é˜ˆå€¼2ç”¨äºä¸€é˜¶å¸¦å‚æ»¤æ³¢å™¨ï¼Œè®¡æ•°å€¼å¤§äºæ­¤å€¼æ—¶ï¼Œå¢å¤§å‚æ•°ï¼Œå¢å¼ºæ»¤æ³¢è·Ÿéš
 
 typedef struct
 {
-	uint8_t last_flag;//ÉÏ´ÎÊı¾İ±ä»¯·½Ïò
-	uint8_t new_flag;//±¾´ÎÊı¾İ±ä»¯·½Ïò
-	float K_x;//ÂË²¨ÏµÊı
+	uint8_t last_flag;//ä¸Šæ¬¡æ•°æ®å˜åŒ–æ–¹å‘
+	uint8_t new_flag;//æœ¬æ¬¡æ•°æ®å˜åŒ–æ–¹å‘
+	float K_x;//æ»¤æ³¢ç³»æ•°
 	uint8_t num_x;
 }LPF1;
 typedef struct
@@ -43,12 +43,12 @@ typedef struct
 	float _b2;
 	float _delay_element_1;        // buffered sample -1
 	float _delay_element_2;        // buffered sample -2	
-}LPF2;//ÂË²¨Æ÷½á¹¹Ìå
+}LPF2;//æ»¤æ³¢å™¨ç»“æ„ä½“
 
-float app_math_Limit(float data,float max,float min);//ÏŞ·ùº¯Êı
-float app_math_Invsqrt(float number);//¿ªÆ½·½¸ùº¯Êı
+float app_math_Limit(float data,float max,float min);//é™å¹…å‡½æ•°
+float app_math_Invsqrt(float number);//å¼€å¹³æ–¹æ ¹å‡½æ•°
 float app_math_Lpf1apply(LPF1* LPF,float NEW_DATA,float OLD_DATA,float k);
-void app_math_Lpf2set(LPF2* LPF,float sample_freq, float cutoff_freq);//ÂË²¨Æ÷½ØÖ¹ÆµÂÊÉèÖÃ
-float app_math_Lpf2apply(LPF2* LPF,float sample);//ÂË²¨Æ÷ÉèÖÃ
-float app_math_fLimitPeriod(float data,float max,float min);//ÖÜÆÚĞÔÏŞ·ùº¯Êı
+void app_math_Lpf2set(LPF2* LPF,float sample_freq, float cutoff_freq);//æ»¤æ³¢å™¨æˆªæ­¢é¢‘ç‡è®¾ç½®
+float app_math_Lpf2apply(LPF2* LPF,float sample);//æ»¤æ³¢å™¨è®¾ç½®
+float app_math_fLimitPeriod(float data,float max,float min);//å‘¨æœŸæ€§é™å¹…å‡½æ•°
 #endif

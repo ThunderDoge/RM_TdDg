@@ -1,15 +1,15 @@
 /** 
 * @file     bsp_universe.cpp
-* @brief    ÓÃÓÚÇ¶ÈëÊ½C++¹¤³ÌµÄ²¹³äÎÄ¼ş
-* @details  ÔÚÇ¶ÈëÊ½¹¤³ÌÊ¹ÓÃC++Ê±£¬ÓĞÒ»Ğ©ÎÊÌâĞèÒª´¦ÀíÀ´Ê¹C++¸üºÃµÄÊÊÓÃÓÚ¹¤³Ì \n
-*           ±¾ÎÄ¼ş¾ÖÏŞĞÔ½Ï´ó£¬×î¼ÑÔËĞĞÇé¿öÎªÊ¹ÓÃkeilÎª±àÒë»·¾³ÇÒÊ¹ÓÃFreeRTOS
+* @brief    ç”¨äºåµŒå…¥å¼C++å·¥ç¨‹çš„è¡¥å……æ–‡ä»¶
+* @details  åœ¨åµŒå…¥å¼å·¥ç¨‹ä½¿ç”¨C++æ—¶ï¼Œæœ‰ä¸€äº›é—®é¢˜éœ€è¦å¤„ç†æ¥ä½¿C++æ›´å¥½çš„é€‚ç”¨äºå·¥ç¨‹ \n
+*           æœ¬æ–‡ä»¶å±€é™æ€§è¾ƒå¤§ï¼Œæœ€ä½³è¿è¡Œæƒ…å†µä¸ºä½¿ç”¨keilä¸ºç¼–è¯‘ç¯å¢ƒä¸”ä½¿ç”¨FreeRTOS
 * @author   WMD
-* @date     2018Äê10ÔÂ26ÈÕ22:06:00
+* @date     2018å¹´10æœˆ26æ—¥22:06:00
 * @version  0.1
 * @par Copyright (c):  
 *       WMD 
-* @par ÈÕÖ¾
-*				2019.11.29 ÎªÊÊÓ¦´úÂë¹æ·¶£¬ĞŞ¸ÄÁË´ËÎÄ¼şÃûÎª£ºbsp_universe.cpp
+* @par æ—¥å¿—
+*				2019.11.29 ä¸ºé€‚åº”ä»£ç è§„èŒƒï¼Œä¿®æ”¹äº†æ­¤æ–‡ä»¶åä¸ºï¼šbsp_universe.cpp
 */  
 #include <rt_sys.h>
 #include "bsp_car_config.hpp"
@@ -20,12 +20,12 @@ using namespace std;
 extern "C" {
 #pragma import(__use_no_semihosting_swi)  
 #pragma import(_main_redirection)  
-const char __stdin_name[150]; //ÈÃËü´æÔÚ¾ÍĞĞÁË 
+const char __stdin_name[150]; //è®©å®ƒå­˜åœ¨å°±è¡Œäº† 
 const char __stdout_name[150];  
 const char __stderr_name[150];  
 typedef int FILEHANDLE;  
 
-//ÖØĞ´±ê×¼¿âº¯Êı£¬ÕâÊ±printf¡¢fopen¡¢fcloseµÈÎÄ¼ş²Ù×÷º¯ÊıÔËĞĞÊ±¾Í»áµ÷ÓÃÄãµÄÖØĞ´º¯Êı£¬ÕâĞ©ÖØĞ´º¯ÊıÖ»ÊÇ¼¸¸ö¼òµ¥µÄÀı×Ó£¬²¢Ã»ÓĞÖØĞ´ËùÓĞµÄÎÄ¼ş²Ù×÷º¯Êı  
+//é‡å†™æ ‡å‡†åº“å‡½æ•°ï¼Œè¿™æ—¶printfã€fopenã€fcloseç­‰æ–‡ä»¶æ“ä½œå‡½æ•°è¿è¡Œæ—¶å°±ä¼šè°ƒç”¨ä½ çš„é‡å†™å‡½æ•°ï¼Œè¿™äº›é‡å†™å‡½æ•°åªæ˜¯å‡ ä¸ªç®€å•çš„ä¾‹å­ï¼Œå¹¶æ²¡æœ‰é‡å†™æ‰€æœ‰çš„æ–‡ä»¶æ“ä½œå‡½æ•°  
 void _sys_exit(int status)  
 {  
     while(1);  
@@ -96,18 +96,18 @@ clock_t clock(void)
 {  
     return 0;  
 }  
-///ÖØ¶¨ÏòµÄÒ»¸öºÜÖØÒªº¯Êı£¬ÈçÓĞĞèÒªÇëÔÚÍâ²¿¸²¸Ç¶¨Òå
+///é‡å®šå‘çš„ä¸€ä¸ªå¾ˆé‡è¦å‡½æ•°ï¼Œå¦‚æœ‰éœ€è¦è¯·åœ¨å¤–éƒ¨è¦†ç›–å®šä¹‰
 __attribute__((weak)) int fputc(int ch, FILE* f)
 {
     return ch;
 }
-}//CÓëC++µÄ·Ö½çÏß
+}//Cä¸C++çš„åˆ†ç•Œçº¿
 #endif
 
 /** 
-* @brief  ÖØÔØnewÔËËã·ûÊ¹Æä¿ÉÒÔÊ¹ÓÃ²Ù×÷ÏµÍ³µÄÄÚ´æµ÷¶È¹ÜÀí
-* @warning pvPortMalloc()º¯ÊıĞèÒª²Ù×÷ÏµÍ³Ö§³Ö
-* @par ÈÕÖ¾ 
+* @brief  é‡è½½newè¿ç®—ç¬¦ä½¿å…¶å¯ä»¥ä½¿ç”¨æ“ä½œç³»ç»Ÿçš„å†…å­˜è°ƒåº¦ç®¡ç†
+* @warning pvPortMalloc()å‡½æ•°éœ€è¦æ“ä½œç³»ç»Ÿæ”¯æŒ
+* @par æ—¥å¿— 
 *
 */
 void *operator new (size_t size)
@@ -117,9 +117,9 @@ void *operator new (size_t size)
 	return p;
 }
 /** 
-* @brief  ÖØÔØnewÔËËã·ûÊ¹Æä¿ÉÒÔÊ¹ÓÃ²Ù×÷ÏµÍ³µÄÄÚ´æµ÷¶È¹ÜÀí
-* @warning pvPortMalloc()º¯ÊıĞèÒª²Ù×÷ÏµÍ³Ö§³Ö
-* @par ÈÕÖ¾ 
+* @brief  é‡è½½newè¿ç®—ç¬¦ä½¿å…¶å¯ä»¥ä½¿ç”¨æ“ä½œç³»ç»Ÿçš„å†…å­˜è°ƒåº¦ç®¡ç†
+* @warning pvPortMalloc()å‡½æ•°éœ€è¦æ“ä½œç³»ç»Ÿæ”¯æŒ
+* @par æ—¥å¿— 
 *
 */
 void*
@@ -128,9 +128,9 @@ operator new[](size_t size)
   return operator new(size);
 }
 /** 
-* @brief  ÖØÔØdeleteÔËËã·ûÊ¹Æä¿ÉÒÔÊ¹ÓÃ²Ù×÷ÏµÍ³µÄÄÚ´æµ÷¶È¹ÜÀí
-* @warning vPortFree()º¯ÊıĞèÒª²Ù×÷ÏµÍ³Ö§³Ö
-* @par ÈÕÖ¾ 
+* @brief  é‡è½½deleteè¿ç®—ç¬¦ä½¿å…¶å¯ä»¥ä½¿ç”¨æ“ä½œç³»ç»Ÿçš„å†…å­˜è°ƒåº¦ç®¡ç†
+* @warning vPortFree()å‡½æ•°éœ€è¦æ“ä½œç³»ç»Ÿæ”¯æŒ
+* @par æ—¥å¿— 
 *
 */
 void operator delete(void* p)
@@ -138,9 +138,9 @@ void operator delete(void* p)
 	vPortFree(p);
 }
 /** 
-* @brief  ÖØÔØdeleteÔËËã·ûÊ¹Æä¿ÉÒÔÊ¹ÓÃ²Ù×÷ÏµÍ³µÄÄÚ´æµ÷¶È¹ÜÀí
-* @warning vPortFree()º¯ÊıĞèÒª²Ù×÷ÏµÍ³Ö§³Ö
-* @par ÈÕÖ¾ 
+* @brief  é‡è½½deleteè¿ç®—ç¬¦ä½¿å…¶å¯ä»¥ä½¿ç”¨æ“ä½œç³»ç»Ÿçš„å†…å­˜è°ƒåº¦ç®¡ç†
+* @warning vPortFree()å‡½æ•°éœ€è¦æ“ä½œç³»ç»Ÿæ”¯æŒ
+* @par æ—¥å¿— 
 *
 */
 void

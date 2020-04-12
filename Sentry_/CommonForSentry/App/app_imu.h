@@ -1,28 +1,28 @@
 /** 
 * @file         app_imu.c
-* @brief        Ê¹ÓÃicm20602×÷Îªapp_imu_data
+* @brief        ä½¿ç”¨icm20602ä½œä¸ºapp_imu_data
 * @details  
 * @author      Asn
-* @date     2019Äê11ÔÂ17ÈÕ
+* @date     2019å¹´11æœˆ17æ—¥
 * @version  
-* @par Copyright (c):  RM2020µç¿Ø
+* @par Copyright (c):  RM2020ç”µæ§
 *  
-* @par ÈÕÖ¾
-*	2019.11.17 Asn V1.0 ÒÆÖ²mpu9250¿â
+* @par æ—¥å¿—
+*	2019.11.17 Asn V1.0 ç§»æ¤mpu9250åº“
 
-*						 Asn V1.1 ¸ü¸ÄmahonyËã·¨µÄPI¿ØÖÆ²ÎÊı
+*						 Asn V1.1 æ›´æ”¹mahonyç®—æ³•çš„PIæ§åˆ¶å‚æ•°
 
-*						 Asn V1.2 ·¢ÏÖÖ®Ç°ÍÓÂİÒÇÓ²¼şÂË²¨²ÎÊıÓĞ´íÎó£¬ÒÑĞŞÕı
+*						 Asn V1.2 å‘ç°ä¹‹å‰é™€èºä»ªç¡¬ä»¶æ»¤æ³¢å‚æ•°æœ‰é”™è¯¯ï¼Œå·²ä¿®æ­£
 
-*	2019.11.28 Asn V2.0 ÏÖÒÑ¼ÓÈë´ÅÁ¦¼Æ£¬²¢ÓÅ»¯ÁËËã·¨£¬¼Ó¿ìÁË³õÊ¼»¯ÊÕÁ²ËÙ¶È
+*	2019.11.28 Asn V2.0 ç°å·²åŠ å…¥ç£åŠ›è®¡ï¼Œå¹¶ä¼˜åŒ–äº†ç®—æ³•ï¼ŒåŠ å¿«äº†åˆå§‹åŒ–æ”¶æ•›é€Ÿåº¦
 
-*						 Asn V2.1 ÕıÊ½¸üÃûapp_filterÎªapp_math£¬²¢°ÑlimitºÍinvsqrtÒÆ½øÈ¥
+*						 Asn V2.1 æ­£å¼æ›´åapp_filterä¸ºapp_mathï¼Œå¹¶æŠŠlimitå’Œinvsqrtç§»è¿›å»
 
-*	2019.12.6  Asn V2.2 ÓÅ»¯PI¿ØÖÆÆ÷²ÎÊı£¬²¢¼ÓÈëÎó²îÔ¤´¦Àí£¬µ±¼ÓËÙ¶ÈÄ£Á¿¹ı´ó»ò¹ıĞ¡¶¼ÉáÆúÎó²î
+*	2019.12.6  Asn V2.2 ä¼˜åŒ–PIæ§åˆ¶å™¨å‚æ•°ï¼Œå¹¶åŠ å…¥è¯¯å·®é¢„å¤„ç†ï¼Œå½“åŠ é€Ÿåº¦æ¨¡é‡è¿‡å¤§æˆ–è¿‡å°éƒ½èˆå¼ƒè¯¯å·®
 
-*	2019.12.11 Asn V2.3 Ôö¼ÓÁËsoft½Ç¶È½âËãÌõ¼ş£¬±ÜÃâÒ»¿ªÊ¼ÊÕÁ²¹ı³ÌÖĞÀÛ»ıÈ¦Êı£¬Ôö¼ÓÁËÌõ¼ş±àÒë£¬½â¾ö²»ÓÃ´ÅÁ¦¼ÆµÄ¾¯¸æ
-* 2019.12.24 Asn V2.4 ¸ü¸ÄÁË¼ÓËÙ¶È¼ÆÂË²¨²ÎÊı
-*   2020-3-18   ThunderDoge ÉÚ±ø¹¤³ÌĞŞÕı£º¼ÓÈëÀëÏß¼ì²âº¯Êı
+*	2019.12.11 Asn V2.3 å¢åŠ äº†softè§’åº¦è§£ç®—æ¡ä»¶ï¼Œé¿å…ä¸€å¼€å§‹æ”¶æ•›è¿‡ç¨‹ä¸­ç´¯ç§¯åœˆæ•°ï¼Œå¢åŠ äº†æ¡ä»¶ç¼–è¯‘ï¼Œè§£å†³ä¸ç”¨ç£åŠ›è®¡çš„è­¦å‘Š
+* 2019.12.24 Asn V2.4 æ›´æ”¹äº†åŠ é€Ÿåº¦è®¡æ»¤æ³¢å‚æ•°
+*   2020-3-18   ThunderDoge å“¨å…µå·¥ç¨‹ä¿®æ­£ï¼šåŠ å…¥ç¦»çº¿æ£€æµ‹å‡½æ•°
 */  
 #ifndef __APP_IMU_H
 #define __APP_IMU_H
@@ -32,15 +32,15 @@
 
 
 
-#define ZERO_SAMPLE_NUM  4000  //Áãµã²ÉÑùµÄÊı¾İÁ¿
+#define ZERO_SAMPLE_NUM  4000  //é›¶ç‚¹é‡‡æ ·çš„æ•°æ®é‡
 #define APP_MATH_ABS(x)   ((x)>0?(x):-(x))
 typedef struct
 {
 	struct{
 		float Gyro[3]; 
-		int16_t Data[3][ZERO_SAMPLE_NUM];   //²ÉÑùÁãµãÊı¾İ
-		float Sum[3];                    //²ÉÑùÖµÖ®ºÍ  
-		uint16_t Cnt[3];                   //Áãµã¼ÆÊı
+		int16_t Data[3][ZERO_SAMPLE_NUM];   //é‡‡æ ·é›¶ç‚¹æ•°æ®
+		float Sum[3];                    //é‡‡æ ·å€¼ä¹‹å’Œ  
+		uint16_t Cnt[3];                   //é›¶ç‚¹è®¡æ•°
 		float Mag[3];
 	}offset;
 	struct{
@@ -49,7 +49,7 @@ typedef struct
 			int16_t lastGyro[3];
 			int16_t Mag[3];        
 			int16_t MPU_Temp; 
-	}original; //Ô­Ê¼µÄ
+	}original; //åŸå§‹çš„
 	struct{
 			float Accel[3]; 
 			float Gyro[3];
@@ -65,7 +65,7 @@ typedef struct
 			float Gyro[3];
 			float Mag[3];        
 			float MPU_Temp; 
-	}unitized; //µ¥Î»»¯µÄ 
+	}unitized; //å•ä½åŒ–çš„ 
 	struct{
 		float Roll;
 		float Pitch;
@@ -81,17 +81,17 @@ typedef struct
 	float Pitch;
 	float Yaw;
 	uint8_t reset;
-	uint8_t ready;   //½¨Òé¶ÀÁ¢´´½¨Ò»¸ö¼à¿ØÈÎÎñ£¬ÒÔµÍÆµË¢ĞÂreadyÎª0£¬ÊµÊ±¼à²â9250ÊÇ·ñ¹¤×÷
-	uint8_t isThisTimeInvalid[3];  // Èô±¾´Î¾²Ì¬Áãµã²É¼¯Ê§°Ü£¬ÔòÖÃÒ»
+	uint8_t ready;   //å»ºè®®ç‹¬ç«‹åˆ›å»ºä¸€ä¸ªç›‘æ§ä»»åŠ¡ï¼Œä»¥ä½é¢‘åˆ·æ–°readyä¸º0ï¼Œå®æ—¶ç›‘æµ‹9250æ˜¯å¦å·¥ä½œ
+	uint8_t isThisTimeInvalid[3];  // è‹¥æœ¬æ¬¡é™æ€é›¶ç‚¹é‡‡é›†å¤±è´¥ï¼Œåˆ™ç½®ä¸€
 }MPU_DEF;
 
-// ÀëÏß¼ì²â ½á¹¹Ìå
+// ç¦»çº¿æ£€æµ‹ ç»“æ„ä½“
 extern struct CheckDevice_Type IMU_CheckDevice;
 
 
 extern MPU_DEF app_imu_data;
 
-extern uint32_t tNow;   //app_imu_So3threadÔËĞĞÊ±µÄÎ¢Ãë(us)Êı¡£¾ÍÊÇHal_GetTick()*1000
+extern uint32_t tNow;   //app_imu_So3threadè¿è¡Œæ—¶çš„å¾®ç§’(us)æ•°ã€‚å°±æ˜¯Hal_GetTick()*1000
 
 uint8_t app_imu_Init(void);
 void app_imu_So3thread(void);

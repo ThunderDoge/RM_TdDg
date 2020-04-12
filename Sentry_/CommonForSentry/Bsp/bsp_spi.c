@@ -10,7 +10,7 @@
  */
 #include "bsp_spi.h"
 #include "spi.h"
-//ĞèÒª×Ô¼º×ª½ÓµÄ3¸öºê¶¨Òå
+//éœ€è¦è‡ªå·±è½¬æ¥çš„3ä¸ªå®å®šä¹‰
 #define MPU_SPI hspi1
 #define ICM_Disable()   HAL_GPIO_WritePin(ICM_CS_GPIO_Port, ICM_CS_Pin, GPIO_PIN_SET)
 #define ICM_Enable()    HAL_GPIO_WritePin(ICM_CS_GPIO_Port, ICM_CS_Pin, GPIO_PIN_RESET)
@@ -21,25 +21,25 @@
 #define AK_Disable()   HAL_GPIO_WritePin(AK_CS_GPIO_Port, AK_CS_Pin, GPIO_PIN_SET)
 #define AK_Enable()    HAL_GPIO_WritePin(AK_CS_GPIO_Port, AK_CS_Pin, GPIO_PIN_RESET)
 
-uint8_t bsp_spi_MagAsa[3];//¶ÁÈ¡´ÅÁ¦¼ÆASAĞ£Õı¼Ä´æÆ÷
+uint8_t bsp_spi_MagAsa[3];//è¯»å–ç£åŠ›è®¡ASAæ ¡æ­£å¯„å­˜å™¨
 #endif
 
 /** 
-* @brief   Íù¼Ä´æÆ÷ÖĞĞ´Êı¾İ
+* @brief   å¾€å¯„å­˜å™¨ä¸­å†™æ•°æ®
 * @remarks 
 * @retval  Null     
 */
 static void bsp_spi_writereg(uint8_t regAddr, uint8_t data)
 {
-	regAddr &= 0x7f;  //Ê×Î»0Î»Ğ´
+	regAddr &= 0x7f;  //é¦–ä½0ä½å†™
 	ICM_Enable();   
 	HAL_SPI_Transmit(&MPU_SPI, &regAddr,1,100);
 	HAL_SPI_Transmit(&MPU_SPI, &data,1,100);
 	ICM_Disable();
 }	
 /** 
-* @brief   µ¥´ÎµÄ¶ÁÈ¡
-* @remarks Ò»´ÎÖ»ÄÜ¶ÁÈ¡Ò»¸ö¼Ä´æÆ÷µÄÖµ£¬¼´8Î»
+* @brief   å•æ¬¡çš„è¯»å–
+* @remarks ä¸€æ¬¡åªèƒ½è¯»å–ä¸€ä¸ªå¯„å­˜å™¨çš„å€¼ï¼Œå³8ä½
 */
 uint8_t bsp_spi_ReadReg(uint8_t regAddr)
 {
@@ -49,11 +49,11 @@ uint8_t bsp_spi_ReadReg(uint8_t regAddr)
 }
 
 	/** 
-* @brief   ´Ó¼Ä´æÆ÷ÖĞ¶ÁÊı¾İ
-* @remarks ÓëÉÏÃæ²»Ò»Ñù£¬RWĞèÒªÎª1
-*          Í¬Ê±£¬ĞèÒªÏÈ·¢ËÍÊı¾İ£¨Ï¹¼¸°Ñ·¢8Î»¾ÍĞĞÁË£©
-* @retval  ¶ÁÈ¡µ½µÄ8Î»Êı¾İ    
-* @bug     ´ÅÁ¦¼ÆÒª°´ÕÕ±ê×¼µÄ0xC0²ÅÄÜÁ¬Ğø¶ÁÈ¡£¬ÆäËûÒª0x80
+* @brief   ä»å¯„å­˜å™¨ä¸­è¯»æ•°æ®
+* @remarks ä¸ä¸Šé¢ä¸ä¸€æ ·ï¼ŒRWéœ€è¦ä¸º1
+*          åŒæ—¶ï¼Œéœ€è¦å…ˆå‘é€æ•°æ®ï¼ˆçå‡ æŠŠå‘8ä½å°±è¡Œäº†ï¼‰
+* @retval  è¯»å–åˆ°çš„8ä½æ•°æ®    
+* @bug     ç£åŠ›è®¡è¦æŒ‰ç…§æ ‡å‡†çš„0xC0æ‰èƒ½è¿ç»­è¯»å–ï¼Œå…¶ä»–è¦0x80
 */
 void bsp_spi_ReadRegs(uint8_t regAddr,uint8_t *pBuff,uint8_t length)
 {
@@ -66,11 +66,11 @@ void bsp_spi_ReadRegs(uint8_t regAddr,uint8_t *pBuff,uint8_t length)
 #ifdef USE_MAG
 
 /** 
-    * @brief ´ÅÁ¦¼ÆĞ´
+    * @brief ç£åŠ›è®¡å†™
 */
 static uint8_t bsp_spi_magwrite(uint8_t regAddr, uint8_t data)
 {
-	regAddr &= 0x7f;  //Ê×Î»0Î»Ğ´
+	regAddr &= 0x7f;  //é¦–ä½0ä½å†™
 	AK_Enable();   
 	HAL_SPI_Transmit(&MPU_SPI, &regAddr,1,2000);
 	if(HAL_SPI_Transmit(&MPU_SPI, &data,1,2000)!=HAL_OK)
@@ -79,7 +79,7 @@ static uint8_t bsp_spi_magwrite(uint8_t regAddr, uint8_t data)
 	return 1;
 }	
 /** 
-    * @brief ´ÅÁ¦¼Æ¶ÁÈ¡
+    * @brief ç£åŠ›è®¡è¯»å–
 */
 uint8_t bsp_spi_MagReads(uint8_t regAddr,uint8_t *pBuff,uint8_t length)
 {
@@ -93,17 +93,17 @@ uint8_t bsp_spi_MagReads(uint8_t regAddr,uint8_t *pBuff,uint8_t length)
 }
 
 /** 
-    * @brief ´ÅÁ¦¼ÆÃüÁî´¥·¢
+    * @brief ç£åŠ›è®¡å‘½ä»¤è§¦å‘
 */
 void bsp_spi_MagTrig(void)
 {
 	bsp_spi_magwrite(AK8975_CNTL_REG,0x01);
 }
 /** 
-* @brief  ´ÅÁ¦¼Æ³õÊ¼»¯
-* @param[in]   ÎŞ 
-* @retval  HAL_OK  ³É¹¦  HAL_ERROR Ê§°Ü
-* @par ÈÕÖ¾ 
+* @brief  ç£åŠ›è®¡åˆå§‹åŒ–
+* @param[in]   æ—  
+* @retval  HAL_OK  æˆåŠŸ  HAL_ERROR å¤±è´¥
+* @par æ—¥å¿— 
 *
 */
 HAL_StatusTypeDef bsp_spi_Ak8975Init(void)
@@ -124,18 +124,18 @@ HAL_StatusTypeDef bsp_spi_Ak8975Init(void)
 }
 #endif
 /** 
-* @brief  ICM20602³õÊ¼»¯
-* @param[in]   ÎŞ 
-* @retval  HAL_OK  ³É¹¦  HAL_ERROR Ê§°Ü
-* @par ÈÕÖ¾ 
+* @brief  ICM20602åˆå§‹åŒ–
+* @param[in]   æ—  
+* @retval  HAL_OK  æˆåŠŸ  HAL_ERROR å¤±è´¥
+* @par æ—¥å¿— 
 *
 */
 HAL_StatusTypeDef bsp_spi_Icm20602Init(void)
 {
 	static uint8_t ID;
-	bsp_spi_writereg(MPU_RA_PWR_MGMT_1,0x80);						//Çå³ıÄÚ²¿¼Ä´æÆ÷
+	bsp_spi_writereg(MPU_RA_PWR_MGMT_1,0x80);						//æ¸…é™¤å†…éƒ¨å¯„å­˜å™¨
 	HAL_Delay(10);
-	bsp_spi_writereg(MPU_RA_PWR_MGMT_1,0x01);           //ÅäÖÃÊ±ÖÓÔ´
+	bsp_spi_writereg(MPU_RA_PWR_MGMT_1,0x01);           //é…ç½®æ—¶é’Ÿæº
 	HAL_Delay(10);
 
 	ID = bsp_spi_ReadReg(MPUREG_WHOAMI);                //WHO AM I!!!
@@ -144,23 +144,23 @@ HAL_StatusTypeDef bsp_spi_Icm20602Init(void)
 
 		bsp_spi_writereg(MPU_RA_SIGNAL_PATH_RESET,0x03);  
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_USER_CTRL,0x01);					//¸´Î»¸÷¼Ä´æÆ÷
+		bsp_spi_writereg(MPU_RA_USER_CTRL,0x01);					//å¤ä½å„å¯„å­˜å™¨
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_PWR_MGMT_2,0x00);					//¿ªÆôÍÓÂİÒÇºÍ¼ÓËÙ¶È¼Æ
+		bsp_spi_writereg(MPU_RA_PWR_MGMT_2,0x00);					//å¼€å¯é™€èºä»ªå’ŒåŠ é€Ÿåº¦è®¡
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_SMPLRT_DIV,0);						//²»·ÖÆµ
+		bsp_spi_writereg(MPU_RA_SMPLRT_DIV,0);						//ä¸åˆ†é¢‘
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_CONFIG,ICM20602_LPF_20HZ);//µÍÍ¨ÂË²¨ÅäÖÃ
+		bsp_spi_writereg(MPU_RA_CONFIG,ICM20602_LPF_20HZ);//ä½é€šæ»¤æ³¢é…ç½®
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_GYRO_CONFIG,(3 << 3));		//ÍÓÂİÒÇÁ¿³Ì+-2000dps
+		bsp_spi_writereg(MPU_RA_GYRO_CONFIG,(3 << 3));		//é™€èºä»ªé‡ç¨‹+-2000dps
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_1,0x11); 		//¼ÓËÙ¶È¼ÆÁ¿³Ì+-2g
+		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_1,0x11); 		//åŠ é€Ÿåº¦è®¡é‡ç¨‹+-2g
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_2,0x04);			//¼ÓËÙ¶È¼ÆÂË²¨ÅäÖÃ
+		bsp_spi_writereg(MPU_RA_ACCEL_CONFIG_2,0x04);			//åŠ é€Ÿåº¦è®¡æ»¤æ³¢é…ç½®
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_LP_CONFIG,0x00);					//¹Ø±ÕµÍ¹¦ºÄ
+		bsp_spi_writereg(MPU_RA_LP_CONFIG,0x00);					//å…³é—­ä½åŠŸè€—
 		HAL_Delay(10);
-		bsp_spi_writereg(MPU_RA_FIFO_EN,0x00);						//¹Ø±ÕFIFO
+		bsp_spi_writereg(MPU_RA_FIFO_EN,0x00);						//å…³é—­FIFO
 		
 		return HAL_OK;
 	}	

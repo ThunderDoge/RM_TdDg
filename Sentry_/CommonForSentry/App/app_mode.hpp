@@ -1,7 +1,7 @@
 /**
  * @file app_mode.hpp
  * @author ThunderDoge (thunderdoge@qq.com)
- * @brief ModeÀà ÓÃÓÚÉÚ±øÂß¼­²¿·Ö
+ * @brief Modeç±» ç”¨äºå“¨å…µé€»è¾‘éƒ¨åˆ†
  * @version 0.1
  * @date 2020-02-18
  * 
@@ -12,9 +12,9 @@
 #define __APP_MODE_HPP_
 #include "stm32f4xx.h"
 
-typedef void (*vivoFuncPtr)(void); ///Ö¸Ïòvoid º¯ÊıÃû(void)µÄÖ¸Õë¡£Pointer to void input void output function
+typedef void (*vivoFuncPtr)(void); ///æŒ‡å‘void å‡½æ•°å(void)çš„æŒ‡é’ˆã€‚Pointer to void input void output function
 /**
- * @brief Mode×´Ì¬Ã¶¾ÙÖµ
+ * @brief ModeçŠ¶æ€æšä¸¾å€¼
  * 
  */
 enum mode_status_enum:uint8_t{
@@ -23,19 +23,19 @@ enum mode_status_enum:uint8_t{
     MODE_RUNNING = 2,
 };
 /**
-  * @brief  ·Ï°¸ÖØÆô ModeÀà¶¨Òå
+  * @brief  åºŸæ¡ˆé‡å¯ Modeç±»å®šä¹‰
   */
 class app_Mode
 {
 public:
-    app_Mode(vivoFuncPtr entry, vivoFuncPtr runner, vivoFuncPtr exit) : ///< ¹¹Ôìº¯ÊıConstructor£¬²ÎÊıÎªÈı¸öº¯ÊıµÄÖ¸Õë£¬·Ö±ğ¶ÔÓ¦Enter,Run,Exit¡£º¯ÊıÌåĞèÒªÓÃ»§×ÔĞĞ¶¨Òå¡£
+    app_Mode(vivoFuncPtr entry, vivoFuncPtr runner, vivoFuncPtr exit) : ///< æ„é€ å‡½æ•°Constructorï¼Œå‚æ•°ä¸ºä¸‰ä¸ªå‡½æ•°çš„æŒ‡é’ˆï¼Œåˆ†åˆ«å¯¹åº”Enter,Run,Exitã€‚å‡½æ•°ä½“éœ€è¦ç”¨æˆ·è‡ªè¡Œå®šä¹‰ã€‚
     status(MODE_EXITED), EnterCallback(entry), RunningCallback(runner), ExitCallback(exit){};
 
-    void Enter();   ///<½øÈëº¯Êı
-    void Run();     ///<ÔËĞĞÊ±º¯Êı
-    void Exit();    ///<ÍË³öº¯Êı
+    void Enter();   ///<è¿›å…¥å‡½æ•°
+    void Run();     ///<è¿è¡Œæ—¶å‡½æ•°
+    void Exit();    ///<é€€å‡ºå‡½æ•°
 private:
-    uint8_t status; ///<ModeµÄ×´Ì¬£¬µ÷ÓÃÄ£Ê½µÄ·½·¨»á¸Ä±ä´ËÊı×Ö¡£È¡Öµ¼û mode_status_enum
+    uint8_t status; ///<Modeçš„çŠ¶æ€ï¼Œè°ƒç”¨æ¨¡å¼çš„æ–¹æ³•ä¼šæ”¹å˜æ­¤æ•°å­—ã€‚å–å€¼è§ mode_status_enum
     vivoFuncPtr EnterCallback;
     vivoFuncPtr RunningCallback;
     vivoFuncPtr ExitCallback;

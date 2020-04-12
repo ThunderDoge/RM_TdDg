@@ -15,7 +15,7 @@
 
 #define __CLOUD_MODE_DEF
 
-///云台模式取值枚举型
+///浜戝彴妯″紡鍙栧�兼灇涓惧瀷
 enum _cloud_ctrl_mode:uint8_t
 {
     save_cloud,
@@ -31,7 +31,7 @@ enum _cloud_ctrl_mode:uint8_t
 
 #define __CHASSIS_MODE_DEF
 
-///底盘模式取值枚举型
+///搴曠洏妯″紡鍙栧�兼灇涓惧瀷
 enum _chassis_mode:uint8_t
 {
     _chassis_speed =1,

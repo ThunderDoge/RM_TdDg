@@ -1,6 +1,6 @@
 /**
   * @file      app_sentry_diagnosis_commom.hpp
-  * @brief     ÉÚ±ø×ÔÕï¶ÏÏµÍ³¡£¼ì²éÉè±¸µôÏßÇé¿ö²¢¸ø³öÉù¹âÌáÊ¾¡£
+  * @brief     å“¨å…µè‡ªè¯Šæ–­ç³»ç»Ÿã€‚æ£€æŸ¥è®¾å¤‡æ‰çº¿æƒ…å†µå¹¶ç»™å‡ºå£°å…‰æç¤ºã€‚
   * @details   
   * @author   ThunderDoge
   * @date      2020-2-24
@@ -12,13 +12,13 @@
 #define __APP_SENTRY_DIAGNOSIS_HPP_
 #include "stm32f4xx_hal.h"
 
-#define APP_SENTRY_DIAG_FLAG_IN_BIT 1   //¡°±êÊ¶Î»°´bitÊ¹ÓÃ¡±±êÊ¶ºê¶¨Òå,Îª1±íÊ¾°´Î»Ê¹ÓÃ,Îª0±íÊ¾°´×Ö½ÚÊ¹ÓÃ,ÌåÏÖÔÚ¶ÁÈ¡ÓëĞ´Èë·½Ê½²»Í¬.²»Ó°ÏìÊµ¼ÊÊ¹ÓÃ.
+#define APP_SENTRY_DIAG_FLAG_IN_BIT 1   //â€œæ ‡è¯†ä½æŒ‰bitä½¿ç”¨â€æ ‡è¯†å®å®šä¹‰,ä¸º1è¡¨ç¤ºæŒ‰ä½ä½¿ç”¨,ä¸º0è¡¨ç¤ºæŒ‰å­—èŠ‚ä½¿ç”¨,ä½“ç°åœ¨è¯»å–ä¸å†™å…¥æ–¹å¼ä¸åŒ.ä¸å½±å“å®é™…ä½¿ç”¨.
 
-#define APP_SENTRY_DIAG_GENARAL_DEVICE_OFFLINE_TIMEOUT_MS 1000; //Ò»°ãÉè±¸µÄÅĞ¶¨ÎªÀëÏßµÄÊ±¼ä£¬µ¥Î»ÊÇms
+#define APP_SENTRY_DIAG_GENARAL_DEVICE_OFFLINE_TIMEOUT_MS 1000; //ä¸€èˆ¬è®¾å¤‡çš„åˆ¤å®šä¸ºç¦»çº¿çš„æ—¶é—´ï¼Œå•ä½æ˜¯ms
 #define APP_SENTRY_DIAG_IS_OFFLINE_TIMEOUT(t0) ((HAL_GetTick()- (t0)) > APP_SENTRY_DIAG_GENARAL_DEVICE_OFFLINE_TIMEOUT_MS)
 
 /**
- * @brief ÉÚ±øÉè±¸´úÂë£¬ÓÃÓÚÕï¶ÏÏµÍ³ÖĞ. DCODE_ stand for Devide_Code_ .
+ * @brief å“¨å…µè®¾å¤‡ä»£ç ï¼Œç”¨äºè¯Šæ–­ç³»ç»Ÿä¸­. DCODE_ stand for Devide_Code_ .
  * Sentry device code, used in diagnosis system.
  */
 enum _sentry_device_code_enum:uint8_t { 

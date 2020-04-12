@@ -1,37 +1,37 @@
 /** 
  * @file    bsp_can.cpp
-* @brief    CAN°å¼¶Ö§³Ö°ü
-* @details  CAN×ÜÏßÏà¹ØÉèÖÃ£¬Êı¾İ½ÓÊÕ½âÎöº¯Êı
+* @brief    CANæ¿çº§æ”¯æŒåŒ…
+* @details  CANæ€»çº¿ç›¸å…³è®¾ç½®ï¼Œæ•°æ®æ¥æ”¶è§£æå‡½æ•°
 * @author   Evan-GH
 * @date      2019.11
 * @version  1.8
-* @par Copyright (c):  RM2020µç¿Ø
-* @par ÈÕÖ¾
-*				¾ßÌåÊ¹ÓÃ·½·¨¼ûReadme.md
-*				°æ±¾±ä¸ü:
-*				2019.10		|		1.0		|		µ÷Í¨CAN×ÜÏßÏà¹ØÖĞ¶Ï´¦Àíº¯Êı
-*				2019.10		|		1.1		|		¼ÓÈëÌõ¼ş±àÒë,×ÔÖ÷Ñ¡Ôñ¿ªÆôÄ³¸öCANÏß
-*				2019.10		|		1.2		|		¼ÓÈëÌõ¼ş±àÒë,·ÖÎªÊ¹ÓÃĞÅºÅÁ¿ºÍÆÕÍ¨ÖĞ¶ÏÁ½ÖÖ
-*				2019.10		|		1.3		|		ĞŞ¸Ä·¢ËÍÏà¹Øº¯Êı£¬Ê¹µÃ¸ü·½±ãÊ¹ÓÃ
-*				2019.10		|		1.4		|		¸ù¾İ´úÂë¹æ·¶ĞŞ¸ÄÁËÒ»²¿·Öº¯ÊıÃû³Æ
-*				2019.10		|		1.5		|		²Î¿¼RM19´úÂë£¬ĞŞ¸Ä¶ÔÍâ½Ó¿Úº¯Êı£¬·â×°¸ü³¹µ×
-*				2019.10		|		1.6		|		ĞŞ¸Ä½ÓÊÕÖĞ¶ÏºÍCANÏß·¢ËÍº¯ÊıÂß¼­
-*				2019.11.11|		1.7		|		Ìí¼Ó¶Ô³õÊ¼»¯½á¹ûµÄ¼ì²âºÍ¸ü¸Ä·¢ËÍº¯ÊıµÄ·µ»ØÀàĞÍ£¬²¢¶Ô½á¹û×ö¼ì²â£¬´Ë´Î¸Ä¶¯ÊÇÎªÁËÊÊÅäC++µç»ú¿â
-*				2019.11.15|		1.8		|		ÔÚ»Øµ÷²ÎÊıÖĞ¹Ì¶¨Ìí¼ÓC++µç»ú¿âµÄ½âÎöº¯Êı£¬ÏÖÔÚÁ½¸ö¿â¿ÉÒÔÖ±½ÓÀ¦°óÊ¹ÓÃÎŞĞè×ö¹ı¶àĞŞ¸ÄÁË
-*				2019.11.15|		1.9		|		ĞŞ¸ÄÁËº¯Êı×¢ÊÍ
-*				2019.11.15|		2.0		|		È¥³ıÁËĞÅºÅÁ¿Ê¹ÓÃµÄÌõ¼ş±àÒë£¬ÏÖÔÚÖ»ĞèÒªÑ¡ÔñÊ¹ÓÃÄÄÒ»¸öCAN×ÜÏßÁË£¬Ìí¼ÓÁËÒ»¸öfreertosµÄÌõ¼ş±àÒëÊ¹ÓÃÑ¡Ïî
+* @par Copyright (c):  RM2020ç”µæ§
+* @par æ—¥å¿—
+*				å…·ä½“ä½¿ç”¨æ–¹æ³•è§Readme.md
+*				ç‰ˆæœ¬å˜æ›´:
+*				2019.10		|		1.0		|		è°ƒé€šCANæ€»çº¿ç›¸å…³ä¸­æ–­å¤„ç†å‡½æ•°
+*				2019.10		|		1.1		|		åŠ å…¥æ¡ä»¶ç¼–è¯‘,è‡ªä¸»é€‰æ‹©å¼€å¯æŸä¸ªCANçº¿
+*				2019.10		|		1.2		|		åŠ å…¥æ¡ä»¶ç¼–è¯‘,åˆ†ä¸ºä½¿ç”¨ä¿¡å·é‡å’Œæ™®é€šä¸­æ–­ä¸¤ç§
+*				2019.10		|		1.3		|		ä¿®æ”¹å‘é€ç›¸å…³å‡½æ•°ï¼Œä½¿å¾—æ›´æ–¹ä¾¿ä½¿ç”¨
+*				2019.10		|		1.4		|		æ ¹æ®ä»£ç è§„èŒƒä¿®æ”¹äº†ä¸€éƒ¨åˆ†å‡½æ•°åç§°
+*				2019.10		|		1.5		|		å‚è€ƒRM19ä»£ç ï¼Œä¿®æ”¹å¯¹å¤–æ¥å£å‡½æ•°ï¼Œå°è£…æ›´å½»åº•
+*				2019.10		|		1.6		|		ä¿®æ”¹æ¥æ”¶ä¸­æ–­å’ŒCANçº¿å‘é€å‡½æ•°é€»è¾‘
+*				2019.11.11|		1.7		|		æ·»åŠ å¯¹åˆå§‹åŒ–ç»“æœçš„æ£€æµ‹å’Œæ›´æ”¹å‘é€å‡½æ•°çš„è¿”å›ç±»å‹ï¼Œå¹¶å¯¹ç»“æœåšæ£€æµ‹ï¼Œæ­¤æ¬¡æ”¹åŠ¨æ˜¯ä¸ºäº†é€‚é…C++ç”µæœºåº“
+*				2019.11.15|		1.8		|		åœ¨å›è°ƒå‚æ•°ä¸­å›ºå®šæ·»åŠ C++ç”µæœºåº“çš„è§£æå‡½æ•°ï¼Œç°åœ¨ä¸¤ä¸ªåº“å¯ä»¥ç›´æ¥æ†ç»‘ä½¿ç”¨æ— éœ€åšè¿‡å¤šä¿®æ”¹äº†
+*				2019.11.15|		1.9		|		ä¿®æ”¹äº†å‡½æ•°æ³¨é‡Š
+*				2019.11.15|		2.0		|		å»é™¤äº†ä¿¡å·é‡ä½¿ç”¨çš„æ¡ä»¶ç¼–è¯‘ï¼Œç°åœ¨åªéœ€è¦é€‰æ‹©ä½¿ç”¨å“ªä¸€ä¸ªCANæ€»çº¿äº†ï¼Œæ·»åŠ äº†ä¸€ä¸ªfreertosçš„æ¡ä»¶ç¼–è¯‘ä½¿ç”¨é€‰é¡¹
 */
 #include "bsp_can.hpp"
 
 /**
-* @brief  CAN×ÜÏßÅäÖÃ³õÊ¼»¯
-* @details  ³õÊ¼»¯ÂË²¨Æ÷£¬¸ù¾İºê¶¨ÒåµÄ¿ªÆôÀ´³õÊ¼»¯CAN×ÜÏß
+* @brief  CANæ€»çº¿é…ç½®åˆå§‹åŒ–
+* @details  åˆå§‹åŒ–æ»¤æ³¢å™¨ï¼Œæ ¹æ®å®å®šä¹‰çš„å¼€å¯æ¥åˆå§‹åŒ–CANæ€»çº¿
 * @param  NULL
 * @retval  NULL
 */
 void bsp_can_Init(void)
 {
-	//CANÂË²¨Æ÷ÉèÖÃ£¬´Ë²¿·Ö²»ĞèÒªĞŞ¸Ä£¬Ö±½ÓÓÃ¾ÍĞĞ
+	//CANæ»¤æ³¢å™¨è®¾ç½®ï¼Œæ­¤éƒ¨åˆ†ä¸éœ€è¦ä¿®æ”¹ï¼Œç›´æ¥ç”¨å°±è¡Œ
 	CAN_FilterTypeDef CAN_FilterConfig;
 	
 	CAN_FilterConfig.SlaveStartFilterBank=0;
@@ -48,28 +48,28 @@ void bsp_can_Init(void)
 		if(HAL_CAN_ConfigFilter(&hcan1, &CAN_FilterConfig) != HAL_OK)
 		{
 
-			while(1);//³õÊ¼»¯Ã»ÓĞ³É¹¦Ôò±©Â¶´íÎó
+			while(1);//åˆå§‹åŒ–æ²¡æœ‰æˆåŠŸåˆ™æš´éœ²é”™è¯¯
 		}
 		HAL_CAN_Start(&hcan1);
-		HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING); /*¿ªÆôÖĞ¶Ï*/
+		HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING); /*å¼€å¯ä¸­æ–­*/
 	#endif
 	
 	#ifdef BSP_CAN_USE_CAN2
-		CAN_FilterConfig.FilterBank = 14; //CAN2ÂË²¨Æ÷ÓÃ14ºÅ
+		CAN_FilterConfig.FilterBank = 14; //CAN2æ»¤æ³¢å™¨ç”¨14å·
 		if(HAL_CAN_ConfigFilter(&hcan2,&CAN_FilterConfig) != HAL_OK)
 		{
-			while(1);//³õÊ¼»¯Ã»ÓĞ³É¹¦Ôò±©Â¶´íÎó
+			while(1);//åˆå§‹åŒ–æ²¡æœ‰æˆåŠŸåˆ™æš´éœ²é”™è¯¯
 		}
 		HAL_CAN_Start(&hcan2);
-		HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING); /*¿ªÆôÖĞ¶Ï*/
+		HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING); /*å¼€å¯ä¸­æ–­*/
 	#endif
 }
 
 /**
-* @brief  CAN·¢ËÍÊı¾İ
-* @details  Í¨¹ıCAN×ÜÏß·¢ËÍ¿ØÖÆÊı¾İ
-* @param  CAN_HandleTypeDef* hcan ·¢ËÍÊ¹ÓÃµÄCAN×ÜÏß,int16_t StdId CANÏß·¢ËÍID,int16_t* Can_Send_Data ĞèÒª·¢ËÍµÄÊı¾İ
-* @retval  HAL_RESULT ·¢ËÍ½á¹û HAL_OK ³É¹¦£¬HAL_ERROR Ê§°Ü
+* @brief  CANå‘é€æ•°æ®
+* @details  é€šè¿‡CANæ€»çº¿å‘é€æ§åˆ¶æ•°æ®
+* @param  CAN_HandleTypeDef* hcan å‘é€ä½¿ç”¨çš„CANæ€»çº¿,int16_t StdId CANçº¿å‘é€ID,int16_t* Can_Send_Data éœ€è¦å‘é€çš„æ•°æ®
+* @retval  HAL_RESULT å‘é€ç»“æœ HAL_OK æˆåŠŸï¼ŒHAL_ERROR å¤±è´¥
 */
 HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int16_t* Can_Send_Data)
 {
@@ -77,7 +77,7 @@ HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int1
 	CAN_TxHeaderTypeDef bsp_can_Tx;
 	HAL_StatusTypeDef HAL_RESULT;
 	
-	//½«´«ÈëµÄÊı¾İ×ª»»Îª±ê×¼CANÖ¡Êı¾İ
+	//å°†ä¼ å…¥çš„æ•°æ®è½¬æ¢ä¸ºæ ‡å‡†CANå¸§æ•°æ®
 	uint8_t Data[8];
 	Data[0] = (uint8_t)((*(Can_Send_Data+0)>>8));
 	Data[1] = (uint8_t)(*(Can_Send_Data+0)) & 0XFF;
@@ -88,14 +88,14 @@ HAL_StatusTypeDef bsp_can_Sendmessage(CAN_HandleTypeDef* hcan,int16_t StdId,int1
 	Data[6] = (uint8_t)((*(Can_Send_Data+3)>>8));
 	Data[7] = (uint8_t)(*(Can_Send_Data+3)) & 0XFF;
 	
-	//ÉèÖÃCANÖ¡ÅäÖÃ
+	//è®¾ç½®CANå¸§é…ç½®
 	bsp_can_Tx.StdId=StdId;
 	bsp_can_Tx.RTR = CAN_RTR_DATA;
 	bsp_can_Tx.IDE = CAN_ID_STD;
 	bsp_can_Tx.DLC = 8;
 	HAL_RESULT = HAL_CAN_AddTxMessage(hcan, &bsp_can_Tx, Data, &MailBox);
 	#ifndef BSP_CAN_USE_FREERTOS
-		while(HAL_CAN_GetTxMailboxesFreeLevel(hcan)!=3);//µÈ´ı·¢ËÍÍê³É£¬Èç¹ûÊÇÊ¹ÓÃFreeRTOSÔò¿ÉÒÔ²»ĞèÒªÕâ¾ä,ÒòÎªÈÎÎñµ÷¶È±¾ÉíÊÇĞèÒªÑÓÊ±µÄ
+		while(HAL_CAN_GetTxMailboxesFreeLevel(hcan)!=3);//ç­‰å¾…å‘é€å®Œæˆï¼Œå¦‚æœæ˜¯ä½¿ç”¨FreeRTOSåˆ™å¯ä»¥ä¸éœ€è¦è¿™å¥,å› ä¸ºä»»åŠ¡è°ƒåº¦æœ¬èº«æ˜¯éœ€è¦å»¶æ—¶çš„
 	#endif
 	
 	return HAL_RESULT;

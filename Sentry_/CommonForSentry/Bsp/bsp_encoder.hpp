@@ -3,7 +3,7 @@
 
 /**
   * @file  bsp_encoder.hpp
-  * @brief    RM2020Í¨ÓÃ±àÂëÆ÷
+  * @brief    RM2020é€šç”¨ç¼–ç å™¨
   * @details  
   * @author   ThunderDoge
   * @date     2019/12/20    v0.1
@@ -15,20 +15,20 @@
 #define __BSP_ENCODER_HPP_
 #include "tim.h"
 // #include "bsp_stddef.h"
-//ÍâÉèºê¶¨Òå
+//å¤–è®¾å®å®šä¹‰
 #define BSP_ENCODER_TIM htim8
 
-extern uint32_t bsp_encoder_PeriodCount;	//Éè¶¨±àÂëÆ÷Ò»È¦ÊıÖµ
-extern uint32_t bsp_encoder_UpdateTime;		//¸üĞÂÊ±¼ä´Á
-extern int32_t bsp_encoder_Value;		//ÓÃ»§Ê¹ÓÃµÄ±àÂëÆ÷Öµ
+extern uint32_t bsp_encoder_PeriodCount;	//è®¾å®šç¼–ç å™¨ä¸€åœˆæ•°å€¼
+extern uint32_t bsp_encoder_UpdateTime;		//æ›´æ–°æ—¶é—´æˆ³
+extern int32_t bsp_encoder_Value;		//ç”¨æˆ·ä½¿ç”¨çš„ç¼–ç å™¨å€¼
 extern float bsp_encoder_Speed;
 
 
 
-void bsp_encoder_Init(uint32_t period_cnt);	//³õÊ¼»¯±àÂëÆ÷
-void bsp_encoder_It();	//Òç³öÖĞ¶Ï´¦Àíº¯Êı
-void bsp_encoder_Handle();	//ÖÜÆÚĞÔµ÷ÓÃ´Ëº¯ÊıÒÔ¸üĞÂ±àÂëÆ÷
-void bsp_encoder_SetValue(int32_t value_to_set);	//Éè¶¨±àÂëÆ÷Öµ
+void bsp_encoder_Init(uint32_t period_cnt);	//åˆå§‹åŒ–ç¼–ç å™¨
+void bsp_encoder_It();	//æº¢å‡ºä¸­æ–­å¤„ç†å‡½æ•°
+void bsp_encoder_Handle();	//å‘¨æœŸæ€§è°ƒç”¨æ­¤å‡½æ•°ä»¥æ›´æ–°ç¼–ç å™¨
+void bsp_encoder_SetValue(int32_t value_to_set);	//è®¾å®šç¼–ç å™¨å€¼
 
 
 

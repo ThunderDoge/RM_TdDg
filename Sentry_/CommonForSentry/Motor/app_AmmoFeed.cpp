@@ -1,23 +1,23 @@
 /**
   * @file       app_AmmoFeed.cpp
-  * @brief    Í¨ÓÃ²¦µ¯µç»ú¿â
+  * @brief    é€šç”¨æ‹¨å¼¹ç”µæœºåº“
   * @details  
   * @author   ThunderDoge & Asn
   * @date     2019/12/13
   * @version  v1.0.3 
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-  * v1.0.0  2019/11/29  ÊµÏÖ»ù±¾¹¦ÄÜ
-  * v1.0.1  2019/12/6   Asn½øĞĞÁË²¿·Ö¼ò»¯£¬Ê¹ÆäÒ×ÓÚÊ¹ÓÃ¡£
-  * v1.0.2  2019/12/13  ĞŞÕıÁË²¿·Ö¶àÓàµÄÒÀÀµ£¬ÒÔ¼°Ò»Ğ©Óï·¨´íÎó¡£²¦µ¯»Ø×ª´¦Àí²¿·ÖBlocked_ReactionÈÔ´æÔÚËÀËø·çÏÕ£¬¿ÉÒÔPID²ÎÊı½â¾ö¡£
-  *	v1.0.3  2019/12.27  ĞŞÕı¶Â×ªÅĞ¶ÏÂß¼­£¬²¢Í³Ò»ÓÃÍâ²¿cansendº¯Êı£¬È»ºó¸üĞÂÃüÃû£¬Ê¹Æä¸ü¹æ·¶
-  * v1.0.4  2019/12/31  °ÑÔ­À´µÄPr_Handleº¯ÊıÒÆÖ²µ½HandleÖĞ£¬Ê¹SetÍêÄ£Ê½Ö®ºóÖ»ĞèÒªµ÷ÓÃmanager::CANSend()¾ÍºÃÁË
-  * v1.0.5  2020/4/10   ĞŞÕıÁË²¿·Ö×¢ÊÍ, by ThunderDoge
+  * v1.0.0  2019/11/29  å®ç°åŸºæœ¬åŠŸèƒ½
+  * v1.0.1  2019/12/6   Asnè¿›è¡Œäº†éƒ¨åˆ†ç®€åŒ–ï¼Œä½¿å…¶æ˜“äºä½¿ç”¨ã€‚
+  * v1.0.2  2019/12/13  ä¿®æ­£äº†éƒ¨åˆ†å¤šä½™çš„ä¾èµ–ï¼Œä»¥åŠä¸€äº›è¯­æ³•é”™è¯¯ã€‚æ‹¨å¼¹å›è½¬å¤„ç†éƒ¨åˆ†Blocked_Reactionä»å­˜åœ¨æ­»é”é£é™©ï¼Œå¯ä»¥PIDå‚æ•°è§£å†³ã€‚
+  *	v1.0.3  2019/12.27  ä¿®æ­£å µè½¬åˆ¤æ–­é€»è¾‘ï¼Œå¹¶ç»Ÿä¸€ç”¨å¤–éƒ¨cansendå‡½æ•°ï¼Œç„¶åæ›´æ–°å‘½åï¼Œä½¿å…¶æ›´è§„èŒƒ
+  * v1.0.4  2019/12/31  æŠŠåŸæ¥çš„Pr_Handleå‡½æ•°ç§»æ¤åˆ°Handleä¸­ï¼Œä½¿Setå®Œæ¨¡å¼ä¹‹ååªéœ€è¦è°ƒç”¨manager::CANSend()å°±å¥½äº†
+  * v1.0.5  2020/4/10   ä¿®æ­£äº†éƒ¨åˆ†æ³¨é‡Š, by ThunderDoge
   */
 
 #include "app_AmmoFeed.hpp"
 
 /** 
-* @brief ÖÜÆÚÖ´ĞĞµÄº¯Êı£¬×Ô¶¯¹ÜÀí²¦µ¯µç»ú
+* @brief å‘¨æœŸæ‰§è¡Œçš„å‡½æ•°ï¼Œè‡ªåŠ¨ç®¡ç†æ‹¨å¼¹ç”µæœº
 */
 void AmmoFeed::Handle(void)
 {
@@ -26,7 +26,7 @@ void AmmoFeed::Handle(void)
 	{
 		block->Block_Check();
 	}
-	if(!Blocked_Reaction())//¶Â×ªÊ±ÔËĞĞ¶Â×ª´¦Àí
+	if(!Blocked_Reaction())//å µè½¬æ—¶è¿è¡Œå µè½¬å¤„ç†
 	{
 		if(feed_mode != last_mode)
 		{
@@ -53,49 +53,49 @@ void AmmoFeed::Handle(void)
 
 
 /** 
- * @brief  ¶Â×ª´¦Àíº¯Êı
- * @retval   ÊÇ·ñÔÚ´¦Àí¶Â×¡µÄ±êÖ¾Î» 1´ú±íÔÚ´¦Àí£¬0±íÊ¾Î´¶Â×ª
+ * @brief  å µè½¬å¤„ç†å‡½æ•°
+ * @retval   æ˜¯å¦åœ¨å¤„ç†å µä½çš„æ ‡å¿—ä½ 1ä»£è¡¨åœ¨å¤„ç†ï¼Œ0è¡¨ç¤ºæœªå µè½¬
  */
 uint8_t AmmoFeed::Blocked_Reaction(void)
 {
 	if(block == NULL)
-		while(1){;}     // ±©Â¶´íÎó£¬¶Â×ªÎªÎ´³õÊ¼»¯Îª
+		while(1){;}     // æš´éœ²é”™è¯¯ï¼Œå µè½¬ä¸ºæœªåˆå§‹åŒ–ä¸º
 	if(block->IsBlock)
 	{
-		if( !is_block_in_handle )	//¶Â×ª£¬Î´´¦Àí
-		{	//Õı³£¶Â×ª´¦Àí³ÌĞò
-			soft_target_angle = SoftAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//Éè¶¨·´×ª½Ç¶È
+		if( !is_block_in_handle )	//å µè½¬ï¼Œæœªå¤„ç†
+		{	//æ­£å¸¸å µè½¬å¤„ç†ç¨‹åº
+			soft_target_angle = SoftAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//è®¾å®šåè½¬è§’åº¦
 			Angle_Set(soft_target_angle);
-			block->Clear_BlockFlag();	//Çå³ş¶Â×ª±êÖ¾
-			is_block_in_handle = 1;	//Á¢Æğ´¦Àí±êÖ¾
+			block->Clear_BlockFlag();	//æ¸…æ¥šå µè½¬æ ‡å¿—
+			is_block_in_handle = 1;	//ç«‹èµ·å¤„ç†æ ‡å¿—
 		}
-		else //ÔÚ´¦Àí£¬ÈÔ¶Â×ª
+		else //åœ¨å¤„ç†ï¼Œä»å µè½¬
 		{
-			is_block_in_handle = 0;	//Ç¿ÖÆ»Øµ½Õı³£
+			is_block_in_handle = 0;	//å¼ºåˆ¶å›åˆ°æ­£å¸¸
 			block->Clear_BlockFlag();
 		}
 	}
 	else
 	{
-		if(is_block_in_handle)	//Î´¶Â×ª£¬ÔÚ´¦Àí¡£
+		if(is_block_in_handle)	//æœªå µè½¬ï¼Œåœ¨å¤„ç†ã€‚
 		{
 			if( fabs(SoftAngle - soft_target_angle) <=3 )	
 			{
-				is_block_in_handle = 0;	//´ïµ½½Ç¶Èºó·µ»ØÕı³£
+				is_block_in_handle = 0;	//è¾¾åˆ°è§’åº¦åè¿”å›æ­£å¸¸
 			}
 			else
 			{
-				Angle_Set(soft_target_angle);	//¼ÌĞø´¦Àí
+				Angle_Set(soft_target_angle);	//ç»§ç»­å¤„ç†
 			}
 		}
-		else	//Î´¶Â×ª£¬´¦ÀíÍê³É£¬Ö±½Ó·µ»Ø
+		else	//æœªå µè½¬ï¼Œå¤„ç†å®Œæˆï¼Œç›´æ¥è¿”å›
 		{	return 0; }
 	}
 	return 1;
 }
 
 /** 
-* @brief °´²½ÊıÔËĞĞµÄº¯Êı
+* @brief æŒ‰æ­¥æ•°è¿è¡Œçš„å‡½æ•°
 */
 void AmmoFeed::Step_Run(void)
 {
@@ -103,13 +103,13 @@ void AmmoFeed::Step_Run(void)
 	static uint32_t rammerStepTime = 0;
 	if(( (HAL_GetTick() - rammerStepTime) > ramming_discrete_delay ) ) 
 	{
-		if(rammer_step_left > 0)//Èç¹û´æÔÚ²½Êı
+		if(rammer_step_left > 0)//å¦‚æœå­˜åœ¨æ­¥æ•°
 		{
-			soft_target_angle += ( SIGN(rammer_direction) * 360.0f/feeder_division) ;		//Éè¶¨·´×ª½Ç¶È£¬·½ÏòÓÉÓÃ»§Éè¶¨µÄ±äÁ¿ rammer_direction ¾ö¶¨
+			soft_target_angle += ( SIGN(rammer_direction) * 360.0f/feeder_division) ;		//è®¾å®šåè½¬è§’åº¦ï¼Œæ–¹å‘ç”±ç”¨æˆ·è®¾å®šçš„å˜é‡ rammer_direction å†³å®š
 			rammer_step_left-- ;
 			rammerStepTime = HAL_GetTick();
 		}
-		else if(rammer_step_left == 0)//Èç¹û²½ÊıÎª0£¬ÔËĞĞµ½¸½½üµÄ°´¸ñÊı¼ÆËãµÄ½Ç¶È
+		else if(rammer_step_left == 0)//å¦‚æœæ­¥æ•°ä¸º0ï¼Œè¿è¡Œåˆ°é™„è¿‘çš„æŒ‰æ ¼æ•°è®¡ç®—çš„è§’åº¦
 		{
 			Step_Overflow = (int16_t)floorf((soft_target_angle - SoftAngle)/(360.0f/feeder_division)/SIGN(rammer_direction));
 			if(Step_Overflow<=0)Step_Overflow = 0;
@@ -122,11 +122,11 @@ void AmmoFeed::Step_Run(void)
 
 
 
-/****************************Ä£Ê½ÅäÖÃº¯Êı*********************************/
+/****************************æ¨¡å¼é…ç½®å‡½æ•°*********************************/
 /** 
-* @brief  ×ÔÓÉ¿ª»ğÄ£Ê½ÅäÖÃº¯Êı¡£×ÔÓÉ¿ª»ğÄ£Ê½µÄ·¢ÉäËÙÂÊÖ±½ÓÈ¡¾öÓÚ²¦µ¯ÂÖ×ª¶¯ËÙÂÊ¡£
-* @param   Éè¶¨²¦µ¯ÂÖËÙ¶È
-*Õâ¸öº¯Êı»á¸Ä±ä²¦µ¯ÂÖµÄËÙ¶È¡£Äã¿ÉÄÜĞèÒªÓÃÍêÖ®ºó¸Ä»ØÀ´¡£
+* @brief  è‡ªç”±å¼€ç«æ¨¡å¼é…ç½®å‡½æ•°ã€‚è‡ªç”±å¼€ç«æ¨¡å¼çš„å‘å°„é€Ÿç‡ç›´æ¥å–å†³äºæ‹¨å¼¹è½®è½¬åŠ¨é€Ÿç‡ã€‚
+* @param   è®¾å®šæ‹¨å¼¹è½®é€Ÿåº¦
+*è¿™ä¸ªå‡½æ•°ä¼šæ”¹å˜æ‹¨å¼¹è½®çš„é€Ÿåº¦ã€‚ä½ å¯èƒ½éœ€è¦ç”¨å®Œä¹‹åæ”¹å›æ¥ã€‚
 */
 void AmmoFeed::Free_Fire_Set(int32_t FreeSpeed)
 {
@@ -134,9 +134,9 @@ void AmmoFeed::Free_Fire_Set(int32_t FreeSpeed)
 	ramming_speed = FreeSpeed;
 }
 /** 
-* @brief  NÁ¬·¢Ä£Ê½ÅäÖÃº¯Êı
-* @param    DiscreDelay Ã¿·¢¼äĞªÊ±¼ä(ºÁÃë)
-* @param 	trig NÁ¬·¢µÄ´¥·¢Ìõ¼ş£¬ÔÚµ÷ÓÃÊ±Ó¦µ±ÌîÈë´¥·¢´¥·¢Ìõ¼ş±í´ïÊ½¡£Èç¹ûÖ±½Ó´¥·¢ÔòÌîÈë1.
+* @brief  Nè¿å‘æ¨¡å¼é…ç½®å‡½æ•°
+* @param    DiscreDelay æ¯å‘é—´æ­‡æ—¶é—´(æ¯«ç§’)
+* @param 	trig Nè¿å‘çš„è§¦å‘æ¡ä»¶ï¼Œåœ¨è°ƒç”¨æ—¶åº”å½“å¡«å…¥è§¦å‘è§¦å‘æ¡ä»¶è¡¨è¾¾å¼ã€‚å¦‚æœç›´æ¥è§¦å‘åˆ™å¡«å…¥1.
 */
 void AmmoFeed::Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig)
 {
@@ -146,9 +146,9 @@ void AmmoFeed::Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig)
 	trigger = trig;
 }
 /** 
-* @brief  µ¥²½Á¬·¢Ä£Ê½ÅäÖÃº¯Êı
-* @param    DiscreDelay Ã¿·¢¼äĞªÊ±¼ä(ºÁÃë)
-* @param 	trig NÁ¬·¢µÄ´¥·¢Ìõ¼ş£¬ÔÚµ÷ÓÃÊ±Ó¦µ±ÌîÈë´¥·¢´¥·¢Ìõ¼ş±í´ïÊ½¡£Èç¹ûÖ±½Ó´¥·¢ÔòÌîÈë1.
+* @brief  å•æ­¥è¿å‘æ¨¡å¼é…ç½®å‡½æ•°
+* @param    DiscreDelay æ¯å‘é—´æ­‡æ—¶é—´(æ¯«ç§’)
+* @param 	trig Nè¿å‘çš„è§¦å‘æ¡ä»¶ï¼Œåœ¨è°ƒç”¨æ—¶åº”å½“å¡«å…¥è§¦å‘è§¦å‘æ¡ä»¶è¡¨è¾¾å¼ã€‚å¦‚æœç›´æ¥è§¦å‘åˆ™å¡«å…¥1.
 */
 void AmmoFeed::Free_Once_Set(int32_t	DiscreDelay,int16_t trig)
 {
@@ -160,9 +160,9 @@ void AmmoFeed::Free_Once_Set(int32_t	DiscreDelay,int16_t trig)
 
 
 
-/****************************Ä£Ê½ÔËĞĞº¯Êı*********************************/
+/****************************æ¨¡å¼è¿è¡Œå‡½æ•°*********************************/
 /** 
-    * @brief ×ÔÓÉ¿ª»ğÄ£Ê½
+    * @brief è‡ªç”±å¼€ç«æ¨¡å¼
 */
 void AmmoFeed::Free_Fire(void)
 {
@@ -173,7 +173,7 @@ void AmmoFeed::Free_Fire(void)
 
 
 /** 
-    * @brief µ¥²½Á¬·¢Ä£Ê½
+    * @brief å•æ­¥è¿å‘æ¨¡å¼
 */
 void AmmoFeed::Free_Once(void)
 {
@@ -196,7 +196,7 @@ void AmmoFeed::Free_Once(void)
 	
 	if(act_flag)
 	{
-		if((HAL_GetTick()-act_time_stamp)>free_once_trig_time)//µ½´ï´¥·¢Ê±¼ä
+		if((HAL_GetTick()-act_time_stamp)>free_once_trig_time)//åˆ°è¾¾è§¦å‘æ—¶é—´
 		{
 			rammer_step_left++;			
 		}
@@ -212,31 +212,31 @@ void AmmoFeed::Free_Once(void)
 	{
 		if(once_flag == 1)
 		{
-			rammer_step_left = 1;//µ¥´Î·¢Éä£¬¾Í¸øÓèÒ»¸ö²½Êı
+			rammer_step_left = 1;//å•æ¬¡å‘å°„ï¼Œå°±ç»™äºˆä¸€ä¸ªæ­¥æ•°
 			once_flag = 0;
 		}
 		else
 		{
-			rammer_step_left = 0;//²»·¢ÉäÊ±°Ñ²½ÊıÇåÁã
+			rammer_step_left = 0;//ä¸å‘å°„æ—¶æŠŠæ­¥æ•°æ¸…é›¶
 		}
 	}
-	Step_Run();//°´²½Êı½øĞĞ²¦µ¯
+	Step_Run();//æŒ‰æ­¥æ•°è¿›è¡Œæ‹¨å¼¹
 }
 
 
 /** 
-    * @brief NÁ¬·¢Ä£Ê½
+    * @brief Nè¿å‘æ¨¡å¼
 */
 void AmmoFeed::Burst(void)
 {
-	static uint8_t burst_flag =0;	//µ¥´Îburst±êÖ¾Î»
+	static uint8_t burst_flag =0;	//å•æ¬¡burstæ ‡å¿—ä½
 	
-	if( trigger )	//µ±°â»ú´¥·¢
+	if( trigger )	//å½“æ‰³æœºè§¦å‘
 	{
-		if(burst_flag == 0)	//Èô±êÖ¾Î»Î´Á¢
+		if(burst_flag == 0)	//è‹¥æ ‡å¿—ä½æœªç«‹
 		{	
 			rammer_step_left = burst_shoot_cnt;
-			burst_flag = 1;	//Á¢±êÖ¾£¬¿ªÆôburst
+			burst_flag = 1;	//ç«‹æ ‡å¿—ï¼Œå¼€å¯burst
 		}
 	}
 	else
@@ -247,7 +247,7 @@ void AmmoFeed::Burst(void)
 }
 
 /**
- * @brief ²¦µ¯µç»ú°²È«Ä£Ê½£ºÁ¢¼´Í£Ö¹¡£
+ * @brief æ‹¨å¼¹ç”µæœºå®‰å…¨æ¨¡å¼ï¼šç«‹å³åœæ­¢ã€‚
  * 
  */
 void AmmoFeed::Safe_Set(void){

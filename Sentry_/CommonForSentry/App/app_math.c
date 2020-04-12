@@ -1,20 +1,20 @@
 /** 
  * @file app_math.c
-* @brief        ÊıÑ§Ïà¹Ø 
+* @brief        æ•°å­¦ç›¸å…³ 
 * @details  
 * @author    Nankel  Li, Asn, Thunderdoge
 * @date     2019.10.16 
 * @version  0.2
-* @par Copyright (c):  RM2020µç¿Ø
+* @par Copyright (c):  RM2020ç”µæ§
 *  
-* @par ÈÕÖ¾
-    2020-4-1    Thunderdoge Ìí¼ÓÁËÖÜÆÚĞÔÏŞ·ùº¯Êı
+* @par æ—¥å¿—
+    2020-4-1    Thunderdoge æ·»åŠ äº†å‘¨æœŸæ€§é™å¹…å‡½æ•°
 */  
 #include "app_math.h"
 #include <math.h>
 
 ///** 
-//* @brief   ÏŞ·ùº¯Êı 
+//* @brief   é™å¹…å‡½æ•° 
 //* @remarks min<data<max
 //*/
 float app_math_Limit(float data,float max,float min)
@@ -26,8 +26,8 @@ float app_math_Limit(float data,float max,float min)
 }
 
 /** 
-* @brief   ÇóÆ½·½¸ùµÄµ¹Êı
-* @remarks Ê¹ÓÃ¾­µäµÄCarmackËã·¨£¬Ğ§ÂÊ¸ß£¬ÊäÈë¸ùºÅÏÂµÄÄÚÈİ
+* @brief   æ±‚å¹³æ–¹æ ¹çš„å€’æ•°
+* @remarks ä½¿ç”¨ç»å…¸çš„Carmackç®—æ³•ï¼Œæ•ˆç‡é«˜ï¼Œè¾“å…¥æ ¹å·ä¸‹çš„å†…å®¹
 */
 float app_math_Invsqrt(float number)
 {
@@ -44,50 +44,50 @@ float app_math_Invsqrt(float number)
     return y;
 }
 
-/*****´øÏµÊıĞŞ¸ÄµÄÒ»½×ÂË²¨º¯Êı
+/*****å¸¦ç³»æ•°ä¿®æ”¹çš„ä¸€é˜¶æ»¤æ³¢å‡½æ•°
 
-Èë¿Ú£ºLPF         ÂË²¨Æ÷½á¹¹Ìå
-			NEW_DATA    ĞÂ²ÉÑùµÄÖµ
-      OLD_DATA    ÉÏ´ÎÂË²¨»ñµÃµÄ½á¹û
-      k           ÂË²¨ÏµÊı(´ú±íÔÚÂË²¨½á¹ûÖĞµÄÈ¨ÖØ)
-³ö¿Ú£º result      ±¾´ÎÂË²¨½á¹û
+å…¥å£ï¼šLPF         æ»¤æ³¢å™¨ç»“æ„ä½“
+			NEW_DATA    æ–°é‡‡æ ·çš„å€¼
+      OLD_DATA    ä¸Šæ¬¡æ»¤æ³¢è·å¾—çš„ç»“æœ
+      k           æ»¤æ³¢ç³»æ•°(ä»£è¡¨åœ¨æ»¤æ³¢ç»“æœä¸­çš„æƒé‡)
+å‡ºå£ï¼š result      æœ¬æ¬¡æ»¤æ³¢ç»“æœ
  */
 float app_math_Lpf1apply(LPF1* LPF,float NEW_DATA,float OLD_DATA,float k)
 {
-    //½Ç¶È±ä»¯·½Ïò£¬new_flag=1±íÊ¾½Ç¶ÈÔö¼Ó£¬=0±íÊ¾½Ç¶ÈÕıÔÚ¼õĞ¡
+    //è§’åº¦å˜åŒ–æ–¹å‘ï¼Œnew_flag=1è¡¨ç¤ºè§’åº¦å¢åŠ ï¼Œ=0è¡¨ç¤ºè§’åº¦æ­£åœ¨å‡å°
     if((NEW_DATA-OLD_DATA)>0)
         LPF->new_flag=1;
     else if((NEW_DATA-OLD_DATA)<0)
         LPF->new_flag=0;
 
 
-    if(LPF->new_flag==LPF->last_flag)  //´Ë´Î±ä»¯ÓëÇ°Ò»´Î±ä»¯·½ÏòÊÇ·ñÒ»ÖÂ£¬ÏàµÈ±íÊ¾½Ç¶È±ä»¯·½ÏòÒ»ÖÂ
+    if(LPF->new_flag==LPF->last_flag)  //æ­¤æ¬¡å˜åŒ–ä¸å‰ä¸€æ¬¡å˜åŒ–æ–¹å‘æ˜¯å¦ä¸€è‡´ï¼Œç›¸ç­‰è¡¨ç¤ºè§’åº¦å˜åŒ–æ–¹å‘ä¸€è‡´
         {
             LPF->num_x++;
             if(fabs((NEW_DATA-OLD_DATA))>Threshold_1)
-        //µ±±ä»¯´óÓÚThreshold_1µÄÊ±ºò£¬½øĞĞ¼ÆÊıÆ÷num¿ìËÙÔö¼Ó£¬ÒÔ´ïµ½¿ìËÙÔö´óKÖµ£¬Ìá¸ß¸úËæĞÔ
+        //å½“å˜åŒ–å¤§äºThreshold_1çš„æ—¶å€™ï¼Œè¿›è¡Œè®¡æ•°å™¨numå¿«é€Ÿå¢åŠ ï¼Œä»¥è¾¾åˆ°å¿«é€Ÿå¢å¤§Kå€¼ï¼Œæé«˜è·Ÿéšæ€§
                 LPF->num_x+=5;                           
 
-            if(LPF->num_x>Threshold_2)   //¼ÆÊıãĞÖµÉèÖÃ£¬µ±Êı¾İµİÔö»òµİ¼õËÙ¶È´ïµ½Ò»¶¨ËÙÂÊÊ±£¬Ôö´óKÖµ
+            if(LPF->num_x>Threshold_2)   //è®¡æ•°é˜ˆå€¼è®¾ç½®ï¼Œå½“æ•°æ®é€’å¢æˆ–é€’å‡é€Ÿåº¦è¾¾åˆ°ä¸€å®šé€Ÿç‡æ—¶ï¼Œå¢å¤§Kå€¼
             {
-                LPF->K_x=k+0.2f;          //0.2ÎªK_xµÄÔö³¤Öµ£¬¿´Êµ¼ÊĞèÒªĞŞ¸Ä
+                LPF->K_x=k+0.2f;          //0.2ä¸ºK_xçš„å¢é•¿å€¼ï¼Œçœ‹å®é™…éœ€è¦ä¿®æ”¹
                 LPF->num_x=0;
             }
         }
     else 
         {
             LPF->num_x=0;
-            LPF->K_x=0.01f;     //Êı¾İ±ä»¯ÎÈ¶¨Ê±K_xÖµ£¬¿´Êµ¼ÊĞŞ¸Ä
+            LPF->K_x=0.01f;     //æ•°æ®å˜åŒ–ç¨³å®šæ—¶K_xå€¼ï¼Œçœ‹å®é™…ä¿®æ”¹
         }
 		LPF->last_flag = LPF->new_flag;
     OLD_DATA=(1-LPF->K_x)*OLD_DATA+LPF->K_x*NEW_DATA;
     return OLD_DATA;
 }
 /** 
-* @brief  Ò»½×¸ßÍ¨ÂË²¨Æ÷
+* @brief  ä¸€é˜¶é«˜é€šæ»¤æ³¢å™¨
 * @param[in]   inArgName input argument description. 
-* @retval  ÎŞ
-* @par ÈÕÖ¾ 
+* @retval  æ— 
+* @par æ—¥å¿— 
 *
 */
 void app_math_hpf1apply(HPF1* HPF,float sample_freq, float cutoff_freq)
@@ -95,9 +95,9 @@ void app_math_hpf1apply(HPF1* HPF,float sample_freq, float cutoff_freq)
 }
 
 /** 
-* @brief    ¶ş½×µÍÍ¨ÂË²¨Æ÷
+* @brief    äºŒé˜¶ä½é€šæ»¤æ³¢å™¨
 * @remarks 
-* @par ÈÕÖ¾
+* @par æ—¥å¿—
 */
 void app_math_Lpf2set(LPF2* LPF,float sample_freq, float cutoff_freq)
 {

@@ -1,6 +1,6 @@
 /**
  * @file      app_can_operator.hpp
- * @brief     class CanOperator ÓÃÓÚ´¦ÀíCAN_ID·¢ËÍ½ÓÊÕºÍ´¦ÀíµÄÀà
+ * @brief     class CanOperator ç”¨äºå¤„ç†CAN_IDå‘é€æ¥æ”¶å’Œå¤„ç†çš„ç±»
  * @details
  * @author   ThunderDoge
  * @date     2020-2-27
@@ -14,16 +14,16 @@
 #include "stm32f4xx_hal.h"
 #include <string.h>
 
-class CanOperator /// CANÍ¨ĞÅ²Ù×÷Æ÷ ÓÃÓÚ´¦ÀíCAN_IDµÄ´¦ÀíµÄÀà
+class CanOperator /// CANé€šä¿¡æ“ä½œå™¨ ç”¨äºå¤„ç†CAN_IDçš„å¤„ç†çš„ç±»
 {
 public:
-    CanOperator( uint32_t sentry_can_id, void(*pfunc)(uint8_t* p) );    ///<¹¹Ôìº¯Êı
+    CanOperator( uint32_t sentry_can_id, void(*pfunc)(uint8_t* p) );    ///<æ„é€ å‡½æ•°
 
-    void Operate(uint8_t* pData);   ///<Ö´ĞĞ²Ù×÷Æ÷µÄ²Ù×÷
+    void Operate(uint8_t* pData);   ///<æ‰§è¡Œæ“ä½œå™¨çš„æ“ä½œ
 
-    //×´Ì¬±äÁ¿
+    //çŠ¶æ€å˜é‡
     uint32_t sentry_can_id; ///<CAN_ID
-    uint32_t update_time;   ///<×î½üÖ´ĞĞ²Ù×÷µÄÊ±¼ä
+    uint32_t update_time;   ///<æœ€è¿‘æ‰§è¡Œæ“ä½œçš„æ—¶é—´
 private:
     void(*callback)(uint8_t* );
 };
