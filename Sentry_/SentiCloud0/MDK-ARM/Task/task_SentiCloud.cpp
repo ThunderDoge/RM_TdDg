@@ -16,39 +16,39 @@ uint32_t mark1, mark2;
 
 
 /**
-  * @brief  ÔÆÌ¨×Ü³õÊ¼»¯º¯Êı
+  * @brief  äº‘å°æ€»åˆå§‹åŒ–å‡½æ•°
   * @details  
   * @param[in]
   * @retval  
   */
 void Cloud_Init(void)
 {
-    bsp_spi_Icm20602Init(); //ÍÓÂİÒÇIcm20602³õÊ¼»¯£¬ÔÚSPIÉÏ
-    app_imu_Init();         //ÍÓÂİÒÇÊı¾İ´¦Àíapp_imu³õÊ¼»¯
+    bsp_spi_Icm20602Init(); //é™€èºä»ªIcm20602åˆå§‹åŒ–ï¼Œåœ¨SPIä¸Š
+    app_imu_Init();         //é™€èºä»ªæ•°æ®å¤„ç†app_imuåˆå§‹åŒ–
 #ifndef	MIGRATE_F407ZG
-    bsp_can_Init();  //CAN×ÜÏß³õÊ¼»¯º¯Êı
+    bsp_can_Init();  //CANæ€»çº¿åˆå§‹åŒ–å‡½æ•°
 #endif //MIGRATE_F407ZG
-    bsp_dbus_Init(); //DBUS³õÊ¼»¯
-	Dbus_CHx_StaticOffset[1] = -4;	//ÕâÊÇÒ£¿ØÆ÷Ò¡¸Ë¾²Ì¬Îó²î¡£¸úÌØ¶¨Ò£¿ØÆ÷Ïà¹Ø£¬»»Ò£¿ØÆ÷Çë¸ü¸Ä´ËÖµ¡£
-	app_vision_Init();              //ÊÓ¾õ´®¿Ú½ÓÊÕ³õÊ¼»¯
-    manager::CANSelect(&hcan1, &hcan2); //´ó½®canµç»ú¿â³õÊ¼»¯£¨Ñ¡CAN£©
+    bsp_dbus_Init(); //DBUSåˆå§‹åŒ–
+	Dbus_CHx_StaticOffset[1] = -4;	//è¿™æ˜¯é¥æ§å™¨æ‘‡æ†é™æ€è¯¯å·®ã€‚è·Ÿç‰¹å®šé¥æ§å™¨ç›¸å…³ï¼Œæ¢é¥æ§å™¨è¯·æ›´æ”¹æ­¤å€¼ã€‚
+	app_vision_Init();              //è§†è§‰ä¸²å£æ¥æ”¶åˆå§‹åŒ–
+    manager::CANSelect(&hcan1, &hcan2); //å¤§ç–†canç”µæœºåº“åˆå§‹åŒ–ï¼ˆé€‰CANï¼‰
 	
 	app_sentry_CheckDevice_Init();
-	// Éè±¸Ìí¼Óµ½Éè±¸ÁĞ±í
+	// è®¾å¤‡æ·»åŠ åˆ°è®¾å¤‡åˆ—è¡¨
     app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
 	
-	// ÀëÏß¼ì²â½á¹¹Ìå ÉèÖÃ
+	// ç¦»çº¿æ£€æµ‹ç»“æ„ä½“ è®¾ç½®
 	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
     app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
 
 
 }
 /**
-  * @brief  Ö÷ÈÎÎñ
+  * @brief  ä¸»ä»»åŠ¡
   * @details  
   * @param[in]  
   * @retval  
@@ -59,22 +59,22 @@ void task_Main(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-        app_imu_So3thread();    //»ñÈ¡ÍÓÂİÒÇÊı¾İ
-		CloudEntity.Handle();	//ÔÆÌ¨Êı¾İ´¦Àí£¬µç»ú¶¯×÷¡£±ØĞëÔÚapp_imu_So3threadÖ®ºóµ÷ÓÃ¡£
-        ModeSelect();           //ÊÖ±úÒ£¿ØÄ£Ê½³õÊ¼»¯
-        manager::CANSend();     //Í³Ò»µÄCANµç»ú¿ØÖÆ
-        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //ÑÓÊ±1ms
+        app_imu_So3thread();    //è·å–é™€èºä»ªæ•°æ®
+		CloudEntity.Handle();	//äº‘å°æ•°æ®å¤„ç†ï¼Œç”µæœºåŠ¨ä½œã€‚å¿…é¡»åœ¨app_imu_So3threadä¹‹åè°ƒç”¨ã€‚
+        ModeSelect();           //æ‰‹æŸ„é¥æ§æ¨¡å¼åˆå§‹åŒ–
+        manager::CANSend();     //ç»Ÿä¸€çš„CANç”µæœºæ§åˆ¶
+        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //å»¶æ—¶1ms
 		
 		
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
-		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //Õ¼ÓÃ¶ÑÕ»Ë®Î»Ïß¡£±¸ÓÃÓÚDEBUG
+		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //å ç”¨å †æ ˆæ°´ä½çº¿ã€‚å¤‡ç”¨äºDEBUG
 		#endif
     }
 }
 /**
-  * @brief  ÊÓ¾õ´®¿ÚÖÜÆÚĞÔ·¢ËÍÈÎÎñ+CANÍ¨ĞÅÖÜÆÚĞÔ·¢ËÍÈÎÎñ
-  * @details  ÒòÎªÖ´ĞĞÖÜÆÚ²»Í¬ËùÒÔºÍÖ÷ÈÎÎñ·Ö¿ª¡£100HZÔËĞĞ¡£
+  * @brief  è§†è§‰ä¸²å£å‘¨æœŸæ€§å‘é€ä»»åŠ¡+CANé€šä¿¡å‘¨æœŸæ€§å‘é€ä»»åŠ¡
+  * @details  å› ä¸ºæ‰§è¡Œå‘¨æœŸä¸åŒæ‰€ä»¥å’Œä¸»ä»»åŠ¡åˆ†å¼€ã€‚100HZè¿è¡Œã€‚
   * @param[in]  
   * @retval  
   */
@@ -83,17 +83,17 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-		CloudVisonTxRoutine();  //ÔÆÌ¨ÊÓ¾õ´®¿Ú·¢ËÍ
-		UpCloudCanCommuRoutine(); //ÉÏÔÆÌ¨CAN·¢ËÍ
-		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //ÑÓÊ±2ms
+		CloudVisonTxRoutine();  //äº‘å°è§†è§‰ä¸²å£å‘é€
+		UpCloudCanCommuRoutine(); //ä¸Šäº‘å°CANå‘é€
+		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //å»¶æ—¶2ms
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
-		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //Õ¼ÓÃ¶ÑÕ»Ë®Î»Ïß¡£±¸ÓÃÓÚDEBUG
+		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //å ç”¨å †æ ˆæ°´ä½çº¿ã€‚å¤‡ç”¨äºDEBUG
 		#endif
 	}
 }
 /**
-  * @brief  ÈÎÎñÆô¶¯Æ÷
+  * @brief  ä»»åŠ¡å¯åŠ¨å™¨
   * @details  
   * @param[in]  
   * @retval  
@@ -101,11 +101,11 @@ void task_CommuRoutine(void *param)
 void TaskStarter(void)
 {
     Cloud_Init();
-    xTaskCreate((TaskFunction_t)	task_Main,		//ÈÎÎñ´úÂë
-				(char*)				"task_Main",	//ÈÎÎñÃû
-				(uint16_t)			512,			//¶ÑÕ»Éî¶È
-				(void*)				NULL,			//²ÎÊıÁĞ±í
-				(UBaseType_t)		4,				//ÓÅÏÈ¼¶
+    xTaskCreate((TaskFunction_t)	task_Main,		//ä»»åŠ¡ä»£ç 
+				(char*)				"task_Main",	//ä»»åŠ¡å
+				(uint16_t)			512,			//å †æ ˆæ·±åº¦
+				(void*)				NULL,			//å‚æ•°åˆ—è¡¨
+				(UBaseType_t)		4,				//ä¼˜å…ˆçº§
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
 //	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
@@ -122,7 +122,7 @@ void TaskStarter(void)
 				(UBaseType_t)		4,
 				(TaskHandle_t*)		&task_CheckDevice_Handle);
 }
-//CANÏß²âÊÔ
+//CANçº¿æµ‹è¯•
 // int16_t test_data[4];
 // int16_t can_received;
 // int16_t last_recv;

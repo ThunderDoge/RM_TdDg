@@ -11,30 +11,30 @@
 #ifndef __SENTRY_CLOUD_COMMU_HPP_
 #define __SENTRY_CLOUD_COMMU_HPP_
 
-#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //¶¨Òå¹¤³Ì±êÊ¶·û__PROJECT_SENTRY_DOWN_CLOUD_
+#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //å®šä¹‰å·¥ç¨‹æ ‡è¯†ç¬¦__PROJECT_SENTRY_DOWN_CLOUD_
 #define __PROJECT_SENTRY_DOWN_CLOUD_
 #endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
-///ÒÀÀµµÄÎÄ¼ş
+///ä¾èµ–çš„æ–‡ä»¶
 #include "app_vision.hpp"
 #include "SentryDownCloudCan.hpp"
 #include "app_sentry_check_device.hpp"
 
-//´Ë°å×ÓÊ¹ÓÃÁËÊÓ¾õ´®¿Ú
+//æ­¤æ¿å­ä½¿ç”¨äº†è§†è§‰ä¸²å£
 #define USE_VISION
 
 
 
 
 
-/// Ö÷ÈÎÎñÖĞÖÜÆÚĞÔ·¢ËÍº¯Êı
+/// ä¸»ä»»åŠ¡ä¸­å‘¨æœŸæ€§å‘é€å‡½æ•°
 extern void UpCloudCanCommuRoutine(void);
 extern void CloudVisonTxRoutine(void);
 
-extern sentry_vision_data VisionTx,VisionRx;    ///Í¨ĞÅÓÃÔİ´æ±äÁ¿
+extern sentry_vision_data VisionTx,VisionRx;    ///é€šä¿¡ç”¨æš‚å­˜å˜é‡
 
-///»Øµ÷º¯Êı
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);	//ÖØ¶¨ÒåµÄCANÖĞ¶Ï»Øµ÷º¯Êı
+///å›è°ƒå‡½æ•°
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);	//é‡å®šä¹‰çš„CANä¸­æ–­å›è°ƒå‡½æ•°
 #endif // __SENTRY_CLOUD_COMMU_HPP_
 
 

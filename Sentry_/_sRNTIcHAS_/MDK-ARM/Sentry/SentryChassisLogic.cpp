@@ -1,6 +1,6 @@
 /**
  * @file      SentryChassisLogic.cpp
- * @brief     ÉÚ±øµ×ÅÌÔËĞĞÂß¼­
+ * @brief     å“¨å…µåº•ç›˜è¿è¡Œé€»è¾‘
  * @details   
  * @author   ThunderDoge
  * @date      2020-4-12
@@ -10,17 +10,17 @@
  */
 #include "SentryChassisLogic.hpp"
 
-//Ä£Ê½¶¨Òå
+//æ¨¡å¼å®šä¹‰
 app_Mode ModeSuperSuperiorControl(nullptr,SuperiorControl,nullptr);
 //app_Mode ModeAutonomousDrive()
 app_Mode ModeGlobalSafe(nullptr,GlobalSafe,nullptr);
-//Ä£Ê½Ö¸Õë
+//æ¨¡å¼æŒ‡é’ˆ
 app_Mode *CurrentMode=&ModeGlobalSafe;
 app_Mode *LastMode=&ModeGlobalSafe;
 
 
 /**
- * @brief Ä£Ê½Ñ¡ÔñÆ÷¡£´ËÎªËùÓĞÂß¼­ÆğÊ¼´¦
+ * @brief æ¨¡å¼é€‰æ‹©å™¨ã€‚æ­¤ä¸ºæ‰€æœ‰é€»è¾‘èµ·å§‹å¤„
  * 
  */
 void ModeSelect(void)
@@ -40,8 +40,8 @@ void ModeSelect(void)
 
 }
 
-void ChassisCanRxHandle(void);	//ÉùÃ÷½«Òªµ÷ÓÃµÄº¯Êı
-void SuperiorControl() //ÊÓ¾õµ÷ÊÔ
+void ChassisCanRxHandle(void);	//å£°æ˜å°†è¦è°ƒç”¨çš„å‡½æ•°
+void SuperiorControl() //è§†è§‰è°ƒè¯•
 {
 	ChassisEntity.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
 	switch (CanRx.SuperCon_ChassisMode)

@@ -1,5 +1,5 @@
 /** 
- * @brief    ÉÚ±øRTOSÈÎÎñ
+ * @brief    å“¨å…µRTOSä»»åŠ¡
  * @details  
  * @author   ThunderDoge
  * @date      
@@ -10,7 +10,7 @@
  #include "task_sentCha.hpp"
 
  /**
-  * @brief Í³Ò»µÄÈÎÎñÆô¶¯Æ÷
+  * @brief ç»Ÿä¸€çš„ä»»åŠ¡å¯åŠ¨å™¨
   */
 void TaskStarter(void)
 {
@@ -19,8 +19,8 @@ void TaskStarter(void)
 	xTaskCreate(task_Commu,"task_Commu",512,NULL,4,NULL);
 }
 /**
-  * @brief  Í³Ò»³õÊ¼»¯³ÌĞò
-  * @details  °üº¬£ºDBUS£¬CAN£¬
+  * @brief  ç»Ÿä¸€åˆå§‹åŒ–ç¨‹åº
+  * @details  åŒ…å«ï¼šDBUSï¼ŒCANï¼Œ
   */
 void RoboInit()
 {
@@ -30,7 +30,7 @@ void RoboInit()
 	taskEXIT_CRITICAL();
 //	bsp_dbus_Init();
 #ifndef	MIGRATE_F407ZG
-    bsp_can_Init();  //CAN×ÜÏß³õÊ¼»¯º¯Êı
+    bsp_can_Init();  //CANæ€»çº¿åˆå§‹åŒ–å‡½æ•°
 #endif //MIGRATE_F407ZG
 	bsp_Current_Init();
 	bsp_encoder_Init(2048);
@@ -39,7 +39,7 @@ void RoboInit()
 	manager::CANSelect(&hcan1,&hcan2);
 }
 /**
- * @brief  Ö÷ÈÎÎñ,1KHZ
+ * @brief  ä¸»ä»»åŠ¡,1KHZ
  * @details  
  */
 void task_Main(void* param)
@@ -58,10 +58,10 @@ void task_Main(void* param)
 	}
 }
 
-void ChassisCanCommuRoutine(void);	//ÉùÃ÷Ò»ÏÂ£¬±ÜÃâÂé·³µÄÎÄ¼ş°üº¬
+void ChassisCanCommuRoutine(void);	//å£°æ˜ä¸€ä¸‹ï¼Œé¿å…éº»çƒ¦çš„æ–‡ä»¶åŒ…å«
 
 /**
- * @brief °å¼äÍ¨Ñ¶ÓÃÈÎÎñ£¬200HZ
+ * @brief æ¿é—´é€šè®¯ç”¨ä»»åŠ¡ï¼Œ200HZ
  * 
  * @param     param 
  */
@@ -71,7 +71,7 @@ void task_Commu(void* param)
 
 	while(1)
 	{
-		ChassisCanCommuRoutine();       // °å¼äCANÍ¨Ñ¶·¢ËÍ
+		ChassisCanCommuRoutine();       // æ¿é—´CANé€šè®¯å‘é€
 		vTaskDelayUntil(&LastTick,5/portTICK_PERIOD_MS);   
 	}
 }
@@ -82,7 +82,7 @@ void task_Commu(void* param)
 
 
 /**
- * @brief   ÀëÏß¼ì²âÈÎÎñ
+ * @brief   ç¦»çº¿æ£€æµ‹ä»»åŠ¡
  * 
  * @param     param 
  */
@@ -111,7 +111,7 @@ void task_OfflineCheck(void *param)
 
 //Aborted code following
 
-//µç»ú¿ØÖÆÓÃPIDºÍµç»úÀà
+//ç”µæœºæ§åˆ¶ç”¨PIDå’Œç”µæœºç±»
 // Motor_t DJI_3508(8192,19);
 // pid dwPid_in(0.25,0,0,1000,16000,100,300);
 // pid dwPid_out(0,0,0,1000,1000,10,200);
@@ -119,7 +119,7 @@ void task_OfflineCheck(void *param)
 // float set_speed;
 // uint8_t mode;
 // /**
-//   * @brief  Ò£¿ØÆ÷²âÊÔÄ£Ê½
+//   * @brief  é¥æ§å™¨æµ‹è¯•æ¨¡å¼
 //   * @details  
 //   * @param[in]  
 //   * @retval  
@@ -130,7 +130,7 @@ void task_OfflineCheck(void *param)
 // 	DriveWheel.Speed_Set(set_speed);
 // }
 // /**
-//   * @brief  ÒÆ½»Ğ¡Ö÷»ú¿ØÖÆÄ£Ê½
+//   * @brief  ç§»äº¤å°ä¸»æœºæ§åˆ¶æ¨¡å¼
 //   * @details  
 //   * @param[in]  
 //   * @retval  
@@ -143,10 +143,10 @@ void task_OfflineCheck(void *param)
 // {
 // 	mode = bsp_dbus_Data.S1*10 + bsp_dbus_Data.S2;
 // 	switch (mode) {
-// 	case 32:	//×óÖĞÓÒÏÂ
+// 	case 32:	//å·¦ä¸­å³ä¸‹
 // 		RemoteTestMode();
 // 	break;
-// 	case 12:	//×óÉÏÓÒÏÂ
+// 	case 12:	//å·¦ä¸Šå³ä¸‹
 // 		NUCTestMode();
 // 	break;
 // 	}

@@ -1,6 +1,6 @@
 /**
   * @file   SentryChassisCan.hpp
-  * @brief      ÉÚ±øµ×ÅÌCANÍ¨ĞÅ
+  * @brief      å“¨å…µåº•ç›˜CANé€šä¿¡
   * @details    
   * @author     ThunderDoge
   * @date       2020-2-23
@@ -10,22 +10,22 @@
 #ifndef __SENTRY_CHASSIS_CAN_HPP_
 #define __SENTRY_CHASSIS_CAN_HPP_
 
-//CAN°å¼äÍ¨ĞÅ¶¨Òå£¬Èç¹ûĞŞCAN¿ÚÇëĞŞ¸Ä´Ë´¦ºê¶¨Òå
+//CANæ¿é—´é€šä¿¡å®šä¹‰ï¼Œå¦‚æœä¿®CANå£è¯·ä¿®æ”¹æ­¤å¤„å®å®šä¹‰
 #define CAN_INTERBOARD hcan2
 
-//ÒÀÀµµÄÎÄ¼ş
+//ä¾èµ–çš„æ–‡ä»¶
 #include "sentry_can_commom.hpp"
 #include "sentry_config.hpp"
 
 
-// ÀëÏß¼ì²âÉè±¸
+// ç¦»çº¿æ£€æµ‹è®¾å¤‡
 extern CheckDevice_Type Connection_UpCloud;
 extern CheckDevice_Type Connection_DownCloud;
 
 
 
-void ChassisCanCommuRoutine(void);  ///µ×ÅÌ¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ
-void ChassisCanFilterConfig(void);    ///ÔÆÌ¨ÓÃ Éè¶¨CAN¹ıÂËÆ÷£¬ÒÔ¹ıÂË²»ĞèÒªµÄIDºÅ
-void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///ÔÆÌ¨ÓÃ °å¼äÍ¨Ñ¶CAN»Øµ÷º¯Êı
+void ChassisCanCommuRoutine(void);  ///åº•ç›˜å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡
+void ChassisCanFilterConfig(void);    ///äº‘å°ç”¨ è®¾å®šCANè¿‡æ»¤å™¨ï¼Œä»¥è¿‡æ»¤ä¸éœ€è¦çš„IDå·
+void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///äº‘å°ç”¨ æ¿é—´é€šè®¯CANå›è°ƒå‡½æ•°
 
 #endif // __SENTRY_CHASSIS_CAN_HPP_

@@ -11,7 +11,7 @@
 #ifndef __TASK_SENTI_CLOUD_H_
 #define __TASK_SENTI_CLOUD_H_
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
+#ifndef __PROJECT_SENTRY_CLOUD_     //瀹氫箟宸ョ▼鏍囪瘑绗_PROJECT_SENTRY_CLOUD_
 #define __PROJECT_SENTRY_CLOUD_
 #endif // __PROJECT_SENTRY_CLOUD_
 
@@ -29,7 +29,7 @@
 #include "Sentry.hpp"
 #include "task_sentry_check_device.h"
 
-void TaskStarter(void); ///全任务启动器
+void TaskStarter(void); ///鍏ㄤ换鍔″惎鍔ㄥ櫒
 
 // void task_CloudCtrl(void* param);
 // void task_CloudMotorManage(void* param);

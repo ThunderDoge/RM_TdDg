@@ -9,7 +9,7 @@
   */
 #include "SentryChassisCan.hpp"
 
-// ���߼���豸
+// ÀëÏß¼ì²âÉè±¸
 CheckDevice_Type Connection_UpCloud(id_UpCloudConnect,500);
 CheckDevice_Type Connection_DownCloud(id_DownCloudConnect,500);
 

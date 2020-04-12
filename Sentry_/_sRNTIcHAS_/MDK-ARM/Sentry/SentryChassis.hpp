@@ -1,33 +1,33 @@
 /**
  * @file        SentryChassis.hpp
- * @brief       ÉÚ±øµ×ÅÌÎïÀíÊµÌå
+ * @brief       å“¨å…µåº•ç›˜ç‰©ç†å®žä½“
  * @details     
- *  ÉÚ±øµ×ÅÌÖ÷Òª¹¦ÄÜÓ²¼þÓÐ£º
- *  - µ×ÅÌÖ÷¶¯ÂÖµç»ú£¬°åÉÏÓÐ¹¦ÂÊ¼ì²âÐ¾Æ¬¼ì²âËüµÄÊµÊ±µçÁ÷Óë¹¦ÂÊ
- *  - Óëµ×ÅÌ¹Ì¶¨µÄÍÓÂÝÒÇ
- *  - ÑØ¹ìµÀ×óÓÒ¸÷Ò»£ºGY-53/VL531LXÁ®¼Û¼¤¹â²â¾àÄ£¿é¡£²â¾à·¶Î§2000mm£¬¾«¶ÈÔÚ10mm
- *  - ÑØ¹ìµÀ×óÓÒ¸÷Ò»£ºµ¯»É¡£ÔÊÐíÒÔ²»³¬¹ýX.X mm/sµÄËÙ¶È×²»÷¹ìµÀ£¬²¢±£»¤µ×ÅÌÖ÷Ìå²»ÊÜ×²»÷
- *      - ÉÏÏÂÔÆÌ¨¹éÔÆÌ¨×Ô¼º¿ØÖÆ£¬µ×ÅÌ²»¿ØÖÆ¡£
- *      - µ×ÅÌ
- *  ÐèÒªÊµÏÖÒÔÏÂ¹¦ÄÜ£º
- *  - ¸ù¾ÝÏÖÓÐ´«¸ÐÆ÷¾¡¿ÉÄÜ¾«È·¹À¼Æ¹ìÉÏÎ»ÖÃ
- *  - µ×ÅÌÖ÷¶¯ÂÖ¿ØÖÆ¡£º¬¹¦ÂÊ¿ØÖÆ
+ *  å“¨å…µåº•ç›˜ä¸»è¦åŠŸèƒ½ç¡¬ä»¶æœ‰ï¼š
+ *  - åº•ç›˜ä¸»åŠ¨è½®ç”µæœºï¼Œæ¿ä¸Šæœ‰åŠŸçŽ‡æ£€æµ‹èŠ¯ç‰‡æ£€æµ‹å®ƒçš„å®žæ—¶ç”µæµä¸ŽåŠŸçŽ‡
+ *  - ä¸Žåº•ç›˜å›ºå®šçš„é™€èžºä»ª
+ *  - æ²¿è½¨é“å·¦å³å„ä¸€ï¼šGY-53/VL531LXå»‰ä»·æ¿€å…‰æµ‹è·æ¨¡å—ã€‚æµ‹è·èŒƒå›´2000mmï¼Œç²¾åº¦åœ¨10mm
+ *  - æ²¿è½¨é“å·¦å³å„ä¸€ï¼šå¼¹ç°§ã€‚å…è®¸ä»¥ä¸è¶…è¿‡X.X mm/sçš„é€Ÿåº¦æ’žå‡»è½¨é“ï¼Œå¹¶ä¿æŠ¤åº•ç›˜ä¸»ä½“ä¸å—æ’žå‡»
+ *      - ä¸Šä¸‹äº‘å°å½’äº‘å°è‡ªå·±æŽ§åˆ¶ï¼Œåº•ç›˜ä¸æŽ§åˆ¶ã€‚
+ *      - åº•ç›˜
+ *  éœ€è¦å®žçŽ°ä»¥ä¸‹åŠŸèƒ½ï¼š
+ *  - æ ¹æ®çŽ°æœ‰ä¼ æ„Ÿå™¨å°½å¯èƒ½ç²¾ç¡®ä¼°è®¡è½¨ä¸Šä½ç½®
+ *  - åº•ç›˜ä¸»åŠ¨è½®æŽ§åˆ¶ã€‚å«åŠŸçŽ‡æŽ§åˆ¶
  * 
  * @author   ThunderDoge
  * @date      2020-4-11
  * @version   v1.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
  * Using encoding: gb2312
- * ×¢£ºÔÚ2019-12ÔÂÖ®Ç°µÄÉÚ±øµ×ÅÌ¾ßÓÐ²»Í¬µÄ½á¹¹£º
- * µ¯Ò©²Õ×°ÔÚµ×ÅÌ£¬µ×ÅÌÓÐÁ½¸ö²¦µ¯ÂÖ·Ö±ðÏòÉÏÏÂ²¦µ¯£»ÁíÓÐÒ»Ä¦²ÁÂÖ¸¨ÖúÏòÉÏÔÆÌ¨¹©µ¯¹Ü ÍÆµ¯Íè¡£
- * ÔÚ2019-1ÔÂÖ®Ç°±»·ÏÆú¡£´úÂëÉÏ¿ÉÄÜÓÐ²ÐÁô²¿·Ö£¬µ«´ó²¿·ÖÒÑ¾­×¢ÊÍ¡£
+ * æ³¨ï¼šåœ¨2019-12æœˆä¹‹å‰çš„å“¨å…µåº•ç›˜å…·æœ‰ä¸åŒçš„ç»“æž„ï¼š
+ * å¼¹è¯èˆ±è£…åœ¨åº•ç›˜ï¼Œåº•ç›˜æœ‰ä¸¤ä¸ªæ‹¨å¼¹è½®åˆ†åˆ«å‘ä¸Šä¸‹æ‹¨å¼¹ï¼›å¦æœ‰ä¸€æ‘©æ“¦è½®è¾…åŠ©å‘ä¸Šäº‘å°ä¾›å¼¹ç®¡ æŽ¨å¼¹ä¸¸ã€‚
+ * åœ¨2019-1æœˆä¹‹å‰è¢«åºŸå¼ƒã€‚ä»£ç ä¸Šå¯èƒ½æœ‰æ®‹ç•™éƒ¨åˆ†ï¼Œä½†å¤§éƒ¨åˆ†å·²ç»æ³¨é‡Šã€‚
  *  verison|    date|       author|         change|
- *  1.0          2020-4-11   ThunderDoge     Ìí¼ÓÁË¸üÏêÏ¸µÄ×¢ÊÍ
+ *  1.0          2020-4-11   ThunderDoge     æ·»åŠ äº†æ›´è¯¦ç»†çš„æ³¨é‡Š
  */
 #ifndef __SENTRY_CHASSIS_HPP_
 #define __SENTRY_CHASSIS_HPP_
 
-// #include "app_AmmoFeed.hpp"  // 2020-1 Ö®ºó²»ÔÙÐèÒª²¦µ¯
+// #include "app_AmmoFeed.hpp"  // 2020-1 ä¹‹åŽä¸å†éœ€è¦æ‹¨å¼¹
 #include "app_imu.h"
 #include "bsp_motor.hpp"
 #include "bsp_current.h"
@@ -40,7 +40,7 @@
 #include "app_mode.hpp"
 #include "sentry_ctrl_def.hpp"
 
-// ²â¾àÄ£¿éÁ¬½ÓµÄ´®¿Ú
+// æµ‹è·æ¨¡å—è¿žæŽ¥çš„ä¸²å£
 #define RANGING_LEFT_UART	huart3
 #define RANGING_RIGHT_UART	huart4
 
@@ -56,91 +56,91 @@
 extern float SpeedMax;
 
 /**
- * @brief ÓëÖù×Ó¾àÀëµÄÃ¶¾ÙÁ¿
+ * @brief ä¸ŽæŸ±å­è·ç¦»çš„æžšä¸¾é‡
  */
 enum PillarFlagEnum : int8_t
 {
-    PILLAR_NOT_DETECTED = 0x00,    ///< Î´¼ì²âµ½Öù×Ó
-    PILLAR_LEFT = 0X01,         ///< ¼ì²âµ½×ó²àÖù×Ó
-	PILLAR_BOUNCE_LEFT=0x02,    ///< ×²»÷×ó²àÖù×Ó
-    PILLAR_RIGHT = 0X03,        ///< ¼ì²âµ½ÓÒ²àÖù×Ó
-	PILLAR_BOUNCE_RIGHT=0x04,   ///< ×²»÷ÓÒ²àÖù×Ó
+    PILLAR_NOT_DETECTED = 0x00,    ///< æœªæ£€æµ‹åˆ°æŸ±å­
+    PILLAR_LEFT = 0X01,         ///< æ£€æµ‹åˆ°å·¦ä¾§æŸ±å­
+	PILLAR_BOUNCE_LEFT=0x02,    ///< æ’žå‡»å·¦ä¾§æŸ±å­
+    PILLAR_RIGHT = 0X03,        ///< æ£€æµ‹åˆ°å³ä¾§æŸ±å­
+	PILLAR_BOUNCE_RIGHT=0x04,   ///< æ’žå‡»å³ä¾§æŸ±å­
 };
 
 /**
- * @brief µ×ÅÌÎïÀíÊµÌåÀà
+ * @brief åº•ç›˜ç‰©ç†å®žä½“ç±»
  */
 class SentryChassis
 {
-    friend class manager;   // Ê¹µÃµç»ú¿ÉÒÔ·ÃÎÊÉÚ±øÄÚ²¿±äÁ¿
+    friend class manager;   // ä½¿å¾—ç”µæœºå¯ä»¥è®¿é—®å“¨å…µå†…éƒ¨å˜é‡
 
 public:
-    SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id);    ///<    ¹¹Ôìº¯Êý
+    SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id);    ///<    æž„é€ å‡½æ•°
 //                  uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
 //                  uint8_t up_feed_can_num, uint16_t up_feed_can_id,
 //                  uint8_t down_feed_can_num, uint16_t down_feed_can_id,
 //                  uint8_t up_fric_can_num, uint16_t up_fric_can_id);
-    //------------------------ÏµÍ³±äÁ¿
+    //------------------------ç³»ç»Ÿå˜é‡
     static SentryChassis* pointer;
-    //-------------------------PID±äÁ¿
-    pid pidDriveSpeed;      ///< µ×ÅÌÖ÷¶¯ÂÖËÙ¶È»·
-    pid pidDriveLocation;   ///< µ×ÅÌÖ÷¶¯ÂÖÎ»ÖÃ»·
+    //-------------------------PIDå˜é‡
+    pid pidDriveSpeed;      ///< åº•ç›˜ä¸»åŠ¨è½®é€Ÿåº¦çŽ¯
+    pid pidDriveLocation;   ///< åº•ç›˜ä¸»åŠ¨è½®ä½ç½®çŽ¯
     // pid FricSpeed;
     // pid FricLocation;
     // pid FeedUpSpeed;
     // pid FeedUpLocation;
     // pid FeedDownSpeed;
     // pid FeedDownLocation;
-    pid pidDriveCurrent;    ///< µ×ÅÌÖ÷¶¯ÂÖ¹¦ÂÊ¿ØÖÆµçÁ÷»·½Ú
-    pid pidPowerFeedback;   ///< µ×ÅÌÖ÷¶¯ÂÖ¹¦ÂÊ¿ØÖÆµçÁ÷·´À¡»·½Ú
-    //-------------------------µç»ú±äÁ¿
+    pid pidDriveCurrent;    ///< åº•ç›˜ä¸»åŠ¨è½®åŠŸçŽ‡æŽ§åˆ¶ç”µæµçŽ¯èŠ‚
+    pid pidPowerFeedback;   ///< åº•ç›˜ä¸»åŠ¨è½®åŠŸçŽ‡æŽ§åˆ¶ç”µæµåé¦ˆçŽ¯èŠ‚
+    //-------------------------ç”µæœºå˜é‡
     softmotor DriveWheel;
 //    motor Fric;
 //    AmmoFeed FeedUp;
 //    AmmoFeed FeedDown;
-	//-------------------------¼¤¹â²â¾àGY-53/VL53L1X
+	//-------------------------æ¿€å…‰æµ‹è·GY-53/VL53L1X
 	bsp_GY53L1_Object RangingLeft;
 	bsp_GY53L1_Object RangingRight;
 
-    //-------------------------ÔËÐÐ×´Ì¬²ÎÊý
+    //-------------------------è¿è¡ŒçŠ¶æ€å‚æ•°
     _chassis_mode Mode;
     _chassis_mode LastMode;
-    //-------------------------ÎïÀí×´Ì¬²ÎÊý£¬¿É¹©²éÑ¯
-    float MotorSpeed;           ///< µç»ú·´À¡ËÙ¶È£¬µ¥Î»rpm
-    float MotorSoftLocation;    ///< µç»úÈíÂ·³Ì£¬µ¥Î»ÊÇ½Ç¶È
-    float RealSpeed;            ///< ÕæÕýµÄËÙ¶È£¬µ¥Î»mm/s£»ÓÉ±àÂëÆ÷
-    float RealPosition;         ///< ÓÉ±àÂëÆ÷Óë¼¤¹â²â¾àÄ£¿é Êý¾ÝÈÚºÏ¹À¼ÆµÄÕæÕýµÄ¾àÀë£¬µ¥Î»mm
-	float Accel_Railward;	    ///<  ÑØ¹ìµÀµÄ¼ÓËÙ¶È
+    //-------------------------ç‰©ç†çŠ¶æ€å‚æ•°ï¼Œå¯ä¾›æŸ¥è¯¢
+    float MotorSpeed;           ///< ç”µæœºåé¦ˆé€Ÿåº¦ï¼Œå•ä½rpm
+    float MotorSoftLocation;    ///< ç”µæœºè½¯è·¯ç¨‹ï¼Œå•ä½æ˜¯è§’åº¦
+    float RealSpeed;            ///< çœŸæ­£çš„é€Ÿåº¦ï¼Œå•ä½mm/sï¼›ç”±ç¼–ç å™¨
+    float RealPosition;         ///< ç”±ç¼–ç å™¨ä¸Žæ¿€å…‰æµ‹è·æ¨¡å— æ•°æ®èžåˆä¼°è®¡çš„çœŸæ­£çš„è·ç¦»ï¼Œå•ä½mm
+	float Accel_Railward;	    ///<  æ²¿è½¨é“çš„åŠ é€Ÿåº¦
 	int16_t LazerRanging[2];
-	float imuLeftBounceThreshold=5;		///<  ÅÐ¶¨Îª×²»÷Á¢ÖùµÄÍÓÂÝÒÇ¼ÓËÙ¶ÈãÐÖµ
+	float imuLeftBounceThreshold=5;		///<  åˆ¤å®šä¸ºæ’žå‡»ç«‹æŸ±çš„é™€èžºä»ªåŠ é€Ÿåº¦é˜ˆå€¼
 	enum PillarFlagEnum PillarFlag = PILLAR_NOT_DETECTED;
-	//-------------------------¹¦ÂÊ¼ÆËã²ÎÊý
+	//-------------------------åŠŸçŽ‡è®¡ç®—å‚æ•°
 
-    float DrivePower;      ///< Çý¶¯ÂÖ¹¦ÂÊ£¬µ¥Î»W. ¹©²éÑ¯
-    float LimitPower = -1; ///<  µ×ÅÌÏÞÖÆ¹¦ÂÊ, <0 ±íÊ¾²»ÏÞÖÆ
-    //-------------------------ÔËÐÐÍÐ¹Üº¯Êý
-    void Handle();                                         ///< ÔËÐÐÊ±Êý¾Ý¸üÐÂºÍÂß¼­¹¦ÄÜ º¯Êý
-    //-------------------------²Ù×÷º¯Êý
-    void Safe_Set();                                       ///< °²È«Ä£Ê½
-    void MotorSpeed_Set(float speed_motor_rpm);            ///< Éè¶¨µç»úËÙ¶È
-    void MotorSoftLocation_Set(float location_motor_soft); ///< Éè¶¨µç»úÈíÂ·³Ì
-    void MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, float speed_motor_rpm_limit);  ///< Éè¶¨µç»úÈíÂ·³Ì£¬ÏÞËÙÔËÐÐ
-    // void Speed_Set(float speedBy_mm_s); //Éè¶¨ÕæÊµËÙ¶È
-    // void Location_Set(float locationBy_mm); //Éè¶¨ÕæÊµÎ»ÖÃ¡£
+    float DrivePower;      ///< é©±åŠ¨è½®åŠŸçŽ‡ï¼Œå•ä½W. ä¾›æŸ¥è¯¢
+    float LimitPower = -1; ///<  åº•ç›˜é™åˆ¶åŠŸçŽ‡, <0 è¡¨ç¤ºä¸é™åˆ¶
+    //-------------------------è¿è¡Œæ‰˜ç®¡å‡½æ•°
+    void Handle();                                         ///< è¿è¡Œæ—¶æ•°æ®æ›´æ–°å’Œé€»è¾‘åŠŸèƒ½ å‡½æ•°
+    //-------------------------æ“ä½œå‡½æ•°
+    void Safe_Set();                                       ///< å®‰å…¨æ¨¡å¼
+    void MotorSpeed_Set(float speed_motor_rpm);            ///< è®¾å®šç”µæœºé€Ÿåº¦
+    void MotorSoftLocation_Set(float location_motor_soft); ///< è®¾å®šç”µæœºè½¯è·¯ç¨‹
+    void MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, float speed_motor_rpm_limit);  ///< è®¾å®šç”µæœºè½¯è·¯ç¨‹ï¼Œé™é€Ÿè¿è¡Œ
+    // void Speed_Set(float speedBy_mm_s); //è®¾å®šçœŸå®žé€Ÿåº¦
+    // void Location_Set(float locationBy_mm); //è®¾å®šçœŸå®žä½ç½®ã€‚
 private:
-    //¹¦ÂÊ¼ÆËãÓÃ±äÁ¿
+    //åŠŸçŽ‡è®¡ç®—ç”¨å˜é‡
     float TargetPowerInput = 0; 
     float PowerOutput = 0;
     uint32_t PwrUpdateTime = 0;
     LPF2 lpf;
 
 
-    void CanSendHandle(); //ÍÐ¹Üµ½CANSendµÄ²Ù×÷º¯Êý
-    float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//²ñÐ¡ÁúÊ½¹¦ÂÊ±Õ»·
+    void CanSendHandle(); //æ‰˜ç®¡åˆ°CANSendçš„æ“ä½œå‡½æ•°
+    float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//æŸ´å°é¾™å¼åŠŸçŽ‡é—­çŽ¯
 
     // int8_t PillarHit_Check();
     // int8_t PillarHit_Handle();
 };
-extern SentryChassis ChassisEntity;     // µ×ÅÌÊµÌå¶ÔÏó
+extern SentryChassis ChassisEntity;     // åº•ç›˜å®žä½“å¯¹è±¡
 
 #endif // __SENTRY_CHASSIS_HPP_

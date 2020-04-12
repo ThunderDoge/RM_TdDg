@@ -1,6 +1,6 @@
 /**
  * @file      SentryChassisLogic.hpp
- * @brief     哨兵底盘运行逻辑
+ * @brief     鍝ㄥ叺搴曠洏杩愯閫昏緫
  * @details   
  * @author   ThunderDoge
  * @date      2020-4-12
@@ -30,10 +30,10 @@
 //     MODE_AUTONOMOUS,
 // };
 
-void ModeSelect(void);  ///模式选择逻辑
+void ModeSelect(void);  ///妯″紡閫夋嫨閫昏緫
 
-void SuperiorControl(); ///上级通讯控制模式
-void GlobalSafe();  ///全局安全模式
+void SuperiorControl(); ///涓婄骇閫氳鎺у埗妯″紡
+void GlobalSafe();  ///鍏ㄥ眬瀹夊叏妯″紡
 
 extern app_Mode ModeSuperSuperiorControl,ModeGlobalSafe;
 

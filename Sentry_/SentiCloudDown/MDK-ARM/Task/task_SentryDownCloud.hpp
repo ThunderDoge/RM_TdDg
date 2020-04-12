@@ -11,26 +11,26 @@
 #ifndef __TASK_SENTI_CLOUD_H_
 #define __TASK_SENTI_CLOUD_H_
 
-#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //¶¨Òå¹¤³Ì±êÊ¶·û__PROJECT_SENTRY_DOWN_CLOUD_
+#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //å®šä¹‰å·¥ç¨‹æ ‡è¯†ç¬¦__PROJECT_SENTRY_DOWN_CLOUD_
 #define __PROJECT_SENTRY_DOWN_CLOUD_
 #endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
-// ÒÀÀµµÄÎÄ¼ş
+// ä¾èµ–çš„æ–‡ä»¶
 
-//ÏµÍ³Çı¶¯
+//ç³»ç»Ÿé©±åŠ¨
 #include "cmsis_os.h"
 
-//Ó²¼şÇı¶¯
+//ç¡¬ä»¶é©±åŠ¨
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
 #include "bsp_dbus.h"
 #include "bsp_spi.h"
 #include "app_imu.h"
 
-//»úÆ÷ÈËÂß¼­
+//æœºå™¨äººé€»è¾‘
 #include "Sentry.hpp"
 
-void DownCloud_Init(void);  /// Ó²¼ş³õÊ¼»¯
-void TaskStarter(void); /// È«ÈÎÎñÆô¶¯Æ÷
+void DownCloud_Init(void);  /// ç¡¬ä»¶åˆå§‹åŒ–
+void TaskStarter(void); /// å…¨ä»»åŠ¡å¯åŠ¨å™¨
 
 #endif // __TASK_SENTI_CLOUD_H_

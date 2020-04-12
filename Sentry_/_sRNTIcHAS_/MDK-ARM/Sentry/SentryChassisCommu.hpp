@@ -1,6 +1,6 @@
 /**
   * @file   SentryChassisCommu.cpp
-  * @brief      ÉÚ±øµ×ÅÌÍ¨ĞÅ
+  * @brief      å“¨å…µåº•ç›˜é€šä¿¡
   * @details  
   * @author     ThunderDoge
   * @date       2020-2-23
@@ -10,12 +10,12 @@
 #ifndef __SENTRY_CHASSIS_COMMU_
 #define __SENTRY_CHASSIS_COMMU_
 
-//ÒÀÀµµÄÎÄ¼ş
+//ä¾èµ–çš„æ–‡ä»¶
 #include "SentryChassisCan.hpp"
 #include "SentryChassisUart.hpp"
 
 extern CanCommuRecv_t CanRx, CanTx;
 
-void ChassisCanCommuRoutine(void);  ///µ×ÅÌ¶¨Ê±·¢ËÍµÄ°å¼äCANÍ¨ĞÅ
+void ChassisCanCommuRoutine(void);  ///åº•ç›˜å®šæ—¶å‘é€çš„æ¿é—´CANé€šä¿¡
 
 #endif // __SENTRY_CHASSIS_COMMU_

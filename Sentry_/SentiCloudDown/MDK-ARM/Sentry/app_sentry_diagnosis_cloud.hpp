@@ -1,6 +1,6 @@
 /**
  * @file      app_sentry_diagnosis_cloud.hpp
- * @brief     ÉÚ±ø×ÔÕï¶ÏÏµÍ³_ÔÆÌ¨·Ö²¿
+ * @brief     å“¨å…µè‡ªè¯Šæ–­ç³»ç»Ÿ_äº‘å°åˆ†éƒ¨
  * @details   
  * @author   ThunderDoge
  * @date      
@@ -11,9 +11,9 @@
 #ifndef __APP_SENTRY_DIAGNOSIS_CLOUD_HPP_
 #define __APP_SENTRY_DIAGNOSIS_CLOUD_HPP_
 
-//¹¤³Ì±êÖ¾ºê¶¨Òå
+//å·¥ç¨‹æ ‡å¿—å®å®šä¹‰
  #include "sentry_config.hpp"
- //ÒÀÀµµÄÎÄ¼ş
+ //ä¾èµ–çš„æ–‡ä»¶
 #include "bsp_motor.hpp"
 #include "app_sentry_diagnosis_commom.hpp"
 #include "SentryCloud.hpp"

@@ -1,46 +1,46 @@
 /**
  * @file        SentryChassis.cpp
- * @brief       ÉÚ±øµ×ÅÌÎïÀíÊµÌå
+ * @brief       å“¨å…µåº•ç›˜ç‰©ç†å®ä½“
  * @details     
- *  ÉÚ±øµ×ÅÌÖ÷Òª¹¦ÄÜÓ²¼şÓĞ£º
- *  - µ×ÅÌÖ÷¶¯ÂÖµç»ú£¬°åÉÏÓĞ¹¦ÂÊ¼ì²âĞ¾Æ¬¼ì²âËüµÄÊµÊ±µçÁ÷Óë¹¦ÂÊ
- *  - Óëµ×ÅÌ¹Ì¶¨µÄÍÓÂİÒÇ
- *  - ÑØ¹ìµÀ×óÓÒ¸÷Ò»£ºGY-53/VL531LXÁ®¼Û¼¤¹â²â¾àÄ£¿é¡£²â¾à·¶Î§2000mm£¬¾«¶ÈÔÚ10mm
- *  - ÑØ¹ìµÀ×óÓÒ¸÷Ò»£ºµ¯»É¡£ÔÊĞíÒÔ²»³¬¹ıX.X mm/sµÄËÙ¶È×²»÷¹ìµÀ£¬²¢±£»¤µ×ÅÌÖ÷Ìå²»ÊÜ×²»÷
- *      - ÉÏÏÂÔÆÌ¨¹éÔÆÌ¨×Ô¼º¿ØÖÆ£¬µ×ÅÌ²»¿ØÖÆ¡£
- *      - µ×ÅÌ
- *  ĞèÒªÊµÏÖÒÔÏÂ¹¦ÄÜ£º
- *  - ¸ù¾İÏÖÓĞ´«¸ĞÆ÷¾¡¿ÉÄÜ¾«È·¹À¼Æ¹ìÉÏÎ»ÖÃ
- *  - µ×ÅÌÖ÷¶¯ÂÖ¿ØÖÆ¡£º¬¹¦ÂÊ¿ØÖÆ
+ *  å“¨å…µåº•ç›˜ä¸»è¦åŠŸèƒ½ç¡¬ä»¶æœ‰ï¼š
+ *  - åº•ç›˜ä¸»åŠ¨è½®ç”µæœºï¼Œæ¿ä¸Šæœ‰åŠŸç‡æ£€æµ‹èŠ¯ç‰‡æ£€æµ‹å®ƒçš„å®æ—¶ç”µæµä¸åŠŸç‡
+ *  - ä¸åº•ç›˜å›ºå®šçš„é™€èºä»ª
+ *  - æ²¿è½¨é“å·¦å³å„ä¸€ï¼šGY-53/VL531LXå»‰ä»·æ¿€å…‰æµ‹è·æ¨¡å—ã€‚æµ‹è·èŒƒå›´2000mmï¼Œç²¾åº¦åœ¨10mm
+ *  - æ²¿è½¨é“å·¦å³å„ä¸€ï¼šå¼¹ç°§ã€‚å…è®¸ä»¥ä¸è¶…è¿‡X.X mm/sçš„é€Ÿåº¦æ’å‡»è½¨é“ï¼Œå¹¶ä¿æŠ¤åº•ç›˜ä¸»ä½“ä¸å—æ’å‡»
+ *      - ä¸Šä¸‹äº‘å°å½’äº‘å°è‡ªå·±æ§åˆ¶ï¼Œåº•ç›˜ä¸æ§åˆ¶ã€‚
+ *      - åº•ç›˜
+ *  éœ€è¦å®ç°ä»¥ä¸‹åŠŸèƒ½ï¼š
+ *  - æ ¹æ®ç°æœ‰ä¼ æ„Ÿå™¨å°½å¯èƒ½ç²¾ç¡®ä¼°è®¡è½¨ä¸Šä½ç½®
+ *  - åº•ç›˜ä¸»åŠ¨è½®æ§åˆ¶ã€‚å«åŠŸç‡æ§åˆ¶
  * 
  * @author   ThunderDoge
  * @date      2020-4-11
  * @version   v1.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
  * Using encoding: gb2312
- * ×¢£ºÔÚ2019-12ÔÂÖ®Ç°µÄÉÚ±øµ×ÅÌ¾ßÓĞ²»Í¬µÄ½á¹¹£º
- * µ¯Ò©²Õ×°ÔÚµ×ÅÌ£¬µ×ÅÌÓĞÁ½¸ö²¦µ¯ÂÖ·Ö±ğÏòÉÏÏÂ²¦µ¯£»ÁíÓĞÒ»Ä¦²ÁÂÖ¸¨ÖúÏòÉÏÔÆÌ¨¹©µ¯¹Ü ÍÆµ¯Íè¡£
- * ÔÚ2019-1ÔÂÖ®Ç°±»·ÏÆú¡£´úÂëÉÏ¿ÉÄÜÓĞ²ĞÁô²¿·Ö£¬µ«´ó²¿·ÖÒÑ¾­×¢ÊÍ¡£
+ * æ³¨ï¼šåœ¨2019-12æœˆä¹‹å‰çš„å“¨å…µåº•ç›˜å…·æœ‰ä¸åŒçš„ç»“æ„ï¼š
+ * å¼¹è¯èˆ±è£…åœ¨åº•ç›˜ï¼Œåº•ç›˜æœ‰ä¸¤ä¸ªæ‹¨å¼¹è½®åˆ†åˆ«å‘ä¸Šä¸‹æ‹¨å¼¹ï¼›å¦æœ‰ä¸€æ‘©æ“¦è½®è¾…åŠ©å‘ä¸Šäº‘å°ä¾›å¼¹ç®¡ æ¨å¼¹ä¸¸ã€‚
+ * åœ¨2019-1æœˆä¹‹å‰è¢«åºŸå¼ƒã€‚ä»£ç ä¸Šå¯èƒ½æœ‰æ®‹ç•™éƒ¨åˆ†ï¼Œä½†å¤§éƒ¨åˆ†å·²ç»æ³¨é‡Šã€‚
  *  verison|    date|       author|         change|
- *  1.2         2019-12-13  ThunderDoge     Ìí¼ÓÁË²ñĞ¡ÁúÊ½¹¦ÂÊ¿ØÖÆ
- *  2.0         2020-4-11   ThunderDoge     Ìí¼ÓÁË¸üÏêÏ¸µÄ×¢ÊÍ;Ìí¼ÓÁË¼¤¹â²â¾àÄ£¿éµÄÖ§³Ö
+ *  1.2         2019-12-13  ThunderDoge     æ·»åŠ äº†æŸ´å°é¾™å¼åŠŸç‡æ§åˆ¶
+ *  2.0         2020-4-11   ThunderDoge     æ·»åŠ äº†æ›´è¯¦ç»†çš„æ³¨é‡Š;æ·»åŠ äº†æ¿€å…‰æµ‹è·æ¨¡å—çš„æ”¯æŒ
  */
 #include "SentryChassis.hpp"
 
-//µç»úÀàĞÍ
+//ç”µæœºç±»å‹
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508(8192, 19);
 float SpeedMax = 16000;
-//ÏµÍ³±äÁ¿
+//ç³»ç»Ÿå˜é‡
 SentryChassis *SentryChassis::pointer=NULL;
-//±¾Ìå
+//æœ¬ä½“
 SentryChassis ChassisEntity(2, 0x201);
 //                   2, 0x203,
 //                   1, 0x202,
 //                   1, 0x201,
 //                   1, 0x203);
-//³õÊ¼»¯º¯Êı
+//åˆå§‹åŒ–å‡½æ•°
 SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //                             uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
 //                             uint8_t up_feed_can_num, uint16_t up_feed_can_id,
@@ -63,10 +63,10 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 {
 //    FeedUp.Enable_Block(4000, 200, 5);
 //    FeedDown.Enable_Block(4000, 200, 5);
-    pointer = this; //³õÊ¼»¯È«¾Öµ×ÅÌÖ¸Õë
+    pointer = this; //åˆå§‹åŒ–å…¨å±€åº•ç›˜æŒ‡é’ˆ
     app_math_Lpf2set(&lpf , 1000.0f, 10.0f);
 	
-	// ³õÊ¼»¯¼¤¹â²â¾àÄ£¿é£¬²¢ÇÒÍ¨¹ı´®¿ÚÉèÖÃºÏÊÊµÄ²ÎÊı
+	// åˆå§‹åŒ–æ¿€å…‰æµ‹è·æ¨¡å—ï¼Œå¹¶ä¸”é€šè¿‡ä¸²å£è®¾ç½®åˆé€‚çš„å‚æ•°
 	bsp_GY53L1_Object_Init( &RangingLeft, &RANGING_LEFT_UART );
 	bsp_GY53L1_Object_Init( &RangingRight, &RANGING_RIGHT_UART );
 	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_CONTINUOUS_OUTPUT );
@@ -87,16 +87,16 @@ void SentryChassis::Handle()
 	Accel_Railward = app_imu_data.original.Accel[0];
 //    FeedUp.PR_Handle();
 //    FeedDown.PR_Handle();
-	//×²Öù±êÖ¾
-	if( fabs(Accel_Railward) > fabs(imuLeftBounceThreshold) )	//³¬³öãĞÖµ
+	//æ’æŸ±æ ‡å¿—
+	if( fabs(Accel_Railward) > fabs(imuLeftBounceThreshold) )	//è¶…å‡ºé˜ˆå€¼
 	{
-		if( SIGN(Accel_Railward) * SIGN(imuLeftBounceThreshold) == 1)	//Í¬ºÅ
-			PillarFlag = PILLAR_BOUNCE_LEFT;	//ÅĞÎª×ó
+		if( SIGN(Accel_Railward) * SIGN(imuLeftBounceThreshold) == 1)	//åŒå·
+			PillarFlag = PILLAR_BOUNCE_LEFT;	//åˆ¤ä¸ºå·¦
 		else
-			PillarFlag = PILLAR_BOUNCE_RIGHT;	//ÒìºÅÅĞÎªÓÒ
+			PillarFlag = PILLAR_BOUNCE_RIGHT;	//å¼‚å·åˆ¤ä¸ºå³
 	}
 	else
-		PillarFlag = PILLAR_NOT_DETECTED;	//Î´³¬ãĞÖµ
+		PillarFlag = PILLAR_NOT_DETECTED;	//æœªè¶…é˜ˆå€¼
 		
     manager::CANSend();
 }
@@ -141,7 +141,7 @@ float VeP1,P_Idle;
 #endif
 float pwr_exceed,pwr_idle,ft,et,ct;
 /**
-  * @brief  ²ñĞ¡ÁúÊ½¹¦ÂÊ±Õ»·
+  * @brief  æŸ´å°é¾™å¼åŠŸç‡é—­ç¯
   * @details  
   *     G(s) = Cur(s)/( 1+Pfd(s)Cur(s) )
   *     Targ    (+) -> Cur(s) -> C(s) -> Motor
@@ -154,8 +154,8 @@ float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCur
 {
 	pwr_exceed  = PwrFeedbackInput-LimitPower;
 	pwr_idle = -pwr_exceed;		
-	(pwr_idle >0)? NULL:pwr_idle =0;//¼ÆËã¿ÕÓà¹¦ÂÊ
-	(pwr_exceed>0)? NULL: pwr_exceed=0;   //¼ÆËã³¬Ô½¹¦ÂÊ
+	(pwr_idle >0)? NULL:pwr_idle =0;//è®¡ç®—ç©ºä½™åŠŸç‡
+	(pwr_exceed>0)? NULL: pwr_exceed=0;   //è®¡ç®—è¶…è¶ŠåŠŸç‡
 	if(pwr_idle>1)
 	{
 		pidPowerFeedback.Iout-=pwr_idle_I*pwr_idle;
@@ -168,7 +168,7 @@ float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCur
 }
 
 /**
-  * @brief  µ×ÅÌ¹¦ÂÊÏŞÖÆ
+  * @brief  åº•ç›˜åŠŸç‡é™åˆ¶
   * @details  
   * @param[in]  
   * @retval  
@@ -177,31 +177,31 @@ void SentryChassis::CanSendHandle()
 {
 	if(Mode != _chassis_save)
     if (LimitPower > 0)
-    {   //Ö»ÓĞ´óÓÚ0²Å»áÆô¶¯
+    {   //åªæœ‰å¤§äº0æ‰ä¼šå¯åŠ¨
 #ifdef DEBUG1
         if(HAL_GetTick() - PwrUpdateTime > 0){
-        unfilted_pwr_in = (((float)DriveWheel.TargetCurrent) /819.2f) //Ä¿±êµçÁ÷
-                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //¼ì²âµçÑ¹
-        TargetPowerInput = app_math_Lpf2apply(&lpf , unfilted_pwr_in);  //µÍÍ¨ÂË²¨·À¶¶
+        unfilted_pwr_in = (((float)DriveWheel.TargetCurrent) /819.2f) //ç›®æ ‡ç”µæµ
+                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //æ£€æµ‹ç”µå‹
+        TargetPowerInput = app_math_Lpf2apply(&lpf , unfilted_pwr_in);  //ä½é€šæ»¤æ³¢é˜²æŠ–
         }
-        if (fabs(TargetPowerInput) > LimitPower)    //¹¦ÂÊÏŞ·ù
+        if (fabs(TargetPowerInput) > LimitPower)    //åŠŸç‡é™å¹…
         {
             TargetPowerInput = LimitPower* SIGN(TargetPowerInput);
         }
-//        if(SIGN(TargetPowerInput) * SIGN(PowerOutput) == -1)    //¹¦ÂÊ·À·´Ïò
+//        if(SIGN(TargetPowerInput) * SIGN(PowerOutput) == -1)    //åŠŸç‡é˜²åå‘
 //        {
 //            PowerOutput = 0;
 //        }
-        if(HAL_GetTick() - PwrUpdateTime > 0){      //·ÀÖ¹»ı·ÖÆµÂÊ²»ÎÈ¶¨
+        if(HAL_GetTick() - PwrUpdateTime > 0){      //é˜²æ­¢ç§¯åˆ†é¢‘ç‡ä¸ç¨³å®š
             PowerOutput += pidDriveCurrent.pid_run(TargetPowerInput - DrivePower);
             PwrUpdateTime = HAL_GetTick();
         }
         DriveWheel.TargetCurrent = PowerOutput;
 #endif
 #ifdef DEBUG2
-        TargetPowerInput = (((float)DriveWheel.TargetCurrent) /819.2f) //Ä¿±êµçÁ÷
-                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //¼ì²âµçÑ¹
-		if (fabs(TargetPowerInput) > LimitPower)    //¹¦ÂÊÏŞ·ù
+        TargetPowerInput = (((float)DriveWheel.TargetCurrent) /819.2f) //ç›®æ ‡ç”µæµ
+                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //æ£€æµ‹ç”µå‹
+		if (fabs(TargetPowerInput) > LimitPower)    //åŠŸç‡é™å¹…
 		{
 			DriveWheel.TargetCurrent *= (LimitPower/TargetPowerInput);
 		}

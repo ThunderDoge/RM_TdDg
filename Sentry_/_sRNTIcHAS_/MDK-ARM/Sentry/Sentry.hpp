@@ -1,5 +1,5 @@
 /**
-  * @brief    �ڱ�֧�ְ���
+  * @brief    ÉÚ±øÖ§³Ö°ü¡£
   * @details  
   * @author   ThunderDoge
   * @date     

@@ -1,6 +1,6 @@
 /**
   * @file      app_sentry_chassis_diagnosis.hpp
-  * @brief     из╠Ь╣велвтуО╤о║ё
+  * @brief     ц┴ц б╠ц╦б╣ц≈ц┘ц▄ц≈ц■ц∙ц╞б╤ц▐б║бё
   * @details   
   * @author    ThunderDoge
   * @date      2020-2-24
