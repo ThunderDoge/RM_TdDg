@@ -45,7 +45,10 @@ typedef enum:uint8_t
     DownCloudFeedMotorDevice,
 
     ChassisDriveMotorDevice,
-    ChassisPillarDetectDevice,
+    ChassisLazerRangingLeftDevice,
+	ChassisLazerRangingRightDevice,
+	ChassisRailEncoderDevice,
+	
     DbusDevice,
 
 	CheckDeviceID_EnumLength,  //这一项放在最后，以指示ID项数
@@ -95,7 +98,7 @@ struct CheckDevice_Type
 		);
 	CheckDeviceID_Enum      id = CheckDeviceID_EnumLength;						/** 器件ID,为防止ID冲突，将所有需检测ID放入 @see CheckDeviceID_Enum 变量中 */
 	uint32_t                lastTick = 0;            /* 上次在线时间 */
-	uint32_t* 				use_ptr_lastTick = NULL;
+	uint32_t* 				ptr_lastTick = NULL;	 // 这个默认是NULL，但是如果制指定了不是NULL就应该使用这个
 	uint16_t                maxAllowTime = 100;	        /* 最大允许时长 */
 	AlarmPriority_Enum      priority = PriorityNormal;		        /* 优先级 */
 	uint8_t					alarm_enabled = 1;		// 离线报警已使能

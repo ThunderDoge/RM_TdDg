@@ -1,6 +1,3 @@
-
-
-
 /**
   * @file  bsp_encoder.hpp
   * @brief    RM2020通用编码器
@@ -14,9 +11,11 @@
 #ifndef __BSP_ENCODER_HPP_
 #define __BSP_ENCODER_HPP_
 #include "tim.h"
-// #include "bsp_stddef.h"
+
 //外设宏定义
 #define BSP_ENCODER_TIM htim8
+
+
 
 extern uint32_t bsp_encoder_PeriodCount;	//设定编码器一圈数值
 extern uint32_t bsp_encoder_UpdateTime;		//更新时间戳

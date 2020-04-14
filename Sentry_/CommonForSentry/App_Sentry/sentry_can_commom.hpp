@@ -86,7 +86,7 @@ enum SENTRY_CAN_ID : uint32_t //板间通讯ID号
 };
 
 // CanRx,CanTx内时间戳的数量
-#define __SENTRY_CAN_UPDATE_TIMESTAMP_COUNT 20 // CAN缓存机构有多少个时间戳
+//#define __SENTRY_CAN_UPDATE_TIMESTAMP_COUNT 20 // CAN缓存机构有多少个时间戳
 
 enum enumSentryCanUpdataTimestampPosition : int
 { // CAN缓存的时间戳编号枚举
@@ -102,6 +102,7 @@ enum enumSentryCanUpdataTimestampPosition : int
     tDownCloud_Shoot_Info,
     tChassis_Info,
     tChassis_Pil_Info,
+	__SENTRY_CAN_UPDATE_TIMESTAMP_COUNT=20,
 };
 struct CanCommuRecv_t /// CAN缓存结构体定义
 {

@@ -43,7 +43,7 @@ void Cloud_Init(void)
 	
 	// 离线检测结构体 设置
 	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
+//    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
 
 
 }

@@ -12,7 +12,7 @@
 
 #include "stm32f4xx_hal.h"
 
-//#include <stdio.h>
+#include <stdio.h>
 
 
 // define user fputc() implement for printf()

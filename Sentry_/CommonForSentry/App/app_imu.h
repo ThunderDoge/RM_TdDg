@@ -27,7 +27,6 @@
 #ifndef __APP_IMU_H
 #define __APP_IMU_H
 #include "stm32f4xx_hal.h"
-#include "app_sentry_check_device.hpp"
 
 
 
@@ -85,13 +84,12 @@ typedef struct
 	uint8_t isThisTimeInvalid[3];  // 若本次静态零点采集失败，则置一
 }MPU_DEF;
 
-// 离线检测 结构体
-extern struct CheckDevice_Type IMU_CheckDevice;
 
 
 extern MPU_DEF app_imu_data;
 
 extern uint32_t tNow;   //app_imu_So3thread运行时的微秒(us)数。就是Hal_GetTick()*1000
+extern uint32_t tImuLastTick;	/// 离线检测用 更新时间
 
 uint8_t app_imu_Init(void);
 void app_imu_So3thread(void);

@@ -118,6 +118,7 @@ public:
     static uint8_t CANSend(void);                                                                //!<全局的发送函数，统一管配所有电???
     void Speed_F_Set(float f);                                                                   //!<设定??????? 输入电机的新????
     virtual void Safe_Set(void) = 0;                                                             //!<子类必须实现的纯虚函???
+    uint32_t LastUpdateTime;              //!<?????更新的时??
 protected:
     uint8_t can_code;                     //!<CAN???,以十进制存储,百位数显示是can几，后面两位数表示id???-1，范???0~10
     static CAN_HandleTypeDef *CanHandle1; //!<CAN?????1的指???
@@ -126,7 +127,6 @@ protected:
     static int16_t CAN1CurrentList[11];   //!<CAN1电机待发送电流列???，由8改动???11
     static manager *CAN2MotorList[11];    //!<CAN2电机地址列表，由8改动???11
     static int16_t CAN2CurrentList[11];   //!<CAN2电流列表，由8改动???11
-    uint32_t LastUpdateTime;              //!<?????更新的时??
     float Speed_LPF;                      //!<速度?????低通滤波器
     float Speed_F;                        //!<速度??????????
 

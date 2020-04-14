@@ -26,10 +26,7 @@
 #include "app_imu.h"
 #include "app_math.h"
 #include "bsp_spi.h"
-#include "app_sentry_check_device.hpp"
 
-// 离线检测 结构体
-struct CheckDevice_Type IMU_CheckDevice(UpCloudImuDevice,100);
 
  
 #define USE_LPF           //使用低通滤波
@@ -492,17 +489,17 @@ static float Soft_Angle(float angle,uint8_t whichAngle)
 * @brief   姿态解算
 * @remarks 
 */
-uint32_t tPrev,tNow; 
+uint32_t tPrev,tNow;
+uint32_t tImuLastTick;		/// 离线检测用 更新时间
 void app_imu_So3thread(void)
 {   
-    // 离线检测 by thunderdoge
-    IMU_CheckDevice.update_hook_func(&IMU_CheckDevice);
 
 
     float euler[3] = {0,0,0};            //rad  
     float Rot_matrix[9] = {1.0f,  0.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,  0.0f,  1.0f };       /**< init: identity matrix */
     /* 计算两次解算时间间隔 */
     tNow = MICROS();
+	tImuLastTick = HAL_GetTick();
     float dt = (tPrev > 0) ? (tNow - tPrev) / 1000000.0f : 0;
     tPrev = tNow;
 //    if(dt == 0)  return;    // 第一次是0也没关系，反正是积分
