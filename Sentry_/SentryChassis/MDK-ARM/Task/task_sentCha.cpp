@@ -88,7 +88,7 @@ void rep_ofl(void){
 }
 
 /**
- * @brief   离线检测任务
+ * @brief   离线检测任务	100Hz
  * 
  * @param     param 
  */

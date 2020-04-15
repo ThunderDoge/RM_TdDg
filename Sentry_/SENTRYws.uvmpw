@@ -9,6 +9,8 @@
 
   <project>
     <PathAndName>.\SentiCloud0\MDK-ARM\SentiCloud0.uvprojx</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
+    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
@@ -17,8 +19,6 @@
 
   <project>
     <PathAndName>.\SentryChassis\MDK-ARM\SentryChassis.uvprojx</PathAndName>
-    <NodeIsActive>1</NodeIsActive>
-    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
 </ProjectWorkspace>

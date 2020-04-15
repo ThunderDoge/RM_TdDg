@@ -15,7 +15,6 @@
 #include "stm32f4xx.h"
 #include "string.h"
 #include "usart.h"
-#include "app_sentry_check_device.hpp"
 
 /// 离线检测 结构体
 extern struct CheckDevice_Type Dbus_CheckDevice;
@@ -72,6 +71,7 @@ typedef struct rc_rec
 			uint8_t Rightkey;	//右键
 		}Mouse;					//鼠标信息
 		uint16_t Keys;	//按键信息
+        uint32_t UpdateTick;
 }bsp_dbus_RC_Data;
 
 extern bsp_dbus_RC_Data bsp_dbus_Data;

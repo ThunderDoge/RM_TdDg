@@ -16,7 +16,6 @@
 #include "app_imu.h"
 #include "app_vision.hpp"
 #include "app_mode.hpp"
-#include "app_sentry_check_device.hpp"
 #include "app_AmmoFeed.hpp"
 
 extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环

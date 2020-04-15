@@ -11,8 +11,6 @@
 
 #include "task_SentiCloud.hpp"
 
-TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
-uint32_t mark1, mark2;
 
 
 /**
@@ -32,20 +30,6 @@ void Cloud_Init(void)
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	app_vision_Init();              //视觉串口接收初始化
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
-	
-	app_sentry_CheckDevice_Init();
-	// 设备添加到设备列表
-    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
-	
-	// 离线检测结构体 设置
-	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
-//    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
-
-
 }
 /**
   * @brief  主任务
@@ -92,6 +76,53 @@ void task_CommuRoutine(void *param)
 		#endif
 	}
 }
+
+/**
+ * @brief 设备离线检测任务
+ * 
+ * @param     param 
+ */
+void task_Check(void* param)
+{
+	app_check_Init();
+
+    // 与云台的连接
+	app_check_EnableDevice(id_UpCloudConnect,500);
+    app_check_SignDeviceTickTo(id_UpCloudConnect,&CanRx.CanUpdateTime[tUpCloud_Info]);
+    app_check_EnableDevice(id_ChassisConnect,500);
+    app_check_SignDeviceTickTo(id_ChassisConnect,&CanRx.CanUpdateTime[tChassis_Info]);
+    // DBUS
+    app_check_EnableDevice(id_Dbus,50);
+    app_check_SignDeviceTickTo(id_Dbus,&bsp_dbus_Data.UpdateTick);
+    // 电机设定
+    app_check_EnableDevice(id_UpCloudPitchMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudPitchMotor,&CloudEntity.PitchMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudYawMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudYawMotor,&CloudEntity.YawMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudLeftFric,50);
+    app_check_SignDeviceTickTo(id_UpCloudLeftFric,&CloudEntity.FricLeftMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudRightFric,50);
+    app_check_SignDeviceTickTo(id_UpCloudRightFric,&CloudEntity.FricRightMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudFeedMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudFeedMotor,&CloudEntity.Feed2nd.LastUpdateTime);
+
+    
+    while (1)
+    {
+        app_check_RefreshList();    // 刷新离线列表
+        vTaskDelay(10/portTICK_PERIOD_MS);  
+    }
+    
+}
+
+
+
+
+TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
+uint32_t mark1, mark2;
+TaskHandle_t task_Check_Handle;
+uint32_t mark3;
+
 /**
   * @brief  任务启动器
   * @details  
@@ -100,27 +131,27 @@ void task_CommuRoutine(void *param)
   */
 void TaskStarter(void)
 {
-    Cloud_Init();
     xTaskCreate((TaskFunction_t)	task_Main,		//任务代码
 				(char*)				"task_Main",	//任务名
-				(uint16_t)			512,			//堆栈深度
+				(uint16_t)			1024,			//堆栈深度
 				(void*)				NULL,			//参数列表
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
-//	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
-//				(char*)				"task_CommuRoutine",
-//				(uint16_t)			512,
-//				(void*)				NULL,
-//				(UBaseType_t)		4,
-//				(TaskHandle_t*)		&task_CommuRoutine_Handle);
-				
-	xTaskCreate((TaskFunction_t)	task_CheckDevice,
-				(char*)				"task_CheckDevice",
-				(uint16_t)			512,
+	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+				(char*)				"task_CommuRoutine",
+				(uint16_t)			1024,
 				(void*)				NULL,
-				(UBaseType_t)		4,
-				(TaskHandle_t*)		&task_CheckDevice_Handle);
+				(UBaseType_t)		3,
+				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+
+	xTaskCreate((TaskFunction_t)	task_Check,
+				(char*)				"task_Check",
+				(uint16_t)			1024,
+				(void*)				NULL,
+				(UBaseType_t)		3,
+				(TaskHandle_t*)		&task_Check_Handle);
+				
 }
 //CAN线测试
 // int16_t test_data[4];

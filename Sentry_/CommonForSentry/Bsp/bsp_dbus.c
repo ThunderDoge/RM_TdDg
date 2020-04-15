@@ -18,9 +18,6 @@
 */
 #include "bsp_dbus.h"
 
-/// 离线检测 结构体
-CheckDevice_Type Dbus_CheckDevice(DbusDevice,100);
-
 
 bsp_dbus_RC_Data bsp_dbus_Data; //Dbus解算数据
 static uint8_t Dbus_Rxbuffer[BSP_DBUS_BUFFER_SIZE]={0}; //Dbus接收数据缓存数组
@@ -100,6 +97,10 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 		bsp_dbus_Data.Mouse.Leftkey = Dbus_Rxbuffer[12];
 		bsp_dbus_Data.Mouse.Rightkey = Dbus_Rxbuffer[13];
 		bsp_dbus_Data.Keys = ((int16_t)Dbus_Rxbuffer[14] | (int16_t)Dbus_Rxbuffer[15]<<8);
+        
+        //更新时间戳
+        bsp_dbus_Data.UpdateTick = HAL_GetTick();
+
 	}
 #else
 	static void bsp_dbus_Analysis(void)
@@ -128,8 +129,8 @@ static HAL_StatusTypeDef bsp_dbus_Datacheck(void)
 		bsp_dbus_Data.CH_2 -= 1024+Dbus_CHx_StaticOffset[2];
 		bsp_dbus_Data.CH_3 -= 1024+Dbus_CHx_StaticOffset[3];
 		
-		//离线检测更新
-		Dbus_CheckDevice.update_hook_func(&Dbus_CheckDevice);
+        //更新时间戳
+        bsp_dbus_Data.UpdateTick = HAL_GetTick();
 	}
 #endif
 

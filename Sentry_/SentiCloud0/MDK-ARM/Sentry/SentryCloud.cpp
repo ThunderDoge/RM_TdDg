@@ -10,36 +10,6 @@
  */
 #include "SentryCloud.hpp"
 
-// ---------------------------------离线检测用 函数定义---------------------------
-// !!!使用用了大量宏定义，请小心阅读
-// 宏定义(1)：定义函数：调用 MotorObj 的 isOffline。将此函数指针传给 CheckDevice_Type 
-#define DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(MotorObj)	\
-uint8_t func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj(void) \
-{		\
-	return CloudEntity.MotorObj.Is_Offline();	\
-}
-
-// 宏定义(2)：给出上面定义的函数的函数名
-#define FUNC_NAME(MotorObj) \
-	func_DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ_##MotorObj
-
-// (3):使用宏定义(1) 定义函数
-DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(PitchMotor)
-DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(YawMotor)
-DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricLeftMotor)
-DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(FricRightMotor)
-DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ(Feed2nd)
-
-//定义各个设备结构体，他们使用了(3)中定义的函数的指针
-CheckDevice_Type UpCloudLeftFric_CheckDevice(
-                (CheckDeviceID_Enum)         UpCloudLeftFricDevice,  // 设备ID
-                                            100,                    // 允许离线时间
-                                            FUNC_NAME(FricLeftMotor) ); // 离线检测函数 函数名
-CheckDevice_Type UpCloudRightFric_CheckDevice(UpCloudRightFricDevice,100,FUNC_NAME(FricRightMotor));
-CheckDevice_Type UpCloudYawMotor_CheckDevice(UpCloudYawMotorDevice,100,FUNC_NAME(YawMotor));
-CheckDevice_Type UpCloudPitchMotor_CheckDevice(UpCloudPitchMotorDevice,100,FUNC_NAME(PitchMotor));
-CheckDevice_Type UpCloudFeedMotor_CheckDevice(UpCloudFeedMotorDevice,100,FUNC_NAME(Feed2nd));
-
 // ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
 app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,NULL);
 app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,NULL);
@@ -736,8 +706,6 @@ void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t sh
 
 
 
-#undef DEF_CHECKDEVICE_IS_OFFLINE_FUNCION_MOTOR_OBJ
-#undef FUNC_NAME
 
 
 
