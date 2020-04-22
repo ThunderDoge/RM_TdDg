@@ -1,14 +1,15 @@
 /**
- * @file task_SentiCloud.cpp
- * @author ThunderDoge (thunderdoge@qq.com)
- * @brief Tasks of SentryCloud
- * @version 0.1
- * @date 2020-02-18
+ * @file      task_SentiCloud.cpp
+ * @brief     哨兵云台RTOS任务
+ * @details   
+ * @author   ThunderDoge
+ * @date      2020-4-15
+ * @version   v1.0
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+ * Using encoding: gb2312
  * 
- * @copyright Copyright (c) 2020
- * 
+ * v1.0 2020-4-15   标准版本发布. 已添加离线检测
  */
-
 #include "task_SentiCloud.hpp"
 
 
@@ -69,11 +70,12 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
-		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2ms
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
+//		vTaskDelayUntil(&LastTick,10 / portTICK_PERIOD_MS);
+		vTaskDelay( 10 / portTICK_PERIOD_MS );
 	}
 }
 
@@ -87,8 +89,8 @@ void task_Check(void* param)
 	app_check_Init();
 
     // 与云台的连接
-	app_check_EnableDevice(id_UpCloudConnect,500);
-    app_check_SignDeviceTickTo(id_UpCloudConnect,&CanRx.CanUpdateTime[tUpCloud_Info]);
+	app_check_EnableDevice(id_DownCloudConnect,500);
+    app_check_SignDeviceTickTo(id_DownCloudConnect,&CanRx.CanUpdateTime[tDownCloud_Info]);
     app_check_EnableDevice(id_ChassisConnect,500);
     app_check_SignDeviceTickTo(id_ChassisConnect,&CanRx.CanUpdateTime[tChassis_Info]);
     // DBUS
@@ -138,19 +140,19 @@ void TaskStarter(void)
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
-	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
-				(char*)				"task_CommuRoutine",
-				(uint16_t)			1024,
-				(void*)				NULL,
-				(UBaseType_t)		3,
-				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+//	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+//				(char*)				"task_CommuRoutine",
+//				(uint16_t)			1024,
+//				(void*)				NULL,
+//				(UBaseType_t)		3,
+//				(TaskHandle_t*)		&task_CommuRoutine_Handle);
 
-	xTaskCreate((TaskFunction_t)	task_Check,
-				(char*)				"task_Check",
-				(uint16_t)			1024,
-				(void*)				NULL,
-				(UBaseType_t)		3,
-				(TaskHandle_t*)		&task_Check_Handle);
+//	xTaskCreate((TaskFunction_t)	task_Check,
+//				(char*)				"task_Check",
+//				(uint16_t)			1024,
+//				(void*)				NULL,
+//				(UBaseType_t)		3,
+//				(TaskHandle_t*)		&task_Check_Handle);
 				
 }
 //CAN线测试

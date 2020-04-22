@@ -5,7 +5,7 @@
  * 
  * @author   ThunderDoge
  * @date      2020-4-14
- * @version   
+ * @version   v0.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
  * Using encoding: gb2312
  */
@@ -24,6 +24,7 @@ void app_check_Init(void)
     {
         ENABLE_OF(i) = 0;
 		OFFLINE_OF(i) = 1;
+        DEVICE_OF(i).DeviceID = ((DeviceIdEnum)i);
         DEVICE_OF(i).OfflineThreshold=100U;
         DEVICE_OF(i).LastTick=0U;
         DEVICE_OF(i).online_callback = NULL;
@@ -104,20 +105,23 @@ uint8_t app_check_IsOffline(DeviceIdEnum device_id)
     {
         if( DEVICE_OF(device_id).offline_callback != NULL )
         {
-            DEVICE_OF(device_id).offline_callback();
+            DEVICE_OF(device_id).offline_callback(&DEVICE_OF(device_id));
         }
     }
     else
     {
         if( DEVICE_OF(device_id).online_callback != NULL )
         {
-            DEVICE_OF(device_id).online_callback();
+            DEVICE_OF(device_id).online_callback(&DEVICE_OF(device_id));
         }
     }
     
     return is_offline;  // 返回离线状态
 }
-
+/**
+ * @brief 刷新整个设备表
+ * 
+ */
 void app_check_RefreshList(void)
 {
 	for(int i=0;i<DeviceIdEnumCount;i++)
@@ -127,11 +131,11 @@ void app_check_RefreshList(void)
 	}
 }
 
-void app_check_SignOfflineCallback(DeviceIdEnum device_id,void(*fptr)(void))
+void app_check_SignOfflineCallback(DeviceIdEnum device_id,pDeviceCallbackTypedef fptr)
 {
     DEVICE_OF(device_id).offline_callback = fptr;
 }
-void app_check_SignOnlineCallback(DeviceIdEnum device_id,void(*fptr)(void))
+void app_check_SignOnlineCallback(DeviceIdEnum device_id,pDeviceCallbackTypedef fptr)
 {
     DEVICE_OF(device_id).online_callback = fptr;
 }

@@ -1,12 +1,17 @@
 /**
- * 
  * @file SentryCloud.cpp
- * @brief    哨兵云台电机控制集合 Sentry Cloud Motors Control
- * @details     Encoding - GB2312
+ * @brief    哨兵上云台
+ * @details     Encoding - UTF8
+ * 包含：
+ * 云台电机控制：左/右俯仰轴、航向轴、左/右摩擦轮、拨弹
+ * 云台俯仰轴电机离线检测。如果检测到离线会改为使用未离线的电机进行PID及控制。
+ * 航向角 机械角/陀螺仪 灵活切换。因为在某些角度的航向角机械角控制会抖动。
  * @author   ThunderDoge
  * @date     2019/12/1
- * @version  v0.1-Develop
+ * @version  v1.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
+ * 
+ * v1.0 2020-4-15   发布
  */
 #include "SentryCloud.hpp"
 
@@ -39,7 +44,7 @@ void RunModeCloudCtrlMech(void)
     app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//注意负号。
 }
 /**
- * @brief 
+ * @brief 进入云台陀螺仪控制模式
  * 
  */
 void EnterModeCloudCtrlGyro(void)
@@ -49,6 +54,10 @@ void EnterModeCloudCtrlGyro(void)
     CloudEntity.Mode = absolute_cloud; //视为绝对角控制
 
 }
+/**
+ * @brief 运行云台陀螺仪控制模式
+ * 
+ */
 void RunModeCloudCtrlGyro(void)
 {
 

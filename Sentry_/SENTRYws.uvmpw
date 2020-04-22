@@ -14,11 +14,11 @@
   </project>
 
   <project>
-    <PathAndName>.\SentiCloudDown\MDK-ARM\SentiCloudDown.uvprojx</PathAndName>
+    <PathAndName>.\SentryChassis\MDK-ARM\SentryChassis.uvprojx</PathAndName>
   </project>
 
   <project>
-    <PathAndName>.\SentryChassis\MDK-ARM\SentryChassis.uvprojx</PathAndName>
+    <PathAndName>.\SentiCloudDown\MDK-ARM\SentiCloudDown.uvprojx</PathAndName>
   </project>
 
 </ProjectWorkspace>

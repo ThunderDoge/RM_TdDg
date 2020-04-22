@@ -14,20 +14,28 @@ ThunderDoge将哨兵专用的串口协议调整写入了该文件，并且改名
 */
 //与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 
-#ifndef __BSP_VISION_HPP
-#define __BSP_VISION_HPP
+#ifndef __APP_VISION_HPP
+#define __APP_VISION_HPP
+
 
 #include "sentry_ctrl_def.hpp" //因为需要使用 _cloud_ctrl_mode 所以包含了。
 #include "stm32f4xx.h"
+#include "stm32f4xx_hal_uart.h"
 #include "usart.h"
 #include <string.h>
 
-//#include "sentry_can_commom.hpp"
 
 //外设相关宏定义,移植时如果修改了外设请在这里修改
-#define BSP_VISION_UART huart1
+#define APP_VISION_UART huart1
 //视觉串口接收缓存的数组大小，有需要请在这里修改,使用空闲中断要求这个数至少要大于18
-#define BSP_VISION_BUFFER_SIZE 120
+#define APP_VISION_BUFFER_SIZE 120
+
+//使用信号量控制串口 宏定义
+#define APP_VISION_USE_SEMAPHORE	1
+
+#if(APP_VISION_USE_SEMAPHORE)
+#include "cmsis_os.h"
+#endif
 
 ///数据帧关键位置
 enum __app_vision_Keywords
@@ -75,15 +83,16 @@ enum __app_vision_Functionwords
     STA_CHASSIS = 0X13,
 
     JUD_GAME_STATUS = 0x20,
-    JUD_ENY_HP = 0x21,
-    JUD_GAME_EVENT = 0x22,
-    JUD_SELF_HP = 0x23,
+    JUD_SELF_HP = 0x21,
+    JUD_BLUE_HP = 0x22,
+    JUD_RED_HP = 0x23,
     JUD_GUN_CHASSIS_HEAT = 0x24,
     JUD_SELF_BUFF = 0x25,
     JUD_TAKING_DMG = 0x26,
     JUD_SHOOTING = 0x27,
     JUD_AMMO_LEFT = 0x28,
-    JUD_USER = 0x29,
+    // JUD_GAME_EVENT = 0x29,
+    JUD_USER = 0x31,
 };
 
 ///视觉传输数据解析结构体
@@ -137,17 +146,21 @@ enum __app_vision_RobotError
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>重要！！！！！需要用户自己实现的函数<<<<<<<<<<<<<<<<<<<<<*/
 __weak HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* i,float* d);
 
-
 extern sentry_vision_data VisionTx, VisionRx; ///串口发送/接收缓存结构体
 extern uint8_t Vision_Txbuffer[18];           ///串口发送暂存数组
-extern uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE];
+extern uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE];
+
+#if(APP_VISION_USE_SEMAPHORE)
+	extern SemaphoreHandle_t app_vision_uart_semaphore;
+#endif
 
 void app_vision_Init(void); ///视觉串口初始化
 void app_vision_It(void);   ///视觉串口中断处理
 
 void app_vision_another_Init(void);
-void app_vision_dma_cpltcallback(void); ///
-void app_vision_dma_abort_in_idle(void);
+void app_vision_dma_rx_cpltcallback(void); ///
+void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart);
+void app_vision_dma_rx_abort_in_idle(void);
 uint8_t app_vision_analysis_intgrated(void);
 
 // HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword);
@@ -160,6 +173,24 @@ void app_vision_load_to_txbuffer(
 
 void app_vision_load_to_txbuffer(
     float fdata, int loaction_at_buffdata); ///将数据装入缓存Vision_Txbuffer中
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 各个功能字单独的发送函数
 void CMD_GET_MCU_STATE_Tx(float pitch, float, float yaw_soft,

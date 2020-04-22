@@ -209,13 +209,14 @@ void UP_CLOUD_STATES_CanTx()
     SentryCanSend(&CAN_INTERBOARD, UP_CLOUD_STATES, CanTx.UpCloudPitchYaw[0],
                   CanTx.UpCloudPitchYaw[1]);
 }
-
+#endif // __PROJECT_SENTRY_CLOUD_
+#ifdef __PROJECT_SENTRY_DOWN_CLOUD_
 void DOWN_CLOUD_STATES_CanTx()
 {
     SentryCanSend(&CAN_INTERBOARD, DOWN_CLOUD_STATES,
                   CanTx.DownCloudPitchYaw[0], CanTx.DownCloudPitchYaw[1]);
 }
-#endif // __PROJECT_SENTRY_CLOUD_
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
 #ifdef __PROJECT_SENTRY_CHASSIS_
 void CHASSIS_STATES_CanTx()
@@ -247,37 +248,23 @@ void CHASSIS_PILLAR_CanTx()
  */
 void UpCloudCanCommuRoutine(void)
 {
-// 	if(CurrentMode ==  MODE_VIISON_SHOOTING_TEST)
-// 	{
-//     CanTx.SuperCon_ChassisMode = VisionRx.chassis_mode;
-//     CanTx.SuperCon_ChassisSpeedLocation[0] = VisionRx.Vx;
-//     CanTx.SuperCon_ChassisSpeedLocation[1] = VisionRx.Px;
-//     CanTx.SuperiorControlFlags = 1;
-// 	}
-// 	if(GlobalMode == MODE_MANUAL_CHASSIS_MOVE)
-//  {
-// 		CanTx.SuperCon_ChassisMode = _chassis_speed;
-// 		CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_0 * 8000.0f / 660.0f;
-// 		CanTx.SuperiorControlFlags = 1;
-// 	}
-// 	SUPERIOR_CHASSIS_MOVE_CanTx();
-//     SUPERIOR_CHASSIS_SET_LOACTION_CanTx();
-//     SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx(); //
-
     CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //装载数据
     CanTx.UpCloudPitchYaw[1] = CloudEntity.RealYaw;
     UP_CLOUD_STATES_CanTx();    //发送数据帧
 }
+#endif // __PROJECT_SENTRY_CLOUD_
+#ifdef __PROJECT_SENTRY_DOWN_CLOUD_
+
 /**
  * @brief 云台定时发送的板间CAN通信 - 下云台
  */
 void DownCloudCanCommuRoutine(void)
 {
-    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //装载数据
-    CanTx.UpCloudPitchYaw[1] = CloudEntity.RealYaw;
+    CanTx.UpCloudPitchYaw[0] = DownCloudEntity.RealPitch;   //装载数据
+    CanTx.UpCloudPitchYaw[1] = DownCloudEntity.RealYaw;
     DOWN_CLOUD_STATES_CanTx();  //发送数据帧
 }
-#endif  //__PROJECT_SENTRY_CLOUD_
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 #ifdef __PROJECT_SENTRY_CHASSIS_
 /**
  * @brief 底盘定时发送的板间CAN通信
@@ -389,7 +376,7 @@ void SUPERIOR_SAFE_CanTx()
  */
 #ifdef __PROJECT_SENTRY_CLOUD_
 
-///上云台控制
+/// 上云台控制
 void SUPERIOR_UP_RELATIVE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_UP_RELATIVE_CMD)
@@ -408,7 +395,9 @@ void SUPERIOR_UP_ABSOLUTE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
         CanRx.CanUpdateTime[tSuperCon_UpCloud] = CanRx.CanUpdateTime[tSuperiorControl] =CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
     }
 }
-//下云台控制
+#endif // __PROJECT_SENTRY_CLOUD_
+#ifdef __PROJECT_SENTRY_DOWN_CLOUD_
+/// 下云台控制
 void SUPERIOR_DOWN_RELATIVE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
     if (StdId == SUPERIOR_DOWN_RELATIVE_CMD)
@@ -423,7 +412,7 @@ void SUPERIOR_DOWN_ABSOLUTE_CMD_CanRx(uint32_t StdId, uint8_t *ptrData)
         }
 
 }
-#endif // __PROJECT_SENTRY_CLOUD_
+#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 #ifdef __PROJECT_SENTRY_CHASSIS_
 
 ///底盘运动
@@ -488,10 +477,6 @@ void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
 }
 #endif // __PROJECT_SENTRY_CHASSIS_
 
-/**
- * @} 
- * SuCmdCanRx
- */
 
 
 //供弹。因为结构调整而废弃。
@@ -520,14 +505,3 @@ void DOWN_FEED_CanTx()
     SentryCanSend(&CAN_INTERBOARD, DOWN_FEED, data);
 }
 */
-
-
-/**
- * @}
- * End of group: SuperiorCommands
- * 
- * 
- * 
- * @}
- * End of group: Can_TxRx_Functions
- */

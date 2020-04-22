@@ -11,8 +11,9 @@
 
 #include "task_SentryDownCloud.hpp"
 
-TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle,task_CheckDevice_Handle;
+TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle,task_Check_Handle;
 uint32_t mark1, mark2;
+uint32_t mark3;
 
 
 static uint8_t is_cloud_inited=0;   // 哨兵初始化标志位
@@ -35,18 +36,6 @@ void DownCloud_Init(void)
 
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
 	
-	// 离线检测初始化
-	app_sentry_CheckDevice_Init();
-	// 设备添加到设备列表
-    app_sentry_CheckDevice_AddToArray(&UpCloudRightFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudLeftFric_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudYawMotor_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&UpCloudFeedMotor_CheckDevice);
-	
-	// 离线检测结构体 设置
-	app_sentry_CheckDevice_AddToArray(&Dbus_CheckDevice);
-    app_sentry_CheckDevice_AddToArray(&IMU_CheckDevice);
 
 	// 初始化标识变量
     is_cloud_inited = 1;
@@ -89,7 +78,7 @@ void task_CommuRoutine(void *param)
     while (1)
     {
 		// CloudVisonTxRoutine();  //云台视觉串口发送
-		UpCloudCanCommuRoutine(); //上云台CAN发送
+		DownCloudCanCommuRoutine(); //上云台CAN发送
 		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2ms
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
@@ -97,6 +86,50 @@ void task_CommuRoutine(void *param)
 		#endif
 	}
 }
+
+
+/**
+ * @brief 设备离线检测任务
+ * 
+ * @param     param 
+ */
+void task_Check(void* param)
+{
+	app_check_Init();
+
+    // 与云台的连接
+	app_check_EnableDevice(id_UpCloudConnect,500);
+    app_check_SignDeviceTickTo(id_UpCloudConnect,&CanRx.CanUpdateTime[tUpCloud_Info]);
+    app_check_EnableDevice(id_ChassisConnect,500);
+    app_check_SignDeviceTickTo(id_ChassisConnect,&CanRx.CanUpdateTime[tChassis_Info]);
+    // 电机设定
+    app_check_EnableDevice(id_DownCloudPitchMotor,50);
+    app_check_SignDeviceTickTo(id_DownCloudPitchMotor,&DownCloudEntity.PitchMotor.LastUpdateTime);
+    app_check_EnableDevice(id_DownCloudYawMotor,50);
+    app_check_SignDeviceTickTo(id_DownCloudYawMotor,&DownCloudEntity.YawMotor.LastUpdateTime);
+    app_check_EnableDevice(id_DownCloudLeftFric,50);
+    app_check_SignDeviceTickTo(id_DownCloudLeftFric,&DownCloudEntity.FricLeftMotor.LastUpdateTime);
+    app_check_EnableDevice(id_DownCloudRightFric,50);
+    app_check_SignDeviceTickTo(id_DownCloudRightFric,&DownCloudEntity.FricRightMotor.LastUpdateTime);
+    app_check_EnableDevice(id_DownCloudFeedMotor,50);
+    app_check_SignDeviceTickTo(id_DownCloudFeedMotor,&DownCloudEntity.Feed2nd.LastUpdateTime);
+
+    
+    while (1)
+    {
+        app_check_RefreshList();    // 刷新离线列表
+        #ifdef INCLUDE_uxTaskGetStackHighWaterMark
+		mark3 = uxTaskGetStackHighWaterMark(task_Check_Handle);  //占用堆栈水位线。备用于DEBUG
+		#endif
+
+        vTaskDelay(10/portTICK_PERIOD_MS);  
+    }
+    
+}
+
+
+
+
 /**
   * @brief  任务启动器
   * @details  
@@ -110,24 +143,24 @@ void TaskStarter(void)
     }
     xTaskCreate((TaskFunction_t)	task_Main,		//任务代码
 				(char*)				"task_Main",	//任务名
-				(uint16_t)			512,			//堆栈深度
+				(uint16_t)			1024,			//堆栈深度
 				(void*)				NULL,			//参数列表
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
 	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
 				(char*)				"task_CommuRoutine",
-				(uint16_t)			512,
+				(uint16_t)			1024,
 				(void*)				NULL,
 				(UBaseType_t)		4,
 				(TaskHandle_t*)		&task_CommuRoutine_Handle);
 				
-	// xTaskCreate((TaskFunction_t)	task_CheckDevice,
-	// 			(char*)				"task_CheckDevice",
-	// 			(uint16_t)			512,
-	// 			(void*)				NULL,
-	// 			(UBaseType_t)		4,
-	// 			(TaskHandle_t*)		&task_CheckDevice_Handle);
+	xTaskCreate((TaskFunction_t)	task_Check,
+				(char*)				"task_Check",
+				(uint16_t)			1024,
+				(void*)				NULL,
+				(UBaseType_t)		4,
+				(TaskHandle_t*)		&task_Check_Handle);
 }
 //CAN线测试
 // int16_t test_data[4];

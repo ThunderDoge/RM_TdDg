@@ -1,6 +1,6 @@
 /**
  * @file       Sentry.hpp
- * @brief    哨兵总头文件
+ * @brief    鍝ㄥ叺鎬诲ご鏂囦欢
  * @details  
  * @author   ThunderDoge
  * @date     

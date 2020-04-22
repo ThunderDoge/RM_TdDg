@@ -24,7 +24,6 @@
    * @version  0.1
    * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
    */
-  
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -39,6 +38,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "task_SentiCloud.hpp"  // the only depend file.
+#include "SEGGER_SYSVIEW.h"		// SEGGER SystemView Support
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -164,7 +164,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -181,7 +180,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     //TaskStarter() called in MX_FREERTOS_Init();
 	Cloud_Init();	// 在操作系统初始化之前 硬件初始化
-
+  SEGGER_SYSVIEW_Conf();            /* Configure and initialize SystemView  */
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

@@ -14,25 +14,12 @@
 #define __PROJECT_SENTRY_DOWN_CLOUD_
 #endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
-#include "bsp_dbus.h"
 #include "SentryDownCloud.hpp"
 #include "SentryDownCloudCommu.hpp"
 #include "app_mode.hpp"
 
-enum GlobalModeName : uint8_t
-{
-    MODE_SAFE = 0X00,
-    MODE_MANUAL_SHOOTING_TEST,
-    MODE_VIISON_SHOOTING_TEST,
-    MODE_FRIC_TEST,
-    MODE_KEYBOARD_TEST,
-    MODE_MANUAL_CHASSIS_MOVE,
-    MODE_AUTONOMOUS,
-};
-
-// extern GlobalModeName GlobalMode;
 // extern CommandSourceName CommandSource;
-extern SentryCloud CloudEntity;
+extern SentryCloud DownCloudEntity;
 
 extern app_Mode* CurrentMode,*LastMode;
 
@@ -45,18 +32,7 @@ extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisio
 
 void ModeSelect(); ///主逻辑-模式选择
 
-void ManualChassis(); ///手动底盘
-void ManualShoot();   ///手动操炮射击
-void ManualShootEnter();
-void ManualShoot_Gyro();
-void ManualShoot_Gyro_Enter();
-void ManualFeed();
-void VisionFeed();
-
 void VisionControl(); ///视觉调试
-void VisionControlEnter();
-void VisionControlExit();
-void AutoMove();      ///全自动移动
 void GlobalSafe();    ///安全模式
 
 /** @} */

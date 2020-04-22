@@ -1,12 +1,14 @@
 /**
  * @file Sentry.hpp
- * @brief    ÉÚ±øÖ§³Ö°ü
- * @details  
- * @author   ThunderDoge
- * @date     
- * @version  
- * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
- */
+  * @brief    哨兵总头文件
+  * @details  
+  * @author   ThunderDoge
+  * @date     2020-4-15
+  * @version  v1.0
+  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+  * 
+  * v1.0    2020-4-15   
+  */
 /**
  * @mainpage
  */

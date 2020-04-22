@@ -76,12 +76,26 @@ void GlobalSafe()
  */
 void Automonus(void)
 {
-//    if(Connection_UpCloud.is_offline==0 || Connection_DownCloud.is_offline==0)  // 检查有没有上线
-//    {
-//        CurrentMode=&ModeSuperSuperiorControl;
-//        return;
-//    }
-    
+    if( !app_check_IsOffline(id_UpCloudConnect) || !app_check_IsOffline(id_DownCloudConnect)  )  // 检查有没有上线
+    {
+        CurrentMode=&ModeSuperSuperiorControl;
+        return;
+    }
+	
+	if( GET_DMG_IN_LAST_5s)
+	{
+		ENABLE_USE_BUF_POW;
+	}
+	else
+	{
+		DISABLE_USE_BUF_POW;
+	}
+	
+	if( REACHED_LAST_LOCATION )
+	{
+		GERERATE_NEXT_LOCATION();
+	}
+	CTRL_TO_LOCATION();
 }
 
 

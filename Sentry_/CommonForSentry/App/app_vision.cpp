@@ -5,12 +5,12 @@
 * @details  32与小主机的通讯处理
 * @author   Evan-GH & ThunderDoge
 * @date      2019.12.8
-* @version  v2.1.1
+* @version  v3.0
 * @par Copyright (c):  RM2020电控
 * @par 日志
     2019/12/8   将Evan-GH个人串口版本1.2合并到公共代码库串口v2.1.0
     2019/12/8   ThunderDoge依据自己的喜好将串口库更改为v2.1.1   增加了部分功能。修改了一些写法
-
+    v3.0    2020-4-16   重写视觉串口。使用RTOS任务来统一管理串口的发送和接收。
     PS 与视觉的通信协议参见《RM2020基本视觉协议 v2.0》 by Evan-GH
 */
 
@@ -30,7 +30,7 @@
 
 ///储存数据使用的结构体
 sentry_vision_data VisionRx, VisionTx; ///视觉串口解析到的数据,视觉串口发送的数据
-uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
+uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
 
 
 
@@ -38,7 +38,9 @@ uint8_t Vision_Rxbuffer[BSP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据
 static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
 int not_analysed_index=0;                  /// Vision_Rxbuffer中从[0]到[not_analysed_index -1]的内容都未曾解析。
 
-
+#if(APP_VISION_USE_SEMAPHORE)
+SemaphoreHandle_t app_vision_uart_semaphore;
+#endif
 
 /// 根据协议解析的函数的集合。在缓存数据解析中调用。
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);   ///统一的接收缓存处理函数。！Vision_Rxbuffer应当验证通过已符合数据帧帧格式
@@ -62,7 +64,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);   ///统一的接收缓存
 uint8_t app_vision_Analysis(void)
 {
     int16_t _check_sum = 0;                         //和校验用变量
-    if (Array_index <= BSP_VISION_BUFFER_SIZE - 18) //检查未超过下标
+    if (Array_index <= APP_VISION_BUFFER_SIZE - 18) //检查未超过下标
     {
         //缓冲区里检测数据帧，首先要帧头帧尾对了才开始解包
         if ((Vision_Rxbuffer[Array_index + Frame_header] == FRAME_HEADER_DATA) && (Vision_Rxbuffer[Array_index + Frame_end] == FRAME_END_DATA))
@@ -219,32 +221,56 @@ uint8_t app_vision_analysis_intgrated(void)
 
 }
 
+/// DMA发送回调函数。释放信号量
+void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart)
+{
+	#if(APP_VISION_USE_SEMAPHORE)
+	xSemaphoreGiveFromISR(app_vision_uart_semaphore,NULL);
+	#endif
+}
+
+
+
 
 
 /**
 * @brief  视觉串口初始化
-* @details  重置空闲(IDLE)中断位，开启空闲中断。关闭其他的无关中断。开启UART-DMA接收，绑定到Vision_Rxbuffer。长度设置为BSP_VISION_BUFFER_SIZE。
+* @details  重置空闲(IDLE)中断位，开启空闲中断。关闭其他的无关中断。开启UART-DMA接收，绑定到Vision_Rxbuffer。长度设置为APP_VISION_BUFFER_SIZE。
 * @param  NULL
 * @retval  NULL
 */
 void app_vision_Init(void)
 {
-    __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);          //清除空闲中断位
-    __HAL_UART_ENABLE_IT(&BSP_VISION_UART, UART_IT_IDLE); //使能DMA接收空闲中断
+    __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);          //清除空闲中断位
+    __HAL_UART_ENABLE_IT(&APP_VISION_UART, UART_IT_IDLE); //使能DMA接收空闲中断
 
 #ifdef VIUART_DISABLE_OTHER_IT //除能其他所有的中断
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_CTS);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_LBD);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_TXE);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_TC);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_RXNE);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_PE);
-    __HAL_UART_DISABLE_IT(&BSP_VISION_UART, UART_IT_ERR);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_CTS);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_LBD);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_TXE);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_TC);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_RXNE);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_PE);
+    __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_ERR);
 #endif
 
-    HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
+    HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
+	
+#if(APP_VISION_USE_SEMAPHORE)
+	app_vision_uart_semaphore = xSemaphoreCreateBinary();
+	xSemaphoreGive(app_vision_uart_semaphore);
+#endif
+#if(USE_HAL_UART_REGISTER_CALLBACKS == 1)
+	HAL_UART_RegisterCallback(&APP_VISION_UART,HAL_UART_RX_COMPLETE_CB_ID,app_vision_dma_tx_cpltcallback);
+#endif
 }
 
+#if(USE_HAL_UART_REGISTER_CALLBACKS != 1)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	app_vision_dma_tx_cpltcallback(huart);
+}
+#endif
 
 
 
@@ -261,16 +287,16 @@ void app_vision_Init(void)
 void app_vision_It(void)
 {
 #ifndef VIUART_DISABLE_OTHER_IT                                         //除能其他所有的中断，不再需要判断
-    if (__HAL_UART_GET_FLAG(&BSP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
+    if (__HAL_UART_GET_FLAG(&APP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
 #endif
     {
-        HAL_UART_DMAStop(&BSP_VISION_UART); //关闭DMA
+        HAL_UART_DMAStop(&APP_VISION_UART); //关闭DMA
         while (app_vision_Analysis())
             ;                                                                                       //数据解析，遍历一次缓冲区
-        memset(Vision_Rxbuffer, 0, BSP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
-        __HAL_UART_CLEAR_IDLEFLAG(&BSP_VISION_UART);                                                //清除空闲中断标志位
-        HAL_UART_DMAResume(&BSP_VISION_UART);                                                       //重新打开DMA
-        HAL_UART_Receive_DMA(&BSP_VISION_UART, (uint8_t *)Vision_Rxbuffer, BSP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
+        memset(Vision_Rxbuffer, 0, APP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
+        __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);                                                //清除空闲中断标志位
+        HAL_UART_DMAResume(&APP_VISION_UART);                                                       //重新打开DMA
+        HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
     }
 }
 
@@ -280,18 +306,18 @@ void app_vision_It(void)
  * @brief 接收的数量
  * 
  */
-void app_vision_dma_abort_in_idle(void)
+void app_vision_dma_rx_abort_in_idle(void)
 {
     // 将已收到的数据登记到未解析数据
-    not_analysed_index += BSP_VISION_UART.RxXferSize -BSP_VISION_UART.RxXferCount;
+    not_analysed_index += APP_VISION_UART.RxXferSize -APP_VISION_UART.RxXferCount;
     
-    HAL_UART_AbortReceive_IT(&BSP_VISION_UART); // 停止收，这个函数可以用于DMA接收和中断接收的停止。详见此函数注释。
+    HAL_UART_AbortReceive_IT(&APP_VISION_UART); // 停止收，这个函数可以用于DMA接收和中断接收的停止。详见此函数注释。
 
     app_vision_analysis_intgrated();            //解析. 在里面 not_analysed_index 更新了
     
-    HAL_UART_Receive_DMA(&BSP_VISION_UART,      //重启接收
+    HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
         Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
-        BSP_VISION_BUFFER_SIZE-not_analysed_index); // 接收的数量一直到填满 Vision_Rxbuffer
+        APP_VISION_BUFFER_SIZE-not_analysed_index); // 接收的数量一直到填满 Vision_Rxbuffer
     
     return ;
 }
@@ -305,15 +331,15 @@ void app_vision_dma_abort_in_idle(void)
  * 启动数据解析。
  * 
  */
-void app_vision_dma_cpltcallback(void)
+void app_vision_dma_rx_cpltcallback(void)
 {
-	not_analysed_index = BSP_VISION_BUFFER_SIZE;	// 直接设定整个缓存为为未解析。因为DMA/IT接收启动时 设定是接受满缓存才会接收完成返回。
+	not_analysed_index = APP_VISION_BUFFER_SIZE;	// 直接设定整个缓存为为未解析。因为DMA/IT接收启动时 设定是接受满缓存才会接收完成返回。
 	
     app_vision_analysis_intgrated();            //解析
     
-    HAL_UART_Receive_DMA(&BSP_VISION_UART,      //重启接收
+    HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
         Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
-        BSP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+        APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
 
     return ;
 }
@@ -329,6 +355,8 @@ void app_vision_dma_cpltcallback(void)
 
 
 
+
+//-------------------------------------下面是视觉串口 根据协议发送的函数--------------------------------------------------
 
 
 /**
@@ -367,6 +395,13 @@ void app_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
  */
 HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 {
+	#if(APP_VISION_USE_SEMAPHORE)
+		if(xSemaphoreTake(app_vision_uart_semaphore,1/portTICK_PERIOD_MS) == errQUEUE_EMPTY)	// 获取信号量
+		{
+			HAL_UART_AbortTransmit_IT(&APP_VISION_UART);	// 超时未得到信号量，会强行终止串口发送
+		}
+	#endif
+
     int16_t _check_sum = 0; //和校验用变量
     // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     Vision_Txbuffer[Frame_header] = FRAME_HEADER_DATA;
@@ -379,24 +414,14 @@ HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
     }
     _check_sum = _check_sum & 0xff;
     Vision_Txbuffer[Sum_check] = _check_sum;
-    //Check if UART Ready;
-    while (HAL_UART_GetState(&BSP_VISION_UART) == HAL_UART_STATE_BUSY_TX ||
-           HAL_UART_GetState(&BSP_VISION_UART) == HAL_UART_STATE_BUSY_TX_RX)
-    {
-        // s1 = HAL_UART_GetState(&BSP_VISION_UART);
-#ifdef INC_FREERTOS_H
-        vTaskDelay(1);
-//#else
-//	HAL_Delay(1);
-#endif
-    }
 
-    return HAL_UART_Transmit_DMA(&BSP_VISION_UART, Vision_Txbuffer, 18);
+    return HAL_UART_Transmit_DMA(&APP_VISION_UART, Vision_Txbuffer, 18);
 }
-#define USE_VISION
-#ifdef USE_VISION
-//VisionUart TxRx Functions 视觉串口函数
-//VisionUart Recv 视觉串口接收函数
+
+
+
+
+
 ///云台相对角度控制
 void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
 {
@@ -537,7 +562,7 @@ __weak HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,
  */
 void CMD_READ_PID_Tx(uint8_t pid_id,float p,float i,float d)
 {
-	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	while(HAL_DMA_GetState( APP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
@@ -603,7 +628,7 @@ static void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 ///视觉串口发送函数
 void CMD_GET_MCU_STATE_Tx(float pitch,float yaw_mech,float yaw_soft,uint8_t cloud_mode,uint8_t shoot_mode)
 {
-	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	while(HAL_DMA_GetState( APP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
@@ -619,7 +644,7 @@ void CMD_GET_MCU_STATE_Tx(float pitch,float yaw_mech,float yaw_soft,uint8_t clou
 ///串口发送到小主机日志系统
 void ROBOT_ERR_Tx(uint8_t err_code)
 {
-	while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+	while(HAL_DMA_GetState( APP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
@@ -631,7 +656,7 @@ void ROBOT_ERR_Tx(uint8_t err_code)
 ///发送底盘状态
 void STA_CHASSIS_Tx(uint8_t chassis_mode,uint8_t pillar_flag,float velocity,float position)
 {
-		while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+		while(HAL_DMA_GetState( APP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
@@ -648,7 +673,7 @@ void STA_CHASSIS_Tx(uint8_t chassis_mode,uint8_t pillar_flag,float velocity,floa
 
 void JUD_GAME_STATUS_Tx(uint8_t game_progress,uint16_t stage_remain_time )
 {
-    while(HAL_DMA_GetState( BSP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
+    while(HAL_DMA_GetState( APP_VISION_UART.hdmatx )!=HAL_DMA_STATE_READY)
 	{
 //		vTaskDelay(1);
 	}
@@ -691,7 +716,6 @@ void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 
 
 
-#endif //USE_VISION
 
 
 /**
@@ -826,5 +850,5 @@ void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 //    _check_sum = _check_sum & 0xff;
 //    Vision_Txbuffer[Sum_check] = _check_sum;
 
-//    return HAL_UART_Transmit_DMA(&BSP_VISION_UART, Vision_Txbuffer, 18);
+//    return HAL_UART_Transmit_DMA(&APP_VISION_UART, Vision_Txbuffer, 18);
 //}

@@ -17,7 +17,7 @@
 #include "SentryChassisCommu.hpp"
 #include "bsp_adc_deal.h"
 #include "app_mode.hpp"
-
+#include "app_check.h"
 
 
 #define LEFT_BOUNCE_READY_DISTANCE

@@ -23,10 +23,11 @@
 //硬件驱动
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
-#include "bsp_dbus.h"
 #include "bsp_spi.h"
 #include "app_imu.h"
 
+// 离线检测逻辑
+#include "app_check.h"
 //机器人逻辑
 #include "Sentry.hpp"
 

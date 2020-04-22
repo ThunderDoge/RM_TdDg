@@ -1,11 +1,13 @@
 /**
  * @file SentryCloud.hpp
- * @brief    哨兵云台电机控制集合 Sentry Cloud Motors Control
- * @details     Encoding - GB2312
+ * @brief    哨兵上云台
+ * @details     Encoding - UTF-8
  * @author   ThunderDoge
  * @date     2019/12/1
- * @version  v0.1-Develop
+ * @version  v1.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
+ * 
+ * v1.0 2020-4-15   发布
  */
 #ifndef __SENTRY_CLOUD_HPP_
 #define __SENTRY_CLOUD_HPP_
@@ -162,13 +164,6 @@ private:
 };
 
 extern SentryCloud CloudEntity; ///云台物理实体对象。包含电机激光器等设备。
-
-// 设备对象。离线检测用
-extern CheckDevice_Type UpCloudLeftFric_CheckDevice;
-extern CheckDevice_Type UpCloudRightFric_CheckDevice;
-extern CheckDevice_Type UpCloudYawMotor_CheckDevice;
-extern CheckDevice_Type UpCloudPitchMotor_CheckDevice;
-extern CheckDevice_Type UpCloudFeedMotor_CheckDevice;
 
 //云台控制模式相关
 void EnterModeCloudCtrlMech(void);

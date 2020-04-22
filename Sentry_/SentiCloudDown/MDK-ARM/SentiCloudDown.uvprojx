@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--cpp11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx,MIGRATE_F407ZG</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;..\..\CommonForSentry\App;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;..\..\CommonForSentry\App_Sentry;.\Sentry</IncludePath>
             </VariousControls>
@@ -711,16 +711,21 @@
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App\app_mode.cpp</FilePath>
             </File>
+            <File>
+              <FileName>app_check.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_vision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_vision.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>App_Sentry</GroupName>
           <Files>
-            <File>
-              <FileName>app_sentry_check_device.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\CommonForSentry\App_Sentry\app_sentry_check_device.cpp</FilePath>
-            </File>
             <File>
               <FileName>sentry_can_commom.cpp</FileName>
               <FileType>8</FileType>
