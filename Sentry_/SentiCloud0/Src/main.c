@@ -179,7 +179,7 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
     //TaskStarter() called in MX_FREERTOS_Init();
-	Cloud_Init();	// 在操作系统初始化之前 硬件初始化
+	Cloud_Init();	// 在操作系统初始化之前 硬件初始�?
   SEGGER_SYSVIEW_Conf();            /* Configure and initialize SystemView  */
   /* USER CODE END 2 */
 

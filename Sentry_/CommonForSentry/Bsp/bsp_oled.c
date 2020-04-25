@@ -196,6 +196,11 @@ void bsp_oled_Clear(void)
 {
 	bsp_oled_Display_Fill(0X0);
 }
+/// 清空缓存
+void bsp_oled_ClearGram(void)
+{
+	memset(bsp_oled_Gram,0U,1024);  //填充数据
+}
 
 /**
  * @brief 画点函数

@@ -150,8 +150,6 @@
 #define  PREFETCH_ENABLE              1U
 #define  INSTRUCTION_CACHE_ENABLE     1U
 #define  DATA_CACHE_ENABLE            1U
-#define  USE_HAL_UART_REGISTER_CALLBACKS	1U	//Costom By ThunderDoge 2020-4-16
-
 
 /* ########################## Assert Selection ############################## */
 /**

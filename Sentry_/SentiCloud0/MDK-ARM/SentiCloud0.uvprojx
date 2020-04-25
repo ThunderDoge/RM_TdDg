@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -193,7 +193,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -312,8 +312,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
-            <oTime>1</oTime>
+            <Optim>1</Optim>
+            <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,USE_HAL_DRIVER,STM32F405xx,MIGRATE_F407ZG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\Sentry;..\..\CommonForSentry\App;..\..\CommonForSentry\App_Sentry;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;.\SEGGER;.\Config;.\Sample\FreeRTOSV10</IncludePath>
+              <IncludePath>../Inc;    ../Drivers/STM32F4xx_HAL_Driver/Inc;    ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;    ../Middlewares/Third_Party/FreeRTOS/Source/include;    ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;    ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;    ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;    ../Drivers/CMSIS/Include;    .\Task;    .\Sentry;    ..\..\CommonForSentry\App;    ..\..\CommonForSentry\App_Sentry;    ..\..\CommonForSentry\Bsp;    ..\..\CommonForSentry\Motor;    ..\..\CommonForSentry\Task;    .\SEGGER;    .\Config;    .\Sample\FreeRTOSV10</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -394,7 +394,7 @@
           <Files>
             <File>
               <FileName>main.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
             </File>
             <File>
@@ -429,7 +429,7 @@
             </File>
             <File>
               <FileName>stm32f4xx_it.c</FileName>
-              <FileType>8</FileType>
+              <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_it.c</FilePath>
             </File>
             <File>
@@ -476,6 +476,16 @@
               <FileName>bsp_dt.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\Bsp\bsp_dt.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_check_oled_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check_oled_spi.c</FilePath>
             </File>
           </Files>
         </Group>

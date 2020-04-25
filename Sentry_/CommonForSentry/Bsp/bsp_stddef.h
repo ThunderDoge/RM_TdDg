@@ -14,26 +14,8 @@
 
 #include <stdio.h>
 
-
-// define user fputc() implement for printf()
-#ifdef __stdio_h
-
-#ifdef __GNUC__
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
-
-PUTCHAR_PROTOTYPE
-{
-	if(HAL_UART_Transmit(&huart1,(uint8_t*)&ch,1,0xff) == HAL_OK)
-		return ch;
-	else
-		return EOF;
-}
-
-#undef PUTCHAR_PROTOTYPE
-
-#endif //__stdio_h
+#define SET_BIT_N_OF_X(N,X)     (X |= (1U << N))
+#define RESET_BIT_N_OF_X(N,X)   (X &= (~(1U << N)))
+#define GET_BIT_N_OF_X(N,X)     (((X >> N) & 0x1) == 0X1)
 
 #endif // __BSP_STDDEF_H_

@@ -43,7 +43,7 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
         case CMD_GET_MCU_STATE:
 		
 		    VisionTx.Cloud_mode = CloudEntity.Mode;
-			    break;VisionTx.Shoot_mode = CloudEntity.shoot_flag;
+			VisionTx.Shoot_mode = CloudEntity.shoot_flag;
 			VisionTx.Pitch = CloudEntity.RealPitch;
 			VisionTx.YawSoft = CloudEntity.RealYaw;
 			VisionTx.Yaw = CloudEntity.MechanicYaw;
@@ -54,7 +54,7 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
 		case ROBOT_ERR:
 		
 			VisionTx.Error_code = 0;	// 未实现
-			    break;ROBOT_ERR_Tx(VisionTx.Error_code);
+			    ROBOT_ERR_Tx(VisionTx.Error_code);
 			break;
 			
 		case STA_CHASSIS:

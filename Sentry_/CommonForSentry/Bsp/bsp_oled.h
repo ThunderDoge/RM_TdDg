@@ -41,6 +41,7 @@ void bsp_oled_Display_Off(void);//关闭显示
 void bsp_oled_Init(void);//oled初始化
 void bsp_oled_Show_Logo(void); //显示Logo
 void bsp_oled_Clear(void);//清屏
+void bsp_oled_ClearGram(void);	/// 清空缓存
 void bsp_oled_Draw_Point(uint8_t x, uint8_t y, bsp_oled_Pen pen); //画点
 void bsp_oled_Show_Graphic(uint8_t x, uint8_t y, const picture_t *graphic);  //显示相关图形
 void bsp_oled_Show_Char(uint8_t col, uint8_t row, uint8_t chr);//显示字符
