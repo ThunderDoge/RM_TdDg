@@ -140,19 +140,19 @@ void TaskStarter(void)
 				(UBaseType_t)		4,				//优先级
 				(TaskHandle_t*)		&task_Main_Handle	);
 				
-//	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
-//				(char*)				"task_CommuRoutine",
-//				(uint16_t)			1024,
-//				(void*)				NULL,
-//				(UBaseType_t)		3,
-//				(TaskHandle_t*)		&task_CommuRoutine_Handle);
+	xTaskCreate((TaskFunction_t)	task_CommuRoutine,
+				(char*)				"task_CommuRoutine",
+				(uint16_t)			1024,
+				(void*)				NULL,
+				(UBaseType_t)		2,
+				(TaskHandle_t*)		&task_CommuRoutine_Handle);
 
-//	xTaskCreate((TaskFunction_t)	task_Check,
-//				(char*)				"task_Check",
-//				(uint16_t)			1024,
-//				(void*)				NULL,
-//				(UBaseType_t)		3,
-//				(TaskHandle_t*)		&task_Check_Handle);
+	xTaskCreate((TaskFunction_t)	task_Check,
+				(char*)				"task_Check",
+				(uint16_t)			1024,
+				(void*)				NULL,
+				(UBaseType_t)		3,
+				(TaskHandle_t*)		&task_Check_Handle);
 				
 }
 //CAN线测试
