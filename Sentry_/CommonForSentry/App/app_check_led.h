@@ -52,9 +52,9 @@ extern _led_priority_unit app_check_LED_PriorityList[DeviceIdEnumCount];
 
 
 /// LED开灯 
-#define __APP_CHECK_LED_ON(led)     HAL_GPIO_WritePin(led->GPIOX, led->GPIO_PIN_X, (GPIO_PinState)IsActiveHigh )
+#define __APP_CHECK_LED_ON(led)     HAL_GPIO_WritePin(led->GPIOX, led->GPIO_PIN_X, (GPIO_PinState)led->IsActiveHigh )
 /// LED关灯
-#define __APP_CHECK_LED_OFF(led)    HAL_GPIO_WritePin(led->GPIOX, led->GPIO_PIN_X, (GPIO_PinState)(!IsActiveHigh) )
+#define __APP_CHECK_LED_OFF(led)    HAL_GPIO_WritePin(led->GPIOX, led->GPIO_PIN_X, (GPIO_PinState)(!led->IsActiveHigh) )
 
 /// LED句柄初始化
 void app_check_LED_Init(app_check_LED_HandleTypedef* led, GPIO_TypeDef*GPIOX, uint16_t GPIO_PIN_X,uint8_t is_active_high );

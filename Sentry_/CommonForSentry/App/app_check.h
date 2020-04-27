@@ -50,6 +50,9 @@ typedef enum __app_check_device_id{
     DeviceIdEnumCount,  ///< 这个放在最末，指示设备表的长度
 }DeviceIdEnum;
 
+struct __app_check_device_type;
+typedef void(*pDeviceCallbackTypedef)(struct __app_check_device_type*);    /// 回调函数指针
+
 /**
  * @brief 设备结构体
  * 

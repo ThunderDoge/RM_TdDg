@@ -1,38 +1,57 @@
 /**
-  * @file      app_math.h
-  * @brief     数学相关
-  * @details   
-  * @author   ThunderDoge
-  * @date      
-  * @version   
-  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
-                           Using encoding: gb2312
-  */
-#ifndef __app_math_H
-#define __app_math_H
-#include "stm32f4xx_hal.h"
-#include <math.h>
-#define PI 		3.14159265358979323846f
+* @file app_math.h
+* @brief 数学计算应用层头文件
+* 有关于限幅，滤波，快速计算等的数学计算函数都丢这里了，有很多一部分都是移植的,放在这里就是做个整合
+* @author Asn (921576434@qq.com)
+* @date 2019.11
+* @version 1.0
+* @copyright Copyright (c) RM2020电控
+* @par 日志:
+*       v1.0 创建此文件
+*/
+#ifndef __APP_MATH_H
+#define __APP_MATH_H
+#include "stm32f4xx.h"
+//#include "arm_math.h"  //如果使用了DSP库，可以使用这行代码
+#include <math.h>  //如果没使用DSP库，就使用这行代码
 
-#define SIGN(x) ((x)>0?1:((x)<0?-1:0))
-#define MAX(a,b)    (a>b?a:b)
-#define MIN(a,b)    (a<b?a:b)
-#define IS_IN_INTERVAL(x,a,b)   ( (x<= MAX(a,b) ) && (x>= MIN(a,b) ) )
+#define APP_MATH_ABS(x)   ((x)>0?(x):-(x))
+#define APP_MATH_PI 		3.1415926535f
 
-#define Threshold_1     8       //阈值1用于一阶带参滤波器，变化角度大于此值时，计数增加
-#define Threshold_2     30      //阈值2用于一阶带参滤波器，计数值大于此值时，增大参数，增强滤波跟随
-
-typedef struct
+typedef struct  //< butterworth lowpass filter 
 {
-	uint8_t last_flag;//上次数据变化方向
-	uint8_t new_flag;//本次数据变化方向
-	float K_x;//滤波系数
-	uint8_t num_x;
-}LPF1;
-typedef struct
+    float b0;
+    float b1;
+    float b2;
+    float a1;
+    float a2;
+    float G;   //输出增益
+    
+    float current_input;		     
+    float last_input;			       
+    float pre_input;
+    
+    float current_output;		            //y[n]
+    float last_output;			            //y[n-1]
+    float pre_output;	                  //y[n-2]
+}IIR;
+
+typedef struct 
 {
-	float out;
-}HPF1;
+    float P_last;				/*上次预测过程协方差矩阵P(k|k-1)*/
+    float X_last;				/*系统状态预测矩阵X(k|k-1)，列矩阵*/
+    
+    float Q;						/*过程白噪声协方差系数*/
+    float R;						/*观测白噪声协方差系数*/
+    
+    float K;						/*卡尔曼增益K(k)，列矩阵*/
+    float X;						/*最优估计状态变量矩阵X(k|k)，列矩阵*/
+    float P;						/*最优估计协方差矩阵P(k|k)*/
+                                                        
+    float input;				    /*系统输出值，即Z(k)*/
+    uint8_t flag;
+}kalman_filter;	
+
 typedef struct 
 {
 	float _cutoff_freq;
@@ -43,12 +62,15 @@ typedef struct
 	float _b2;
 	float _delay_element_1;        // buffered sample -1
 	float _delay_element_2;        // buffered sample -2	
-}LPF2;//滤波器结构体
+}LPF2;
 
-float app_math_Limit(float data,float max,float min);//限幅函数
-float app_math_Invsqrt(float number);//开平方根函数
-float app_math_Lpf1apply(LPF1* LPF,float NEW_DATA,float OLD_DATA,float k);
-void app_math_Lpf2set(LPF2* LPF,float sample_freq, float cutoff_freq);//滤波器截止频率设置
-float app_math_Lpf2apply(LPF2* LPF,float sample);//滤波器设置
+float app_math_Limit(float Data,float Max,float Min);//数据限幅
+float app_math_Average(float* data,uint16_t length);//平均值
+float app_math_Variance(float* data,uint16_t length);//方差
+void app_math_LPF2pSetCutoffFreq(LPF2* LPF,float sample_freq, float cutoff_freq);
+float app_math_LPF2pApply(LPF2* LPF,float sample);
+float app_math_Kalman(kalman_filter* kalman,float input);
+float app_math_InvSqrt(float number);
 float app_math_fLimitPeriod(float data,float max,float min);//周期性限幅函数
+
 #endif

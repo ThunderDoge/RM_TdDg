@@ -1,56 +1,50 @@
-/** 
-* @file         app_imu.c
-* @brief        使用icm20602作为app_imu_data
-* @details  
-* @author      Asn
-* @date     2019年11月17日
-* @version  
-* @par Copyright (c):  RM2020电控
-*  
-* @par 日志
-*	2019.11.17 Asn V1.0 移植mpu9250库
-
-*						 Asn V1.1 更改mahony算法的PI控制参数
-
-*						 Asn V1.2 发现之前陀螺仪硬件滤波参数有错误，已修正
-
-*	2019.11.28 Asn V2.0 现已加入磁力计，并优化了算法，加快了初始化收敛速度
-
-*						 Asn V2.1 正式更名app_filter为app_math，并把limit和invsqrt移进去
-
-*	2019.12.6  Asn V2.2 优化PI控制器参数，并加入误差预处理，当加速度模量过大或过小都舍弃误差
-
-*	2019.12.11 Asn V2.3 增加了soft角度解算条件，避免一开始收敛过程中累积圈数，增加了条件编译，解决不用磁力计的警告
-* 2019.12.24 Asn V2.4 更改了加速度计滤波参数
-*/  
+/**
+* @file app_imu.c
+* @brief imu相关配置头文件
+* @author Asn (921576434@qq.com)
+* @date 2020.02.26
+* @version 1.0
+* @copyright Copyright (c) RM2020电控
+* @par 日志:
+*		v1.0 移植mpu9250库\n
+*		v1.1 更改mahony算法的PI控制参数\n
+*		v1.2 发现之前陀螺仪硬件滤波参数有错误，已修正\n
+*		v2.0 现已加入磁力计，并优化了算法，加快了初始化收敛速度\n
+*		v2.1 正式更名app_filter为app_math，并把limit和invsqrt移进去\n
+*		v2.2 优化PI控制器参数，并加入误差预处理，当加速度模量过大或过小都舍弃误差\n
+*		v2.3 增加了soft角度解算条件，避免一开始收敛过程中累积圈数，增加了条件编译，解决不用磁力计的警告\n
+*		v2.4 更改了加速度计滤波参数\n
+*		v2.5 打开了加速度解算区间（原区间0.75g~1.25g）\n
+*		v2.6 把磁力计获取速率变慢\n
+*/
 #include "app_imu.h"
-#include "app_math.h"
-#include "bsp_spi.h"
+#include "app_math.h"   
+#include "bsp_icm20602.h"
+//#include "bsp_ak8975.h"
 
-
- 
-#define USE_LPF           //使用低通滤波
+#define USE_LPF				//使用低通滤波
 #define MAG_OFFSET
-#define USE_OFFSET				//使用零点校正
-#define DYNAMIC_OFFSET    //使用动态校正零点，这个可以使用，imu还是主要受上面的影响
-// 需调整的变量,调完可以使用static 
-#ifdef USE_MAG
-float so3_comp_params_Kp = 2.0f ;            //< 四元数校正PI参数
+#define USE_OFFSET			//使用零点校正
+#define DYNAMIC_OFFSET		//使用动态校正零点，这个可以使用，imu还是主要受上面的影响
+
+//需调整的变量,调完可以使用static 
+#ifdef USE_MAG//这个宏定义在bsp_spi文件定义
+float so3_comp_params_Kp = 2.0f ;            //四元数校正PI参数
 float so3_comp_params_Ki = 0.05f; 
 float so3_comp_params_mKp = 1.6f; 
 #else
-float so3_comp_params_Kp = 2.35f ;            //< 四元数校正PI参数
+float so3_comp_params_Kp = 3.0f ;            //四元数校正PI参数
 float so3_comp_params_Ki = 0.05f; 
 #endif
-uint16_t Zero_Threshold[3] = {100,100,100};  //< 用于零点校正，判断数据是否为静止数据------------------------> 100足够大了，最好看一下原始数据，看看够不够（其实有点大）<--------------------建议更改，提升自检要求
-float  Dynamic_Zero_Thre = 4.0f;             //< 动态校正的零点阈值
-float Offset_Coeff[3] = {1.0f,1.0f,1.0f};    //< 对量程进行校正，角速度校正系数           ！！！！！！在此标准化量程，即转一个直角，显示90度的效果！！！！！！！！！！！！！！
-float manualOffsetGyro[3] = {0,0,0};         //< 手动添加校正值，解决零点误差在+-1之间的问题，因为原始数据是int16_t类型，这个参数能解决有规律的漂移,追求完美的可以试试
+uint16_t Zero_Threshold[3] = {200,200,200};  //用于零点校正，判断数据是否为静止数据------------------------> 100足够大了，最好看一下原始数据，看看够不够（其实有点大）<--------------------建议更改，提升自检要求
+float  Dynamic_Zero_Thre = 4.0f;             //动态校正的零点阈值
+float Offset_Coeff[3] = {1.0f,1.0f,1.0f};    //对量程进行校正，角速度校正系数           ！！！！！！在此标准化量程，即转一个直角，显示90度的效果！！！！！！！！！！！！！！
+float manualOffsetGyro[3] = {0,0,0};         //手动添加校正值，解决零点误差在+-1之间的问题，因为原始数据是int16_t类型，这个参数能解决有规律的漂移,追求完美的可以试试
 
-static int16_t Flash_Val[4];                        //< [0]记录Flash写入的次数，[1-3]为陀螺仪零点值
+static int16_t Flash_Val[4];                        //[0]记录Flash写入的次数，[1-3]为陀螺仪零点值
 static float app_imu_OffsetVal[3];
 /* 功能性函数宏定义 */
-#define MICROS() 1000*HAL_GetTick()  //计时，单位us,除1000000是秒
+#define MICROS() (1000*HAL_GetTick())  //计时，单位us,除1000000是秒
 
 
 /* 变量宏定义 */
@@ -59,12 +53,12 @@ static float app_imu_OffsetVal[3];
 #define ACCE_CUT_OFF_FREQUENCY 20
 #define MAG_CUT_OFF_FREQUENCY  20
 #define SELF_TEST_T  5           //自检时间，单位秒
-#define G 9.80665f                           //< 重力加速度
-#define TORADIAN   0.0174533f                //< 转换为弧度制，四元数的姿态解算需要使用 π/180
-#define TOANGLE    57.2957795f               //< 最后解算出来的弧度制转换为角度
-#define ACC_RESOLUTION  (16.0f*G/32768.0f)    //< 加速度计分辨率 m/s^2/LSb
-#define GYRO_RESOLUTION (2000.0f/32768.0f)   //< 陀螺仪分辨率   dps/LSb 
-#define MAG_RESOLUTION  0.3f*0.001f          //< 磁力计分辨率   uT/LSb
+#define G 9.80665f                           //重力加速度
+#define TORADIAN   0.0174533f                //转换为弧度制，四元数的姿态解算需要使用 π/180
+#define TOANGLE    57.2957795f               //最后解算出来的弧度制转换为角度
+#define ACC_RESOLUTION  (16.0f*G/32768.0f)    //加速度计分辨率 m/s^2/LSb
+#define GYRO_RESOLUTION (2000.0f/32768.0f)   //陀螺仪分辨率   dps/LSb 
+#define MAG_RESOLUTION  (0.3f*0.001f)          //磁力计分辨率   uT/LSb
 /* 结构体 */
 MPU_DEF app_imu_data;
 
@@ -74,35 +68,34 @@ LPF2 Gyro_LPF[3];
 LPF2 Mag_LPF[3];
 #endif
 
-/** 
-* @brief   零点值计算
-* @remarks 用于零点校正，采样均值,只对陀螺仪进行
+/**
+* @brief imu零漂计算初始化
+* @return uint8_t 
 */
 uint8_t app_imu_Init(void){
-
 	static uint16_t unstable_num;
 	app_imu_data.reset = 1;
 #ifdef USE_LPF	
 	for(uint8_t i=0;i<3;i++){
-		app_math_Lpf2set(&Acc_LPF[i],SAMPLE_FREQUENCY,ACCE_CUT_OFF_FREQUENCY);
-		app_math_Lpf2set(&Gyro_LPF[i],SAMPLE_FREQUENCY,GYRO_CUT_OFF_FREQUENCY);
+		app_math_LPF2pSetCutoffFreq(&Acc_LPF[i],SAMPLE_FREQUENCY,ACCE_CUT_OFF_FREQUENCY);
+		app_math_LPF2pSetCutoffFreq(&Gyro_LPF[i],SAMPLE_FREQUENCY,GYRO_CUT_OFF_FREQUENCY);
 	#ifdef USE_MAG		
-		app_math_Lpf2set(&Mag_LPF[i],SAMPLE_FREQUENCY,MAG_CUT_OFF_FREQUENCY);
+		app_math_LPF2pSetCutoffFreq(&Mag_LPF[i],SAMPLE_FREQUENCY,MAG_CUT_OFF_FREQUENCY);
 	#endif		
 	}
 #endif
-	static uint8_t flag = 1;  ///<采样标志位
-	static float tick;        ///<用于超时计数
+	static uint8_t flag = 1;  //采样标志位
+	static float tick;        //用于超时计数
 	while(flag){
 		tick = MICROS();
 		for(uint16_t num=0;num<ZERO_SAMPLE_NUM;num++){   /*零点采样*/
-			app_imu_data.original.Gyro[0] = bsp_spi_ReadReg(MPUREG_GYRO_XOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_XOUT_L);
-			app_imu_data.original.Gyro[1] = bsp_spi_ReadReg(MPUREG_GYRO_YOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_YOUT_L);
-			app_imu_data.original.Gyro[2] = bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_L);		
+			app_imu_data.original.Gyro[0] = bsp_icm20602_ReadReg(MPUREG_GYRO_XOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_XOUT_L);
+			app_imu_data.original.Gyro[1] = bsp_icm20602_ReadReg(MPUREG_GYRO_YOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_YOUT_L);
+			app_imu_data.original.Gyro[2] = bsp_icm20602_ReadReg(MPUREG_GYRO_ZOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_ZOUT_L);		
 			while(APP_MATH_ABS(app_imu_data.original.Gyro[0])>Zero_Threshold[0] || APP_MATH_ABS(app_imu_data.original.Gyro[1])>Zero_Threshold[1] || APP_MATH_ABS(app_imu_data.original.Gyro[2])>Zero_Threshold[2])  {
-				app_imu_data.original.Gyro[0] = bsp_spi_ReadReg(MPUREG_GYRO_XOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_XOUT_L);
-				app_imu_data.original.Gyro[1] = bsp_spi_ReadReg(MPUREG_GYRO_YOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_YOUT_L);
-				app_imu_data.original.Gyro[2] = bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_H)<<8|bsp_spi_ReadReg(MPUREG_GYRO_ZOUT_L);
+				app_imu_data.original.Gyro[0] = bsp_icm20602_ReadReg(MPUREG_GYRO_XOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_XOUT_L);
+				app_imu_data.original.Gyro[1] = bsp_icm20602_ReadReg(MPUREG_GYRO_YOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_YOUT_L);
+				app_imu_data.original.Gyro[2] = bsp_icm20602_ReadReg(MPUREG_GYRO_ZOUT_H)<<8|bsp_icm20602_ReadReg(MPUREG_GYRO_ZOUT_L);
 				unstable_num++;
 	      if((MICROS() - tick)/1000000.0f > SELF_TEST_T) {
 					for(uint8_t j=0;j<3;j++){
@@ -116,7 +109,7 @@ uint8_t app_imu_Init(void){
 			for(uint8_t k=0;k<3;k++){
 				app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]] = app_imu_data.original.Gyro[k]; //<零点采样值
 				app_imu_data.offset.Sum[k] += app_imu_data.offset.Data[k][app_imu_data.offset.Cnt[k]];   //<零点采样和
-				app_imu_data.offset.Cnt[k]++;                                          //<采样计数
+				app_imu_data.offset.Cnt[k]++;                                          //采样计数
 			}	
 		}	
 		if (unstable_num > 300){   /*采样数据无效*/  
@@ -139,24 +132,25 @@ uint8_t app_imu_Init(void){
   return 1;	
 }
 
-/** 
-* @brief   读取原始数据和单位换算
-* @remarks 
-*/
+
 #ifdef USE_MAG
 int16_t Mag_max[2];  //平面校准法，磁力计只校正x,和y
 int16_t Mag_min[2];
 #endif
+/**
+* @brief 读取原始数据和单位换算
+*/
 static void MPU_Read_Raw(void)
 {
 	static uint8_t dynamicFlag[3];
+	static uint8_t mag_read_cnt = 0;
 #ifdef USE_MAG	
 	static uint8_t akm_data[6];	
 #endif	
 	static uint8_t mpu_data_buf[14];
 	
 	/* 读取加速度计&陀螺仪 */
-	bsp_spi_ReadRegs(MPUREG_ACCEL_XOUT_H,mpu_data_buf,14);      
+	bsp_icm20602_ReadRegs(MPUREG_ACCEL_XOUT_H,mpu_data_buf,14);      
 	app_imu_data.original.Accel[0] = (mpu_data_buf[0]<<8 | mpu_data_buf[1]); 
 	app_imu_data.original.Accel[1] = (mpu_data_buf[2]<<8 | mpu_data_buf[3]);
 	app_imu_data.original.Accel[2] = (mpu_data_buf[4]<<8 | mpu_data_buf[5]);
@@ -167,13 +161,18 @@ static void MPU_Read_Raw(void)
 	app_imu_data.original.Gyro[2] = (mpu_data_buf[12]<<8 | mpu_data_buf[13]);
 #ifdef USE_MAG	
 	/* 读取磁力计 */
-	bsp_spi_MagReads(AK8975_HXL_REG,akm_data,6);
-	bsp_spi_MagTrig();
-	bsp_spi_MagReads(AK8975_ASAX_REG,bsp_spi_MagAsa,3);
-	bsp_spi_MagTrig();
-	//AK8963_ASA[i++] = (s16)((data - 128.0f) / 256.0f + 1.0f) ;	调节校准的公式
-	for(uint8_t i=0;i<3;i++)
-		app_imu_data.original.Mag[i] = (akm_data[i*2+1]<<8 | akm_data[i*2]);	
+	if(mag_read_cnt == 5)
+	{
+		bsp_ak8975_ReadRegs(AK8975_HXL_REG,akm_data,6);
+		bsp_ak8975_Trig();
+		bsp_ak8975_ReadRegs(AK8975_ASAX_REG,bsp_ak8975_Asa,3);
+		bsp_ak8975_Trig();
+		//AK8963_ASA[i++] = (s16)((data - 128.0f) / 256.0f + 1.0f) ;	调节校准的公式
+		for(uint8_t i=0;i<3;i++)
+			app_imu_data.original.Mag[i] = (akm_data[i*2+1]<<8 | akm_data[i*2]);
+		mag_read_cnt = 0;
+	}
+	mag_read_cnt++;
 #ifdef MAG_OFFSET  
 	for(uint8_t i=0;i<2;i++){  //水平校正磁力计
 		Mag_max[i] = app_imu_data.original.Mag[i]>Mag_max[i]?app_imu_data.original.Mag[i]:Mag_max[i];
@@ -204,8 +203,8 @@ static void MPU_Read_Raw(void)
 #endif
 
 #ifdef USE_LPF
-		app_imu_data.LPF.Accel[i] = app_math_Lpf2apply(&Acc_LPF[i],(float)app_imu_data.original.Accel[i]);
-    app_imu_data.LPF.Gyro[i] = app_math_Lpf2apply(&Gyro_LPF[i],(float)app_imu_data.original.Gyro[i]);
+		app_imu_data.LPF.Accel[i] = app_math_LPF2pApply(&Acc_LPF[i],(float)app_imu_data.original.Accel[i]);
+    app_imu_data.LPF.Gyro[i] = app_math_LPF2pApply(&Gyro_LPF[i],(float)app_imu_data.original.Gyro[i]);
 		/* 取角速度 */
     app_imu_data.Angle_Rate[i] = (float)(app_imu_data.LPF.Gyro[i] - app_imu_data.offset.Gyro[i] + manualOffsetGyro[i])*Offset_Coeff[i];  //16位量程，只对原始数据进行补偿和滤波处理,需要根据9250改		
     /* 单位化 */		
@@ -216,10 +215,10 @@ static void MPU_Read_Raw(void)
 #endif	
 		app_imu_data.unitized.Accel[i] = (float)app_imu_data.LPF.Accel[i]*ACC_RESOLUTION;     //m/s^2  
 #ifdef USE_MAG	
-		app_imu_data.LPF.Mag[i] = app_math_Lpf2apply(&Mag_LPF[i],app_imu_data.original.Mag[i]);
-		if(bsp_spi_MagAsa[0]<=254&&bsp_spi_MagAsa[1]<=254&&bsp_spi_MagAsa[2]<=254)
+		app_imu_data.LPF.Mag[i] = app_math_LPF2pApply(&Mag_LPF[i],app_imu_data.original.Mag[i]);
+		if(bsp_ak8975_Asa[0]<=254&&bsp_ak8975_Asa[1]<=254&&bsp_ak8975_Asa[2]<=254)
 		{
-			app_imu_data.unitized.Mag[i] = (float)app_imu_data.LPF.Mag[i] * ((bsp_spi_MagAsa[i]-128)/256.0f+1.0f); //uT
+			app_imu_data.unitized.Mag[i] = (float)app_imu_data.LPF.Mag[i] * ((bsp_ak8975_Asa[i]-128)/256.0f+1.0f); //uT
 		}
 #endif		
 #endif	
@@ -258,6 +257,10 @@ static float gyro_bias[3];
 static uint8_t bFilterInit;
 //! Using accelerometer, sense the gravity vector.
 //! Using magnetometer, sense yaw.
+
+/**
+* @brief 迭代初始化
+*/
 static void NonlinearSO3AHRSinit(float ax, float ay, float az, float mx,
                                  float my, float mz)        //其实这个函数是没什么用的，他本身就是利用加速度计和磁力计算出偏航角，再算出四元数，但是一般不用磁力计，懒得注释进宏定义了
 {
@@ -309,8 +312,7 @@ static void NonlinearSO3AHRSinit(float ax, float ay, float az, float mx,
 	q3q3 = q3 * q3;
 }
 /** 
-* @brief   Mahony算法
-* @remarks 
+* @brief Mahony算法
 */
 float kp_use = 0.0f,ki_use = 0.0f,mkp_use = 0.0f;
 static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
@@ -332,7 +334,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 			float hx, hy, hz, bx, bz;
 			float halfwx, halfwy, halfwz;
 			
-			recipNorm = app_math_Invsqrt(mx * mx + my * my + mz * mz);
+			recipNorm = app_math_InvSqrt(mx * mx + my * my + mz * mz);
 			mx *= recipNorm;
 			my *= recipNorm;
 			mz *= recipNorm;
@@ -357,8 +359,9 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
     if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))){
 			float halfvx, halfvy, halfvz;
 			
-			recipNorm = app_math_Invsqrt(ax * ax + ay * ay + az * az);
-			if((1/(0.75f*9.8f))>recipNorm>(1/(1.25f*9.8f))){
+			recipNorm = app_math_InvSqrt(ax * ax + ay * ay + az * az);
+			/*//新陀螺仪目前没看到需要用到这个的地方*/
+			//if((1/(0.75f*9.8f))>recipNorm>(1/(1.25f*9.8f))){
 				ax *= recipNorm;
 				ay *= recipNorm;
 				az *= recipNorm;
@@ -371,7 +374,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 				halfey += az * halfvx - ax * halfvz;
 				halfez += ax * halfvy - ay * halfvx;
 			}
-    }
+    //}
     // Apply feedback only when valid data has been gathered from the accelerometer or magnetometer
     if (halfex != 0.0f && halfey != 0.0f && halfez != 0.0f){
         // Compute and apply integral feedback if enabled
@@ -425,7 +428,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 		{
 			kp_use = 20.0f;
 			ki_use = 0.0f;
-			if(APP_MATH_ABS(halfex)+APP_MATH_ABS(halfey)+APP_MATH_ABS(halfez)<0.01f)
+			if(APP_MATH_ABS(halfex)+APP_MATH_ABS(halfey)+APP_MATH_ABS(halfez)<0.001f)
 			{
 				app_imu_data.reset = 0;
 			}
@@ -450,7 +453,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
     q3 += dt * dq3;
 
     // Normalise quaternion
-    recipNorm = app_math_Invsqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+    recipNorm = app_math_InvSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
     q0 *= recipNorm;
     q1 *= recipNorm;
     q2 *= recipNorm;
@@ -470,9 +473,7 @@ static void NonlinearSO3AHRSupdate(float gx, float gy, float gz, float ax,
 }
 
 /** 
-* @brief    SoftYaw
-* @remarks  没有边界的Yaw值
-* @par 日志
+* @brief 软角度
 */
 static float Soft_Angle(float angle,uint8_t whichAngle)
 {
@@ -486,15 +487,11 @@ static float Soft_Angle(float angle,uint8_t whichAngle)
 	return  angleCircle[whichAngle]*360 + angle;
 }
 /** 
-* @brief   姿态解算
-* @remarks 
+* @brief 姿态解算
 */
-uint32_t tPrev,tNow;
-uint32_t tImuLastTick;		/// 离线检测用 更新时间
+uint32_t tPrev,tNow,tImuLastTick; 
 void app_imu_So3thread(void)
 {   
-
-
     float euler[3] = {0,0,0};            //rad  
     float Rot_matrix[9] = {1.0f,  0.0f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f,  0.0f,  1.0f };       /**< init: identity matrix */
     /* 计算两次解算时间间隔 */

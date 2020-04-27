@@ -28,6 +28,7 @@
 #define __SENTRY_CHASSIS_HPP_
 
 // #include "app_AmmoFeed.hpp"  // 2020-1 之后不再需要拨弹
+#include "bsp_stddef.h"
 #include "app_imu.h"
 #include "bsp_motor.hpp"
 #include "bsp_current.h"
@@ -111,7 +112,7 @@ public:
     float RealSpeed;            ///< 真正的速度，单位mm/s；由编码器
     float RealPosition;         ///< 由编码器与激光测距模块 数据融合估计的真正的距离，单位mm
 	float Accel_Railward;	    ///<  沿轨道的加速度
-	int16_t LazerRanging[2];
+	int16_t LazerRanging[2];	///< 激光测距得出的距离，单位mm
 	float imuLeftBounceThreshold=5;		///<  判定为撞击立柱的陀螺仪加速度阈值
 	enum PillarFlagEnum PillarFlag = PILLAR_NOT_DETECTED;
 	//-------------------------功率计算参数

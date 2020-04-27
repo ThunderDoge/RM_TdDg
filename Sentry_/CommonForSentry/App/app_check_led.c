@@ -11,7 +11,7 @@
 #include "app_check_led.h"
 
 /// 默认闪光延迟时间。单位是ms
-#define DEFAULT_WAIT_TIME(led_ptr)    1000
+#define DEFAULT_WAIT_TIME    1000
 
 _led_priority_unit app_check_LED_PriorityList[DeviceIdEnumCount] = {0};    /// 全局优先级列表
 

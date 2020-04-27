@@ -724,7 +724,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>App_Sentry</GroupName>
+          <GroupName>Sentry</GroupName>
           <Files>
             <File>
               <FileName>sentry_can_commom.cpp</FileName>

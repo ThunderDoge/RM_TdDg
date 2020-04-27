@@ -18,4 +18,6 @@
 #define RESET_BIT_N_OF_X(N,X)   (X &= (~(1U << N)))
 #define GET_BIT_N_OF_X(N,X)     (((X >> N) & 0x1) == 0X1)
 
+#define SIGN(x) (x>0?1:(x<0?-1:0))
+
 #endif // __BSP_STDDEF_H_

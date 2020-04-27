@@ -17,6 +17,7 @@
 
 #include "math.h"
 #include "cmsis_os.h"
+#include "bsp_stddef.h"
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
 #include "bsp_dbus.h"

@@ -64,7 +64,7 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //    FeedUp.Enable_Block(4000, 200, 5);
 //    FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
-    app_math_Lpf2set(&lpf , 1000.0f, 10.0f);
+    app_math_LPF2pSetCutoffFreq(&lpf , 1000.0f, 10.0f);
 	
 	// 初始化激光测距模块，并且通过串口设置合适的参数
 	bsp_GY53L1_Object_Init( &RangingLeft, &RANGING_LEFT_UART );

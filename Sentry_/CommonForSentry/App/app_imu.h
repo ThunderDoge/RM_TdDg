@@ -1,33 +1,24 @@
-/** 
-* @file         app_imu.c
-* @brief        使用icm20602作为app_imu_data
-* @details  
-* @author      Asn
-* @date     2019年11月17日
-* @version  
-* @par Copyright (c):  RM2020电控
-*  
-* @par 日志
-*	2019.11.17 Asn V1.0 移植mpu9250库
-
-*						 Asn V1.1 更改mahony算法的PI控制参数
-
-*						 Asn V1.2 发现之前陀螺仪硬件滤波参数有错误，已修正
-
-*	2019.11.28 Asn V2.0 现已加入磁力计，并优化了算法，加快了初始化收敛速度
-
-*						 Asn V2.1 正式更名app_filter为app_math，并把limit和invsqrt移进去
-
-*	2019.12.6  Asn V2.2 优化PI控制器参数，并加入误差预处理，当加速度模量过大或过小都舍弃误差
-
-*	2019.12.11 Asn V2.3 增加了soft角度解算条件，避免一开始收敛过程中累积圈数，增加了条件编译，解决不用磁力计的警告
-* 2019.12.24 Asn V2.4 更改了加速度计滤波参数
-*   2020-3-18   ThunderDoge 哨兵工程修正：加入离线检测函数
-*/  
+/**
+* @file app_imu.h
+* @brief imu相关配置头文件
+* @author Asn (921576434@qq.com)
+* @date 2019.11
+* @version 2.5
+* @copyright Copyright (c) RM2020电控
+* @par 日志:
+*		v1.0 移植mpu9250库\n
+*		v1.1 更改mahony算法的PI控制参数\n
+*		v1.2 发现之前陀螺仪硬件滤波参数有错误，已修正\n
+*		v2.0 现已加入磁力计，并优化了算法，加快了初始化收敛速度\n
+*		v2.1 正式更名app_filter为app_math，并把limit和invsqrt移进去\n
+*		v2.2 优化PI控制器参数，并加入误差预处理，当加速度模量过大或过小都舍弃误差\n
+*		v2.3 增加了soft角度解算条件，避免一开始收敛过程中累积圈数，增加了条件编译，解决不用磁力计的警告\n
+*		v2.4 更改了加速度计滤波参数\n
+*		v2.5 打开了加速度解算区间（原区间0.75g~1.25g）\n
+*/
 #ifndef __APP_IMU_H
 #define __APP_IMU_H
 #include "stm32f4xx_hal.h"
-
 
 
 
@@ -84,13 +75,8 @@ typedef struct
 	uint8_t isThisTimeInvalid[3];  // 若本次静态零点采集失败，则置一
 }MPU_DEF;
 
-
-
 extern MPU_DEF app_imu_data;
-
-extern uint32_t tNow;   //app_imu_So3thread运行时的微秒(us)数。就是Hal_GetTick()*1000
-extern uint32_t tImuLastTick;	/// 离线检测用 更新时间
-
+extern uint32_t tImuLastTick;
 uint8_t app_imu_Init(void);
 void app_imu_So3thread(void);
 #endif
