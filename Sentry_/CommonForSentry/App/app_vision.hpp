@@ -146,6 +146,7 @@ enum __app_vision_RobotError
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>重要！！！！！需要用户自己实现的函数<<<<<<<<<<<<<<<<<<<<<*/
 __weak HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* i,float* d);
 
+extern uint8_t Vision_IsTxUseDma,Vision_IsRxUseDma;
 extern sentry_vision_data VisionTx, VisionRx; ///串口发送/接收缓存结构体
 extern uint8_t Vision_Txbuffer[18];           ///串口发送暂存数组
 extern uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE];
@@ -158,7 +159,7 @@ void app_vision_Init(void); ///视觉串口初始化
 void app_vision_It(void);   ///视觉串口中断处理
 
 void app_vision_another_Init(void);
-void app_vision_dma_rx_cpltcallback(void); ///
+void app_vision_dma_rx_cpltcallback(UART_HandleTypeDef *huart); ///
 void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart);
 void app_vision_dma_rx_abort_in_idle(void);
 uint8_t app_vision_analysis_intgrated(void);

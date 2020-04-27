@@ -517,6 +517,16 @@
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App\app_vision.cpp</FilePath>
             </File>
+            <File>
+              <FileName>app_check_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_check_oled_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check_oled_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

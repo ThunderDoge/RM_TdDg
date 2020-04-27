@@ -80,10 +80,10 @@ void task_Commu(void* param)
 uint32_t test_tick=0;
 int update_test = 0;
 int update_report=0;
-void rep_ol(void){
+void rep_ol(app_check_DeviceTypedef*){
 	update_report = 1;
 }
-void rep_ofl(void){
+void rep_ofl(app_check_DeviceTypedef*){
 	update_report=0;
 }
 

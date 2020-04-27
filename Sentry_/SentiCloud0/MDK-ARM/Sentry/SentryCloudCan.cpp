@@ -2,7 +2,7 @@
 /**
   * @file SentryCloudCan.cpp
   * @brief    哨兵云台CAN通信
-  * @details  
+  * @details  包含 哨兵云台CAN接收中断回调
   * @author   ThunderDoge
   * @date     2019/12/7
   * @version  v0.0.1

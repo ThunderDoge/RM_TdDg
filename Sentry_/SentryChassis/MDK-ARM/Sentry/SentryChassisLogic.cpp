@@ -82,20 +82,21 @@ void Automonus(void)
         return;
     }
 	
-	if( GET_DMG_IN_LAST_5s)
-	{
-		ENABLE_USE_BUF_POW;
-	}
-	else
-	{
-		DISABLE_USE_BUF_POW;
-	}
-	
-	if( REACHED_LAST_LOCATION )
-	{
-		GERERATE_NEXT_LOCATION();
-	}
-	CTRL_TO_LOCATION();
+//	if( GET_DMG_IN_LAST_5s)
+//	{
+//		ENABLE_USE_BUF_POW;
+//	}
+//	else
+//	{
+//		DISABLE_USE_BUF_POW;
+//	}
+//	
+//	if( REACHED_LAST_LOCATION )
+//	{
+//		GERERATE_NEXT_LOCATION();
+//	}
+//	CTRL_TO_LOCATION();
+	ChassisEntity.Safe_Set();
 }
 
 

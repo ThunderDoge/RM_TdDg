@@ -32,7 +32,9 @@
 sentry_vision_data VisionRx, VisionTx; ///视觉串口解析到的数据,视觉串口发送的数据
 uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
 
-
+/// "使用DMA发送" FLAG
+uint8_t Vision_IsTxUseDma;
+uint8_t Vision_IsRxUseDma;
 
 ///关键状态变量
 static int8_t Array_index = 0;                             ///缓冲区数据检测用指针
@@ -253,8 +255,10 @@ void app_vision_Init(void)
     __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_PE);
     __HAL_UART_DISABLE_IT(&APP_VISION_UART, UART_IT_ERR);
 #endif
-
-    HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
+	if(APP_VISION_UART.hdmarx != NULL)
+	{
+		HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
+	}
 	
 #if(APP_VISION_USE_SEMAPHORE)
 	app_vision_uart_semaphore = xSemaphoreCreateBinary();
@@ -262,14 +266,25 @@ void app_vision_Init(void)
 #endif
 #if(USE_HAL_UART_REGISTER_CALLBACKS == 1)
 	HAL_UART_RegisterCallback(&APP_VISION_UART,HAL_UART_RX_COMPLETE_CB_ID,app_vision_dma_tx_cpltcallback);
+    HAL_UART_RegisterCallback(&)
 #endif
+	if(APP_VISION_UART.hdmatx != NULL && APP_VISION_UART.hdmatx->State == HAL_DMA_STATE_READY)
+		Vision_IsTxUseDma=1;
+	if(APP_VISION_UART.hdmarx != NULL && APP_VISION_UART.hdmarx->State == HAL_DMA_STATE_READY)
+		Vision_IsRxUseDma=1;
 }
 
 #if(USE_HAL_UART_REGISTER_CALLBACKS != 1)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	app_vision_dma_tx_cpltcallback(huart);
+	app_vision_dma_rx_cpltcallback(huart);
 }
+#if(APP_VISION_USE_SEMAPHORE)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    app_vision_dma_tx_cpltcallback(huart);
+}
+#endif
 #endif
 
 
@@ -331,15 +346,24 @@ void app_vision_dma_rx_abort_in_idle(void)
  * 启动数据解析。
  * 
  */
-void app_vision_dma_rx_cpltcallback(void)
+void app_vision_dma_rx_cpltcallback(UART_HandleTypeDef *huart)
 {
 	not_analysed_index = APP_VISION_BUFFER_SIZE;	// 直接设定整个缓存为为未解析。因为DMA/IT接收启动时 设定是接受满缓存才会接收完成返回。
 	
     app_vision_analysis_intgrated();            //解析
     
+	if(Vision_IsRxUseDma)
+	{
     HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
         Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
         APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+	}
+	else
+	{
+    HAL_UART_Receive_IT(&APP_VISION_UART,      //重启接收
+        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+	}
 
     return ;
 }
@@ -396,10 +420,12 @@ void app_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
 HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 {
 	#if(APP_VISION_USE_SEMAPHORE)
-		if(xSemaphoreTake(app_vision_uart_semaphore,1/portTICK_PERIOD_MS) == errQUEUE_EMPTY)	// 获取信号量
+		if(xSemaphoreTake(app_vision_uart_semaphore,10) == errQUEUE_EMPTY)	// 获取信号量
 		{
 			HAL_UART_AbortTransmit_IT(&APP_VISION_UART);	// 超时未得到信号量，会强行终止串口发送
 		}
+    #else
+        if(APP_VISION_UART.gState )
 	#endif
 
     int16_t _check_sum = 0; //和校验用变量
