@@ -71,6 +71,9 @@ void SuperiorControl() //视觉调试
         ChassisEntity.MotorSoftLocation_LimitSpeed_Set(CanRx.SuperCon_ChassisSpeedLocation[1],
 		CanRx.Chassis_SpeedLimit);
 		break;
+	default: 
+		ChassisEntity.Safe_Set();
+		break;
 	}
 }
 
