@@ -136,8 +136,7 @@ void UpCloudCanCommuRoutine(void);   ///云台定时发送的板间CAN通信 - �
 void DownCloudCanCommuRoutine(void); ///云台定时发送的板间CAN通信 - 下云台
 
 void UP_CLOUD_STATES_CanRx(
-    int StdId,
-    uint8_t *
+    uint32_t StdId,uint8_t *
         ptrData);                                               ///从 CAN_INTERBOARD
                                                                 ///接收上云台数据帧(UPCLOUD_STATES)数据到CanRx。如果功能字不对则忽略。
 void UP_CLOUD_STATES_CanTx();                                   ///从 CanTx 的数据通过 CAN_INTERBOARD
