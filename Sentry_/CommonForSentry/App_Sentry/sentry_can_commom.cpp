@@ -136,6 +136,8 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id, f
 ///底盘CAN接收函数
 void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data)
 {
+	UP_CLOUD_STATES_CanRx(RxHead->StdId, Data);
+	DOWN_CLOUD_STATES_CanRx(RxHead->StdId, Data);
     CHASSIS_SUPERIOR_ALL_CanRx(RxHead->StdId, Data);
 }
 #endif // __PROJECT_SENTRY_CHASSIS

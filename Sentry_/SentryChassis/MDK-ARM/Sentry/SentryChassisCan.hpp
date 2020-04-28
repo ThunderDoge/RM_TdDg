@@ -19,9 +19,8 @@
 
 
 
-void ChassisCanInit(void);
 void ChassisCanCommuRoutine(void);  ///底盘定时发送的板间CAN通信
-void ChassisCanFilterConfig(void);    ///云台用 设定CAN过滤器，以过滤不需要的ID号
+void ChassisCanFilterConfig(void);    ///底盘用 设定CAN过滤器，以过滤不需要的ID号
 void CanRxCpltCallBack_ChassisCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTypeDef *RxHead, uint8_t *Data);  ///云台用 板间通讯CAN回调函数
 
 #endif // __SENTRY_CHASSIS_CAN_HPP_

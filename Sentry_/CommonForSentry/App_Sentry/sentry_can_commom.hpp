@@ -43,23 +43,7 @@
 
 #define SENTRY_CAN_ID_CNT 20
 
-/**
- * 2020-2-27 ThunderDoge观察到，绝大多数的
- *
- *
- *
- * 程序是如何接收CAN消息的
- * 首先CAN的接收邮箱已经经过设置，使得它仅接收自己需要的内容的CANID
- * 然后，一个回调函数会在Can回调函数中被调用，它接收CAN已经收到的StdId和数据指针pData。他将顺序遍历一个哨兵
- * 通信用CANID列表[ SENTRY_CAN_ID_List
- * ]。如果有一个符合，他将按照数据指令列表[]中的序号相同位置的指令(指令如枚举[
- * __enum_sentry_can_id_RW_OrderWord ]所示)，储存到数据目标列表[]所示的地址中。
- * 所以每当你需要通信功能。你需要：
- * 1. 添加 SENTRY_CAN_ID 条目
- * 2. 添加 CANID列表[] 条目
- * 3. 添加 通讯指令列表条目
- * 4. 添加 存取地址列表条目
- */
+
 enum SENTRY_CAN_ID : uint32_t //板间通讯ID号
 {
     //通用接收 0x10X
@@ -146,14 +130,7 @@ HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id,
 HAL_StatusTypeDef SentryCanSend(CAN_HandleTypeDef *_hcan, uint32_t command_id,
                                 uint8_t *ptrData, size_t size=8);
 
-/**
- * @addtogroup CAN_Interboard_Communication
- * @{
- */
-/**
- * @addtogroup CAN_Interboard_COmmu_StatusBroudcast
- * @{
- */
+
 void ChassisCanCommuRoutine(void);   ///底盘定时发送的板间CAN通信
 void UpCloudCanCommuRoutine(void);   ///云台定时发送的板间CAN通信 - 上云台
 void DownCloudCanCommuRoutine(void); ///云台定时发送的板间CAN通信 - 下云台
@@ -169,14 +146,7 @@ void DOWN_CLOUD_STATES_CanRx(uint32_t StdId, uint8_t *ptrData); ///以下类推�
 void DOWN_CLOUD_STATES_CanTx();
 void CHASSIS_STATES_CanRx(uint32_t StdId, uint8_t *ptrData);
 void CHASSIS_STATES_CanTx();
-/**
- * @}
- * CAN_Interboard_COmmu_StatusBroudcast
- */
-/**
- * @addtogroup CAN_Interboard_Commu_SuperiorCommand
- * @{
- */
+
 void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData);
 void UP_FEED_CanRx(uint32_t StdId, uint8_t *ptrData);
 void UP_FEED_CanTx();
@@ -199,13 +169,5 @@ void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanRx(uint32_t StdId,
 void SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx();
 void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData);
 void SUPERIOR_SAFE_CanTx();
-/**
- * @}
- * CAN_Interboard_Commu_SuperiorCommand
- */
-/**
- * @}
- * CAN_Interboard_Communication
- */
 
 #endif // __SENTRY_CAN_COMMOM_HPP_

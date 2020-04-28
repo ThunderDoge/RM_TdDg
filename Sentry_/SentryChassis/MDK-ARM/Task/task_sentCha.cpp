@@ -38,7 +38,6 @@ void RoboInit()
 	
 	manager::CANSelect(&hcan1,&hcan2);
 	
-	ChassisCanInit();
 }
 /**
  * @brief  主任务,1KHZ
