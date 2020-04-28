@@ -19,7 +19,7 @@ app_Mode ModeAutomonus(NULL,Automonus,NULL);
 app_Mode *CurrentMode=&ModeGlobalSafe;
 app_Mode *LastMode=&ModeGlobalSafe;
 
-
+uint8_t force_mode=0;
 /**
  * @brief 模式选择器。此为所有逻辑起始处
  * 
@@ -27,15 +27,26 @@ app_Mode *LastMode=&ModeGlobalSafe;
 void ModeSelect(void)
 {
     LastMode = CurrentMode;
-
-//    if(Connection_UpCloud.is_offline && Connection_DownCloud.is_offline)
-//    {
-//        CurrentMode=&ModeAutomonus;
-//    }
-//    else
-//    {
-//        CurrentMode=&ModeSuperSuperiorControl;
-//    }
+	switch(force_mode)
+	{
+		case 1:
+			CurrentMode = &ModeSuperSuperiorControl;
+			break;
+		case 2:
+			CurrentMode=&ModeAutomonus;
+			break;
+		case 0:
+		default:
+			if(GlobalCheckList.IsOfflineList[id_UpCloudConnect] && GlobalCheckList.IsOfflineList[id_DownCloudConnect])
+			{
+				CurrentMode=&ModeAutomonus;
+			}
+			else
+			{
+				CurrentMode=&ModeSuperSuperiorControl;
+			}
+			break;
+	}
 
     if(LastMode!=CurrentMode)
     {
