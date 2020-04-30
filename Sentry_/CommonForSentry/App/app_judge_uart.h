@@ -17,6 +17,8 @@
 #include "app_judge_uart_datastruct.h"
 #include "app_judge_cmd_id.h"
 
+#define APP_JUDGE_UART huart3;
+
 
 void app_judge_Init(void);
 void app_judge_RxCpltCallback(void);

@@ -34,7 +34,7 @@ void RoboInit()
 #endif //MIGRATE_F407ZG
 	bsp_Current_Init();
 	bsp_encoder_Init(2048);
-	bsp_ADC_Sensor_Init();
+//	bsp_ADC_Sensor_Init();
 	
 	manager::CANSelect(&hcan1,&hcan2);
 	

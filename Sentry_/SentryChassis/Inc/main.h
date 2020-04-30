@@ -59,16 +59,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define OPTIC_SENSE_1_Pin GPIO_PIN_0
-#define OPTIC_SENSE_1_GPIO_Port GPIOC
-#define OPTIC_SENSE_2_Pin GPIO_PIN_1
-#define OPTIC_SENSE_2_GPIO_Port GPIOC
-#define INFRED_1_ADC_Pin GPIO_PIN_0
-#define INFRED_1_ADC_GPIO_Port GPIOA
-#define INFRED_2_ADC_Pin GPIO_PIN_1
-#define INFRED_2_ADC_GPIO_Port GPIOA
-#define BEEP_Pin GPIO_PIN_3
-#define BEEP_GPIO_Port GPIOA
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
 #define IMU_SPI_SCK_Pin GPIO_PIN_5
@@ -77,12 +67,6 @@ void Error_Handler(void);
 #define IMU_SPI_MISO_GPIO_Port GPIOA
 #define IMU_SPI_MOSI_Pin GPIO_PIN_7
 #define IMU_SPI_MOSI_GPIO_Port GPIOA
-#define RGB3_Pin GPIO_PIN_13
-#define RGB3_GPIO_Port GPIOB
-#define RGB2_Pin GPIO_PIN_14
-#define RGB2_GPIO_Port GPIOB
-#define RGB1_Pin GPIO_PIN_15
-#define RGB1_GPIO_Port GPIOB
 #define ENCODER_A_Pin GPIO_PIN_6
 #define ENCODER_A_GPIO_Port GPIOC
 #define ENCODER_B_Pin GPIO_PIN_7

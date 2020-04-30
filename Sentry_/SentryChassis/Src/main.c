@@ -21,7 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "adc.h"
 #include "can.h"
 #include "dma.h"
 #include "i2c.h"
@@ -32,7 +31,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-//#include "bsp_stddef.h"
+#include "bsp_stddef.h"
+#include "task_sentCha.hpp"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +54,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#include "task_sentCha.hpp"
+#ifdef __MAIN_DEBUG
+  uint8_t uart_data[4][20];
+#endif
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,7 +69,22 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+#ifdef __MAIN_DEBUG
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	int i=-1;
+	
+	if(huart == &huart4)
+		i=1;
+	if(huart == &huart3)
+		i=0;
+	if(huart == &huart5)
+		i=2;
+	
+	if(i!=-1)
+		HAL_UART_Transmit_IT(huart,uart_data[i],20);
+}
+#endif
 /* USER CODE END 0 */
 
 /**
@@ -98,31 +117,37 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_ADC1_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
   MX_SPI1_Init();
-  MX_TIM1_Init();
   MX_TIM8_Init();
   MX_UART4_Init();
   MX_UART5_Init();
   MX_USART3_UART_Init();
   MX_I2C3_Init();
-  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-		RoboInit();	// 机器人硬件初始化 ロボットハードウェアの初期化　
+		RoboInit();	// 机器人硬件初始化 ロボットハードウェアの初期化
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
 
   /* Start scheduler */
+  #ifndef __MAIN_DEBUG
   osKernelStart();
+  #endif
   
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+    #ifdef __MAIN_DEBUG
+  HAL_UART_Receive_IT(&huart3,uart_data[0],20);
+  HAL_UART_Receive_IT(&huart4,uart_data[1],20);
+  HAL_UART_Receive_IT(&huart5,uart_data[2],20);
+  #endif
+
+
   while (1)
   {
     /* USER CODE END WHILE */

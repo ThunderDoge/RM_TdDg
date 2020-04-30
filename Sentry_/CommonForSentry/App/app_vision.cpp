@@ -274,6 +274,7 @@ void app_vision_Init(void)
 		Vision_IsRxUseDma=1;
 }
 
+#ifndef __MAIN_DEBUG
 #if(USE_HAL_UART_REGISTER_CALLBACKS != 1)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -286,6 +287,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 }
 #endif
 #endif
+#endif // __MAIN_DEBUG
 
 
 

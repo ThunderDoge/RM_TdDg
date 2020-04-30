@@ -13,12 +13,15 @@ void ChassisCanFilterConfig()
 {
     
 }
+
+
 /**
 * @brief  CAN接收中断
 * @details  重新定义接收中断，会自动在CAN中断中调用，不需要手动添加,使用的时候自行在此函数中替换解析函数
 * @param  NULL
 * @retval  NULL
 */
+#ifndef __MAIN_DEBUG
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 {
 	static CAN_RxHeaderTypeDef bsp_can_Rx;
@@ -31,6 +34,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 		CanRxCpltCallBack_ChassisCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
 	}
 }
+#endif // __MAIN_DEBGU
 
 
 

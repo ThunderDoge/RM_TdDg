@@ -15,7 +15,6 @@
 #include "sentry_ctrl_def.hpp"
 #include "SentryChassis.hpp"
 #include "SentryChassisCommu.hpp"
-#include "bsp_adc_deal.h"
 #include "app_mode.hpp"
 #include "app_check.h"
 

@@ -91,7 +91,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  osThreadTerminate(defaultTaskHandle);	// defaultTask 是CubeMX默认生成的任务。因为不需要它所以直接删除掉。
+  osThreadTerminate(defaultTaskHandle);	// defaultTask 是CubeMX默认生成的任务�?�因为不�?要它�?以直接删除掉�?
   TaskStarter();
   /* USER CODE END RTOS_THREADS */
 

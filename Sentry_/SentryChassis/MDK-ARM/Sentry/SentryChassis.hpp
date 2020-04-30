@@ -32,7 +32,7 @@
 #include "app_imu.h"
 #include "bsp_motor.hpp"
 #include "bsp_current.h"
-#include "bsp_adc_deal.h"
+//#include "bsp_adc_deal.h"
 #include "bsp_encoder.hpp"
 #include "bsp_gy53l1.h"
 #include "app_math.h"

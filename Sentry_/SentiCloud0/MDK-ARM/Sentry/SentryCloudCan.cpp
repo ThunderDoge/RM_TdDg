@@ -48,6 +48,7 @@ void CloudCanFilterConfig()
 * @param  NULL
 * @retval  NULL
 */
+#ifndef __MAIN_DEBUG
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 {
 	static CAN_RxHeaderTypeDef bsp_can_Rx;
@@ -60,4 +61,4 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 		CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
 	}
 }
-
+#endif

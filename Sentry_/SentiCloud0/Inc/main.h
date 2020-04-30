@@ -58,26 +58,30 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define RGB1_Pin GPIO_PIN_0
-#define RGB1_GPIO_Port GPIOC
-#define RGB2_Pin GPIO_PIN_1
-#define RGB2_GPIO_Port GPIOC
-#define RGB3_Pin GPIO_PIN_2
-#define RGB3_GPIO_Port GPIOC
 #define NC_Pin GPIO_PIN_2
 #define NC_GPIO_Port GPIOA
 #define DBUS_Pin GPIO_PIN_3
 #define DBUS_GPIO_Port GPIOA
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
-#define OLED_RES_Pin GPIO_PIN_4
-#define OLED_RES_GPIO_Port GPIOC
-#define OLED_CS_Pin GPIO_PIN_5
+#define OLED_CS_Pin GPIO_PIN_4
 #define OLED_CS_GPIO_Port GPIOC
-#define LAZER_Pin GPIO_PIN_0
+#define OLED_DC_Pin GPIO_PIN_5
+#define OLED_DC_GPIO_Port GPIOC
+#define OLED_RES_Pin GPIO_PIN_0
+#define OLED_RES_GPIO_Port GPIOB
+#define LAZER_Pin GPIO_PIN_1
 #define LAZER_GPIO_Port GPIOB
-#define OLED_DC_Pin GPIO_PIN_1
-#define OLED_DC_GPIO_Port GPIOB
+#define VISION_TX_Pin GPIO_PIN_10
+#define VISION_TX_GPIO_Port GPIOB
+#define VISION_RX_Pin GPIO_PIN_11
+#define VISION_RX_GPIO_Port GPIOB
+#define DBUSA10_Pin GPIO_PIN_10
+#define DBUSA10_GPIO_Port GPIOA
+#define SUPERIOR_TX_Pin GPIO_PIN_12
+#define SUPERIOR_TX_GPIO_Port GPIOC
+#define SUPERIOR_RX_Pin GPIO_PIN_2
+#define SUPERIOR_RX_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
