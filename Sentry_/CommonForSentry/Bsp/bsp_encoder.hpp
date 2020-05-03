@@ -17,9 +17,10 @@
 
 
 
-extern uint32_t bsp_encoder_PeriodCount;	//设定编码器一圈数值
-extern uint32_t bsp_encoder_UpdateTime;		//更新时间戳
-extern int32_t bsp_encoder_Value;		//用户使用的编码器值
+extern uint32_t bsp_encoder_PeriodCount;	/// 设定编码器一圈数值
+extern uint32_t bsp_encoder_UpdateTime;		/// 数值变动时间戳
+extern uint32_t bsp_encoder_HandleTime;		/// Handle时间戳
+extern int32_t bsp_encoder_Value;		/// 用户使用的编码器值
 extern float bsp_encoder_Speed;
 
 

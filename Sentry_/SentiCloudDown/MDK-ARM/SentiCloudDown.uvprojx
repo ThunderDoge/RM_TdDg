@@ -691,6 +691,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\CommonForSentry\Bsp\bsp_oled.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_icm20602.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_icm20602.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -66,7 +66,6 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-       DownCloud_Init();    // 哨兵硬件初始化
 
   /* USER CODE END Init */
 
@@ -93,6 +92,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadTerminate(defaultTaskHandle);
   TaskStarter();    //哨兵任务启动器
   /* USER CODE END RTOS_THREADS */
 

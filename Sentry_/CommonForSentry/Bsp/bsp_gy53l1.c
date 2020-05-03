@@ -45,6 +45,10 @@ void bsp_GY53L1_Object_Init(bsp_GY53L1_Object *object,
 		
 	// 开启接收
 	HAL_UART_Receive_DMA(object->uart_interface,object->RxBuffer,8);
+
+	bsp_GY53L1_Object_SendCommand( object, GY53L1_TIME_55MS_CONFIG );
+	bsp_GY53L1_Object_SendCommand( object, GY53L1_MID_RANGE_CONFIG );
+
 }
 
 /**

@@ -18,30 +18,30 @@
 #include "app_mode.hpp"
 #include "app_check.h"
 
+extern float RAIL_LEFT_END_MM            ;
+extern float RAIL_RIGHT_END_MM           ;
 
-#define LEFT_BOUNCE_READY_DISTANCE
-#define RIGHT_BOUNCE_READY_DISTANCE
-#define LEFT_TOUCH_DISTANCE
-#define RIGHT_TOUCH_DISTANCE
+#define LEFT_BOUNCE_READY_LOCATION		200
+#define RIGHT_BOUNCE_READY_LOCATION		200
+#define LEFT_TOUCH_LOCATION		
+#define RIGHT_TOUCH_LOCATION
 #define ARMOR_WIDTH
 #define ROBOT_WIDTH
 
-
-// enum GlobalModeName
-// {
-//     MODE_SAFE = 1,
-//     MODE_MANUAL_SHOOTING_TEST,
-//     MODE_VIISON_SHOOTING_TEST,
-//     MODE_KEYBOARD_TEST,
-//     MODE_MANUAL_CHASSIS_MOVE,
-//     MODE_AUTONOMOUS,
-// };
+typedef enum{
+	NO_ORDER = 0,
+	MOV_HIT_PREPARE= 1,
+	MOV_HIT_ACCELE = 2,
+	MOV_HIT_BANG = 3,
+	MOV_HIT_BACK = 4,
+}HitPillarStateEnum;
 
 void ModeSelect(void);  ///模式选择逻辑
 
 void SuperiorControl(); ///上级通讯控制模式
 void GlobalSafe();  ///全局安全模式
 void Automonus();	/// 自主运动模式
+int8_t HitPillarCommand();  
 
 extern app_Mode ModeSuperSuperiorControl,ModeGlobalSafe,ModeAutomonus;
 

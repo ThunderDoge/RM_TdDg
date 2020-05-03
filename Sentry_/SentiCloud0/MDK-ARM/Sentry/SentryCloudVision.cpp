@@ -20,8 +20,6 @@ void CloudVision_TaskTransmit_Init(void)
     CloudVision_QueueOfMsgToSend = xQueueCreate(20,sizeof(uint8_t));
 }
 
-static void CloudVision_HandleFuncWord(uint8_t func_word);
-
 void CloudVision_TaskTransmit_Handle(void)
 {
     uint8_t _func_word;
@@ -54,13 +52,13 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
 		case ROBOT_ERR:
 		
 			VisionTx.Error_code = 0;	// 未实现
-			    ROBOT_ERR_Tx(VisionTx.Error_code);
+			ROBOT_ERR_Tx(VisionTx.Error_code);
 			break;
 			
 		case STA_CHASSIS:
 		
 			VisionTx.chassis_mode = VisionRx.chassis_mode;
-			    break;VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
+			VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
 			VisionTx.pillar_flag = CanRx.Pillar_flag;
 			VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
 			STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);

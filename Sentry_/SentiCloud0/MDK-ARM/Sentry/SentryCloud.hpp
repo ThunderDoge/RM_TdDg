@@ -15,9 +15,10 @@
 // 依赖的文件
 #include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
-#include "app_imu.h"
 #include "app_vision.hpp"
+#include "app_imu.h"
 #include "app_mode.hpp"
+#include "app_check.h"
 #include "app_AmmoFeed.hpp"
 
 extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环

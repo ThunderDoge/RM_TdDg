@@ -28,24 +28,32 @@
 #define __SENTRY_CHASSIS_HPP_
 
 // #include "app_AmmoFeed.hpp"  // 2020-1 之后不再需要拨弹
+#include <cmath>
+#include <cstring>
+#include "sentry_ctrl_def.hpp"
 #include "bsp_stddef.h"
-#include "app_imu.h"
 #include "bsp_motor.hpp"
 #include "bsp_current.h"
 //#include "bsp_adc_deal.h"
 #include "bsp_encoder.hpp"
 #include "bsp_gy53l1.h"
 #include "app_math.h"
-#include <cmath>
-#include <cstring>
+#include "app_imu.h"
 #include "app_mode.hpp"
-#include "sentry_ctrl_def.hpp"
+#include "app_check.h"
 
 // 测距模块连接的串口
 #define RANGING_LEFT_UART	huart3
 #define RANGING_RIGHT_UART	huart4
 
+extern float RAIL_LEFT_END_MM;
+extern float RAIL_RIGHT_END_MM;
 
+extern float RATIO_ENCODE_PER_MM	    ;
+extern float RATIO_ENCODE_SPD_PER_MM_S 	;
+
+extern float RATIO_MOTOR_MM_PER_ANG		;
+extern float RATIO_MOTOR_MM_S_PER_SPD	;
 
 
 
@@ -63,9 +71,9 @@ enum PillarFlagEnum : int8_t
 {
     PILLAR_NOT_DETECTED = 0x00,    ///< 未检测到柱子
     PILLAR_LEFT = 0X01,         ///< 检测到左侧柱子
-	PILLAR_BOUNCE_LEFT=0x02,    ///< 撞击左侧柱子
+	PILLAR_HIT_LEFT=0x02,    ///< 撞击左侧柱子
     PILLAR_RIGHT = 0X03,        ///< 检测到右侧柱子
-	PILLAR_BOUNCE_RIGHT=0x04,   ///< 撞击右侧柱子
+	PILLAR_HIT_RIGHT=0x04,   ///< 撞击右侧柱子
 };
 
 /**
@@ -111,9 +119,11 @@ public:
     float MotorSoftLocation;    ///< 电机软路程，单位是角度
     float RealSpeed;            ///< 真正的速度，单位mm/s；由编码器
     float RealPosition;         ///< 由编码器与激光测距模块 数据融合估计的真正的距离，单位mm
+
+    uint8_t Accel_Railward_UseKalman = 1;
 	float Accel_Railward;	    ///<  沿轨道的加速度
 	int16_t LazerRanging[2];	///< 激光测距得出的距离，单位mm
-	float imuLeftBounceThreshold=5;		///<  判定为撞击立柱的陀螺仪加速度阈值
+	float imuAccelHitPillarThreshold[2] = {-1300.0f,-400.0f};		///<  判定为撞击立柱的陀螺仪加速度阈值。取绝对值。
 	enum PillarFlagEnum PillarFlag = PILLAR_NOT_DETECTED;
 	//-------------------------功率计算参数
 
@@ -133,12 +143,17 @@ private:
     float TargetPowerInput = 0; 
     float PowerOutput = 0;
     uint32_t PwrUpdateTime = 0;
-    LPF2 lpf;
 
+    LPF2 lpf;
+	kalman_filter LocationFilter;
+	kalman_filter SpeedFilter;
+    kalman_filter AccelRailFilter;
 
     void CanSendHandle(); //托管到CANSend的操作函数
     float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//柴小龙式功率闭环
-
+	
+	void LocationSpeedDataFusion();	// 使用轨上编码器和对柱测距仪的结果
+	void LocationSpeedDataMultiplexer();	///< 数据多选一 
     // int8_t PillarHit_Check();
     // int8_t PillarHit_Handle();
 };

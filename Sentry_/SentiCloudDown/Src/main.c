@@ -102,6 +102,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+	DownCloud_Init();    // ÉÚ±øÓ²¼þ³õÊ¼»¯
 
   /* USER CODE END 2 */
 

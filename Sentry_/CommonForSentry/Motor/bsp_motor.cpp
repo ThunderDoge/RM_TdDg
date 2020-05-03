@@ -718,6 +718,12 @@ int8_t softmotor::Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num)
 	block->Block_Init(Limit, time, err_num);
 	return 0;
 }
+
+void softmotor::ForceSetSoftAngle(float Angle)
+{
+	Soft_RealPosition =(int32_t)Angle*MotorType->Reduction_ratio/360;//得到电机减速前目标圈数
+//	RealPosition ; // 此变量自动更新无法控制。
+}
 ////*******************************************Cloud类***********************************************************************////
 /** 
 	* @brief  云台电机构造函数 \n

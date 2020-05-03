@@ -21,7 +21,6 @@
 #include "app_check.h"
 #include "app_AmmoFeed.hpp"
 
-
 extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
 extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
 

@@ -35,6 +35,8 @@ void RoboInit()
 	bsp_Current_Init();
 	bsp_encoder_Init(2048);
 //	bsp_ADC_Sensor_Init();
+	bsp_GY53L1_Object_Init( &ChassisEntity.RangingLeft, &RANGING_LEFT_UART );
+	bsp_GY53L1_Object_Init( &ChassisEntity.RangingRight, &RANGING_RIGHT_UART );
 	
 	manager::CANSelect(&hcan1,&hcan2);
 	
@@ -116,10 +118,10 @@ void task_OfflineCheck(void *param)
     app_check_EnableDevice(id_ChassisLazerRangingRight,150);
 	app_check_SignDeviceTickTo(id_ChassisLazerRangingRight,&ChassisEntity.RangingRight.data.update_time);
 
-	app_check_EnableDevice(id_Test,1000);
-	app_check_SignDeviceTickTo(id_Test,&test_tick);
-	app_check_SignOnlineCallback(id_Test,rep_ol);
-	app_check_SignOfflineCallback(id_Test,rep_ofl);
+//	app_check_EnableDevice(id_Test,1000);
+//	app_check_SignDeviceTickTo(id_Test,&test_tick);
+//	app_check_SignOnlineCallback(id_Test,rep_ol);
+//	app_check_SignOfflineCallback(id_Test,rep_ofl);
 	while(1)
 	{
 		if(update_test)

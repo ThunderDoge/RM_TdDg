@@ -2,10 +2,10 @@
  * 
  * @file SentryDownCloud.cpp
  * @brief    哨兵下云台
- * @details     Encoding - GB2312
+ * @details     Encoding - UTF8
  * @author   ThunderDoge
- * @date     2019/12/1
- * @version  v1.0
+ * @date     2020-4-15
+ * @version  v2.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
  */
 #include "SentryDownCloud.hpp"
@@ -49,6 +49,10 @@ void EnterModeCloudCtrlGyro(void)
     DownCloudEntity.Mode = absolute_cloud; //视为绝对角控制
 
 }
+/**
+ * @brief 运行云台陀螺仪控制模式
+ * 
+ */
 void RunModeCloudCtrlGyro(void)
 {
 

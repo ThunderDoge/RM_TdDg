@@ -27,6 +27,27 @@
  */
 #include "SentryChassis.hpp"
 
+
+
+float RAIL_LEFT_END_MM = 2250;
+float RAIL_RIGHT_END_MM = 0;
+
+
+float RATIO_ENCODE_PER_MM        =(73.4f);
+float RATIO_ENCODE_SPD_PER_MM_S 	=(10.0f);
+
+float RATIO_MOTOR_MM_PER_ANG		=(0.610f);
+float RATIO_MOTOR_MM_S_PER_SPD	=(0.02f);
+
+float LAZER_LEFT_RANGE = 2000;
+float LAZER_RIGHT_RANGE = 2000;
+float LAZER_TOUCH_LEFT = 300;
+float LAZER_TOUCH_RIGHT = 300;
+
+
+
+
+
 //电机类型
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
@@ -40,6 +61,13 @@ SentryChassis ChassisEntity(2, 0x201);
 //                   1, 0x202,
 //                   1, 0x201,
 //                   1, 0x203);
+
+
+
+
+
+
+
 //初始化函数
 SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //                             uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
@@ -65,16 +93,6 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //    FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
     app_math_LPF2pSetCutoffFreq(&lpf , 1000.0f, 10.0f);
-	
-	// 初始化激光测距模块，并且通过串口设置合适的参数
-	bsp_GY53L1_Object_Init( &RangingLeft, &RANGING_LEFT_UART );
-	bsp_GY53L1_Object_Init( &RangingRight, &RANGING_RIGHT_UART );
-	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_CONTINUOUS_OUTPUT );
-	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_TIME_55MS_CONFIG );
-	bsp_GY53L1_Object_SendCommand( &RangingLeft, GY53L1_MID_RANGE_CONFIG );
-	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_CONTINUOUS_OUTPUT );
-	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_TIME_55MS_CONFIG );
-	bsp_GY53L1_Object_SendCommand( &RangingRight, GY53L1_MID_RANGE_CONFIG );
 };
 
 void SentryChassis::Handle()
@@ -83,23 +101,100 @@ void SentryChassis::Handle()
     MotorSoftLocation = DriveWheel.SoftAngle;
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
+	
     DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
-	Accel_Railward = app_imu_data.original.Accel[0];
-//    FeedUp.PR_Handle();
-//    FeedDown.PR_Handle();
+
+    if(Accel_Railward_UseKalman)
+    {
+        Accel_Railward = app_imu_data.kalman.Accel[0]; // Oringin值过Kalman滤波
+    }
+    else
+    {
+        Accel_Railward = app_imu_data.original.Accel[0];    // 此处取Oringin值
+    }
+
+    LocationSpeedDataMultiplexer();     // 获取路程和速度。根据设备离线情况.
+
 	//撞柱标志
-	if( fabs(Accel_Railward) > fabs(imuLeftBounceThreshold) )	//超出阈值
-	{
-		if( SIGN(Accel_Railward) * SIGN(imuLeftBounceThreshold) == 1)	//同号
-			PillarFlag = PILLAR_BOUNCE_LEFT;	//判为左
-		else
-			PillarFlag = PILLAR_BOUNCE_RIGHT;	//异号判为右
-	}
-	else
-		PillarFlag = PILLAR_NOT_DETECTED;	//未超阈值
-		
-    manager::CANSend();
+    PillarFlag = PILLAR_NOT_DETECTED;
+    
+    // 陀螺仪超过阈值指示撞柱
+    if(!app_check_IsOffline(id_ChassisImu)) // 先检查数据是不是有效的
+    {
+        if(Accel_Railward < -imuAccelHitPillarThreshold[0])     // Accel_Railward是 面对敌方时的左侧为正方向，而imuAccelHitPillarThreshold只有绝对值
+        {
+            PillarFlag = PILLAR_HIT_LEFT;
+            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
+        }
+        else if(Accel_Railward > imuAccelHitPillarThreshold[1])
+        {
+            PillarFlag = PILLAR_HIT_RIGHT;
+            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
+        }
+    }
+    // 激光测距结果小于阈值->指示 接近柱 或 撞柱. 这是左侧的
+    if(!app_check_IsOffline(id_ChassisLazerRangingLeft))
+    {
+        if(LazerRanging[0]<LAZER_LEFT_RANGE)    // LAZER_LEFT_RANGE 超过此值认为是无效的
+        {
+            if(LazerRanging[0]<LAZER_TOUCH_LEFT)    // LAZER_TOUCH_LEFT 是测试得到的 底盘贴着柱子时的距离值
+            {
+                PillarFlag = PILLAR_HIT_LEFT;
+            }
+            PillarFlag = PILLAR_LEFT;
+        }
+    }
+    // 激光测距结果小于阈值 指示 接近柱 或 撞柱. 右侧同理.
+    if(!app_check_IsOffline(id_ChassisLazerRangingRight))
+    {
+        if(LazerRanging[0]<LAZER_RIGHT_RANGE)   
+        {
+            if(LazerRanging[0]<LAZER_TOUCH_RIGHT)
+            {
+                PillarFlag = PILLAR_HIT_RIGHT;
+            }
+            PillarFlag = PILLAR_RIGHT;
+        }
+    }
+
+
+	
+	manager::CANSend();
 }
+
+
+void SentryChassis::LocationSpeedDataFusion()
+{
+	
+}
+
+void SentryChassis::LocationSpeedDataMultiplexer()
+{
+    if( !app_check_IsOffline(id_ChassisRailEncoder) )
+    {
+        RealPosition = bsp_encoder_Value / (RATIO_ENCODE_PER_MM);
+        RealSpeed = bsp_encoder_Speed / (RATIO_ENCODE_SPD_PER_MM_S);
+    }
+    else if(!app_check_IsOffline(id_ChassisDriveMotor))
+    {
+        RealPosition = DriveWheel.RealAngle * (RATIO_MOTOR_MM_PER_ANG);
+        RealSpeed = DriveWheel.RealSpeed * (RATIO_MOTOR_MM_S_PER_SPD);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void SentryChassis::Safe_Set()
 {
     DriveWheel.Speed_Set(0);

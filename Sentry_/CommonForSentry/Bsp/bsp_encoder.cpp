@@ -3,8 +3,9 @@
   * @brief    RM2020通用编码器
   * @details  
   * @author   ThunderDoge
-  * @date     2019/12/20    v0.1
+  * @date     2020-5-2    v0.2
   * @version  
+  * v0.2	增加一个Handle时间戳. Update时间戳表示数字变动的时间
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
 
@@ -12,6 +13,7 @@
 
 uint32_t bsp_encoder_PeriodCount;	//设定编码器一圈数值
 uint32_t bsp_encoder_UpdateTime;	//更新时间戳
+uint32_t bsp_encoder_HandleTime;		/// Handle时间戳
 uint32_t bsp_encoder_lastupdate;
 int32_t bsp_encoder_Value;		//用户使用的编码器值
 uint32_t bsp_encoder_speed_update_time;
@@ -44,27 +46,27 @@ void bsp_encoder_It()
 		__HAL_TIM_CLEAR_FLAG(&BSP_ENCODER_TIM,TIM_FLAG_UPDATE);	//清空计数器
 	}
 }
+uint32_t last_encode_value;
 /**
  * @brief  周期性调用此函数以更新编码器
  */
 void bsp_encoder_Handle()
 {
+	last_encode_value = bsp_encoder_Value;
 	//实时更新你的编码器值
 	bsp_encoder_Value  = soft_period_passed*bsp_encoder_PeriodCount + __HAL_TIM_GetCounter(&BSP_ENCODER_TIM);
-	#ifdef _CMSIS_OS_H
-	bsp_encoder_UpdateTime = xTaskGetTickCount();
-	#else
-	bsp_encoder_UpdateTime = HAL_GetTick();
-	#endif
+	
+	bsp_encoder_HandleTime = HAL_GetTick();	//检查时间戳
+	if(last_encode_value!=bsp_encoder_Value)
+	{
+		bsp_encoder_UpdateTime = HAL_GetTick();	//数值变动时间戳
+	}
+	
 	
 	if(bsp_encoder_lastupdate!=bsp_encoder_UpdateTime){	//确保每TICK只执行一次
 		if(bsp_encoder_UpdateTime - bsp_encoder_speed_update_time > DiffTime)	//满足时间则输出
 		{
-			#ifdef _CMSIS_OS_H					
-			bsp_encoder_speed_update_time = xTaskGetTickCount();   	//更新时间
-			#else								
 			bsp_encoder_speed_update_time = HAL_GetTick();			
-			#endif		
 			bsp_encoder_Speed =((float)(bsp_encoder_Value - value_before_difftime)) /DiffTime;	//输出速度
 			value_before_difftime = bsp_encoder_Value;	//更新算速度区间
 		}

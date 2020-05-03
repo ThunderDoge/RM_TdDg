@@ -7,11 +7,11 @@
  * 云台俯仰轴电机离线检测。如果检测到离线会改为使用未离线的电机进行PID及控制。
  * 航向角 机械角/陀螺仪 灵活切换。因为在某些角度的航向角机械角控制会抖动。
  * @author   ThunderDoge
- * @date     2019/12/1
- * @version  v1.0
+ * @date     2020-4-15
+ * @version  v2.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
  * 
- * v1.0 2020-4-15   发布
+ * v2.0 2020-4-15   发布
  */
 #include "SentryCloud.hpp"
 
