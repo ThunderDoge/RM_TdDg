@@ -342,6 +342,7 @@ void USART6_IRQHandler(void)
 
 //		app_vision_dma_rx_abort_in_idle();
 		bsp_GY53L1_Object_Idle_RxCpltCallback(&test_lazer);
+		__HAL_UART_CLEAR_IDLEFLAG(&huart6);
 	}
 
   /* USER CODE END USART6_IRQn 0 */
