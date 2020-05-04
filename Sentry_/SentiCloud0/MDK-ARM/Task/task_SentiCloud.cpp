@@ -13,7 +13,7 @@
 #include "task_SentiCloud.hpp"
 #include "bsp_gy53l1.h"
 
-bsp_GY53L1_Object test_lazer;
+
 
 
 /**

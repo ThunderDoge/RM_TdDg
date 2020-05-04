@@ -281,10 +281,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	app_vision_dma_rx_cpltcallback(huart);
 }
 #if(APP_VISION_USE_SEMAPHORE)
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-    app_vision_dma_tx_cpltcallback(huart);
-}
 #endif
 #endif
 #endif // __MAIN_DEBUG

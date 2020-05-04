@@ -78,6 +78,7 @@ enum Gy53l1_UartCommand{
 // 
 extern uint8_t Gy53l1_CheckBytes[4];
 
+
 ///模块数据结构体
 typedef struct{
     uint32_t update_time;
@@ -98,6 +99,8 @@ typedef struct
 	uint8_t RxBufferIT[GY53L1_RXBUF_LEN];
     Gy53l1_DataType     data;
 }bsp_GY53L1_Object;
+
+extern bsp_GY53L1_Object test_lazer;
 
 /// 激光测距模块GY53L1对象 初始化
 void bsp_GY53L1_Object_Init(bsp_GY53L1_Object* object,UART_HandleTypeDef* uart_interface);

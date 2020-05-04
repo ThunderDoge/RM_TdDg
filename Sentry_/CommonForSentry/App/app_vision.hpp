@@ -26,7 +26,7 @@ ThunderDoge将哨兵专用的串口协议调整写入了该文件，并且改名
 
 
 //外设相关宏定义,移植时如果修改了外设请在这里修改
-#define APP_VISION_UART huart1
+#define APP_VISION_UART huart6
 //视觉串口接收缓存的数组大小，有需要请在这里修改,使用空闲中断要求这个数至少要大于18
 #define APP_VISION_BUFFER_SIZE 120
 

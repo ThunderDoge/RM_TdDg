@@ -16,6 +16,8 @@
   */
 #include "bsp_gy53l1.h"
 
+bsp_GY53L1_Object test_lazer;
+
 uint8_t Gy53l1_CheckBytes[4] = {0x5a, 0x5a, 0x15,
                                 0x03}; /// 接收帧头标志对照表。Byte[0~3]
 

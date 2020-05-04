@@ -20,6 +20,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 #include "app_vision.hpp"
+#include "bsp_gy53l1.h"
 #include "cmsis_os.h"
 #include "SentryCloud.hpp"
 #include "SentryCloudCan.hpp"

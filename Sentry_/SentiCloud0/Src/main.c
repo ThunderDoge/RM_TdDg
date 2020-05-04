@@ -212,6 +212,7 @@ int main(void)
   MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
     //TaskStarter() called in MX_FREERTOS_Init();
 	Cloud_Init();	// 在操作系统初始化之前 硬件初始�?
@@ -221,9 +222,7 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
   /* Start scheduler */
-  #ifndef __MAIN_DEBUG
   osKernelStart();
-  #endif
  
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
