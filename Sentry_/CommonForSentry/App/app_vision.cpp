@@ -276,10 +276,6 @@ void app_vision_Init(void)
 
 #ifndef __MAIN_DEBUG
 #if(USE_HAL_UART_REGISTER_CALLBACKS != 1)
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	app_vision_dma_rx_cpltcallback(huart);
-}
 #if(APP_VISION_USE_SEMAPHORE)
 #endif
 #endif

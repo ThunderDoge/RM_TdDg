@@ -143,9 +143,14 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 //    app_vision_dma_tx_cpltcallback(huart);
-	bsp_GY53L1_Object_Idle_RxCpltCallback(&test_lazer);
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+//	app_vision_dma_rx_cpltcallback(huart);
+	bsp_GY53L1_Object_Idle_RxCpltCallback(&test_lazer);
+
+}
 
 
 
