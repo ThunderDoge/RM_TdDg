@@ -17,6 +17,7 @@
 ".\senticloud0\bsp_dt.o"
 ".\senticloud0\bsp_oled.o"
 ".\senticloud0\bsp_icm20602.o"
+".\senticloud0\bsp_gy53l1.o"
 ".\senticloud0\app_math.o"
 ".\senticloud0\app_imu.o"
 ".\senticloud0\app_mode.o"

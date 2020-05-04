@@ -11,7 +11,9 @@
  * v1.0 2020-4-15   标准版本发布. 已添加离线检测
  */
 #include "task_SentiCloud.hpp"
+#include "bsp_gy53l1.h"
 
+bsp_GY53L1_Object test_lazer;
 
 
 /**
@@ -29,7 +31,8 @@ void Cloud_Init(void)
 #endif //MIGRATE_F407ZG
     bsp_dbus_Init(); //DBUS初始化
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
-	app_vision_Init();              //视觉串口接收初始化
+//	app_vision_Init();              //视觉串口接收初始化
+	bsp_GY53L1_Object_Init(&test_lazer,&APP_VISION_UART);
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
 }
 /**
