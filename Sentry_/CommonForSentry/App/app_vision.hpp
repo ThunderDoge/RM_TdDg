@@ -163,6 +163,7 @@ void app_vision_dma_rx_cpltcallback(UART_HandleTypeDef *huart); ///
 void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart);
 void app_vision_dma_rx_abort_in_idle(void);
 uint8_t app_vision_analysis_intgrated(void);
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode);
 
 // HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword);
 
