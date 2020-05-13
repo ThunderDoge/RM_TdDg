@@ -28,6 +28,7 @@ app_Mode *LastMode = &ModeGlobalSafe;
 app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
+int t=0;
 /**
   * @brief  模式选择函数，控制逻辑源于此
   */
@@ -73,6 +74,16 @@ void ModeSelect(void)
         CurrentMode = &ModeGlobalSafe;
         break;
     }
+	
+	if(t==0)
+	{
+		CurrentMode = &ModeGlobalSafe;
+	}
+	if(t==1)
+	{
+		CurrentMode = &ModeManualFeed;
+	}
+	
     if (LastMode != CurrentMode)
     {
         LastMode->Exit();

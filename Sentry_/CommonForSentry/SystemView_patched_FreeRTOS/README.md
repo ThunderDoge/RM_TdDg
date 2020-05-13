@@ -1,0 +1,3 @@
+根据SystemView的target代码中的`Sample\FreeRTOSV10\Patch\FreeRTOSV10_Core.patch`中的操作手动修改后的FreeRTOS文件
+
+你可以直接把 Middlewares 文件夹 覆盖到你自己的工程目录下的 Middlewares 文件夹来更改。

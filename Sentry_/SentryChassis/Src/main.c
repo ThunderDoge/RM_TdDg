@@ -31,6 +31,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "SEGGER_SYSVIEW.h"
 #include "bsp_stddef.h"
 #include "task_sentCha.hpp"
 
@@ -96,7 +97,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -127,18 +127,16 @@ int main(void)
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
 		RoboInit();	// 机器人硬件初始化 ロボットハードウェアの初期化
+		SEGGER_SYSVIEW_SendSysDesc("N=SentryChassis,O=FreeRTOS,D=STM32F405RG");
+		SEGGER_SYSVIEW_Conf();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
-
   /* Start scheduler */
-  #ifndef __MAIN_DEBUG
   osKernelStart();
-  #endif
-  
+ 
   /* We should never get here as control is now taken by the scheduler */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     #ifdef __MAIN_DEBUG
@@ -203,7 +201,7 @@ void SystemClock_Config(void)
 
 /* USER CODE END 4 */
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM7 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

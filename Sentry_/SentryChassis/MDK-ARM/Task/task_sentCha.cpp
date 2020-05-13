@@ -17,6 +17,7 @@ void TaskStarter(void)
 	xTaskCreate(task_Main,"task_Main",1024,NULL,4,NULL);
 	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
 	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
+	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
 }
 /**
   * @brief  统一初始化程序
@@ -33,6 +34,7 @@ void RoboInit()
     bsp_can_Init();  //CAN总线初始化函数
 #endif //MIGRATE_F407ZG
 	bsp_Current_Init();
+	bsp_Current_StartRead_IT(1);
 	bsp_encoder_Init(2048);
 //	bsp_ADC_Sensor_Init();
 	bsp_GY53L1_Object_Init( &ChassisEntity.RangingLeft, &RANGING_LEFT_UART );
@@ -51,13 +53,25 @@ void task_Main(void* param)
 	TickType_t LastTick = xTaskGetTickCount();
 	while (1)
 	{
+		SEGGER_SYSVIEW_Print("taskMain_Enter");
+		
+		SEGGER_SYSVIEW_Print("taskMain_PowerRead");
 		bsp_Current_Read();
+		
+		SEGGER_SYSVIEW_Print("taskMain_Encoder");
 		bsp_encoder_Handle();
+		
+		SEGGER_SYSVIEW_Print("taskMain_Imu");
 		app_imu_So3thread();
+		
+		SEGGER_SYSVIEW_Print("taskMain_ChassisHandle");
         ChassisEntity.Handle();
+		
+		SEGGER_SYSVIEW_Print("taskMain_ModeSelect");
 		ModeSelect();
 //		manager::CANSend();	
-		vTaskDelayUntil(&LastTick,1/portTICK_PERIOD_MS);
+		SEGGER_SYSVIEW_Print("taskMain_EXit");
+		vTaskDelayUntil(&LastTick,10/portTICK_PERIOD_MS);
 	}
 }
 
@@ -129,6 +143,15 @@ void task_OfflineCheck(void *param)
 		
 		app_check_RefreshList();
 		vTaskDelay(10/portTICK_PERIOD_MS);
+	}
+}
+
+void task_Led(void* param)
+{
+	while(1)
+	{
+		HAL_GPIO_TogglePin(RGB1_GPIO_Port,RGB1_Pin);
+		vTaskDelay(800/portTICK_PERIOD_MS);
 	}
 }
 

@@ -22,5 +22,7 @@ void RoboInit(void);        /// 硬件初始化
 void task_Main(void* param);        /// 主任务
 void task_Commu(void* param);       /// 板间通讯任务
 void task_OfflineCheck(void* param);    /// 离线检测任务
+void task_Led(void* param);
+void task_DriveWheelPowerRead(void* param);
 
 #endif	//__TASK_SENT_CHA_HPP_
