@@ -23,7 +23,7 @@ extern struct CheckDevice_Type Dbus_CheckDevice;
 //条件编译开关宏定义，不需要开启的就注释掉相关宏定义
 //#define BSP_DBUS_USE_SIGNAL
 //外设相关宏定义,移植时如果修改了外设请在这里修改
-#define BSP_DBUS_UART						huart2
+#define BSP_DBUS_UART						huart1
 //Dbus接收缓存的数组大小，有需要请在这里修改,使用空闲中断要求这个数至少要大于18
 #define BSP_DBUS_BUFFER_SIZE		25
 

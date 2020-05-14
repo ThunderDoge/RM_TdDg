@@ -145,19 +145,8 @@ void MX_FREERTOS_Init(void);
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	int i=-1;
-	
-	if(huart == &huart1)
-		i=0;
-	if(huart == &huart2)
-		i=1;
-	if(huart == &huart3)
-		i=2;
-	if(huart == &huart5)
-		i=3;
-	
-	if(i!=-1)
-	HAL_UART_Transmit_IT(huart,uart_data[i],20);
+		HAL_UART_Transmit_IT(huart,(uint8_t*)"receive cplt\r\n",sizeof("receive cplt\r\n"));
+		HAL_UART_Receive_IT(&huart5,uart_data[3],20);
 }
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -207,36 +196,34 @@ int main(void)
   MX_DMA_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
-  MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
-  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
     //TaskStarter() called in MX_FREERTOS_Init();
-	Cloud_Init();	// 在操作系统初始化之前 硬件初始�?
+//	Cloud_Init();	// 在操作系统初始化之前 硬件初始�?
   SEGGER_SYSVIEW_Conf();            /* Configure and initialize SystemView  */
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
   /* Start scheduler */
-  osKernelStart();
+//  osKernelStart();
  
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   #ifdef __MAIN_DEBUG
 //  HAL_UART_Receive_IT(&huart1,uart_data[0],20);
-//  HAL_UART_Receive_IT(&huart2,uart_data[1],20);
-  HAL_UART_Receive_IT(&huart3,uart_data[2],20);
-//  HAL_UART_Receive_IT(&huart5,uart_data[3],20);
+//  HAL_UART_Receive_IT(&huart3,uart_data[2],20);
+  HAL_UART_Receive_IT(&huart5,uart_data[3],20);
+  __HAL_UART_ENABLE_IT(&huart5,UART_IT_IDLE);
   #endif // __MAIN_DEBUG
   while (1)
   {
-	  HAL_UART_Transmit(&huart5,(uint8_t*)"uart5_test",sizeof("uart5_test"),10);
-	  HAL_Delay(100);
+	  HAL_UART_Transmit(&huart5,(uint8_t*)"uart5_test\r\n",sizeof("uart5_test\r\n"),10);
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

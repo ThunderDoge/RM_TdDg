@@ -42,7 +42,10 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+#ifdef __MAIN_DEBUG
+extern uint8_t uart_data[4][20];
 
+	#endif
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -58,10 +61,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define NC_Pin GPIO_PIN_2
-#define NC_GPIO_Port GPIOA
-#define DBUS_Pin GPIO_PIN_3
-#define DBUS_GPIO_Port GPIOA
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
 #define OLED_CS_Pin GPIO_PIN_4
@@ -76,8 +75,8 @@ void Error_Handler(void);
 #define VISION_TX_GPIO_Port GPIOB
 #define VISION_RX_Pin GPIO_PIN_11
 #define VISION_RX_GPIO_Port GPIOB
-#define DBUSA10_Pin GPIO_PIN_10
-#define DBUSA10_GPIO_Port GPIOA
+#define DBUS_Pin GPIO_PIN_10
+#define DBUS_GPIO_Port GPIOA
 #define SUPERIOR_TX_Pin GPIO_PIN_12
 #define SUPERIOR_TX_GPIO_Port GPIOC
 #define SUPERIOR_RX_Pin GPIO_PIN_2

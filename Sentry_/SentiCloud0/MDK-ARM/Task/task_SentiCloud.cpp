@@ -127,19 +127,6 @@ void task_Check(void* param)
     
 }
 
-void task_uart(void* param)
-{
-	while(1)
-	{
-		memset(u5buf,0,30);
-		HAL_UART_Receive_IT(&huart5,(uint8_t*)u5buf,sizeof(u5buf));
-		while(huart5.RxState == HAL_UART_STATE_BUSY_RX)
-		{
-			osDelay(1);
-		}
-		HAL_UART_Transmit_IT(&huart5,(uint8_t*)u5buf,sizeof(u5buf));
-	}
-}
 
 
 
@@ -177,14 +164,7 @@ void TaskStarter(void)
 				(void*)				NULL,
 				(UBaseType_t)		3,
 				(TaskHandle_t*)		&task_Check_Handle);
-				
-	xTaskCreate((TaskFunction_t)	task_uart,
-				(char*)				"task_uart",
-				(uint16_t)			512,
-				(void*)				NULL,
-				(UBaseType_t)		5,
-				(TaskHandle_t*)		NULL);
-				
+							
 }
 //CAN线测试
 // int16_t test_data[4];
