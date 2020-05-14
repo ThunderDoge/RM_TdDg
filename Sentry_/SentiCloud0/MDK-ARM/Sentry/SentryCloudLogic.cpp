@@ -29,6 +29,7 @@ app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
 int t=0;
+float p=0,y=0;
 /**
   * @brief  模式选择函数，控制逻辑源于此
   */
@@ -81,7 +82,20 @@ void ModeSelect(void)
 	}
 	if(t==1)
 	{
+		CurrentMode =&ModeManualShoot;
+		CloudEntity.TargetPitch=p;
+		CloudEntity.TargetYaw=y;
+		CloudEntity.ShooterSwitchCmd(0);
+	}
+	if(t==2)
+	{
 		CurrentMode = &ModeManualFeed;
+		bsp_dbus_Data.CH_0=0;
+	}
+	if(t==3)
+	{
+		CurrentMode = &ModeManualFeed;
+		bsp_dbus_Data.CH_0=201;
 	}
 	
     if (LastMode != CurrentMode)
@@ -200,7 +214,7 @@ void ManualChassisEnter(){
 /**
   * @brief  遥控器测试拨弹
   */
-// float feed_speed;
+float feed_gap=100;
 void ManualFeed()
 {
     // SentryCanSend(&CAN_INTERBOARD, UP_FEED, feed_speed, 0.0f);
@@ -209,7 +223,7 @@ void ManualFeed()
     // CloudEntity.Feed2nd.Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200));
 
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
-    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
+    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
 
     // if (bsp_dbus_Data.CH_0 > 200)    //状态信息发送到VisionTx
     //     VisionTx.Shoot_mode = 1;

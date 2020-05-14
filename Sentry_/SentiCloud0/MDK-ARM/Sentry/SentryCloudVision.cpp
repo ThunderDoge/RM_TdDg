@@ -139,18 +139,27 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
 // 	#endif
 // }
 
-
+#ifndef __MAIN_DEBUG
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-    app_vision_dma_tx_cpltcallback(huart);
+	if(huart == &APP_VISION_UART)
+		app_vision_dma_tx_cpltcallback(huart);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	app_vision_dma_rx_cpltcallback(huart);
-	bsp_GY53L1_Object_Idle_RxCpltCallback(&test_lazer);
-
+	if(huart == &APP_VISION_UART)
+	{
+		app_vision_dma_rx_cpltcallback(huart);
+	}
+//	if(huart == &huart5)
+//	{
+//		HAL_UART_Transmit_IT(&huart5,u5buf,30);
+//		memset(u5buf,0,30);
+//		HAL_UART_Receive_IT(&huart5,u5buf,30);
+//	}
 }
+#endif //__MAIN_DEBUG
 
 
 

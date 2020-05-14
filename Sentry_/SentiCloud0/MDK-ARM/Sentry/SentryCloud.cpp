@@ -156,6 +156,7 @@ void SentryCloud::ExitModeDualPitch(void)
  */
 void SentryCloud::RunModeDualPitch()
 {
+	PitchSecondMotor.cooperative =1;
     PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
     PitchSecondMotor.InsertCurrent();   // 写入电流值
 }
@@ -271,7 +272,7 @@ Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x207, 2, 0x203, 2, 0x204, 1, 0x204);
+SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x201);
 
 
 /// 云台物理实体类 构造与删除函数
@@ -290,6 +291,22 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+      YawSpeed(-20, 0, 0, 2000, 30000, 10, 10, 500),
+      YawPosition(-10, -1,0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
+      YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
+      FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
+      FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
+      FeedSpeed(20, 0, 1, 1000, 7000),
+      FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
+/*    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
+	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+      PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
+      PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndSpeed(6, 0, 8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
       YawPosition(10, 1,-0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(15, 0, 0, 2000, 30000, 10, 10, 500),
@@ -298,13 +315,13 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
-
+*/
         //!!!!!!!!!!!>>>>>>>>>>>>>要调节双PITCH参数请到 dual_pitch_pid_param
 
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
+	  YawMotor(yaw_can_num, yaw_can_id, 1319, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
+      PitchMotor(pitch_can_num, pitch_can_id, 52, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4115, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
@@ -314,6 +331,9 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
     PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
     PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
+		
+	PitchSecondMotor.cooperative=1;	// 设为合作模式，这样会阻断此电机的PID的运行
+	
 	copy_cloud_param_to_backup(&PitchMotor);				// 复制云台PITCH轴参数到备份数组。以待运行时使用。
 };
 

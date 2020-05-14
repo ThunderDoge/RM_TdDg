@@ -28,11 +28,11 @@ extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
 //extern app_Mode ModeSinglePitch;
 
 
-enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
-	__cloud_main_pitch,
-	__cloud_second_pitch,
-	__cloud_dual_pitch,
-};
+typedef enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
+	__cloud_main_pitch=0U,
+	__cloud_second_pitch=1U,
+	__cloud_dual_pitch=2U,
+}pitch_enum;
 
 
 /**
@@ -144,8 +144,8 @@ private:
 	void RunModeDualPitch(void);
 	void ExitModeDualPitch(void);
 	
-	uint8_t pitch_ctrl_mode = 0;
-	uint8_t last_pitch_ctrl_mode = 0;
+	pitch_enum pitch_ctrl_mode = __cloud_main_pitch;
+	pitch_enum last_pitch_ctrl_mode = __cloud_main_pitch;
 	void PitchModeCtrl(void);
 
     // 射击控制逻辑 执行函数，在Handle中调用

@@ -34,6 +34,7 @@ void Cloud_Init(void)
 	app_vision_Init();              //视觉串口接收初始化
 	bsp_GY53L1_Object_Init(&test_lazer,&APP_VISION_UART);
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
+	HAL_UART_Receive_IT(&huart5,u5buf,30);
 }
 /**
   * @brief  主任务
@@ -60,6 +61,7 @@ void task_Main(void *param)
 		#endif
     }
 }
+char s_u5[]="superior_uart5_tx_test\r\n";
 /**
   * @brief  视觉串口周期性发送任务+CAN通信周期性发送任务
   * @details  因为执行周期不同所以和主任务分开。100HZ运行。
@@ -73,6 +75,11 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
+		
+		memset(u5buf,0,30);
+		HAL_UART_Receive(&huart5,(uint8_t*)u5buf,sizeof(u5buf),1U);
+		HAL_UART_Transmit(&huart5,(uint8_t*)u5buf,sizeof(u5buf),1U);
+
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
@@ -120,6 +127,20 @@ void task_Check(void* param)
     
 }
 
+void task_uart(void* param)
+{
+	while(1)
+	{
+		memset(u5buf,0,30);
+		HAL_UART_Receive_IT(&huart5,(uint8_t*)u5buf,sizeof(u5buf));
+		while(huart5.RxState == HAL_UART_STATE_BUSY_RX)
+		{
+			osDelay(1);
+		}
+		HAL_UART_Transmit_IT(&huart5,(uint8_t*)u5buf,sizeof(u5buf));
+	}
+}
+
 
 
 
@@ -156,6 +177,13 @@ void TaskStarter(void)
 				(void*)				NULL,
 				(UBaseType_t)		3,
 				(TaskHandle_t*)		&task_Check_Handle);
+				
+	xTaskCreate((TaskFunction_t)	task_uart,
+				(char*)				"task_uart",
+				(uint16_t)			512,
+				(void*)				NULL,
+				(UBaseType_t)		5,
+				(TaskHandle_t*)		NULL);
 				
 }
 //CAN线测试

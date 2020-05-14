@@ -228,14 +228,15 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   #ifdef __MAIN_DEBUG
-  HAL_UART_Receive_IT(&huart1,uart_data[0],20);
-  HAL_UART_Receive_IT(&huart2,uart_data[1],20);
+//  HAL_UART_Receive_IT(&huart1,uart_data[0],20);
+//  HAL_UART_Receive_IT(&huart2,uart_data[1],20);
   HAL_UART_Receive_IT(&huart3,uart_data[2],20);
-  HAL_UART_Receive_IT(&huart5,uart_data[3],20);
+//  HAL_UART_Receive_IT(&huart5,uart_data[3],20);
   #endif // __MAIN_DEBUG
   while (1)
   {
-	
+	  HAL_UART_Transmit(&huart5,(uint8_t*)"uart5_test",sizeof("uart5_test"),10);
+	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

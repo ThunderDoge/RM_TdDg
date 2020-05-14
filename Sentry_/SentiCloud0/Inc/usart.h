@@ -37,7 +37,7 @@ extern UART_HandleTypeDef huart3;
 extern UART_HandleTypeDef huart6;
 
 /* USER CODE BEGIN Private defines */
-
+extern uint8_t u5buf[100];
 /* USER CODE END Private defines */
 
 void MX_UART5_Init(void);
