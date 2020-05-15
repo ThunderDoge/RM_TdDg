@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
-#include "task_SentiCloud.hpp"
+//#include "task_SentiCloud.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,7 +110,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   osThreadTerminate(defaultTaskHandle);
-  TaskStarter();    //Start All Task
+//  TaskStarter();    //Start All Task
   /* USER CODE END RTOS_THREADS */
 
 }

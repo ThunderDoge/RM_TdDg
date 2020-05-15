@@ -25,9 +25,9 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bsp_dbus.h"
-#include "app_vision.hpp"
-#include "bsp_gy53l1.h"
+//#include "bsp_dbus.h"
+//#include "app_vision.hpp"
+//#include "bsp_gy53l1.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+uint8_t s1[]="uart rx idle\r\n";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -205,7 +205,7 @@ void SPI1_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-		bsp_dbus_It();  
+//		bsp_dbus_It();  
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
@@ -221,7 +221,9 @@ void USART3_IRQHandler(void)
   /* USER CODE BEGIN USART3_IRQn 0 */
 	if(__HAL_UART_GET_IT_SOURCE(&huart3,UART_IT_IDLE))
 	{
-		HAL_UART_Transmit_IT(&huart3,uart_data[2],20);
+		HAL_UART_Transmit_IT(&huart5,s1,sizeof(s1));
+		HAL_UART_Receive_IT(&huart3,huart3.pRxBuffPtr,huart3.RxXferSize);
+		__HAL_UART_CLEAR_IDLEFLAG(&huart3);
 	}
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
@@ -252,8 +254,8 @@ void UART5_IRQHandler(void)
   /* USER CODE BEGIN UART5_IRQn 0 */
 	if(__HAL_UART_GET_IT_SOURCE(&huart5,UART_IT_IDLE))
 	{
-		HAL_UART_Transmit_IT(&huart5,(uint8_t*)"u5txcplt",sizeof("u5txcplt"));
-		HAL_UART_Receive_IT(&huart5,uart_data[3],20);
+		HAL_UART_Transmit_IT(&huart5,s1,sizeof(s1));
+		HAL_UART_Receive_IT(&huart5,huart5.pRxBuffPtr,huart5.RxXferSize);
 		__HAL_UART_CLEAR_IDLEFLAG(&huart5);
 	}
   /* USER CODE END UART5_IRQn 0 */

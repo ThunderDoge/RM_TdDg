@@ -95,6 +95,7 @@ static void _cbSendSystemDesc(void) {
 *
 **********************************************************************
 */
+
 void SEGGER_SYSVIEW_Conf(void) {
   SEGGER_SYSVIEW_Init(SYSVIEW_TIMESTAMP_FREQ, SYSVIEW_CPU_FREQ, 
                       &SYSVIEW_X_OS_TraceAPI, _cbSendSystemDesc);
