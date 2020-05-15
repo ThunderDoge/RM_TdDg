@@ -32,9 +32,7 @@ void Cloud_Init(void)
     bsp_dbus_Init(); //DBUS初始化
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
 	app_vision_Init();              //视觉串口接收初始化
-	bsp_GY53L1_Object_Init(&test_lazer,&APP_VISION_UART);
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
-	HAL_UART_Receive_IT(&huart5,u5buf,30);
 }
 /**
   * @brief  主任务
@@ -75,11 +73,6 @@ void task_CommuRoutine(void *param)
     {
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
-		
-		memset(u5buf,0,30);
-		HAL_UART_Receive(&huart5,(uint8_t*)u5buf,sizeof(u5buf),1U);
-		HAL_UART_Transmit(&huart5,(uint8_t*)u5buf,sizeof(u5buf),1U);
-
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG

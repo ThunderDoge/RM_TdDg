@@ -4,7 +4,7 @@
 #include "stm32f4xx.h"
 #include "usart.h"
 
-#define BSP_JUDGEMENT_UART huart4
+#define BSP_JUDGEMENT_UART huart3
 
 typedef __packed struct
 {

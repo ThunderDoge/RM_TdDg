@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -242,14 +242,7 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 void UART5_IRQHandler(void)
 {
   /* USER CODE BEGIN UART5_IRQn 0 */
-	if(__HAL_UART_GET_IT_SOURCE(&huart5,UART_IT_IDLE))
-	{
-//		uint8_t s[] = "uart rx cplt\r\n";
-//		__HAL_UART_CLEAR_IDLEFLAG(&huart5);
-//		HAL_UART_Transmit_IT(&huart5,s,sizeof(s));
-//		memset(buf,0,50);
-//		HAL_UART_Receive_IT(&huart5,buf,50);
-	}
+
   /* USER CODE END UART5_IRQn 0 */
   HAL_UART_IRQHandler(&huart5);
   /* USER CODE BEGIN UART5_IRQn 1 */

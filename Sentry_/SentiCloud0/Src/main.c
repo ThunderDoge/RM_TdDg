@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -28,7 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,31 +60,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#ifdef __MAIN_DEBUG
-
-uint8_t buf[100];
-
-#ifdef __stdio_h
-
-#ifdef __GNUC__
-  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
-
-PUTCHAR_PROTOTYPE
-{
-	if(HAL_UART_Transmit(&huart5,(uint8_t*)&ch,1,0xff) == HAL_OK)
-		return ch;
-	else
-		return EOF;
-}
-
-#undef PUTCHAR_PROTOTYPE
-
-#endif
-
-#endif // __MAIN_DEBUG
 
 /* USER CODE END 0 */
 
@@ -123,10 +98,7 @@ int main(void)
   MX_CAN2_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  #ifdef __MAIN_DEBUG
-	HAL_UART_Receive_IT(&huart3,buf,50);
-  #endif
-  #ifndef __MAIN_DEBUG
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -137,7 +109,6 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  #endif
   while (1)
   {
     /* USER CODE END WHILE */
@@ -223,10 +194,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-	while(1U)
-	{
-		HAL_Delay(1);	// Error waiting debug.
-	}
+
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -243,7 +211,6 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	printf("Wrong parameters value: file %s on line %d\r\n", file, line);
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

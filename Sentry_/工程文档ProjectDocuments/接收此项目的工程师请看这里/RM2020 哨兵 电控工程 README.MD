@@ -51,11 +51,15 @@
 
 ### 源文件依赖关系
 
-## 调试指南
+## 安装指南
 
-设置程序需要的操作记录在这里。
+从零开始建立一个电控工程的方法
 
-### 设置
+1. 建立CUBE工程，详见CubeMX Report PDF文档
+2. 所需的源文件：（除了CUBE复制过来的库文件）并且把工程分组如下。![image-20200515173444669](RM2020%20%E5%93%A8%E5%85%B5%20%E7%94%B5%E6%8E%A7%E5%B7%A5%E7%A8%8B%20README.assets/image-20200515173444669.png)
+3. 在工程的option的C/C++中设置编译选项`--cpp11`，设置组`Middlewares/FreeRTOS`编译选项`--c99`。在工程option的target中取消use MicroLIB（因为MicroLIB可能与C++冲突）
+4. 设置IncludePath![image-20200515173258971](RM2020%20%E5%93%A8%E5%85%B5%20%E7%94%B5%E6%8E%A7%E5%B7%A5%E7%A8%8B%20README.assets/image-20200515173258971.png)
+5. 
 
 
 
