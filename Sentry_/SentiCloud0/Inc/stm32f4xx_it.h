@@ -53,13 +53,9 @@ void MemManage_Handler(void);
 void BusFault_Handler(void);
 void UsageFault_Handler(void);
 void DebugMon_Handler(void);
-void CAN1_RX0_IRQHandler(void);
-void SPI1_IRQHandler(void);
-void USART1_IRQHandler(void);
 void USART3_IRQHandler(void);
 void TIM8_TRG_COM_TIM14_IRQHandler(void);
 void UART5_IRQHandler(void);
-void CAN2_RX0_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
