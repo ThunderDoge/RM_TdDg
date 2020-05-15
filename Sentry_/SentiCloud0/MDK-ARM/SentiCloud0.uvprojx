@@ -338,7 +338,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx,__MAIN_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;                    ../Drivers/STM32F4xx_HAL_Driver/Inc;                    ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                    ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                    ../Drivers/CMSIS/Include;                    ../Middlewares/Third_Party/FreeRTOS/Source/include;                    ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;                    ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;                    .\Sentry;                    .\Task;                    ..\..\CommonForSentry\App;                    ..\..\CommonForSentry\App_Sentry;                    ..\..\CommonForSentry\Bsp;                    ..\..\CommonForSentry\Motor</IncludePath>
+              <IncludePath>../Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;        ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;        ../Drivers/CMSIS/Include;        ../Middlewares/Third_Party/FreeRTOS/Source/include;        ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;        ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;        .\Sentry;        .\Task;        ..\..\CommonForSentry\App;        ..\..\CommonForSentry\App_Sentry;        ..\..\CommonForSentry\Bsp;        ..\..\CommonForSentry\Motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -670,6 +670,71 @@
               <FileName>port.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Bsp</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_dbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_dbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_icm20602.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_icm20602.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_judgement.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_judgement.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>App</GroupName>
+          <Files>
+            <File>
+              <FileName>app_check.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_check_oled_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_check_oled_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_math.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_mode.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_mode.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_vision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App\app_vision.cpp</FilePath>
             </File>
           </Files>
         </Group>
