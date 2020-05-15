@@ -2,15 +2,11 @@
 "senticloud0\startup_stm32f405xx.o"
 "senticloud0\main.o"
 "senticloud0\gpio.o"
-"senticloud0\can.o"
-"senticloud0\dma.o"
 "senticloud0\freertos.o"
-"senticloud0\spi.o"
 "senticloud0\usart.o"
 "senticloud0\stm32f4xx_it.o"
 "senticloud0\stm32f4xx_hal_msp.o"
 "senticloud0\stm32f4xx_hal_timebase_tim.o"
-"senticloud0\stm32f4xx_hal_can.o"
 "senticloud0\stm32f4xx_hal_rcc.o"
 "senticloud0\stm32f4xx_hal_rcc_ex.o"
 "senticloud0\stm32f4xx_hal_flash.o"
@@ -24,7 +20,6 @@
 "senticloud0\stm32f4xx_hal_cortex.o"
 "senticloud0\stm32f4xx_hal.o"
 "senticloud0\stm32f4xx_hal_exti.o"
-"senticloud0\stm32f4xx_hal_spi.o"
 "senticloud0\stm32f4xx_hal_tim.o"
 "senticloud0\stm32f4xx_hal_tim_ex.o"
 "senticloud0\stm32f4xx_hal_uart.o"
@@ -39,7 +34,7 @@
 "senticloud0\cmsis_os.o"
 "senticloud0\heap_4.o"
 "senticloud0\port.o"
---nodebug --strict --scatter "SentiCloud0\SentiCloud0.sct"
+--library_type=microlib --strict --scatter "SentiCloud0\SentiCloud0.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "SentiCloud0.map" -o SentiCloud0\SentiCloud0.axf
