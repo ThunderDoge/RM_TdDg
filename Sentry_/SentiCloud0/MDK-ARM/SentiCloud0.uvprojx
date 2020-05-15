@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--cpp11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx,__MAIN_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;.\Sentry;.\Task;..\..\CommonForSentry\App;..\..\CommonForSentry\App_Sentry;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor</IncludePath>
+              <IncludePath>../Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F4xx/Include; ../Drivers/CMSIS/Include; ../Middlewares/Third_Party/FreeRTOS/Source/include; ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS; ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F; .\Sentry; .\Task; ..\..\CommonForSentry\App; ..\..\CommonForSentry\App_Sentry; ..\..\CommonForSentry\Bsp; ..\..\CommonForSentry\Motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

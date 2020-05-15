@@ -248,7 +248,24 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
-
+extern uint8_t buf[100];
+#include "string.h"
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == &huart3)
+	{
+		uint8_t s[] = "uart rx cplt\r\n";
+		__HAL_UART_CLEAR_IDLEFLAG(&huart3);
+		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
+		memset(buf,0,50);
+		HAL_UART_Receive_IT(&huart3,buf,50);
+	}
+}
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+	uint8_t serr[] = "uart_rx_err";
+	HAL_UART_Transmit_IT(&huart3,serr,sizeof(serr));
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
