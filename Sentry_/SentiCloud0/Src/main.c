@@ -21,6 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "can.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -117,6 +119,9 @@ int main(void)
   MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   #ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart3,buf,50);
