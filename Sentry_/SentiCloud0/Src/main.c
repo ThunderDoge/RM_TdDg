@@ -21,6 +21,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "can.h"
+#include "dma.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -92,6 +95,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -111,9 +115,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_SPI1_Init();
   MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   #ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart3,buf,50);
@@ -123,16 +131,19 @@ int main(void)
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
+
   /* Start scheduler */
   osKernelStart();
- 
+  
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   #endif
   while (1)
   {
-		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
+//		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
+	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
 	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
@@ -188,7 +199,7 @@ void SystemClock_Config(void)
 
 /* USER CODE END 4 */
 
- /**
+/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM14 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
