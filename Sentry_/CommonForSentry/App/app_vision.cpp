@@ -222,15 +222,13 @@ uint8_t app_vision_analysis_intgrated(void)
     return frame_solved;
 
 }
-
+#if(APP_VISION_USE_SEMAPHORE)
 /// DMA发送回调函数。释放信号量
 void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart)
 {
-	#if(APP_VISION_USE_SEMAPHORE)
 	xSemaphoreGiveFromISR(app_vision_uart_semaphore,NULL);
-	#endif
 }
-
+#endif
 
 
 
@@ -413,6 +411,8 @@ void app_vision_load_to_txbuffer(float fdata, int location_at_buffdata)
  */
 HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 {
+	int16_t _check_sum = 0; //和校验用变量
+
 	#if(APP_VISION_USE_SEMAPHORE)
 		if(xSemaphoreTake(app_vision_uart_semaphore,10) == errQUEUE_EMPTY)	// 获取信号量
 		{
@@ -422,7 +422,6 @@ HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
         if(APP_VISION_UART.gState )
 	#endif
 
-    int16_t _check_sum = 0; //和校验用变量
     // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     Vision_Txbuffer[Frame_header] = FRAME_HEADER_DATA;
     Vision_Txbuffer[Frame_end] = FRAME_END_DATA;
