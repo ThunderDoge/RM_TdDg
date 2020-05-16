@@ -30,6 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "task_SentiCloud.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,10 +124,15 @@ int main(void)
   MX_CAN1_Init();
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
-  #ifdef __MAIN_DEBUG
+  
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始化
+  
+	#ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart5,buf,50);
 	#endif
-#ifndef __MAIN_DEBUG
+	#ifndef __MAIN_DEBUG
+	
+	TaskStarter();	// FreeRTOS 任务启动
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

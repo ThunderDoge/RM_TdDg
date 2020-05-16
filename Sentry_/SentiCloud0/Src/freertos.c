@@ -92,6 +92,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadTerminate(defaultTaskHandle);
   /* USER CODE END RTOS_THREADS */
 
 }

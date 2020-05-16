@@ -357,6 +357,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+#ifdef __MAIN_DEBUG
 extern uint8_t buf[100];
 #include "string.h"
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -378,6 +379,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	HAL_UART_Init(huart);
 	HAL_UART_Receive_IT(&huart5,buf,50);
 }
+#endif // __MAIN_DEBUG
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
