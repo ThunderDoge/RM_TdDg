@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--cpp11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx,__MAIN_DEBUG</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;        ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;        ../Drivers/CMSIS/Include;        ../Middlewares/Third_Party/FreeRTOS/Source/include;        ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;        ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;        .\Sentry;        .\Task;        ..\..\CommonForSentry\App;        ..\..\CommonForSentry\App_Sentry;        ..\..\CommonForSentry\Bsp;        ..\..\CommonForSentry\Motor</IncludePath>
+              <IncludePath>../Inc;         ../Drivers/STM32F4xx_HAL_Driver/Inc;         ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;         ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;         ../Drivers/CMSIS/Include;         ../Middlewares/Third_Party/FreeRTOS/Source/include;         ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;         ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;         .\Sentry;         .\Task;         ..\..\CommonForSentry\App;         ..\..\CommonForSentry\App_Sentry;         ..\..\CommonForSentry\Bsp;         ..\..\CommonForSentry\Motor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -701,6 +701,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\CommonForSentry\Bsp\bsp_judgement.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_can.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_can.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -735,6 +740,76 @@
               <FileName>app_vision.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\CommonForSentry\App\app_vision.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Sentry</GroupName>
+          <Files>
+            <File>
+              <FileName>Sentry.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\Sentry.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloud.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloud.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudCan.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudCan.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudCommu.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudCommu.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudLogic.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudLogic.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudVision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudVision.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>sentry_can_commom.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\App_Sentry\sentry_can_commom.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Task</GroupName>
+          <Files>
+            <File>
+              <FileName>task_SentiCloud.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Task\task_SentiCloud.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Motor</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_motor.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_motor.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_universe.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\bsp_universe.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>app_AmmoFeed.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\CommonForSentry\Motor\app_AmmoFeed.cpp</FilePath>
             </File>
           </Files>
         </Group>

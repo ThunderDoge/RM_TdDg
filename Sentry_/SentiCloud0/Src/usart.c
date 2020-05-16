@@ -361,19 +361,22 @@ extern uint8_t buf[100];
 #include "string.h"
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart == &huart3)
+	if(huart == &huart5)
 	{
 		uint8_t s[] = "uart rx cplt\r\n";
-		__HAL_UART_CLEAR_IDLEFLAG(&huart3);
-		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
+		__HAL_UART_CLEAR_IDLEFLAG(&huart5);
+		HAL_UART_Transmit_IT(&huart5,s,sizeof(s));
 		memset(buf,0,50);
-		HAL_UART_Receive_IT(&huart3,buf,50);
+		HAL_UART_Receive_IT(&huart5,buf,50);
 	}
 }
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 	uint8_t serr[] = "uart_rx_err";
-	HAL_UART_Transmit_IT(&huart3,serr,sizeof(serr));
+	HAL_UART_Transmit_IT(&huart5,serr,sizeof(serr));
+	HAL_UART_Abort_IT(huart);
+	HAL_UART_Init(huart);
+	HAL_UART_Receive_IT(&huart5,buf,50);
 }
 /* USER CODE END 1 */
 

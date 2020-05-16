@@ -124,7 +124,7 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   #ifdef __MAIN_DEBUG
-	HAL_UART_Receive_IT(&huart3,buf,50);
+	HAL_UART_Receive_IT(&huart5,buf,50);
 	#endif
 #ifndef __MAIN_DEBUG
   /* USER CODE END 2 */
@@ -143,8 +143,10 @@ int main(void)
   while (1)
   {
 //		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
-	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
-	  HAL_Delay(100);
+//	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
+//	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_12);
+//	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_11);
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
