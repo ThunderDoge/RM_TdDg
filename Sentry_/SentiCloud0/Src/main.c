@@ -31,6 +31,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "task_SentiCloud.hpp"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,8 +63,48 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+#ifdef __MAIN_DEBUG
 uint8_t buf[100];
 uint8_t s[] = "uart-test";
+
+#ifdef __VISION_TEST
+
+int v_case;
+
+uint8_t str_normal[] = {0xff,0x13,0x9a,0x99,0x99,0x3f,0x9a,0x99,0x59,0x40,0x1,0x98,0x0,0x0,0x0,0x0,0x8f,0xd};
+uint8_t s1[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0 ,0x0 ,0x0 ,0x0 ,0xf1 ,0xd};
+uint8_t trush[] = {0x13, 0x9a ,0x99,0x99, 0x3f};
+uint8_t s2[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfb ,0x0 ,0x0 ,0x0 ,0x0 ,0xf2 ,0xd };
+	
+uint8_t s3_a[] = {0x13, 0x9a ,0x99,0x99, 0x3f,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
+uint8_t s3_b_s[] = {0x0 ,0x0 ,0x0 ,0xf1 ,0xd,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfb ,0x0 ,0x0 ,0x0 ,0x0 ,0xf2 ,0xd };
+
+uint8_t trush4[]={0x54 ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x20 ,0xa0 ,0x0 ,0x0 ,0x41 ,0x6d};
+uint8_t s4_a[]={0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
+uint8_t s4_b[]={0x0 ,0x0 ,0x0 ,0xf1 ,0xd};	
+
+uint8_t s5[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59,0x40,0x1,0xfa,0x0,0xff,
+0x13,0x0,0xf1,0xd,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xa,0xb,0x5f,0xd};
+
+void v_buf_insert(uint8_t* pdata, int size)
+{
+    memcpy(Vision_Rxbuffer+not_analysed_index,  pdata, size);
+    not_analysed_index += size;
+    if(not_analysed_index>120)
+        not_analysed_index = 120;
+}
+void v_buf_clr()
+{
+    not_analysed_index = 0;
+    memset(Vision_Rxbuffer,0,sizeof(Vision_Rxbuffer));
+}
+
+#endif // __VISION_TEST
+
+#endif // __MAIN_DEBUG
+
+
 
 //#ifdef __stdio_h
 
@@ -125,7 +166,7 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�?
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�?
   
 	#ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart5,buf,50);
@@ -152,7 +193,53 @@ int main(void)
 //	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
 //	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_12);
 //	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_11);
-	  HAL_Delay(1000);
+#ifdef __VISION_TEST
+	  switch(v_case)
+	  {
+		  case 0:
+            v_buf_insert(str_normal,sizeof(str_normal));
+            app_vision_analysis_intgrated();
+
+            v_buf_clr();
+            break;
+		  case 1:
+            v_buf_insert(s1, sizeof(s1));
+            v_buf_insert(trush, sizeof(trush));
+            app_vision_analysis_intgrated();
+
+            v_buf_insert(s2, sizeof(s2));
+            app_vision_analysis_intgrated();
+            v_buf_clr();
+            break;
+		  case 2:
+            v_buf_insert(s3_a, sizeof(s3_a));
+            app_vision_analysis_intgrated();
+            v_buf_insert(s3_b_s, sizeof(s3_b_s));
+            app_vision_analysis_intgrated();
+            v_buf_clr();
+			  break;
+		  case 3:
+            v_buf_insert(trush4, sizeof(trush4));
+            v_buf_insert(trush4, sizeof(trush4));
+            v_buf_insert(s4_a, sizeof(s4_a));
+            app_vision_analysis_intgrated();
+
+            v_buf_insert(s4_b, sizeof(s4_b));
+            app_vision_analysis_intgrated();
+
+            v_buf_clr();
+			  break;
+		  case 4:
+          v_buf_insert(s5, sizeof(s5));
+		  app_vision_analysis_intgrated();
+          v_buf_clr();
+			  break;
+	  }
+      
+
+#endif // __VISION_TEST
+	  
+	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
