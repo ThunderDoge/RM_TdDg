@@ -27,47 +27,6 @@
             "intelliSenseMode": "msvc-x64",
             "cStandard": "c99",
             "cppStandard": "c++11"
-        },
-        {
-            "name": "MDK-ARM",
-            "cStandard": "c99",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-arm",
-            "compilerPath": "D:\\Program Files\\Keil_MDK5\\ARM\\ARMCC\\bin\\armcc.exe",
-            "compilerArgs": [
-                "--c99 ",
-                "-c ",
-                "--cpu Cortex-M4.fp ",
-                "-g ",
-                "-O0 ",
-                "-Otime ",
-                "--apcs=interwork ",
-                "--split_sections ",
-                "-I\"D:/Program Files/Keil_MDK5/ARM/PACK/ARM/CMSIS/5.5.1/CMSIS/Core/Include\"",
-                "-I\"D:/Program Files/Keil_MDK5/ARM/PACK/Keil/STM32F4xx_DFP/2.13.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include\"",
-                "-D__UVISION_VERSION=\"528\" ",
-                "-D_RTE_ ",
-                "-DSTM32F405xx ",
-                "-DUSE_HAL_DRIVER ",
-                "-DSTM32F405xx ",
-                "-D__MAIN_DEBUG ",
-                "-D__VISION_TEST",
-                "-o SentiCloud0\\*.o --omf_browse SentiCloud0\\*.crf --depend SentiCloud0\\*.d"
-            ],
-            "includePath": [
-                "D:/Program Files/Keil_MDK5/ARM/PACK/ARM/CMSIS/5.5.1/CMSIS/Core/Include",
-                "D:/Program Files/Keil_MDK5/ARM/PACK/Keil/STM32F4xx_DFP/2.13.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
-                "D:/Program Files/Keil_MDK5/ARM/ARMCC\\include",
-                "C:\\Users\\49997\\STM32Cube\\Repository\\STM32Cube_FW_F4_V1.24.0\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
-                "C:\\Users\\49997\\STM32Cube\\Repository\\STM32Cube_FW_F4_V1.24.0\\Drivers\\CMSIS\\Core\\Include",
-                "C:\\Users\\49997\\STM32Cube\\Repository\\STM32Cube_FW_F4_V1.24.0\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
-                "C:\\Users\\49997\\STM32Cube\\Repository\\STM32Cube_FW_F4_V1.24.0\\Drivers\\CMSIS\\Include"
-            ],
-            "browse": {
-                "path": [
-                    "C:\\Users\\49997\\STM32Cube\\Repository\\STM32Cube_FW_F4_V1.24.0"
-                ]
-            }
         }
     ],
     "version": 4

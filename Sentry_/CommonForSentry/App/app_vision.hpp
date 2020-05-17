@@ -67,7 +67,7 @@ enum __app_vision_pid_id : uint8_t
 enum __app_vision_Functionwords
 {
     //视觉发给电控的
-    CMD_GIMBAL_RELATIVE_CONTROL = 0x13,      //控制云台相对角度
+    CMD_GIMBAL_RELATIVE_CONTROL = 0x01,      //控制云台相对角度
     CMD_GIMBAL_ABSOLUTE_CONTROL = 0x02,      //控制云台绝对角度
     CMD_SHOOT = 0x03,                        //射击指令
     CMD_CHASSIS_CONTROL = 0X04,              //底盘控制
@@ -80,7 +80,7 @@ enum __app_vision_Functionwords
     //电控发给视觉的
     CMD_GET_MCU_STATE = 0x11, //获取电控控制信息
     ROBOT_ERR = 0X12,
-    STA_CHASSIS = 0X1F,
+    STA_CHASSIS = 0X13,
 
     JUD_GAME_STATUS = 0x20,
     JUD_SELF_HP = 0x21,
@@ -149,10 +149,8 @@ __weak HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,
 extern uint8_t Vision_IsTxUseDma,Vision_IsRxUseDma;
 extern sentry_vision_data VisionTx, VisionRx; ///串口发送/接收缓存结构体
 extern uint8_t Vision_Txbuffer[18];           ///串口发送暂存数组
-extern uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE]; // 串口接收暂存数组
-extern int not_analysed_index;  /// Vision_Rxbuffer中从[0]到[not_analysed_index -1]的内容都未曾解析。
+extern uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE];
 
-extern int not_analysed_index;                  /// Vision_Rxbuffer中从[0]到[not_analysed_index -1]的内容都未曾解析。
 #if(APP_VISION_USE_SEMAPHORE)
 	extern SemaphoreHandle_t app_vision_uart_semaphore;
 #endif
