@@ -52,8 +52,6 @@ void task_Main(void *param)
         manager::CANSend();     //统一的CAN电机控制
         vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
 		
-		
-		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif

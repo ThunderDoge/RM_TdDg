@@ -283,15 +283,15 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
         // 初始化各项PID参数
     : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
-	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+	  PitchPosition(15, 1, 0, 1800, 10000, 10, 10, 120),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
 	  Pitch2ndSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(10, 1,0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawPosition(10, 1,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
@@ -337,6 +337,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	
 	copy_cloud_param_to_backup(&PitchMotor);				// 复制云台PITCH轴参数到备份数组。以待运行时使用。
 	is_use_dual_param = 0;	// 标记未使用双PITCH参数。此数值会随着PITCH模式变化
+	SetPitchRealAngleLimit(35,-60);
 };
 
 
