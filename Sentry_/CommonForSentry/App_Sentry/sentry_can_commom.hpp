@@ -145,6 +145,8 @@ void DOWN_CLOUD_STATES_CanRx(uint32_t StdId, uint8_t *ptrData); ///以下类推�
 void DOWN_CLOUD_STATES_CanTx();
 void CHASSIS_STATES_CanRx(uint32_t StdId, uint8_t *ptrData);
 void CHASSIS_STATES_CanTx();
+void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData);
+void CHASSIS_PILLAR_CanTx();
 
 void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData);
 void UP_FEED_CanRx(uint32_t StdId, uint8_t *ptrData);

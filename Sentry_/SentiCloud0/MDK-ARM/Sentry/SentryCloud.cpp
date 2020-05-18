@@ -87,6 +87,7 @@ float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
 -15, -1, 0, 1800, 10000,120,
 100, 0, 0, 2000, 10000,3000,
 -10, 0, 0, 2000, 30000,500};
+uint8_t is_use_dual_param;
 // 参照一下参数设定
 //   PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 //   PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
@@ -135,7 +136,7 @@ static void copy_array_to_cloud_param(softcloud* desti,float* src)
 void SentryCloud::EnterModeDualPitch(void)
 {
     copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
-
+	is_use_dual_param = 1;
     PitchSecondMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
     // 它的输出值电流值会在运行时复制PitchMotor的电流输出值
 }
@@ -145,8 +146,8 @@ void SentryCloud::EnterModeDualPitch(void)
  */
 void SentryCloud::ExitModeDualPitch(void)
 {
-    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入单PITCH参数 WriteDualMotorParam();
-
+    copy_array_to_cloud_param(&PitchMotor,pid_param_backup);    //写入单PITCH参数 WriteDualMotorParam();
+	is_use_dual_param = 0;
     PitchSecondMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
     // 但是此函数在某一PITCH掉线时才会调用。
 }
@@ -157,8 +158,17 @@ void SentryCloud::ExitModeDualPitch(void)
 void SentryCloud::RunModeDualPitch()
 {
 	PitchSecondMotor.cooperative =1;
-    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
-    PitchSecondMotor.InsertCurrent();   // 写入电流值
+//    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
+//    PitchSecondMotor.InsertCurrent();   // 写入电流值
+}
+/// 覆写 UserProc定义用于操作电流值
+void manager::UserProcess(void)
+{
+	if(CloudEntity.PitchSecondMotor.cooperative == 1)
+	{
+		CloudEntity.PitchSecondMotor.TargetCurrent = CloudEntity.PitchMotor.TargetCurrent;  // 复制电流值
+		CloudEntity.PitchSecondMotor.InsertCurrent();   // 写入电流值
+	}
 }
 /**
  * @brief PITCH模式控制。在Handle()中调用
@@ -166,105 +176,58 @@ void SentryCloud::RunModeDualPitch()
  */
 void SentryCloud::PitchModeCtrl(void)
 {
-	last_pitch_ctrl_mode = pitch_ctrl_mode;
+	last_pitch_ctrl_mode = pitch_ctrl_mode;	// 记录旧的 PITCH模式
 	
-	// 更新模式PITCH的规则
-	if(PitchMotor.Is_Offline() == 0 && PitchSecondMotor.Is_Offline() ==0)
+	// PITCH 模式切换
+	if(PitchMotor.Is_Offline() == 0 && PitchSecondMotor.Is_Offline() == 0)
 	{
-		pitch_ctrl_mode = __cloud_dual_pitch;
+		// 仅当 两个PITCH在线时采用 双PITCH模式。采用合作模式。主PITCH参数写入双PITCH模式的参数
+		pitch_ctrl_mode = __cloud_dual_pitch;	
 	}
-	else 
+	else
 	{
-		pitch_ctrl_mode = __cloud_main_pitch;
+		// 当某一PITCH离线 使用副PUTCH模式，即关闭合作模式。
+		// 主PITCH参数写入独立模式的参数。两PITCH的PID独立运行。
+		// 由于一个PITCH离线。
+		pitch_ctrl_mode = __cloud_second_pitch;
 	}
 	
 	// 进行模式切换及运行
-	switch( (pitch_ctrl_mode*10)+(last_pitch_ctrl_mode) )
+	
+	if(last_pitch_ctrl_mode != pitch_ctrl_mode)
 	{
-	case __cloud_dual_pitch*10 + __cloud_dual_pitch:
-		{			RunModeDualPitch();		}
-		break;
-		
-	case __cloud_main_pitch*10 + __cloud_main_pitch:
-		{/*DO NOTHING*/}
-		break;
-		
-	case __cloud_dual_pitch*10 + __cloud_main_pitch:
-	default:
-		{			ExitModeDualPitch();		}
-		break;
-		
-	case __cloud_main_pitch*10 + __cloud_dual_pitch:
-		{			EnterModeDualPitch();		}
-		break;
+		switch(last_pitch_ctrl_mode)
+		{
+			case __cloud_dual_pitch:
+				ExitModeDualPitch();
+				break;
+			default:
+				break;
+		}
+		switch(pitch_ctrl_mode)
+		{
+			case __cloud_dual_pitch:
+				EnterModeDualPitch();
+				break;
+			default:
+				break;
+		}
 	}
+	
+	switch(pitch_ctrl_mode)
+	{
+		case __cloud_dual_pitch:
+			RunModeDualPitch();
+			break;
+		case __cloud_second_pitch:
+			PitchSecondMotor.cooperative = 0;
+			break;
+		default:
+			break;
+
+	}
+	
 }
-//  `...*...............................................................................................................................
-//  ^,`.,\`..`O[\/=/./O\[**************************************************************************************************[******[*****
-//  \`/^=O*^^^O`]^==,`],@@@`,*******************************,[**************************************************************************
-//  ,OO\/OoO@@\OoOO/[OoOO@@@@`\`*************************************************,]*****,`****************]*****************************
-// .///=o`O/O@@@\\`OOo\\\^\@@@@/************************************=^***,**************************************************************
-//  *]``*,,[,,@@@@`,o,*`*=\^\@@@\***********************************=^******************************************************************
-// .***********,@@@@``]**[*`,*\@@@\*,***************************************************************************************************
-// .*,,********,\,@@@O^******,**\@@@\*`*************************************************************************************************
-// .****************@@@@*,******\*O@@@``************************************************************************************************
-// .*****************,@@@@`*`****,``\@@@`***********************************************************************************************
-// .*****************`*,@@@@********\,@@@@/`********************************************************************************************
-// .********************`,@@@@`********,@@@@********************************************************************************************
-// .**=********************,@@@@]\,****`*\@@@\**************************************************************************]***************
-// .***********************`,,@@@@`****,*,*\@@@O*,**********************************************************************]***************
-// .***************************/@@@\/]*****]*@@@@\`*************************************************************************************
-// .***************************`\\@@@@`****^*`,\@@@\*\**********************************************************************************
-// .**=****************************/@@@\`,,^***`,@@@@``/,*******************************************************************************
-// .*******************************/`/@@@@/*******[@@@@`*`,****************************************************************]`***********
-// .`**********************************=@@@\`\,****`\@@@@`*`*,\*************************************************************************
-// .*************************************,@@@@/*****=*\@@@@`,***************************************************************************
-// .***************************************\@@@@*\,*,`*`\@@@\,*=*]**********************************************************************
-// .***************************************,*\@@@@*****`*,@@@@\*************************************************************************
-// .*******************************************\@@@@*/,,***,@@@@\*`/*[,*****************************************************************
-// .*******************************************\.\@@@@``***=*[@@@@\[`*^*****************************************************************
-// .***********************************************\@@@@`//`,``\@@@@^,\,/*\*****************************`,,`,***************************
-// .******,****************************************,`\@@@@``]O/``[@@@@O]O\,********`*******************,`   \*,*************************
-// .**************************=**********************\`\@@@@@@^    =@@@@@@^***`*,***`=^********^*****. ,      `*,^,*********************
-// .************************[[*****************/^******[@@@@@@  @^ =@@@@@@ .`*`******`*************``   ,.   @^ ************************
-// .***************************************************=O@@@`  ..   @@@@^\@@@`[/*\,*`*[],,]****,\*,.  /]]]]@/@@].*`*****,***************
-// .**************[*`*,**********************************.  ,@@@OOO@@/[`\@@@@@^    .``]*]*,***,**   =@^        @@..*********************
-// .*****************************************************`    ,@@@@@@OO*..@@@@@@\         `**,`   ,@/         /O,@`.,*/****************`
-// .*****************************************************       =@@@@@OOOO^=@@@@^     ]` . `    /@@`           O@^\\./,*****************
-// .***********************************************,****.      ]/@@@@@@@@@]/@@@@.  . .. ..\@@@@@@@             ,OOO/@*******************
-// .*************************************************,`` ....,     =\/=@@@@`         /`       @@@^              ,[``*,******************
-// .************************************************/           /@@@@@@@@@@^  .     @@@.  ,,\  == ,^             ,]*********************
-// .************************************************@@@@@]]\] @@. ,@@@@@@@@[     .\\@@/  =@@@^.=` @           ,^..**********************
-// .*******************************************.          ,/@@@`   @\/@@@@@      .\OO@@@O..=`[\@ =@@@@@@@@@@@@@@\.[*=*******************
-// .*******************************.******,.           ]@@@@@@@@@@@@@@@@@@@@^@@@@@@@@@@O^,*O^./@`           ..@@@@`^**]***]*************
-// .***********************************`.          ]/\/O@@/    /@@@@@@@@@@@@`/@@@@@@@OOO^.oO/`            *...=@@@@^          ]]]^******
-// .********************************.            .,]]]O@@`   ,@@@@@@@@@@@@@@@@@@OO@@@Oo^]@[            .*......\@@/]/o[[.........*******
-// .*****************************`           =@``=oOOO@@    =@@@@@@@@@@@@@@@@@@@@@@@@OO`             *..........=@^...........   .******
-// .***************************.              =`,]]OO@@@/[@ @@@@@@@@@@@@@@@@@@OOOOO@/             .*...............    .,]]/o[[`..******
-// .****************************         [[[[...\oOOO@@@*/^=@@@@@@@@@@@@@@@@@*o.*.              *......      .]]/O[[[...    ,]`[[`******
-// .***************************.         ....*      ,[[` ,@@@@@@@@@@@@@@@@@@^.,..                 ..]]/O[[....    .]]o/[`........*.*****
-// .****************************         ...,oOOO@@@@OOO]],]]]                = .`           ,[`....     ,]]oO/o`*******...........*****
-// .****************************           ...oOO@@@@/OO/.=@@@@@@@@@@@@@@@@@@@@]\`             .]]/O[[[[**o****************...**..******
-// .****************************         ...`=@      .OO/@=@@@@@@@@@@@@@@@@@@@@@@^           .....*****=`**`****`,***,]]@@@/************
-// .**********************************....,**..           =OO@@@@@@@@@@@@@@@@@@@@^           ....**`**\**\``*.]]@@@O/[`*,***************
-// .**`*************************************..            .OO@@@@@@@@@@@@@@@@@@@@^           .*.**,***,]]@@@@@@*************************
-// .****************************************.         . ...@@/@@@@@@/[[O@@O*\@@@@....,`      ..,]/@@@@@@@@@@OoO*************************
-// .****************************************.       /^    .]`          /@@@OOoo\.    @@@@@@@@@@@@@@@@@@@@@@@\[\*************************
-// .***************************************,        @^ .. .O\\/=..    .\. =@@@O^    ..@@@@@@@@@@@@@@@@@@@@@@\//*************************
-// .*******************************************\]]]/@     `@\@@@@@   .OOO@@@@@@.     =/[[[@@@@@@@@@@@@@@[[`*****************************
-// .*********************************************[O^     .`=O@@@@@@/]@@@@@@@@@\...,. =**..,****.**=@@@@O*,******************************
-// .**`*****************************************`....[OOOO[\OO@@@@@@@@@\@@.//@O.,.=. O............/@@@/*,*******************************
-// .**`****o*******^*\***************************[*@@@\[[`..        .,[\\` [O[.....==O.....    .,.@@@@^*,o`*****************************
-// .*/**********************************************.[`.             ...`.. O]`.....=^....  .. ...@@OO\\oo******************************
-// .**,***********************************************`.       .  ^     ./OOO[O@@\]]@@@@\]]`. ...,//************************************
-// .^*********************=***,********************************`........... ......*oOOOOO[[[`*,***//`*****[**,*********o`**************,
-// .^*****,********************************************************[[*,]]`*****]`***[[[***]**,[************^****************************
-// .****************************\`****************************/*`*******************oo*************************************/************
-// .****o**************************************************************************/oo*****//\]`*[***********************[[\]***********
-// .**]**************************************************************************=^****/**,*********************************************
-// .*,*****************oooo******************************************,[`***[[`*****************************************`****************
-// ]]]]]]]]]]]]]]]]]]]]`]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-// @\\@/@//@O/@@=@/^O*OO.\@@@\`@/O@@@O=^@O`@@,\\@/O/=@/`O/\O@O/=@@=,=^//.=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 // 电机型号类
 Motor_t DJI_2006(8192, 36);
@@ -287,12 +250,12 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
-	  Pitch2ndSpeed(6, 0, 8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
-      YawSpeed(-20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(-10, -1,0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
+      YawPosition(10, 1,0.5, 200, 10000, 10, 2, 100),//10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
@@ -321,20 +284,23 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 1319, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 52, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4115, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
+      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4115, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
 {
 	Feed2nd.Enable_Block(4000,200,5);                       // 初始化堵转检测
 	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  // 设定微分来源为陀螺仪
+	Pitch2ndPosition.Custom_Diff = PitchSecondMotor.Gyro_RealSpeed;
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
+	
     PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
     PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
-		
-	PitchSecondMotor.cooperative=1;	// 设为合作模式，这样会阻断此电机的PID的运行
+	
+//	PitchSecondMotor.cooperative=1;	// 设为合作模式，这样会阻断此电机的PID的运行
 	
 	copy_cloud_param_to_backup(&PitchMotor);				// 复制云台PITCH轴参数到备份数组。以待运行时使用。
+	is_use_dual_param = 0;	// 标记未使用双PITCH参数。此数值会随着PITCH模式变化
 };
 
 
@@ -406,13 +372,13 @@ void SentryCloud::ImuDataProcessHandle()
 		app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//注意负号。
 	}
 	//↓↓↓陀螺仪角度旋转到枪口方向↓↓↓
-	RotatedImuAngle[0] = -app_imu_data.integral.Roll;
-    RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
-	RotatedImuAngle[2] = -app_imu_data.integral.Yaw;
+	RotatedImuAngle[0] = -app_imu_data.integral.Pitch;
+    RotatedImuAngle[1] = app_imu_data.integral.Roll;
+	RotatedImuAngle[2] = app_imu_data.integral.Yaw;
 	//↓↓↓陀螺仪加速度旋转到枪口方向↓↓↓
-	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[0];
-    RotatedImuAngleRate[1] = -app_imu_data.Angle_Rate[1];
-	RotatedImuAngleRate[2] = -app_imu_data.Angle_Rate[2];
+	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[1];
+    RotatedImuAngleRate[1] = app_imu_data.Angle_Rate[0];
+	RotatedImuAngleRate[2] = app_imu_data.Angle_Rate[2];
     //↓↓↓陀螺仪角速度旋转到炮塔方向，即Roll,Pitch水平，Yaw随枪口Yaw↓↓↓
     float Cp = cosf(RealPitch), Sp = sinf(RealPitch);
 
@@ -433,6 +399,7 @@ void SentryCloud::SetAngleTo(float pitch, float yaw)
     TargetPitch = pitch;
     TargetYaw = yaw;
     PitchMotor.Angle_Set(-TargetPitch);	//注意负号
+	PitchSecondMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Angle_Set(TargetYaw);
 }
 ///设定陀螺仪控制角度
@@ -442,6 +409,7 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
     TargetPitch = pitch;
     TargetYaw = yaw;
     PitchMotor.Gyro_Angle_Set(-TargetPitch);
+	PitchSecondMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Gyro_Angle_Set(TargetYaw);
 }
 
@@ -549,9 +517,10 @@ void SentryCloud::Shoot(float bullet_speed, uint8_t fire_freq, uint8_t Shoot_mod
 void SentryCloud::Safe_Set()
 {
 	Mode = save_cloud;
-    YawMotor.Safe_Set();
+    YawMotor.Speed_Set(0);
 //    PitchMotor.Safe_Set();
 	PitchMotor.Speed_Set(0);
+    PitchSecondMotor.Speed_Set(0);
     FricLeftMotor.Safe_Set();
     FricRightMotor.Safe_Set();
     Feed2nd.Safe_Set();
@@ -613,6 +582,20 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
         FricLeftMotor.Speed_Set(-Shoot_Speed);
         FricRightMotor.Speed_Set(Shoot_Speed);
 	}
+}
+
+void SentryCloud::SetPitchRealAngleLimit(float max, float min)
+{
+    if(max < min)
+    {
+        pitch_limit_max = min;
+        pitch_limit_min = max;
+    }
+    else
+    {
+        pitch_limit_max = max;
+        pitch_limit_min = min;
+    }
 }
 
 

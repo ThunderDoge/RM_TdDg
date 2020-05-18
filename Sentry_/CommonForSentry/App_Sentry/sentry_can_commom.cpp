@@ -187,7 +187,7 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
 	if(StdId == CHASSIS_PILLAR)
 	{
 		CanRx.Pillar_flag = ptrData[0];
-        CanRx.CanUpdateTime[tChassis_Info] = CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
+        CanRx.CanUpdateTime[tChassis_Pil_Info] = CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
 	}
 }
 
@@ -208,6 +208,7 @@ void CHASSIS_PILLAR_CanRx(uint32_t StdId, uint8_t *ptrData)
 #ifdef __PROJECT_SENTRY_CLOUD_
 void UP_CLOUD_STATES_CanTx()
 {
+	CanTx.CanUpdateTime[tUpCloud_Info] = HAL_GetTick();
     SentryCanSend(&CAN_INTERBOARD, UP_CLOUD_STATES, CanTx.UpCloudPitchYaw[0],
                   CanTx.UpCloudPitchYaw[1]);
 }
@@ -215,6 +216,7 @@ void UP_CLOUD_STATES_CanTx()
 #ifdef __PROJECT_SENTRY_DOWN_CLOUD_
 void DOWN_CLOUD_STATES_CanTx()
 {
+	CanTx.CanUpdateTime[tDownCloud_Info] = HAL_GetTick();
     SentryCanSend(&CAN_INTERBOARD, DOWN_CLOUD_STATES,
                   CanTx.DownCloudPitchYaw[0], CanTx.DownCloudPitchYaw[1]);
 }
@@ -223,6 +225,7 @@ void DOWN_CLOUD_STATES_CanTx()
 #ifdef __PROJECT_SENTRY_CHASSIS_
 void CHASSIS_STATES_CanTx()
 {
+	CanTx.CanUpdateTime[tChassis_Info] = HAL_GetTick();
     SentryCanSend(&CAN_INTERBOARD, CHASSIS_STATES,
                   CanTx.Chassis_SpeedLocation[0],
                   CanTx.Chassis_SpeedLocation[1]);
@@ -230,6 +233,7 @@ void CHASSIS_STATES_CanTx()
 
 void CHASSIS_PILLAR_CanTx()
 {
+	CanTx.CanUpdateTime[tChassis_Pil_Info] = HAL_GetTick();
 	CanTx.Pillar_flag = ChassisEntity.PillarFlag;
 	uint8_t pData[8];
 	pData[0] = CanTx.Pillar_flag;

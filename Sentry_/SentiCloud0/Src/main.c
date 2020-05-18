@@ -29,6 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+//#include "stdio.h"	// stdio.h may cause CAN RX error
 #include "stdio.h"
 #include "task_SentiCloud.hpp"
 #include <string.h>
