@@ -239,10 +239,12 @@ void SentryCloud::PitchRealAngleLimitCtrl()
         if(PitchMotor.RealAngle >= pitch_limit_max)
         {
             PitchMotor.Angle_Set(pitch_limit_max);
+			PitchMotor.PID_Out->Iout = 0;
         }
         if(PitchMotor.RealAngle <= pitch_limit_min)
         {
             PitchMotor.Angle_Set(pitch_limit_min);
+			PitchMotor.PID_Out->Iout = 0;
         }
     // }
     // else    // if (PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
@@ -255,10 +257,12 @@ void SentryCloud::PitchRealAngleLimitCtrl()
         if(PitchSecondMotor.RealAngle >= pitch_limit_max)
         {
             PitchSecondMotor.Angle_Set(pitch_limit_max);
+			PitchSecondMotor.PID_Out->Iout = 0;
         }
         if(PitchSecondMotor.RealAngle <= pitch_limit_min)
         {
             PitchSecondMotor.Angle_Set(pitch_limit_min);
+			PitchSecondMotor.PID_Out->Iout = 0;
         }
     }
 }
@@ -283,15 +287,15 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
         // 初始化各项PID参数
     : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
-	  PitchPosition(15, 1, 0, 1800, 10000, 10, 10, 120),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+	  PitchPosition(-10, -1, 0, 1800, 10000, 10, 10, 120),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
 	  Pitch2ndSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndPosition(1, 0, 0, 1800, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(10, 1,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawPosition(0, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
@@ -437,6 +441,12 @@ void SentryCloud::SetAngleTo(float pitch, float yaw)
 	Mode = absolute_cloud;
     TargetPitch = pitch;
     TargetYaw = yaw;
+	
+	if(TargetPitch > pitch_limit_max)
+		TargetPitch = pitch_limit_max;
+	if(TargetPitch < pitch_limit_min)
+		TargetPitch = pitch_limit_min;
+	
     PitchMotor.Angle_Set(-TargetPitch);	//注意负号
 	PitchSecondMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Angle_Set(TargetYaw);
@@ -563,7 +573,7 @@ void SentryCloud::Safe_Set()
     FricLeftMotor.Safe_Set();
     FricRightMotor.Safe_Set();
     Feed2nd.Safe_Set();
-    manager::CANSend();
+//    manager::CANSend();
 	LazerSwitchCmd(0);
 }
 

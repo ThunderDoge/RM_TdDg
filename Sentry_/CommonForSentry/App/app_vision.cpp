@@ -653,11 +653,11 @@ void CMD_GET_MCU_STATE_Tx(float pitch,float yaw_mech,float yaw_soft,uint8_t clou
 	}
 
     memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
-    app_vision_load_to_txbuffer(cloud_mode, 0U);
-    app_vision_load_to_txbuffer(pitch, 1);
-    app_vision_load_to_txbuffer(yaw_mech, 5);
-    app_vision_load_to_txbuffer(yaw_soft, 9U);
-    app_vision_load_to_txbuffer(shoot_mode, 13U);
+    // app_vision_load_to_txbuffer(cloud_mode, 0U);
+    app_vision_load_to_txbuffer(pitch, 0U);
+    app_vision_load_to_txbuffer(yaw_soft, 4U);
+    app_vision_load_to_txbuffer(yaw_mech, 8U);
+    // app_vision_load_to_txbuffer(shoot_mode, 13U);
     app_vision_SendTxbuffer(CMD_GET_MCU_STATE);
 }
 ///串口发送到小主机日志系统

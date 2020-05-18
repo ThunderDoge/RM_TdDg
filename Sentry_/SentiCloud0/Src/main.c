@@ -167,7 +167,7 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�?
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
   
 	#ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart5,buf,50);
