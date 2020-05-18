@@ -228,47 +228,11 @@ void SentryCloud::PitchModeCtrl(void)
 	}
 	
 }
-/**
- * @brief 软件限位控制
- * 
- */
-void SentryCloud::PitchRealAngleLimitCtrl()
-{
-    // if(PitchMotor.RunState == Speed_Ctl || PitchMotor.RunState == Gyro_Speed_Ctl)
-    // {
-        if(PitchMotor.RealAngle >= pitch_limit_max)
-        {
-            PitchMotor.Angle_Set(pitch_limit_max);
-        }
-        if(PitchMotor.RealAngle <= pitch_limit_min)
-        {
-            PitchMotor.Angle_Set(pitch_limit_min);
-        }
-    // }
-    // else    // if (PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
-    // {
-
-    // }
-
-    if(PitchSecondMotor.cooperative == 0)
-    {
-        if(PitchSecondMotor.RealAngle >= pitch_limit_max)
-        {
-            PitchSecondMotor.Angle_Set(pitch_limit_max);
-        }
-        if(PitchSecondMotor.RealAngle <= pitch_limit_min)
-        {
-            PitchSecondMotor.Angle_Set(pitch_limit_min);
-        }
-    }
-}
-
 
 // 电机型号类
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
-
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
 SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x201);
@@ -357,6 +321,10 @@ void SentryCloud::Handle()
 	
     // 陀螺仪数据处理
     ImuDataProcessHandle();
+    //--------------------------单/双PITCH模式控制逻辑--------------------------
+    PitchModeCtrl();    
+    //--------------------------------射击控制逻辑-----------------------------------
+    ShootCtrl();
 
     // -------------------------------分模式逻辑-------------------------------
     {
@@ -386,12 +354,6 @@ void SentryCloud::Handle()
         LastCloudMode = CurrentCloudMode;   //  检查模式更新
     }
 
-    //--------------------------单/双PITCH模式控制逻辑------------------------------
-    PitchModeCtrl();    
-    //-------------------------------PITCH软件限位----------------------------------
-    PitchRealAngleLimitCtrl();
-    //--------------------------------射击控制逻辑-----------------------------------
-    ShootCtrl();
 //CANSend会在主逻辑统一调用
 //    manager::CANSend();
 
