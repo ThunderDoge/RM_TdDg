@@ -652,7 +652,7 @@ void SentryCloud::ShootCtrl()
 	{
 		Feed2nd.Safe_Set();
 	}
-    if(!fric_power_permitted != 1)   // 检车摩擦轮许可
+    if(fric_power_permitted != 1)   // 检车摩擦轮许可
     {
         FricLeftMotor.Safe_Set();
 		FricRightMotor.Safe_Set();
