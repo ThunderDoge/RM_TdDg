@@ -389,6 +389,8 @@ void SentryCloud::Handle()
 
         LastCloudMode = CurrentCloudMode;   //  检查模式更新
     }
+    //-------------------------------PITCH软件限位----------------------------------
+    PitchRealAngleLimitCtrl();
 
 //CANSend会在主逻辑统一调用
 //    manager::CANSend();
