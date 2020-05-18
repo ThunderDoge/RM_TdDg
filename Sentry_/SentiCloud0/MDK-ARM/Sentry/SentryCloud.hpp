@@ -128,10 +128,11 @@ public:
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮
 	void SetPitchRealAngleLimit(float max, float min);
+
+private:
     float gravity_feedforward(float pitch){ ///< 重力前馈补偿函数，内部使用
         return g_A*cos(pitch+g_phi);
     }
-private:
 	
     static const float RotationMatrix[3][3];    ///<旋转矩阵陀螺仪到云台枪口方向。现在没用 
     //基本状态
