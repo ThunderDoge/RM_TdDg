@@ -128,11 +128,10 @@ public:
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮
 	void SetPitchRealAngleLimit(float max, float min);
-
-private:
     float gravity_feedforward(float pitch){ ///< 重力前馈补偿函数，内部使用
         return g_A*cos(pitch+g_phi);
     }
+private:
 	
     static const float RotationMatrix[3][3];    ///<旋转矩阵陀螺仪到云台枪口方向。现在没用 
     //基本状态
@@ -140,8 +139,8 @@ private:
     uint8_t fric_power_permitted=0; /// 允许摩擦轮转动
     uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; /// 强行指定云台控制模式
 	
-	float pitch_limit_max;
-	float pitch_limit_min;
+	float pitch_limit_max=999999.0f;
+	float pitch_limit_min=-999999.0f;
 	
 	// 内部运行函数：
 	// 软件限位

@@ -46,17 +46,16 @@ void task_Main(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-        app_imu_So3thread();    //获取陀螺仪数据
-		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
+		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         manager::CANSend();     //统一的CAN电机控制
-        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
-		
-		
-		
-		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
+
+
+        #ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
+
+        vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
     }
 }
 char s_u5[]="superior_uart5_tx_test\r\n";
@@ -71,6 +70,7 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
+        app_imu_So3thread();    //获取陀螺仪数据
 		CloudVisonTxRoutine();  //云台视觉串口发送
 		UpCloudCanCommuRoutine(); //上云台CAN发送
 		
