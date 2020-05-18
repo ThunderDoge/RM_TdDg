@@ -47,8 +47,8 @@ void task_Main(void *param)
     while (1)
     {
         app_imu_So3thread();    //获取陀螺仪数据
-		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
+		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         manager::CANSend();     //统一的CAN电机控制
         vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
 		
