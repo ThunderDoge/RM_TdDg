@@ -140,8 +140,8 @@ private:
     uint8_t fric_power_permitted=0; /// 允许摩擦轮转动
     uint8_t forced_ctrl_mode = (uint8_t)auto_cloud; /// 强行指定云台控制模式
 	
-	float pitch_limit_max;
-	float pitch_limit_min;
+	float pitch_limit_max=999999.0f;
+	float pitch_limit_min=-999999.0f;
 	
 	// 内部运行函数：
 	// 软件限位
