@@ -171,6 +171,39 @@ void manager::UserProcess(void)
 	}
 }
 /**
+ * @brief 哨兵云台自定义PID用户预处理函数
+ * 
+ */
+void pid::PIDUserProcess()
+{
+    // 超限保存 IMAX，并且写入IMAX=0，关闭积分作用以避免抖动
+    // 回到限内 从保存变量回复 IMAX
+    if(this == &CloudEntity.PitchPosition)
+    {
+        if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
+        {
+            CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchPosition.IMax;
+            CloudEntity.PitchPosition.IMax = 0;
+        }
+        if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
+        {
+            CloudEntity.PitchPosition.IMax = CloudEntity.pitch_IMax_save[0];
+        }
+    }
+    if(this == &CloudEntity.Pitch2ndPosition)
+    {
+        if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
+        {
+            CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndPosition.IMax;
+            CloudEntity.Pitch2ndPosition.IMax = 1;
+        }
+        if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
+        {
+            CloudEntity.Pitch2ndPosition.IMax = CloudEntity.pitch_IMax_save[1];
+        }
+    }
+}
+/**
  * @brief PITCH模式控制。在Handle()中调用
  * 
  */
@@ -234,35 +267,39 @@ void SentryCloud::PitchModeCtrl(void)
  */
 void SentryCloud::PitchRealAngleLimitCtrl()
 {
-    // if(PitchMotor.RunState == Speed_Ctl || PitchMotor.RunState == Gyro_Speed_Ctl)
-    // {
-        if(PitchMotor.RealAngle >= pitch_limit_max)
-        {
-            PitchMotor.Angle_Set(pitch_limit_max);
-			PitchMotor.PID_Out->Iout = 0;
-        }
-        if(PitchMotor.RealAngle <= pitch_limit_min)
-        {
-            PitchMotor.Angle_Set(pitch_limit_min);
-			PitchMotor.PID_Out->Iout = 0;
-        }
-    // }
-    // else    // if (PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
-    // {
+    // 复制旧的pitch_exceed_flag
+    memcpy(pitch_last_exceed_flag,pitch_exceed_flag,sizeof(pitch_last_exceed_flag));
 
-    // }
+    if(PitchMotor.RealAngle >= pitch_limit_max)
+    {
+        PitchMotor.Angle_Set(pitch_limit_max);
+        pitch_exceed_flag[0] = 1;
+    }
+    else if(PitchMotor.RealAngle <= pitch_limit_min)
+    {
+        PitchMotor.Angle_Set(pitch_limit_min);
+        pitch_exceed_flag[0] = 1;
+    }
+    else
+    {
+        pitch_exceed_flag[0] = 0;
+    }
 
     if(PitchSecondMotor.cooperative == 0)
     {
         if(PitchSecondMotor.RealAngle >= pitch_limit_max)
         {
             PitchSecondMotor.Angle_Set(pitch_limit_max);
-			PitchSecondMotor.PID_Out->Iout = 0;
+            pitch_exceed_flag[1] = 1;
         }
-        if(PitchSecondMotor.RealAngle <= pitch_limit_min)
+        else if(PitchSecondMotor.RealAngle <= pitch_limit_min)
         {
             PitchSecondMotor.Angle_Set(pitch_limit_min);
-			PitchSecondMotor.PID_Out->Iout = 0;
+            pitch_exceed_flag[1] = 1;
+        }
+        else
+        {
+            pitch_exceed_flag[1] = 0;
         }
     }
 }

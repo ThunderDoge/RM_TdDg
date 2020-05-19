@@ -132,6 +132,12 @@ public:
         return g_A*cos(pitch+g_phi);
     }
 	
+	// 内部控制用但是外部可访问变量
+	uint8_t pitch_exceed_flag[2];
+    uint8_t pitch_last_exceed_flag[2];
+    float pitch_IMax_save[2];
+
+	
 private:
 	
     static const float RotationMatrix[3][3];    ///<旋转矩阵陀螺仪到云台枪口方向。现在没用 

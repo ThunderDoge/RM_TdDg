@@ -5,7 +5,12 @@
         "*.h": "c",
         "main.c": "cpp",
         "stm32f4xx_it.c": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "string_view": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "limits": "cpp",
+        "streambuf": "cpp"
     },
     "files.encoding": "gb2312",
     "doxdocgen.generic.paramTemplate": "@param {indent:10} {param} ",

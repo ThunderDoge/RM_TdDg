@@ -215,7 +215,7 @@ float pid::sech(float in)
  */
 WEAK void pid::PIDUserProcess(void)
 {
-    UNUSED(PIDUserProcess);
+	// 	WEAK function allow user d6efine
 }
 ////*******************************************block_type类******************************************************************////
 /** 

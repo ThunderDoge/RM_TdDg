@@ -70,7 +70,7 @@ public:
     uint32_t I_start_time; //!<???分开始时间戳，用于带时间参数的pid   plus专属
     uint32_t D_start_time; //!<???分开始时间戳，用于带时间参数的pid
 
-    static void PIDUserProcess(void);  //!< 在pid_run运行前运行的用户数据处理函数
+    void PIDUserProcess(void);  //!< 在pid_run运行前运行的用户数据处理函数
 };
 
 /** 
