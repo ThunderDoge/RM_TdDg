@@ -23,7 +23,7 @@
 
 # Linker output
 *.ilk
-# *.map
+*.map
 *.exp
 
 # Precompiled Headers
@@ -91,8 +91,8 @@ html/
 
 *.png
 *.md5
-# *.htm
+*.htm
 *.icf
 *.lnp
-# *.html
+*.html
 *.zip
