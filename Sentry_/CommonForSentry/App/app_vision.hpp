@@ -94,6 +94,8 @@ enum __app_vision_Functionwords
     JUD_AMMO_LEFT = 0x28,
     // JUD_GAME_EVENT = 0x29,
     JUD_USER = 0x31,
+	
+	APP_TEST = 0X44,
 };
 
 ///视觉传输数据解析结构体
@@ -126,6 +128,8 @@ typedef struct __vision_data
     uint8_t Error_code = 0;          ///<错误代码
     int16_t CAN1_motorlist = 0xffff; ///< CAN1电机列表
     int16_t CAN2_motorlist = 0xffff; ///< CAN2电机列表
+	//
+	int16_t id_got;
     //本结构体信息
     uint8_t Ready_flag; //就绪标志。表示有新数据未处理。
 } sentry_vision_data;
@@ -180,6 +184,11 @@ void app_vision_load_to_txbuffer(
 
 void app_vision_load_to_txbuffer(
     float fdata, int loaction_at_buffdata); ///将数据装入缓存Vision_Txbuffer中
+
+
+void app_vision_test(int id, int cnt);
+void APP_TEST_Rx(uint8_t *RxXer);
+void APP_TEST_Tx(int id,int size);
 
 
 

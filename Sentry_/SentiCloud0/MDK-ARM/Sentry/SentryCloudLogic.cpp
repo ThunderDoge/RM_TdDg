@@ -98,7 +98,10 @@ void ModeSelect(void)
 			CurrentMode = &ModeManualFeed;
 			bsp_dbus_Data.CH_0=201;
 		}
-		
+		if(t==4)
+		{
+			CurrentMode = &ModeVisionControl;
+		}
 	}
 	
     if (LastMode != CurrentMode)

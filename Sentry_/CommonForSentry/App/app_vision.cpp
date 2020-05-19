@@ -83,7 +83,8 @@ uint8_t app_vision_Analysis(void)
                 Array_index += 1; //和校验错了，指针移动1位继续重新检测
                 return 1;         //校验和出错，直接退出,继续在缓冲区检测数据帧
             }
-
+			
+			SentryVisionUartRxAll(Vision_RxXfer + Array_index);   //解析数据帧
             Array_index += 18; //数据帧一帧长度为18，所以移动18位
             return 1;          //处理完一帧，移动18位继续检测
         }
@@ -163,8 +164,8 @@ uint8_t app_vision_analysis_intgrated(void)
                     head_index = end_index;
                     end_index += Frame_end;
 
-                    // 如果之前标记了 first_0xFF，要重置它
-                    first_0xFF = -1;
+                    // // 如果之前标记了 first_0xFF，要重置它
+                    // first_0xFF = -1;
                 }
                 else
                 {
@@ -174,10 +175,12 @@ uint8_t app_vision_analysis_intgrated(void)
             }
             else    // 符合帧头但是不符合帧尾
             {
-                if(first_0xFF == -1)    // 记录第一个 0XFF
-                {
-                    first_0xFF = head_index;
-                }
+                // if(first_0xFF == -1)    // 记录第一个 0XFF
+                // {
+                //     first_0xFF = head_index;
+                // }
+                continue;   //跳过到下一个
+
             }
 		}
         else    // 不是 0XFF
@@ -190,8 +193,8 @@ uint8_t app_vision_analysis_intgrated(void)
     // 将未解析的数据移到前面
 	
 	// 第一个0XFF 可能在 不够构成一个帧的长度里面.遍历，检查一下.
-	if(first_0xFF == -1)
-	{
+	// if(first_0xFF == -1)
+	// {
 		for(int i=head_index;i<not_analysed_index;i++)
 		{
 			if(Vision_RxXfer[i] == 0xff)
@@ -200,7 +203,7 @@ uint8_t app_vision_analysis_intgrated(void)
 				break;		// 找到就退了
 			}
 		}
-	}
+	// }
 	//还是没有
 	if(first_0xFF == -1)
 	{
@@ -216,6 +219,8 @@ uint8_t app_vision_analysis_intgrated(void)
         Vision_RxXfer[to_index] = Vision_RxXfer[from_index];
     }
     not_analysed_index = to_index;
+
+    memset(&Vision_RxXfer[not_analysed_index] , 0 , APP_VISION_BUFFER_SIZE - not_analysed_index);
 
 
     // 返回解析出的帧的数量。
@@ -643,6 +648,7 @@ void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
     CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(Vision_Rxbuffer);
 	CMD_GIMBAL_SPEED_CONTROL_Rx(Vision_Rxbuffer);
     CMD_READ_PID_Rx(Vision_Rxbuffer);
+	APP_TEST_Rx(Vision_Rxbuffer);
 }
 ///视觉串口发送函数
 void CMD_GET_MCU_STATE_Tx(float pitch,float yaw_mech,float yaw_soft,uint8_t cloud_mode,uint8_t shoot_mode)
@@ -708,6 +714,38 @@ void JUD_TAKING_DMG_Tx(uint8_t armor_id_enum,uint8_t hurt_type_enum);
 void JUD_SHOOTING_Tx(uint8_t bullet_freq, float bullet_speed);
 void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 
+int v_test_id;
+int v_test_size;
+int v_test_cnt;
+
+int v_in_id,v_in_cnt,v_in_max;
+
+void APP_TEST_Rx(uint8_t *RxXer)
+{
+    if (RxXer[Function_word] == APP_TEST)
+    {
+		int id;
+		memcpy(&id,&RxXer[2],4);
+		APP_TEST_Tx(id,100);
+	}
+}
+void APP_TEST_Tx(int id,int size)
+{
+	memcpy(Vision_Txbuffer + 2, &id, 4);
+	memcpy(Vision_Txbuffer + 6, &size, 4);
+	app_vision_SendTxbuffer(APP_TEST);
+}
+void app_vision_test(int id, int size)
+{
+	if(id != v_test_id)
+	{
+		v_test_id = id;
+		v_test_cnt = 0;
+	}
+	if(v_test_cnt == v_test_size)
+		v_test_cnt = 0;
+	APP_TEST_Tx(id,size);
+}
 
 
 

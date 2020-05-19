@@ -793,6 +793,10 @@ WEAK void cloud::update(uint8_t Data[])
 	else RealSpeed = (LastPosition - RealPosition + LastSpeed)/2; //无外部数据输入根据位置偏移量求取角速度,并做均值滤波
 	LastUpdateTime=HAL_GetTick();  //更新本次电机数据最后更新的时间
 	RealAngle = RealPosition*360.f / MotorType->max_mechanical_position;//转换为角度
+
+    OriginCurrent = Data[4]<<8|Data[5];
+    Temputure = Data[6];
+
 }
 /** 
 * @brief  电机进行数据处理的函数 该函数会在CAN发送前执行，一般用于判断运行状态，运行PID计算电流
@@ -1048,6 +1052,8 @@ WEAK void softcloud::update(uint8_t Data[])
 		Soft_RealPosition++;
 	RealAngle = /*圈数对应角度*/(Soft_RealPosition)/(1.0*MotorType->Reduction_ratio)*360 \
 							+ /*单圈内角度*/1.0f*RealPosition / (MotorType->max_mechanical_position * MotorType->Reduction_ratio )*360;//转换为角度
+
+    Temputure = Data[6];
 }
 /** 
 * @brief  电机进行数据处理的函数 该函数会在CAN发送前执行，一般用于判断运行状态，运行PID计算电流
