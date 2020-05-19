@@ -65,6 +65,7 @@
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<RM2020哨兵自定义内容
     * @author ThunderDoge
     *       v7.7    2019-12-21 哨兵底盘适配性修正。将CANSend的托管的chassis::point指向哨兵自定义的底盘类SentryChassis。添加了在 motor 中添加了 InsertCurrentBy()以在外部写入要发送的电流值
+    *       v7.8    2020-5-19  添加PID回调函数以在运行时修改PID的值
 */  
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
@@ -146,10 +147,9 @@ pid::pid(float ap, float bp, float cp,
 */
 WEAK float pid::pid_run(float err)
 {
-    //在所有处理之前调用。暂定
-    if(pid_run_CallBack!=nullptr)
-    pid_run_CallBack(this); //用户自定义回调 by thunderdoge 2020-2-27
-
+    //在所有处理之前调用
+    //用户自定义回调 by thunderdoge 2020-5-19
+    PIDUserProcess();
 	CurrentError = err;
 	Pout = CurrentError*P;
 	
@@ -208,6 +208,14 @@ float pid::nonlinear_pid_run(float err)
 float pid::sech(float in)
 {
 	return 1/cosh(in);
+}
+/**
+ * @brief 在pid_run运行前运行的用户数据处理函数
+ * 
+ */
+WEAK void pid::PIDUserProcess(void)
+{
+    UNUSED(PIDUserProcess);
 }
 ////*******************************************block_type类******************************************************************////
 /** 

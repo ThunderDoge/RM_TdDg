@@ -334,8 +334,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	Pitch2ndPosition.Custom_Diff = PitchSecondMotor.Gyro_RealSpeed;
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
 	
-    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
-    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
+//    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
+//    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
 	
 //	PitchSecondMotor.cooperative=1;	// 设为合作模式，这样会阻断此电机的PID的运行
 	

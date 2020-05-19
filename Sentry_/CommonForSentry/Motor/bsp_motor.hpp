@@ -35,7 +35,7 @@ class pid
 {
 public:
     float *Custom_Diff = NULL; //!<???定义??????????点型???分数??? 常用于路程环的微分环???(即速度???)
-    pvPidCallBack pid_run_CallBack=nullptr; 
+    // pvPidCallBack pid_run_CallBack=nullptr; 
     uint16_t I_Time;           //!<pid时间参数 ???ms为单??? plus专属,???分时???
     uint16_t D_Time;           //!<???分时间，ms为单???
     uint16_t I_Limited;        //!<????????小于I_Limited时才?????I输出 plus专属
@@ -69,6 +69,8 @@ public:
     float LastError;
     uint32_t I_start_time; //!<???分开始时间戳，用于带时间参数的pid   plus专属
     uint32_t D_start_time; //!<???分开始时间戳，用于带时间参数的pid
+
+    static void PIDUserProcess(void);  //!< 在pid_run运行前运行的用户数据处理函数
 };
 
 /** 
