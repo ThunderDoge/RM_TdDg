@@ -30,7 +30,7 @@
 
 ///储存数据使用的结构体
 sentry_vision_data VisionRx, VisionTx; ///视觉串口解析到的数据,视觉串口发送的数据
-uint8_t Vision_Rxbuffer[APP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
+uint8_t Vision_RxXfer[APP_VISION_BUFFER_SIZE] = {0};     ///串口接收数据缓存数组，现在缓冲区可以连续接收三帧的数据
 
 /// "使用DMA发送" FLAG
 uint8_t Vision_IsTxUseDma;
@@ -69,16 +69,16 @@ uint8_t app_vision_Analysis(void)
     if (Array_index <= APP_VISION_BUFFER_SIZE - 18) //检查未超过下标
     {
         //缓冲区里检测数据帧，首先要帧头帧尾对了才开始解包
-        if ((Vision_Rxbuffer[Array_index + Frame_header] == FRAME_HEADER_DATA) && (Vision_Rxbuffer[Array_index + Frame_end] == FRAME_END_DATA))
+        if ((Vision_RxXfer[Array_index + Frame_header] == FRAME_HEADER_DATA) && (Vision_RxXfer[Array_index + Frame_end] == FRAME_END_DATA))
         {
             //帧头帧尾对了，检测一次和校验
             for (int i = 0; i < 18; i++)
             {
                 if (i != Sum_check)
-                    _check_sum += Vision_Rxbuffer[Array_index + i];
+                    _check_sum += Vision_RxXfer[Array_index + i];
             }
             _check_sum = _check_sum & 0xff;
-            if (_check_sum != Vision_Rxbuffer[Array_index + Sum_check]) //检查和校验
+            if (_check_sum != Vision_RxXfer[Array_index + Sum_check]) //检查和校验
             {
                 Array_index += 1; //和校验错了，指针移动1位继续重新检测
                 return 1;         //校验和出错，直接退出,继续在缓冲区检测数据帧
@@ -138,27 +138,27 @@ uint8_t app_vision_analysis_intgrated(void)
     end_index < not_analysed_index;    // 检查未超过已收到的数据的下标
     head_index++ , end_index++) // 指示变量后移
     {
-		if( Vision_Rxbuffer [ head_index ] == FRAME_HEADER_DATA )   // 是0XFF
+		if( Vision_RxXfer [ head_index ] == FRAME_HEADER_DATA )   // 是0XFF
 		{
-            if(Vision_Rxbuffer [ end_index ] == FRAME_END_DATA)     // 帧尾是 0X0D
+            if(Vision_RxXfer [ end_index ] == FRAME_END_DATA)     // 帧尾是 0X0D
             {
 
                 // 计算校验和
                 for (int i = head_index; i <= end_index; i++)   
                 {
                     if (i != head_index+Sum_check)
-                        _check_sum += Vision_Rxbuffer[i];
+                        _check_sum += Vision_RxXfer[i];
                     _check_sum &= 0xff;
                 }
 
 
                 // 如果校验和符合
-                if (_check_sum == Vision_Rxbuffer[ head_index + Sum_check ] ) // 和校验符合
+                if (_check_sum == Vision_RxXfer[ head_index + Sum_check ] ) // 和校验符合
                 {
                     //帧头帧尾正确，和校验正确，开始解析
                     VisionRx.Ready_flag ++; //标记数据就绪
                     frame_solved++;          //解出的帧的计数
-                    SentryVisionUartRxAll(Vision_Rxbuffer + head_index);   //解析数据帧
+                    SentryVisionUartRxAll(Vision_RxXfer + head_index);   //解析数据帧
                     //运行到这里就表示解析已经成功，一帧有效数据已经解出
                     head_index = end_index;
                     end_index += Frame_end;
@@ -190,11 +190,11 @@ uint8_t app_vision_analysis_intgrated(void)
     // 将未解析的数据移到前面
 	
 	// 第一个0XFF 可能在 不够构成一个帧的长度里面.遍历，检查一下.
-	if(first_0xFF == 0)
+	if(first_0xFF == -1)
 	{
 		for(int i=head_index;i<not_analysed_index;i++)
 		{
-			if(Vision_Rxbuffer[i] == 0xff)
+			if(Vision_RxXfer[i] == 0xff)
 			{
 				first_0xFF = i;
 				break;		// 找到就退了
@@ -213,7 +213,7 @@ uint8_t app_vision_analysis_intgrated(void)
         from_index < not_analysed_index;
         from_index++,to_index++)
     {
-        Vision_Rxbuffer[to_index] = Vision_Rxbuffer[from_index];
+        Vision_RxXfer[to_index] = Vision_RxXfer[from_index];
     }
     not_analysed_index = to_index;
 
@@ -255,7 +255,7 @@ void app_vision_Init(void)
 #endif
 	if(APP_VISION_UART.hdmarx != NULL)
 	{
-		HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
+		HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_RxXfer, APP_VISION_BUFFER_SIZE); //开始DMA接收，DMA连接到Vision_Rxbuffer
 	}
 	
 #if(APP_VISION_USE_SEMAPHORE)
@@ -300,10 +300,10 @@ void app_vision_It(void)
         HAL_UART_DMAStop(&APP_VISION_UART); //关闭DMA
         while (app_vision_Analysis())
             ;                                                                                       //数据解析，遍历一次缓冲区
-        memset(Vision_Rxbuffer, 0, APP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
+        memset(Vision_RxXfer, 0, APP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
         __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);                                                //清除空闲中断标志位
         HAL_UART_DMAResume(&APP_VISION_UART);                                                       //重新打开DMA
-        HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_Rxbuffer, APP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
+        HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_RxXfer, APP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
     }
 }
 
@@ -316,14 +316,14 @@ void app_vision_It(void)
 void app_vision_dma_rx_abort_in_idle(void)
 {
     // 将已收到的数据登记到未解析数据
-    not_analysed_index += APP_VISION_UART.RxXferSize -APP_VISION_UART.RxXferCount;
+    not_analysed_index += APP_VISION_UART.RxXferSize -__HAL_DMA_GET_COUNTER(APP_VISION_UART.hdmarx);
     
     HAL_UART_AbortReceive_IT(&APP_VISION_UART); // 停止收，这个函数可以用于DMA接收和中断接收的停止。详见此函数注释。
 
     app_vision_analysis_intgrated();            //解析. 在里面 not_analysed_index 更新了
     
     HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
-        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
         APP_VISION_BUFFER_SIZE-not_analysed_index); // 接收的数量一直到填满 Vision_Rxbuffer
     
     return ;
@@ -347,13 +347,13 @@ void app_vision_dma_rx_cpltcallback(UART_HandleTypeDef *huart)
 	if(Vision_IsRxUseDma)
 	{
     HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
-        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
         APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
 	}
 	else
 	{
     HAL_UART_Receive_IT(&APP_VISION_UART,      //重启接收
-        Vision_Rxbuffer+not_analysed_index,       //not_analysed_indexer 处开始写
+        Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
         APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
 	}
 

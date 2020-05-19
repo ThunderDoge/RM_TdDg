@@ -133,7 +133,7 @@ void VisionControl(void)
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //处理完成标志。因为一个命令只会处理一次，处理后置0
+    VisionRx.cloud_ctrl_mode = hold_cloud; //处理完成标志。因为一个命令只会处理一次，处理后置0
 
 
     // 		float pitch;

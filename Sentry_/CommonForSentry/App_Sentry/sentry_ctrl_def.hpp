@@ -18,6 +18,7 @@
 ///云台模式取值枚举型
 enum _cloud_ctrl_mode:uint8_t
 {
+	hold_cloud,
     save_cloud,
 	speed_cloud,
 	absolute_cloud,
