@@ -633,7 +633,7 @@ void CMD_READ_PID_Rx(uint8_t *Vision_Rxbuffer)
 
 ///全命令接收	新增的功能字接收函数请在这里面调用
 ///视觉串口中断接收函数
-static void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
+void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 {
     CMD_GIMBAL_RELATIVE_CONTROL_Rx(Vision_Rxbuffer);
     CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(Vision_Rxbuffer);

@@ -217,6 +217,9 @@ void JUD_SHOOTING_Tx(uint8_t bullet_freq, float bullet_speed);
 void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 void JUD_USER_Tx();
 
+void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);
+
+
 uint8_t app_vision_Analysis(void);
 extern int not_analysed_index;
 #endif
