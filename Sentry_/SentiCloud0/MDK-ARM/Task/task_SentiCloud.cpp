@@ -76,7 +76,7 @@ void task_CommuRoutine(void *param)
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
 //		vTaskDelayUntil(&LastTick,10 / portTICK_PERIOD_MS);
-		vTaskDelay( 10 / portTICK_PERIOD_MS );
+		vTaskDelay( 1000 / portTICK_PERIOD_MS );
 	}
 }
 

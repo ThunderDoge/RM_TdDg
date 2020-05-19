@@ -176,32 +176,6 @@ void manager::UserProcess(void)
  */
 void pid::PIDUserProcess()
 {
-    // 超限保存 IMAX，并且写入IMAX=0，关闭积分作用以避免抖动
-    // 回到限内 从保存变量回复 IMAX
-    if(this == &CloudEntity.PitchPosition)
-    {
-        if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
-        {
-            CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchPosition.IMax;
-            CloudEntity.PitchPosition.IMax = 0;
-        }
-        if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
-        {
-            CloudEntity.PitchPosition.IMax = CloudEntity.pitch_IMax_save[0];
-        }
-    }
-    if(this == &CloudEntity.Pitch2ndPosition)
-    {
-        if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
-        {
-            CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndPosition.IMax;
-            CloudEntity.Pitch2ndPosition.IMax = 1;
-        }
-        if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
-        {
-            CloudEntity.Pitch2ndPosition.IMax = CloudEntity.pitch_IMax_save[1];
-        }
-    }
 }
 /**
  * @brief PITCH模式控制。在Handle()中调用
@@ -219,7 +193,7 @@ void SentryCloud::PitchModeCtrl(void)
 	}
 	else
 	{
-		// 当某一PITCH离线 使用副PUTCH模式，即关闭合作模式。
+		// 当某一PITCH离线 使用副PITCH模式，即关闭合作模式。
 		// 主PITCH参数写入独立模式的参数。两PITCH的PID独立运行。
 		// 由于一个PITCH离线。
 		pitch_ctrl_mode = __cloud_second_pitch;
@@ -302,6 +276,29 @@ void SentryCloud::PitchRealAngleLimitCtrl()
             pitch_exceed_flag[1] = 0;
         }
     }
+	
+    // 超限保存 IMAX，并且写入IMAX=0，关闭积分作用以避免抖动
+    // 回到限内 从保存变量回复 IMAX
+	if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
+	{
+		CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchPosition.IMax;
+		CloudEntity.PitchPosition.IMax = 0;
+	}
+	if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
+	{
+		CloudEntity.PitchPosition.IMax = CloudEntity.pitch_IMax_save[0];
+	}
+	
+	if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
+	{
+		CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndPosition.IMax;
+		CloudEntity.Pitch2ndPosition.IMax = 1;
+	}
+	if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
+	{
+		CloudEntity.Pitch2ndPosition.IMax = CloudEntity.pitch_IMax_save[1];
+	}
+
 }
 
 
