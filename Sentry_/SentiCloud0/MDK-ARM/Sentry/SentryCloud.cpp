@@ -244,19 +244,42 @@ void SentryCloud::PitchRealAngleLimitCtrl()
     // 复制旧的pitch_exceed_flag
     memcpy(pitch_last_exceed_flag,pitch_exceed_flag,sizeof(pitch_last_exceed_flag));
 
-    if(PitchMotor.RealAngle >= pitch_limit_max)
+    // 速度控制情况下，只要 RealAngle 超过软件限，直接 Angle_Set(Position_Ctl事模式)到软件限
+    // 并且设定 pitch_exceed_flag[xx] = 1; 这会导致IMAX置零 见下面。
+    if(PitchMotor.RunState == Speed_Ctl || PitchMotor.RunState == Gyro_Speed_Ctl)
     {
-        PitchMotor.Angle_Set(pitch_limit_max);
-        pitch_exceed_flag[0] = 1;
+        if(PitchMotor.RealAngle > pitch_limit_max)
+        {
+            PitchMotor.Angle_Set(pitch_limit_max);
+            pitch_exceed_flag[0] = 1;
+        }
+        else if(PitchMotor.RealAngle < pitch_limit_min)
+        {
+            PitchMotor.Angle_Set(pitch_limit_min);
+            pitch_exceed_flag[0] = 1;
+        }
+        else
+        {
+            pitch_exceed_flag[0] = 0;
+        }
     }
-    else if(PitchMotor.RealAngle <= pitch_limit_min)
+    // 位置控制情况下，仅在 RealAngle 和 TargetAngle 都超过软件限 会 设定 pitch_exceed_flag
+    else if(PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
     {
-        PitchMotor.Angle_Set(pitch_limit_min);
-        pitch_exceed_flag[0] = 1;
-    }
-    else
-    {
-        pitch_exceed_flag[0] = 0;
+        if(PitchMotor.RealAngle > pitch_limit_max && PitchMotor.TargetAngle > pitch_limit_max)
+        {
+            PitchMotor.Angle_Set(pitch_limit_max);
+            pitch_exceed_flag[0] = 1;
+        }
+        else if(PitchMotor.RealAngle < pitch_limit_min && PitchMotor.TargetAngle < pitch_limit_min)
+        {
+            PitchMotor.Angle_Set(pitch_limit_min);
+            pitch_exceed_flag[0] = 1;
+        }
+        else
+        {
+            pitch_exceed_flag[0] = 0;
+        }
     }
 
     if(PitchSecondMotor.cooperative == 0)
