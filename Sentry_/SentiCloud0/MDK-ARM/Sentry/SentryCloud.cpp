@@ -81,13 +81,7 @@ void RunModeCloudCtrlGyro(void)
                                                                                                               
 
 //------------------------双PITCH模式相关-----------------------------------------
-float pid_param_backup[24];     // 单PITCH参数备份存在此。在初始化时备份
-float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
-{-3, 0, -8, 2000, 30000, 500,
--15, -1, 0, 1800, 10000,120,
-100, 0, 0, 2000, 10000,3000,
--10, 0, 0, 2000, 30000,500};
-uint8_t is_use_dual_param;
+
 // 参照一下参数设定
 //   PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 //   PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
@@ -114,7 +108,7 @@ static void copy_array_to_pid_param(pid* desti,float* src)
 }
 
 ///备份单PITCH参数到 pid_param_backup. BackupSingleMotorParam
-static void copy_cloud_param_to_backup(softcloud* src)
+void SentryCloud::copy_cloud_param_to_backup(softcloud* src)
 {
     copy_pid_param_to_array(&pid_param_backup[0],src->PID_In);
 	copy_pid_param_to_array(&pid_param_backup[6],src->PID_Out);
@@ -343,12 +337,12 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
         // 初始化各项PID参数
-    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
-	  PitchPosition(-30, -1, 0, 3000, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
-      PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
-	  Pitch2ndSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndPosition(1, 0, 0, 1800, 10000, 10, 10, 120),
+    : PitchSpeed(-6, 0, -8, 2001, 30000, 10, 10, 500), 
+	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+      PitchGyroPosition(200, 0, 0, 2011, 10000, 10, 10, 3000),
+      PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
+	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
+	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
@@ -412,10 +406,10 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 void SentryCloud::Handle()
 {
     //------------------------安全模式激光灯自动关闭-------------------------
-	if(Mode != save_cloud)
-		LazerSwitchCmd(1);  
-    else
-        LazerSwitchCmd(0);  
+//	if(Mode != save_cloud)
+//		LazerSwitchCmd(1);  
+//    else
+//        LazerSwitchCmd(0);  
 	
     // 陀螺仪数据处理
     ImuDataProcessHandle();
@@ -514,8 +508,14 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 	Mode = absolute_gyro_cloud;
     TargetPitch = pitch;
     TargetYaw = yaw;
+	
+	if(TargetPitch > pitch_limit_max)
+		TargetPitch = pitch_limit_max;
+	if(TargetPitch < pitch_limit_min)
+		TargetPitch = pitch_limit_min;
+
     PitchMotor.Gyro_Angle_Set(-TargetPitch);
-	PitchSecondMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+	PitchSecondMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Gyro_Angle_Set(TargetYaw);
 }
 
@@ -631,7 +631,7 @@ void SentryCloud::Safe_Set()
     FricRightMotor.Safe_Set();
     Feed2nd.Safe_Set();
 //    manager::CANSend();
-	LazerSwitchCmd(0);
+	LazerSwitchCmd(1);
 }
 
 
@@ -662,11 +662,11 @@ void SentryCloud::LazerSwitchCmd( int NewState )
 {
 	if(NewState == 0)
 	{
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LAZER_GPIO_Port,LAZER_Pin,GPIO_PIN_RESET);
 	}
 	else
 	{
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LAZER_GPIO_Port,LAZER_Pin,GPIO_PIN_SET);
 	}
 }
 

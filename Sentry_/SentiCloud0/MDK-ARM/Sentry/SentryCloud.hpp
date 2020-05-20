@@ -95,7 +95,7 @@ public:
     float BaseImuAngleRate[3];      ///< 云台水平底座朝向
 
     //Public 状态
-    int Mode;   ///<云台状态指示
+    _cloud_ctrl_mode Mode;   ///<云台状态指示
     app_Mode* LastCloudMode=&ModeCloudCtrlMech,*CurrentCloudMode=&ModeCloudCtrlMech;  // 模式指针
     uint8_t force_use_mech_gyro=0;
 	
@@ -159,7 +159,17 @@ private:
 	
 	pitch_enum pitch_ctrl_mode = __cloud_main_pitch;
 	pitch_enum last_pitch_ctrl_mode = __cloud_main_pitch;
+
 	void PitchModeCtrl(void);
+    float pid_param_backup[24];     // 单PITCH参数备份存在此。在初始化时备份
+	void copy_cloud_param_to_backup(softcloud* src);
+    
+    float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
+    {-3, 0, -8, 2000, 30000, 500,
+    -15, -1, 0, 1800, 10000,120,
+    100, 0, 0, 2000, 10000,3000,
+    -10, 0, 0, 2000, 30000,500};
+uint8_t is_use_dual_param;
 
     // 射击控制逻辑 执行函数，在Handle中调用
     void ShootCtrl(void);

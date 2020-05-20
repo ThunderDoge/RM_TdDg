@@ -28,7 +28,7 @@ app_Mode *LastMode = &ModeGlobalSafe;
 app_Mode *CurrentMode = &ModeGlobalSafe;
 
 extern sentry_vision_data VisionRx, VisionTx;
-int t=0;
+int t=4;
 float p=0,y=0;
 /**
   * @brief  模式选择函数，控制逻辑源于此
@@ -137,7 +137,7 @@ void VisionControl(void)
         break;
     }
     VisionRx.cloud_ctrl_mode = hold_cloud; //处理完成标志。因为一个命令只会处理一次，处理后置0
-
+	CloudEntity.LazerSwitchCmd(1);
 
     // 		float pitch;
     // 		float yaw;
@@ -188,6 +188,7 @@ void ManualShoot()
     float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_1 * dbus_rate; //很多负号。这些都是调出来的。
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
+	CloudEntity.LazerSwitchCmd(1);
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式

@@ -66,6 +66,7 @@
     * @author ThunderDoge
     *       v7.7    2019-12-21 哨兵底盘适配性修正。将CANSend的托管的chassis::point指向哨兵自定义的底盘类SentryChassis。添加了在 motor 中添加了 InsertCurrentBy()以在外部写入要发送的电流值
     *       v7.8    2020-5-19  添加PID回调函数以在运行时修改PID的值
+    *       v7.9    2020-5-20  误差区间外边积分拉满
 */  
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
@@ -145,6 +146,9 @@ pid::pid(float ap, float bp, float cp,
 	* @par 日志 
 *				2019年12月1日15:00:00 移除积分时间不设置的兼容性改动，加入微分时间
 */
+#ifndef SIGN
+#define SIGN(x) (x>0?1:x<0?-1:0)
+#endif
 WEAK float pid::pid_run(float err)
 {
     //在所有处理之前调用
@@ -158,8 +162,8 @@ WEAK float pid::pid_run(float err)
 	{
 		if(ABS(CurrentError) < I_Limited)//仅在小于误差区间时进行I积分
 			Iout += I	*	CurrentError;
-		else 
-			Iout=0;					//误差区间外边积分清0
+		else
+			Iout=  SIGN(CurrentError)* SIGN(P) * IMax;					//误差区间外边积分拉满
 		I_start_time = HAL_GetTick();//重新定义积分开始时间
 	}
 	
