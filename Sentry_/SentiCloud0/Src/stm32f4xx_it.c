@@ -315,8 +315,8 @@ void UART5_IRQHandler(void)
   /* USER CODE BEGIN UART5_IRQn 0 */
 	if(__HAL_UART_GET_IT_SOURCE(&huart5,UART_IT_IDLE))
 	{
-		app_vision_dma_rx_abort_in_idle();
-//		app_vision_It();
+//		app_vision_dma_rx_abort_in_idle();
+		app_vision_It();
 		__HAL_UART_CLEAR_IDLEFLAG(&huart5);
 	}
   /* USER CODE END UART5_IRQn 0 */

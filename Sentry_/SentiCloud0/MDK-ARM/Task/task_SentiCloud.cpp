@@ -31,8 +31,7 @@ void Cloud_Init(void)
 #endif //MIGRATE_F407ZG
     bsp_dbus_Init(); //DBUS初始化
 	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
-//	app_vision_Init();              //视觉串口接收初始化
-	app_vision_another_Init();
+	app_vision_Init();              //视觉串口接收初始化
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
 }
 /**
