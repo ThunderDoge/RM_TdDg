@@ -428,14 +428,14 @@ HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 {
 	int16_t _check_sum = 0; //和校验用变量
 
-	#if(APP_VISION_USE_SEMAPHORE)
-		if(xSemaphoreTake(app_vision_uart_semaphore,10) == errQUEUE_EMPTY)	// 获取信号量
-		{
-			HAL_UART_AbortTransmit_IT(&APP_VISION_UART);	// 超时未得到信号量，会强行终止串口发送
-		}
-    #else
-        if(APP_VISION_UART.gState )
-	#endif
+//	#if(APP_VISION_USE_SEMAPHORE)
+//		if(xSemaphoreTake(app_vision_uart_semaphore,10) == errQUEUE_EMPTY)	// 获取信号量
+//		{
+//			HAL_UART_AbortTransmit_IT(&APP_VISION_UART);	// 超时未得到信号量，会强行终止串口发送
+//		}
+//    #else
+//        if(APP_VISION_UART.gState )
+//	#endif
 
     // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
     Vision_Txbuffer[Frame_header] = FRAME_HEADER_DATA;
@@ -449,7 +449,7 @@ HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
     _check_sum = _check_sum & 0xff;
     Vision_Txbuffer[Sum_check] = _check_sum;
 
-    return HAL_UART_Transmit_DMA(&APP_VISION_UART, Vision_Txbuffer, 18);
+    return HAL_UART_Transmit(&APP_VISION_UART, Vision_Txbuffer, 18,1);
 }
 
 
