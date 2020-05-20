@@ -298,18 +298,28 @@ void app_vision_Init(void)
 */
 void app_vision_It(void)
 {
-#ifndef VIUART_DISABLE_OTHER_IT                                         //除能其他所有的中断，不再需要判断
-    if (__HAL_UART_GET_FLAG(&APP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
-#endif
-    {
-        HAL_UART_DMAStop(&APP_VISION_UART); //关闭DMA
-        while (app_vision_Analysis())
-            ;                                                                                       //数据解析，遍历一次缓冲区
-        memset(Vision_RxXfer, 0, APP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
-        __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);                                                //清除空闲中断标志位
-        HAL_UART_DMAResume(&APP_VISION_UART);                                                       //重新打开DMA
-        HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_RxXfer, APP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
-    }
+//#ifndef VIUART_DISABLE_OTHER_IT                                         //除能其他所有的中断，不再需要判断
+//    if (__HAL_UART_GET_FLAG(&APP_VISION_UART, UART_FLAG_IDLE) != RESET) //如果产生了空闲中断
+//#endif
+//     {
+//         HAL_UART_DMAStop(&APP_VISION_UART); //关闭DMA
+//         while (app_vision_Analysis())
+//             ;                                                                                       //数据解析，遍历一次缓冲区
+// //        memset(Vision_RxXfer, 0, APP_VISION_BUFFER_SIZE);                                         //解析完成，数据清0
+//         __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);                                                //清除空闲中断标志位
+//         HAL_UART_DMAResume(&APP_VISION_UART);                                                       //重新打开DMA
+//         HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t *)Vision_RxXfer, APP_VISION_BUFFER_SIZE); //重新开启DMA接收传输
+//     }
+	if(__HAL_UART_GET_FLAG(&APP_VISION_UART,UART_FLAG_IDLE) != RESET)	//如果产生了空闲中断
+	{
+		HAL_UART_DMAStop(&APP_VISION_UART); //关闭DMA
+		while(app_vision_Analysis());	//数据解析，遍历一次缓冲区
+		memset(Vision_RxXfer,0,APP_VISION_BUFFER_SIZE); //解析完成，数据清0
+		__HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART); //清除空闲中断标志位
+		HAL_UART_DMAResume(&APP_VISION_UART);         //重新打开DMA，这句记得加
+		HAL_UART_Receive_DMA(&APP_VISION_UART, (uint8_t*)Vision_RxXfer, APP_VISION_BUFFER_SIZE);//重新开启DMA接收传输
+	}
+
 }
 
 
@@ -726,7 +736,7 @@ void APP_TEST_Rx(uint8_t *RxXer)
     {
 		int id;
 		memcpy(&id,&RxXer[2],4);
-		APP_TEST_Tx(id,100);
+//		APP_TEST_Tx(id,100);
 	}
 }
 void APP_TEST_Tx(int id,int size)

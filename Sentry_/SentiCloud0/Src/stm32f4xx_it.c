@@ -313,13 +313,8 @@ void DMA1_Stream7_IRQHandler(void)
 void UART5_IRQHandler(void)
 {
   /* USER CODE BEGIN UART5_IRQn 0 */
-	if(__HAL_UART_GET_IT_SOURCE(&huart5,UART_IT_IDLE))
-	{
-//		app_vision_dma_rx_abort_in_idle();
-		app_vision_It();
-		__HAL_UART_CLEAR_IDLEFLAG(&huart5);
-	}
-  /* USER CODE END UART5_IRQn 0 */
+	app_vision_It();
+	/* USER CODE END UART5_IRQn 0 */
   HAL_UART_IRQHandler(&huart5);
   /* USER CODE BEGIN UART5_IRQn 1 */
 
