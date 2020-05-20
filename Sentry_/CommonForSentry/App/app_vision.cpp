@@ -434,7 +434,7 @@ HAL_StatusTypeDef app_vision_SendTxbuffer(uint8_t _Functionword)
 			HAL_UART_AbortTransmit_IT(&APP_VISION_UART);	// 超时未得到信号量，会强行终止串口发送
 		}
     #else
-        if(APP_VISION_UART.gState )
+//        if(APP_VISION_UART.gState )
 	#endif
 
     // memset(Vision_Txbuffer, 0, 18); //发送之前先清空一次
@@ -736,6 +736,7 @@ void APP_TEST_Rx(uint8_t *RxXer)
     {
 		int id;
 		memcpy(&id,&RxXer[2],4);
+		VisionRx.id_got = id;
 //		APP_TEST_Tx(id,100);
 	}
 }

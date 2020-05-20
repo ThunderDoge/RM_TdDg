@@ -51,14 +51,14 @@ void CloudVisonTxRoutine(void)
     VisionTx.pillar_flag = CanRx.Pillar_flag;
     VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
 	
-	if(i == 10000)
-		i=0;
-	else
-		i++;
+//	if(i == 10000)
+//		i=0;
+//	else
+//		i++;
 
     //串口发送
-    CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
-    ROBOT_ERR_Tx(VisionTx.Error_code);
-    STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);
-	APP_TEST_Tx(i,i);
+//    CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
+//    ROBOT_ERR_Tx(VisionTx.Error_code);
+//    STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);
+	APP_TEST_Tx(VisionRx.id_got,i);
 }
