@@ -277,15 +277,6 @@ void app_vision_Init(void)
 		Vision_IsRxUseDma=1;
 }
 
-void app_vision_another_Init(void)
-{
-    __HAL_UART_CLEAR_IDLEFLAG(&APP_VISION_UART);          //清除空闲中断位
-    __HAL_UART_ENABLE_IT(&APP_VISION_UART, UART_IT_IDLE); //使能DMA接收空闲中断
-	
-	HAL_UART_Receive_IT(&APP_VISION_UART, (uint8_t *)Vision_RxXfer, APP_VISION_BUFFER_SIZE);
-}
-
-
 #ifndef __MAIN_DEBUG
 #if(USE_HAL_UART_REGISTER_CALLBACKS != 1)
 #if(APP_VISION_USE_SEMAPHORE)
@@ -330,15 +321,15 @@ void app_vision_It(void)
 void app_vision_dma_rx_abort_in_idle(void)
 {
     // 将已收到的数据登记到未解析数据
-    not_analysed_index += APP_VISION_UART.RxXferSize - APP_VISION_UART.RxXferCount;
+    not_analysed_index += APP_VISION_UART.RxXferSize -__HAL_DMA_GET_COUNTER(APP_VISION_UART.hdmarx);
     
     HAL_UART_AbortReceive_IT(&APP_VISION_UART); // 停止收，这个函数可以用于DMA接收和中断接收的停止。详见此函数注释。
 
     app_vision_analysis_intgrated();            //解析. 在里面 not_analysed_index 更新了
     
-    HAL_UART_Receive_IT(&APP_VISION_UART,      //重启接收
+    HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
         Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
-        APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+        APP_VISION_BUFFER_SIZE-not_analysed_index); // 接收的数量一直到填满 Vision_Rxbuffer
     
     return ;
 }
@@ -358,9 +349,18 @@ void app_vision_dma_rx_cpltcallback(UART_HandleTypeDef *huart)
 	
     app_vision_analysis_intgrated();            //解析
     
+	if(Vision_IsRxUseDma)
+	{
+    HAL_UART_Receive_DMA(&APP_VISION_UART,      //重启接收
+        Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
+        APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+	}
+	else
+	{
     HAL_UART_Receive_IT(&APP_VISION_UART,      //重启接收
         Vision_RxXfer+not_analysed_index,       //not_analysed_indexer 处开始写
         APP_VISION_BUFFER_SIZE-not_analysed_index+1); // 接收的数量一直到填满 Vision_Rxbuffer
+	}
 
     return ;
 }
