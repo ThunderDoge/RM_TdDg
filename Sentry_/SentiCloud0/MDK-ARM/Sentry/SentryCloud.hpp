@@ -62,11 +62,6 @@ public:
     pid Pitch2ndGyroPosition;  ///<Pitch电机陀螺仪 位置环
     pid Pitch2ndGyroSpeed;     ///<Pitch电机陀螺仪 速度环
 
-	pid DualSpeed;         ///<双Pitch电机机械角 速度环
-    pid DualPosition;      ///<双Pitch电机机械角 位置环
-    pid DualGyroPosition;  ///<双Pitch电机陀螺仪 位置环
-    pid DualGyroSpeed;     ///<双Pitch电机陀螺仪 速度环
-
     pid YawSpeed;           ///<Yaw电机机械角 速度环
     pid YawPosition;        ///<Yaw电机机械角 位置环
     pid YawGyroSpeed;       ///<Yaw电机陀螺仪 速度环
@@ -87,7 +82,7 @@ public:
     AmmoFeed Feed2nd;       ///< 供弹轮电机
 public:
     //为了安全，提供了包装供弹轮函数，需要确认feed_is_permitted才能运行供弹轮。提不要直接使用Feed2nd
-    void Feed_Free_Fire_Set(int32_t FreeSpeed,int trig);                 ///< 供弹轮：连续转动设置
+    void Feed_Free_Fire_Set(int32_t FreeSpeed);                 ///< 供弹轮：连续转动设置
     void Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);  ///< 供弹轮：n连发设置
     void Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig);  ///< 供弹轮：单发设置
     void Feed_Safe_Set();   ///< 供弹轮停止
@@ -168,7 +163,7 @@ private:
 	void PitchModeCtrl(void);
     float pid_param_backup[24];     // 单PITCH参数备份存在此。在初始化时备份
 	void copy_cloud_param_to_backup(softcloud* src);
-
+    
     float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
     {-3, 0, -8, 2000, 30000, 500,
     -15, -1, 0, 1800, 10000,120,
