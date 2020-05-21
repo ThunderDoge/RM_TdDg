@@ -50,21 +50,21 @@ void ModeSelect(void)
     case 33: //双中：视觉控制云台转动
         CurrentMode = &ModeVisionControl;
         break;
-    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-        // VisionControl();
-        // ManualFeed();
-        CurrentMode = &ModeVisionFeed;
+//    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
+//        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
+//        // VisionControl();
+//        // ManualFeed();
+//        CurrentMode = &ModeVisionFeed;
         break;
     case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
         // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
         // ManualShoot_Gyro();
         CurrentMode = &ModeManualShootGyro;
         break;
-    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_FRIC_TEST;
-        // ManualFeed();
-        CurrentMode = &ModeManualFeed;
+//    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
+//        // CurrentMode = MODE_FRIC_TEST;
+//        // ManualFeed();
+//        CurrentMode = &ModeManualFeed;
         break;
     case 22: //双下
     case 23:
