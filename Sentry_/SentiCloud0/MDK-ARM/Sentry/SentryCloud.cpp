@@ -129,16 +129,8 @@ static void copy_array_to_cloud_param(softcloud* desti,float* src)
  */
 void SentryCloud::EnterModeDualPitch(void)
 {
-    // copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
-	
-    // 装载积分值，避免突变. 除以2是因为两个电机所以大致是2倍输出所以
-    DualSpeed.Iout = PitchSpeed.Iout/2;
-    DualPosition.Iout = PitchPosition.Iout/2;
-
-    // 切换微分
-    PitchMotor.PID_In = &DualSpeed;
-    PitchMotor.PID_Out = &DualPosition;
-    is_use_dual_param = 1;  // DUAL电机标志位
+    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
+	is_use_dual_param = 1;
     PitchSecondMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
     // 它的输出值电流值会在运行时复制PitchMotor的电流输出值
 }
@@ -148,20 +140,7 @@ void SentryCloud::EnterModeDualPitch(void)
  */
 void SentryCloud::ExitModeDualPitch(void)
 {
-    // copy_array_to_cloud_param(&PitchMotor,pid_param_backup);    //写入单PITCH参数 WriteDualMotorParam();
-
-    // 装载积分值，避免突变. 电机2变1所以变双倍
-
-    PitchSpeed.Iout = DualSpeed.Iout*2;
-    PitchPosition.Iout = DualPosition.Iout*2;
-
-    Pitch2ndSpeed.Iout = DualSpeed.Iout*2;
-    Pitch2ndPosition.Iout = DualPosition.Iout*2;
-
-    // 切换微分
-    PitchMotor.PID_In = &PitchSpeed;
-    PitchMotor.PID_Out = &PitchPosition;
-
+    copy_array_to_cloud_param(&PitchMotor,pid_param_backup);    //写入单PITCH参数 WriteDualMotorParam();
 	is_use_dual_param = 0;
     PitchSecondMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
     // 但是此函数在某一PITCH掉线时才会调用。
@@ -360,9 +339,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         // 初始化各项PID参数
     : PitchSpeed(-6, 0, -8, 2001, 30000, 10, 10, 500), 
 	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      PitchGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
+      PitchGyroPosition(200, 0, 0, 2011, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
-
 	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
 	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
@@ -377,38 +355,10 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       YawPosition(30, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
-      FricLeftSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
-      FricRightSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
+      FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
+      FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
-	  
-	  
-	  
-	  
-//	      : PitchSpeed(-6, 0, -8, 2001, 30000, 10, 10, 500), 
-//	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-//      PitchGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
-//      PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
-
-//	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
-//	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
-//	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
-//	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
-
-//	  DualSpeed(-3, 0, -8, 2001, 30000, 10, 10, 500), 
-//	  DualPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-//      DualGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
-//      DualGyroSpeed(-5, 0, 0, 2011, 30000, 10, 10, 500),
-
-//      YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
-//      YawPosition(10, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
-//      YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
-//      YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
-//      FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
-//      FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
-//      FeedSpeed(20, 0, 1, 1000, 7000),
-//      FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
-
 /*    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
@@ -696,9 +646,9 @@ void SentryCloud::Safe_Set()
   * @brief      经包装的连续拨弹函数
   * @param     FreeSpeed 设定拨弹轮速度
   */
-void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed,int trig){
-    if(feed_is_permitted && trig)
-		Feed2nd.Free_Fire_Set(FreeSpeed);
+void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
+    if(feed_is_permitted)
+    Feed2nd.Free_Fire_Set(FreeSpeed);
 }
 void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
@@ -734,7 +684,6 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 	if(NewState == 0)
 	{
 		feed_is_permitted=0;    //不允许射击
-        fric_power_permitted = 0;
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
         CloudEntity.Feed2nd.Safe_Set();
@@ -742,7 +691,6 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 	else
 	{
 		feed_is_permitted=1;
-        fric_power_permitted = 1;
         FricLeftMotor.Speed_Set(-Shoot_Speed);
         FricRightMotor.Speed_Set(Shoot_Speed);
 	}

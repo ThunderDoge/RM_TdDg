@@ -33,8 +33,6 @@
 #include "stdio.h"
 #include "task_SentiCloud.hpp"
 #include <string.h>
-
-#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -129,11 +127,6 @@ void v_buf_clr()
 
 //#endif
 
-
-// AmmoFeed test(1,0x201,)
-    // :softmotor(can_num, _can_id, motor_type, PID_In, PID_Out) ,
-    //  feeder_division(RamerDiv) , rammer_direction(rammer_direction){}///<构造函数				
-
 /* USER CODE END 0 */
 
 /**
@@ -174,7 +167,7 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
   
 	#ifdef __MAIN_DEBUG
 	HAL_UART_Receive_IT(&huart5,buf,50);

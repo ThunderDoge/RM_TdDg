@@ -50,21 +50,21 @@ void ModeSelect(void)
     case 33: //双中：视觉控制云台转动
         CurrentMode = &ModeVisionControl;
         break;
-    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-        // VisionControl();
-        // ManualFeed();
-        CurrentMode = &ModeVisionFeed;
+//    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
+//        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
+//        // VisionControl();
+//        // ManualFeed();
+//        CurrentMode = &ModeVisionFeed;
         break;
-//    case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
-//        // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
-//        // ManualShoot_Gyro();
-//        CurrentMode = &ModeManualShootGyro;
-//        break;
-    case 13: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_FRIC_TEST;
-        // ManualFeed();
-        CurrentMode = &ModeManualFeed;
+    case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
+        // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
+        // ManualShoot_Gyro();
+        CurrentMode = &ModeManualShootGyro;
+        break;
+//    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
+//        // CurrentMode = MODE_FRIC_TEST;
+//        // ManualFeed();
+//        CurrentMode = &ModeManualFeed;
         break;
     case 22: //双下
     case 23:
@@ -188,7 +188,6 @@ void ManualShoot()
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 	CloudEntity.LazerSwitchCmd(1);
-	CloudEntity.ShooterSwitchCmd(0);
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式
@@ -230,8 +229,8 @@ void ManualFeed()
     // CloudEntity.Feed2nd.Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200));
 
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
-//    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
-	CloudEntity.Feed_Free_Fire_Set(1000/feed_gap*30,(bsp_dbus_Data.CH_0 > 200));
+    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
+
     // if (bsp_dbus_Data.CH_0 > 200)    //状态信息发送到VisionTx
     //     VisionTx.Shoot_mode = 1;
     // else
