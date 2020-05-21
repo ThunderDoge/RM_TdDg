@@ -79,11 +79,11 @@ class AmmoFeed : public softmotor
 			uint8_t feed_mode;		//拨弹模式指示
 			uint16_t free_once_trig_time = 150;	//按住切到单步连发切换的延时时间
 			
-		protected:	
 			void Free_Fire_Set(int32_t FreeSpeed);			//流畅运转模式配置
 			void Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig);				//N连发模式配置
 			void Free_Once_Set(int32_t	DiscreDelay,int16_t trig);				//单发模式配置
 			virtual void Handle(void);
+		protected:	
 	
 			void Free_Fire(void);			//流畅运转模式
 			void Burst(void);				//N连发模式，N=burst_shoot_cnt

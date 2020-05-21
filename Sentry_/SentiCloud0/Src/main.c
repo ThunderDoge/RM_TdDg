@@ -33,6 +33,7 @@
 #include "stdio.h"
 #include "task_SentiCloud.hpp"
 #include <string.h>
+#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -126,6 +127,18 @@ void v_buf_clr()
 //#undef PUTCHAR_PROTOTYPE
 
 //#endif
+extern Motor_t DJI_2006;
+pid FeedSpeed(20, 0, 1, 1000, 7000);
+pid FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200);
+AmmoFeed ttt(1,0x201,&DJI_2006,7, -1, &FeedSpeed, &FeedPositon);
+
+int k;
+
+int32_t ttt_free_spd=-3000;
+int16_t ttt_d_time=100;
+int16_t ttt_trig;
+
+extern float p,y;
 
 /* USER CODE END 0 */
 
@@ -174,22 +187,56 @@ int main(void)
 	#endif
 	#ifndef __MAIN_DEBUG
 	
-	TaskStarter();	// FreeRTOS 任务启动
+	//TaskStarter();	// FreeRTOS 任务启动
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
 
   /* Start scheduler */
-  osKernelStart();
+//  osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   #endif
+  
+  ttt.Enable_Block(5000,200,5);
+  
   while (1)
   {
+	  CloudEntity.ShooterSwitchCmd(0);
+	  CloudEntity.SetAngleTo(p,y);
+	  CloudEntity.PitchSecondMotor.cooperative = 1;
+	  	  switch(k)
+	  {
+		  case 0:
+			  ttt.Safe_Set();
+				CloudEntity.ShooterSwitchCmd(0);
+		  break;
+		  case 1:
+				CloudEntity.ShooterSwitchCmd(0);
+		  break;
+		  case 2:
+			  ttt.Free_Once_Set(ttt_d_time,ttt_trig);
+		  break;
+		  case 3:
+			  ttt.Burst_Set(3,ttt_d_time,ttt_trig);
+		  break;
+		  case 4:
+			  CloudEntity.ShooterSwitchCmd(1);
+				
+		  break;
+		  case 5:
+			  CloudEntity.ShooterSwitchCmd(1);
+			  ttt.Free_Once_Set(ttt_d_time,ttt_1trig);
+				
+		  break;
+	  }
+	  manager::CANSend();
+	  HAL_Delay(2);
+
 //		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
 //	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
 //	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_12);
@@ -240,7 +287,7 @@ int main(void)
 
 #endif // __VISION_TEST
 	  
-	  HAL_Delay(100);
+	  //HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

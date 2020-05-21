@@ -79,7 +79,7 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 	{
 		if(is_block_in_handle)	//未堵转，在处理。
 		{
-			if( fabs(SoftAngle - soft_target_angle) <=3 )	
+			if( fabs(SoftAngle - soft_target_angle) <=5 )	
 			{
 				is_block_in_handle = 0;	//达到角度后返回正常
 			}
