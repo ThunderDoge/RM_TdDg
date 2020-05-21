@@ -358,23 +358,23 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
         // 初始化各项PID参数
-    : PitchSpeed(0, 0, -8, 2001, 30000, 10, 10, 500), 
+    : PitchSpeed(-6, 0, -8, 2001, 30000, 10, 10, 500), 
 	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
 
-	  Pitch2ndSpeed(0, 0, -8, 2002, 30000, 10, 10, 500),
+	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
 	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
 
-	  DualSpeed(0, 0, -8, 2001, 30000, 10, 10, 500), 
+	  DualSpeed(-5, 0, -8, 2001, 30000, 10, 10, 500), 
 	  DualPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       DualGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
       DualGyroSpeed(-5, 0, 0, 2011, 30000, 10, 10, 500),
 
-      YawSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(10, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawSpeed(30, 0, 0, 2000, 30000, 10, 10, 500),
+      YawPosition(30, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
@@ -429,18 +429,18 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         //!!!!!!!!!!!>>>>>>>>>>>>>要调节双PITCH参数请到 dual_pitch_pid_param
 
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 1319, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 52, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4115, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
+      PitchMotor(pitch_can_num, pitch_can_id, 147, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4233, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
 {
-	Feed2nd.Enable_Block(4000,200,5);                       // 初始化堵转检测
+	Feed2nd.Enable_Block(5000,200,5);                       // 初始化堵转检测
 	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  // 设定微分来源为陀螺仪
 	Pitch2ndPosition.Custom_Diff = PitchSecondMotor.Gyro_RealSpeed;
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
-	
+	DualPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;
 //    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
 //    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
 	

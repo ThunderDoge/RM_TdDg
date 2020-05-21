@@ -75,34 +75,33 @@ void ModeSelect(void)
         CurrentMode = &ModeGlobalSafe;
         break;
     }
-//	if(app_check_IsOffline(id_Dbus))
-//	{
-//		if(t==0)
-//		{
-//			CurrentMode = &ModeGlobalSafe;
-//		}
-//		if(t==1)
-//		{
-//			CurrentMode =&ModeManualShoot;
-//			CloudEntity.TargetPitch=p;
-//			CloudEntity.TargetYaw=y;
-//			CloudEntity.ShooterSwitchCmd(0);
-//		}
-//		if(t==2)
-//		{
-//			CurrentMode = &ModeManualFeed;
-//			bsp_dbus_Data.CH_0=0;
-//		}
-//		if(t==3)
-//		{
-//			CurrentMode = &ModeManualFeed;
-//			bsp_dbus_Data.CH_0=201;
-//		}
-//		if(t==4)
-//		{
-//			CurrentMode = &ModeVisionControl;
-//		}
-//	}
+	if(app_check_IsOffline(id_Dbus))
+	{
+		if(t==0)
+		{
+			CurrentMode = &ModeGlobalSafe;
+		}
+		if(t==1)
+		{
+			CurrentMode =&ModeManualShoot;
+			CloudEntity.SetAngleTo(p,y);
+			CloudEntity.ShooterSwitchCmd(0);
+		}
+		if(t==2)
+		{
+			CurrentMode = &ModeManualFeed;
+			bsp_dbus_Data.CH_0=0;
+		}
+		if(t==3)
+		{
+			CurrentMode = &ModeManualFeed;
+			bsp_dbus_Data.CH_0=201;
+		}
+		if(t==4)
+		{
+			CurrentMode = &ModeVisionControl;
+		}
+	}
 	
     if (LastMode != CurrentMode)
     {
