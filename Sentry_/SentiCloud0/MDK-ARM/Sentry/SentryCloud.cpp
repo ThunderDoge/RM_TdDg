@@ -646,11 +646,11 @@ void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
 }
 void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
-    Feed2nd.Burst_Set(ShootCnt,DiscreDelay,trig);
+    Feed2nd.Burst_Set(ShootCnt,DiscreDelay,&trig);
 }
 void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
-    Feed2nd.Free_Once_Set(DiscreDelay,trig);
+    Feed2nd.Free_Once_Set(DiscreDelay,&trig);
 }
 void SentryCloud::Feed_Safe_Set(){
     Feed2nd.Safe_Set();
@@ -764,7 +764,7 @@ void SentryCloud::ShootCtrl()
 		FricRightMotor.Safe_Set();
     }
 
-    shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
+//    shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
 
 }
 
