@@ -30,9 +30,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 //#include "stdio.h"	// stdio.h may cause CAN RX error
-#include "stdio.h"
-#include "task_SentiCloud.hpp"
-#include <string.h>
+//#include "stdio.h"
+//#include "task_SentiCloud.hpp"
+//#include <string.h>
+#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -126,6 +127,18 @@ void v_buf_clr()
 //#undef PUTCHAR_PROTOTYPE
 
 //#endif
+extern Motor_t DJI_2006;
+pid FeedSpeed(20, 0, 1, 1000, 7000);
+pid FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200);
+AmmoFeed ttt(1,0x201,&DJI_2006,7, -1, &FeedSpeed, &FeedPositon);
+
+int k;
+
+int32_t ttt_free_spd=-3000;
+int16_t ttt_d_time=100;
+int16_t ttt_trig;
+
+extern float p,y;
 
 /* USER CODE END 0 */
 
@@ -167,80 +180,30 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
-  
-	#ifdef __MAIN_DEBUG
-	HAL_UART_Receive_IT(&huart5,buf,50);
-	#endif
-	#ifndef __MAIN_DEBUG
+//  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
+    bsp_can_Init();  //CAN总线初始化函�?
+    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（�?�CAN�?
 	
-	TaskStarter();	// FreeRTOS 任务启动
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
-  MX_FREERTOS_Init(); 
+//  MX_FREERTOS_Init(); 
 
   /* Start scheduler */
-  osKernelStart();
+//  osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  #endif
+  
+  ttt.Enable_Block(6000,200,5);
+  ttt.Burst_Set(3,100,&ttt_trig);
   while (1)
   {
-//		HAL_UART_Transmit_IT(&huart3,s,sizeof(s));
-//	  HAL_UART_Transmit_IT(&huart3,(uint8_t*)"test\r\n",sizeof("test\r\n"));
-//	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_12);
-//	  HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_11);
-#ifdef __VISION_TEST
-	  switch(v_case)
-	  {
-		  case 0:
-            v_buf_insert(str_normal,sizeof(str_normal));
-            app_vision_analysis_intgrated();
-
-            v_buf_clr();
-            break;
-		  case 1:
-            v_buf_insert(s1, sizeof(s1));
-            v_buf_insert(trush, sizeof(trush));
-            app_vision_analysis_intgrated();
-
-            v_buf_insert(s2, sizeof(s2));
-            app_vision_analysis_intgrated();
-            v_buf_clr();
-            break;
-		  case 2:
-            v_buf_insert(s3_a, sizeof(s3_a));
-            app_vision_analysis_intgrated();
-            v_buf_insert(s3_b_s, sizeof(s3_b_s));
-            app_vision_analysis_intgrated();
-            v_buf_clr();
-			  break;
-		  case 3:
-            v_buf_insert(trush4, sizeof(trush4));
-            v_buf_insert(trush4, sizeof(trush4));
-            v_buf_insert(s4_a, sizeof(s4_a));
-            app_vision_analysis_intgrated();
-
-            v_buf_insert(s4_b, sizeof(s4_b));
-            app_vision_analysis_intgrated();
-
-            v_buf_clr();
-			  break;
-		  case 4:
-          v_buf_insert(s5, sizeof(s5));
-		  app_vision_analysis_intgrated();
-          v_buf_clr();
-			  break;
-	  }
-      
-
-#endif // __VISION_TEST
-	  
-	  HAL_Delay(100);
+	  ttt.Burst_Set(3,100,&ttt_trig);
+	  manager::CANSend();
+	  HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -263,12 +226,11 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;

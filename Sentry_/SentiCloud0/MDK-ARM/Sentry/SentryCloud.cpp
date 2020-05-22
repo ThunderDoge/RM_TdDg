@@ -326,7 +326,7 @@ Motor_t DJI_3508_Fric(8192, 1);
 
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x201);
+SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x202);
 
 
 /// 云台物理实体类 构造与删除函数
@@ -355,8 +355,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       YawPosition(30, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
-      FricLeftSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
-      FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
+      FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+      FricRightSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
 /*    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
@@ -652,11 +652,11 @@ void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
 }
 void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
-    Feed2nd.Burst_Set(ShootCnt,DiscreDelay,trig);
+    Feed2nd.Burst_Set(ShootCnt,DiscreDelay,&trig);
 }
 void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
-    Feed2nd.Free_Once_Set(DiscreDelay,trig);
+    Feed2nd.Free_Once_Set(DiscreDelay,&trig);
 }
 void SentryCloud::Feed_Safe_Set(){
     Feed2nd.Safe_Set();
@@ -770,7 +770,7 @@ void SentryCloud::ShootCtrl()
 		FricRightMotor.Safe_Set();
     }
 
-    shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
+//    shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
 
 }
 

@@ -1,20 +1,19 @@
 /**
-* @file     app_AmmoFeed.hpp
-* @brief    通用拨弹电机库源文件
+* @file     app_AmmoFeed.cpp
+* @brief    通用拨弹电机库
 * @details  
 * @author    ThunderDoge, Asn
-* @date      2020.5
-* @version  1.0.7
+* @date      2019.12
+* @version  1.0.5
 * @copyright  RM2020电控 
 * @par 日志
-*		v1.0.0  2019/11/29  实现基本功能\n
-*		v1.0.1  2019/12/6   Asn进行了部分简化，使其易于使用\n
-*		v1.0.2  2019/12/13  修正了部分多余的依赖，以及一些语法错误。拨弹回转处理部分Blocked_Reaction仍存在死锁风险，可以PID参数解决\n
-*		v1.0.3  2019/12.27  修正堵转判断逻辑，并统一用外部cansend函数，然后更新命名，使其更规范\n
-*		v1.0.4  2019/12/31  把原来的Pr_Handle函数移植到Handle中，使Set完模式之后只需要调用manager::CANSend()就好了\n
-*		v1.0.5  2020/1/21   修正安全模式的bug，并增加专用停止模式，并增加trig宏定义\n
-*		v1.0.6	2020/2/24	增加：在每次trig触发后对触发值清0，Set_Step函数可在外部直接设置步数
-*       v1.0.7  2020/5/22   修正 last_mode错误地使用static使得多个ammofeed对象互相干扰的问题 
+* 	   v1.0.0  2019/11/29  实现基本功能\n
+* 	   v1.0.1  2019/12/6   Asn进行了部分简化，使其易于使用\n
+* 	   v1.0.2  2019/12/13  修正了部分多余的依赖，以及一些语法错误。拨弹回转处理部分Blocked_Reaction仍存在死锁风险，可以PID参数解决\n
+* 	   v1.0.3  2019/12.27  修正堵转判断逻辑，并统一用外部cansend函数，然后更新命名，使其更规范\n
+* 	   v1.0.4  2019/12/31  把原来的Pr_Handle函数移植到Handle中，使Set完模式之后只需要调用manager::CANSend()就好了\n
+* 	   v1.0.5  2020/1/21   修正安全模式的bug，并增加专用停止模式，并增加trig宏定义\n
+*		v1.0.6	2020/2/24	增加：在每次trig触发后对触发值清0，Set_Step函数可在外部直接设置步数\n
 */ 
 #include "app_AmmoFeed.hpp"
 #define SIGN(x) ((x)>0?1:((x)<0?-1:0))
@@ -28,6 +27,7 @@
 */
 void AmmoFeed::Handle(void)
 {
+	static uint8_t last_mode;
 	if(feed_mode != last_mode)
 	{
 		soft_target_angle = SoftAngle;//模式切换时角度同步
