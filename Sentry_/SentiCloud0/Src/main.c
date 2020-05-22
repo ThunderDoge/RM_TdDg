@@ -159,7 +159,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -183,14 +182,15 @@ int main(void)
   Cloud_Init();	// Sentinal Cloud Hardware Init ç¡¬ä»¶åˆå§‹ï¿??
 //    bsp_can_Init();  //CANæ€»çº¿åˆå§‹åŒ–å‡½æ•?
 //    manager::CANSelect(&hcan1, &hcan2); //å¤§ç–†canç”µæœºåº“åˆå§‹åŒ–ï¼ˆé?‰CANï¼?
-	
+	TaskStarter(); /// È«ÈÎÎñÆô¶¯Æ÷
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
-//  MX_FREERTOS_Init(); 
+  MX_FREERTOS_Init(); 
 
   /* Start scheduler */
-//  osKernelStart();
+  osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 

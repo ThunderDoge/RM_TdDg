@@ -56,15 +56,15 @@ void ModeSelect(void)
 //        // ManualFeed();
 //        CurrentMode = &ModeVisionFeed;
         break;
-    case 13: //上-中：遥控器测试云台 陀螺仪模式【未完成】
+    case 11: //上-上：遥控器测试云台 陀螺仪模式【未完成】
         // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
         // ManualShoot_Gyro();
         CurrentMode = &ModeManualShootGyro;
         break;
-//    case 11: //上-上：手动控云台，手动供弹射击（右摇杆右拨为扳机）
-//        // CurrentMode = MODE_FRIC_TEST;
-//        // ManualFeed();
-//        CurrentMode = &ModeManualFeed;
+    case 13: //上-中：手动控云台，手动供弹射击（右摇杆右拨为扳机）
+        // CurrentMode = MODE_FRIC_TEST;
+        // ManualFeed();
+        CurrentMode = &ModeManualFeed;
         break;
     case 22: //双下
     case 23:
@@ -188,6 +188,8 @@ void ManualShoot()
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_0 * dbus_rate;
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 	CloudEntity.LazerSwitchCmd(1);
+	CloudEntity.ShooterSwitchCmd(0);   
+
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式
@@ -209,6 +211,9 @@ void ManualShoot_Gyro_Enter()
   */
 void ManualChassis() //手动底盘
 {
+	CloudEntity.ShooterSwitchCmd(0);   
+	CloudEntity.LazerSwitchCmd(0);
+
     SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
                   (float)(bsp_dbus_Data.CH_0 * 10000.0f / 660.0f),
                   0);
@@ -228,9 +233,11 @@ void ManualFeed()
     // CloudEntity.FricRightMotor.Speed_Set(Shoot_Speed);
     // CloudEntity.Feed2nd.Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200));
 
-    CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
-    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
-
+    CloudEntity.ShooterSwitchCmd(1);   
+	CloudEntity.LazerSwitchCmd(1);
+	//启动射击。
+//    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
+	CloudEntity.Feed2nd.Free_Once_Set(100,&bsp_dbus_Data.CH_0);
     // if (bsp_dbus_Data.CH_0 > 200)    //状态信息发送到VisionTx
     //     VisionTx.Shoot_mode = 1;
     // else
@@ -245,7 +252,8 @@ void ManualFeed()
 void VisionFeed()
 {
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
-    CloudEntity.Feed_Free_Once_Set(100, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
+	CloudEntity.LazerSwitchCmd(1);
+    CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
     VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
@@ -271,6 +279,8 @@ void VisionFeed()
   */
 void GlobalSafe() //安全模式
 {
+    CloudEntity.ShooterSwitchCmd(0);   
+	CloudEntity.LazerSwitchCmd(0);
     CloudEntity.Safe_Set();                         //所有电机安全模式
     uint8_t data[8] = {0};                          //发送空字节。之后会改掉的
     SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]); //通过CAN向其他的MCU发送安全模式指令

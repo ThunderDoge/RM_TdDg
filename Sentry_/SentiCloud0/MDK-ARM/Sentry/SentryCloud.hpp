@@ -110,7 +110,7 @@ public:
 
 
 	int shoot_flag=0;   ///<“正在射击”指示位
-    int32_t Shoot_Speed=7000;   ///<摩擦轮的设定速度。
+    int32_t Shoot_Speed=4000;   ///<摩擦轮的设定速度。
 
     uint32_t heat_remain=2000;  ///< 剩余热量。从裁判系统获得。如果没有裁判系统，则自行估计.
 	

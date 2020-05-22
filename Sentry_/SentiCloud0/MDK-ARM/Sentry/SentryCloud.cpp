@@ -326,7 +326,7 @@ Motor_t DJI_3508_Fric(8192, 1);
 
 
 // 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x202);
+SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x201);
 
 
 /// 云台物理实体类 构造与删除函数
@@ -339,21 +339,21 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         // 初始化各项PID参数
     : PitchSpeed(-6, 0, -8, 2001, 30000, 10, 10, 500), 
 	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      PitchGyroPosition(200, 0, 0, 2011, 10000, 10, 10, 3000),
-      PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
+      PitchGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
+      PitchGyroSpeed(0, 0, 0, 2011, 30000, 10, 10, 500),
 	  
 	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
 	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
-	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroPosition(0, 0, 8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
 
 	  DualSpeed(-5, 0, -8, 2001, 30000, 10, 10, 500), 
 	  DualPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      DualGyroSpeed(-5, 0, 0, 2011, 30000, 10, 10, 500),
-      DualGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
+      DualGyroSpeed(0, 0, 0, 2011, 30000, 10, 10, 500),
+      DualGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
 
-      YawSpeed(30, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(30, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
+      YawPosition(20, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -381,8 +381,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 147, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4233, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
@@ -700,6 +700,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 	if(NewState == 0)
 	{
 		feed_is_permitted=0;    //不允许射击
+		fric_power_permitted =0;
         FricLeftMotor.Safe_Set();
         FricRightMotor.Safe_Set();
         CloudEntity.Feed2nd.Safe_Set();
@@ -707,6 +708,7 @@ void SentryCloud::ShooterSwitchCmd(int NewState )
 	else
 	{
 		feed_is_permitted=1;
+		fric_power_permitted =1;
         FricLeftMotor.Speed_Set(-Shoot_Speed);
         FricRightMotor.Speed_Set(Shoot_Speed);
 	}
