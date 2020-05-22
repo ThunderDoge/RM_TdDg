@@ -16,7 +16,7 @@
 #define __CLOUD_MODE_DEF
 
 ///云台模式取值枚举型
-enum _cloud_ctrl_mode:uint8_t
+typedef enum _cloud_ctrl_mode:uint8_t
 {
 	hold_cloud,
     save_cloud,
@@ -28,17 +28,17 @@ enum _cloud_ctrl_mode:uint8_t
     absolute_auto_cloud,
 	relative_auto_cloud,
 	auto_cloud,
-};
+}CloudMode_t;
 
 #define __CHASSIS_MODE_DEF
 
 ///底盘模式取值枚举型
-enum _chassis_mode:uint8_t
+typedef enum _chassis_mode:uint8_t
 {
     _chassis_speed =1,
     _chassis_location =2,
     _chassis_location_limit_speed =3,
     _chassis_save =0,
-};
+}ChassisMode_t;
 #endif // !__SENTRY_CTRL_DEF_HPP_
 

@@ -19,10 +19,5 @@
 #include "SentryCloudCommu.hpp"
 #include "sentry_config.hpp"
 
-// #include "SentryCommu.hpp"
-// #include "SentryCloud.hpp"
-// #include "SentryCanCommu.hpp"
-// #include "SentryCloudVision.hpp"
-// #include "SentryTroubleShooter.hpp"
 
 #endif // __SENTRY_HPP_

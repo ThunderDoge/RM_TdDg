@@ -179,10 +179,8 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
-//    bsp_can_Init();  //CAN总线初始化函�?
-//    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（�?�CAN�?
-	TaskStarter(); /// ȫ����������
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始化
+	TaskStarter(); /// 任务启动器
 
   /* USER CODE END 2 */
 
