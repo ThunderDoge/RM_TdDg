@@ -341,6 +341,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2011, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2011, 30000, 10, 10, 500),
+	  
 	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
 	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
@@ -348,8 +349,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
 	  DualSpeed(-5, 0, -8, 2001, 30000, 10, 10, 500), 
 	  DualPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      DualGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
       DualGyroSpeed(-5, 0, 0, 2011, 30000, 10, 10, 500),
+      DualGyroPosition(6, 0, 0, 2011, 10000, 10, 10, 3000),
 
       YawSpeed(30, 0, 0, 2000, 30000, 10, 10, 500),
       YawPosition(30, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
@@ -649,14 +650,29 @@ void SentryCloud::Safe_Set()
 void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
     if(feed_is_permitted)
     Feed2nd.Free_Fire_Set(FreeSpeed);
+	else
+	{
+		Feed2nd.Safe_Set();
+	}
+
 }
 void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
     Feed2nd.Burst_Set(ShootCnt,DiscreDelay,&trig);
+	else
+	{
+		Feed2nd.Safe_Set();
+	}
 }
 void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
     if(feed_is_permitted)
-    Feed2nd.Free_Once_Set(DiscreDelay,&trig);
+	{
+		Feed2nd.Free_Once_Set(DiscreDelay,&trig);
+	}
+	else
+	{
+		Feed2nd.Safe_Set();
+	}
 }
 void SentryCloud::Feed_Safe_Set(){
     Feed2nd.Safe_Set();

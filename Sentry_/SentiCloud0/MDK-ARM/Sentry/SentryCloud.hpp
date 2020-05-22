@@ -63,10 +63,16 @@ public:
     pid Pitch2ndGyroPosition;  ///<Pitch电机陀螺仪 位置环
     pid Pitch2ndGyroSpeed;     ///<Pitch电机陀螺仪 速度环
 
+    pid DualSpeed;           ///<Yaw电机机械角 速度环
+    pid DualPosition;        ///<Yaw电机机械角 位置环
+    pid DualGyroSpeed;       ///<Yaw电机陀螺仪 速度环
+    pid DualGyroPosition;    ///<Yaw电机陀螺仪 位置环
+
     pid YawSpeed;           ///<Yaw电机机械角 速度环
     pid YawPosition;        ///<Yaw电机机械角 位置环
     pid YawGyroSpeed;       ///<Yaw电机陀螺仪 速度环
     pid YawGyroPosition;    ///<Yaw电机陀螺仪 位置环
+
 
     pid FricLeftSpeed;      ///<左边摩擦轮 速度环
     pid FricRightSpeed;     ///<右边摩擦轮 速度环

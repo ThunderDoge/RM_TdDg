@@ -31,9 +31,9 @@
 /* USER CODE BEGIN Includes */
 //#include "stdio.h"	// stdio.h may cause CAN RX error
 //#include "stdio.h"
-//#include "task_SentiCloud.hpp"
-//#include <string.h>
-#include "app_AmmoFeed.hpp"
+#include "task_SentiCloud.hpp"
+#include <string.h>
+//#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,16 +127,16 @@ void v_buf_clr()
 //#undef PUTCHAR_PROTOTYPE
 
 //#endif
-extern Motor_t DJI_2006;
-pid FeedSpeed(20, 0, 1, 1000, 7000);
-pid FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200);
-AmmoFeed ttt(1,0x201,&DJI_2006,7, -1, &FeedSpeed, &FeedPositon);
+//extern Motor_t DJI_2006;
+//pid FeedSpeed(20, 0, 1, 1000, 7000);
+//pid FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200);
+//AmmoFeed ttt(1,0x201,&DJI_2006,7, -1, &FeedSpeed, &FeedPositon);
 
-int k;
+//int k;
 
-int32_t ttt_free_spd=-3000;
-int16_t ttt_d_time=100;
-int16_t ttt_trig;
+//int32_t ttt_free_spd=-3000;
+//int16_t ttt_d_time=100;
+//int16_t ttt_trig;
 
 extern float p,y;
 
@@ -180,9 +180,9 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-//  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
-    bsp_can_Init();  //CAN总线初始化函�?
-    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（�?�CAN�?
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始�??
+//    bsp_can_Init();  //CAN总线初始化函�?
+//    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（�?�CAN�?
 	
   /* USER CODE END 2 */
 
@@ -197,12 +197,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   
-  ttt.Enable_Block(6000,200,5);
-  ttt.Burst_Set(3,100,&ttt_trig);
+//  ttt.Enable_Block(6000,200,5);
+//  ttt.Burst_Set(3,100,&ttt_trig);
   while (1)
   {
-	  ttt.Burst_Set(3,100,&ttt_trig);
-	  manager::CANSend();
+//	  ttt.Burst_Set(3,100,&ttt_trig);
+//	  manager::CANSend();
 	  HAL_Delay(1);
     /* USER CODE END WHILE */
 
