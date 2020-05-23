@@ -6,10 +6,9 @@
  * @date     2020-5-23
  * @version  v2.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
- * 未特别标注的部分全由 ThunderDoge 编写
  * 
  * v1.0 2020-4-15   发布
- * v2.0 2020-5-23   重写了函数
+ * v2.0 2020-5-23   重构计划"Clean Cloud"
  */
 #ifndef __SENTRY_CLOUD_HPP_
 #define __SENTRY_CLOUD_HPP_
@@ -23,6 +22,8 @@
 #include "app_math.h"
 #include "app_check.h"
 #include "app_AmmoFeed.hpp"
+
+#define MINIMAL_FRIC_SPD_BAN_FEED 3000
 
 // extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
 // extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
@@ -59,7 +60,7 @@ typedef enum __sentry_cloud_error_type:uint8_t{
 class SentryCloud   
 {
 public:
-    //Initializer & Destructor 云台物理实体类 构造与删除函数
+    // 云台物理实体类 构造函数
     SentryCloud(uint8_t yaw_can_num,uint16_t yaw_can_id, 
     uint8_t pitch_can_num, uint16_t pitch_can_id,
 	uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
@@ -75,7 +76,6 @@ public:
     
     uint8_t RED_BUTTON_HaltAllPids;  ///< 停止所有PID输出
 
-
     /*---------------------------------实时更新物理信息----------------------------------*/
 
     // 操作这些变量不会产生控制效果
@@ -84,9 +84,6 @@ public:
     float RotatedImuAngle[3];       ///<云台枪口朝向：Roll,Pitch,Yaw
     float RotatedImuAngleRate[3];   ///<云台枪口朝向角速度Roll,Pitch,Yaw
     float BaseImuAngleRate[3];      ///< 云台水平底座朝向
-
-    // 云台运行状态
-    CloudMode_t CloudMode;      ///<云台状态指示
 
     int32_t Shoot_Speed=4000;   ///<摩擦轮的设定速度。	
 	
@@ -99,16 +96,24 @@ public:
 
     /*---------------------------------逻辑控制相关信息----------------------------------*/
 
-    uint8_t MotorOnlineList[6];                     ///< 六个电机在线列表，依声明序
-    uint32_t LastControlTick;                       ///< 标记最后受外界控制时间。便于观察视觉离线
+    
+    CloudMode_t CloudMode;      ///< 云台状态指示
+    ShootModeEnum ShootMode;
+
+    uint8_t MotorOnlineList[6];     ///< 六个电机在线列表，依声明序
+    uint32_t LastControlTick;       ///< 标记最后受外界控制时间。便于观察视觉离线
+    uint32_t LastShootTick;         ///< 
+    uint32_t LastHandleTick;        ///< 
 
     CloudError_t CloudError[CloudErrorCount];         ///<  错误信息
+
+    uint32_t FeedBlockCnt;          ///< 堵转触发次数
+
+    uint8_t IsSlowFricBanFeed;
 
 	PitchModeEnum pitch_ctrl_mode = __cloud_main_pitch;         ///< 云台单pitch/双pitch模式
 
     uint8_t pitch_exceed_flag[2];       ///< pitch超过软件限位的标志位
-    uint8_t pitch_last_exceed_flag[2];  ///< pitch超过软件限位的标志位,上一次数值
-    float pitch_IMax_save[2];           ///< pitch超过软件限位时关闭IMAX，IMAX保存到这里
 
     /*-------------------------------------电机用PID---------------------------------------*/
 
@@ -146,7 +151,7 @@ public:
 
     softcloud YawMotor;     ///<Yaw轴电机对象_CAN1上
     softcloud PitchMotor;   ///<Pitch轴电机对象_CAN1上
-	softcloud PitchSecondMotor;		///<从动Pitch轴电机对象_CAN2上
+	softcloud Pitch2ndMotor;		///<从动Pitch轴电机对象_CAN2上
 
     // 警告⚠ 当摩擦轮速度低于一值时，不允许开启拨弹电机。由Handle()强制修正，直接控制Feed2nd时无效的。
 
@@ -156,14 +161,14 @@ public:
 
 	/*------------------------- 控制用函数，使用这些函数会产生控制效果 --------------------------*/
 
-    void Handle();      ///< 【重要】云台自动控制函数，包含着所有数据的获取、处理和例行执行。应当在主逻辑任务中调用。
+    void Handle();      ///< 【重要】云台自动控制托管，包含着所有数据的获取、处理和例行执行。应当在主逻辑任务中调用。
 
     void Safe_Set();                                ///< 安全模式
     void SetAngleTo(float pitch, float yaw);        ///< 机械角度设定
     void SetAngleTo_Gyro(float pitch, float yaw);   ///< 角度设定 陀螺仪控制模式
     void SetCloudMode(CloudMode_t newCloudMode);    ///< 设定云台模式
 
-	void Shoot(float bullet_speed, uint8_t fire_freq, ShootModeEnum shoot_mode);  ///< 设定射击模式
+	void Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum shoot_mode);  ///< 设定射击模式
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关摩擦轮
@@ -179,19 +184,31 @@ private:
 	float pitch_limit_min;  ///< 云台软限位上限
 
     PitchModeEnum last_pitch_ctrl_mode = __cloud_main_pitch;    ///< 云台单pitch/双pitch模式，历史
-	
+    
+    uint8_t pitch_last_exceed_flag[2];  ///< pitch超过软件限位的标志位,上一次数值
+    
+    float pitch_IMax_save[2];           ///< pitch超过软件限位时关闭IMAX，IMAX保存到这里
+
+    int16_t feed_trig;
+    
 	/*----------------------------------- 内部运行函数 -----------------------------------*/
 
     // 后缀Ctrl的函数会控制电机产生控制效果
     // 后缀Handle的函数仅控制信息显示，如上面的控制变量
 	
-	
+	void CloudModeCtrl(void);           ///< 云台模式控制逻辑
 	void PitchRealAngleLimitCtrl(void); ///< 软件限位
 	void PitchModeCtrl(void);           ///< 双PITCH/单PITCH切换逻辑
     void ShootCtrl(void);               ///< 射击控制逻辑执行函数，在Handle中调用
     void RedButtonEffectCtrl(void);     ///< 实现紧急开关的功能
 	void ImuDataProcessHandle(void);    ///< 陀螺仪数据处理
     void ErrorReportHandle(void);       ///< 错误信息输出
+
+	/*----------------------------------- 内部调用函数 -----------------------------------*/
+
+    void SetAngleTo_NoMode(float pitch, float yaw);        ///< 机械角度设定，不改变控制模式
+    void SetAngleTo_Gyro_NoMode(float pitch, float yaw);   ///< 角度设定 陀螺仪控制模式，不改变控制模式
+    void Safe_Set_NoMode(void);
 	
     //废案 5-23
 	// void EnterModeDualPitch(void);      
@@ -200,6 +217,12 @@ private:
 };
 
 extern SentryCloud CloudEntity; ///云台物理实体对象。包含电机激光器等设备。
+
+// 电机型号类
+extern Motor_t DJI_2006;
+extern Motor_t DJI_6020;
+extern Motor_t DJI_3508_Fric;
+
 
 //云台控制模式相关
 // void EnterModeCloudCtrlMech(void);

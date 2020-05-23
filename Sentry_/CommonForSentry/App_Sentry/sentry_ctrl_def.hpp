@@ -20,14 +20,15 @@ typedef enum _cloud_ctrl_mode:uint8_t
 {
 	hold_cloud,
     save_cloud,
-	speed_cloud,
+	// speed_cloud,
 	absolute_cloud,
-    relative_cloud,
+    // relative_cloud,
     absolute_gyro_cloud,
-	relative_gyro_cloud,
-    absolute_auto_cloud,
-	relative_auto_cloud,
-	auto_cloud,
+	// relative_gyro_cloud,
+    // absolute_auto_cloud,
+	// relative_auto_cloud,
+	// auto_cloud,
+    default_cloud_mode,
 }CloudMode_t;
 
 #define __CHASSIS_MODE_DEF

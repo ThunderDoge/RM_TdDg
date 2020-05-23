@@ -131,7 +131,7 @@ void SentryCloud::EnterModeDualPitch(void)
 {
     copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
 
-    PitchSecondMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
+    Pitch2ndMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
     // 它的输出值电流值会在运行时复制PitchMotor的电流输出值
 }
 /**
@@ -142,7 +142,7 @@ void SentryCloud::ExitModeDualPitch(void)
 {
     copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入单PITCH参数 WriteDualMotorParam();
 
-    PitchSecondMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
+    Pitch2ndMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
     // 但是此函数在某一PITCH掉线时才会调用。
 }
 /**
@@ -151,8 +151,8 @@ void SentryCloud::ExitModeDualPitch(void)
  */
 void SentryCloud::RunModeDualPitch()
 {
-    PitchSecondMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
-    PitchSecondMotor.InsertCurrent();   // 写入电流值
+    Pitch2ndMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
+    Pitch2ndMotor.InsertCurrent();   // 写入电流值
 }
 /**
  * @brief PITCH模式控制。在Handle()中调用
@@ -163,7 +163,7 @@ void SentryCloud::PitchModeCtrl(void)
 	last_pitch_ctrl_mode = pitch_ctrl_mode;
 	
 	// 更新模式PITCH的规则
-	if(PitchMotor.Is_Offline() == 0 && PitchSecondMotor.Is_Offline() ==0)
+	if(PitchMotor.Is_Offline() == 0 && Pitch2ndMotor.Is_Offline() ==0)
 	{
 		pitch_ctrl_mode = __cloud_dual_pitch;
 	}
@@ -299,7 +299,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      PitchSecondMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
+      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
