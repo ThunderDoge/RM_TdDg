@@ -9,11 +9,6 @@
   */
 #include "SentryCloudLogic.hpp"
 
-//模式标志变量定义
-// GlobalModeName GlobalMode;
-// GlobalModeName LastGlobalMode;
-// CommandSourceName CommandSource;
-
 //模式定义
 app_Mode ModeManualChassis(NULL, ManualChassis, NULL);
 app_Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
@@ -50,11 +45,11 @@ void ModeSelect(void)
     case 33: //双中：视觉控制云台转动
         CurrentMode = &ModeVisionControl;
         break;
-//    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-//        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-//        // VisionControl();
-//        // ManualFeed();
-//        CurrentMode = &ModeVisionFeed;
+    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
+        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
+        // VisionControl();
+        // ManualFeed();
+        CurrentMode = &ModeVisionFeed;
         break;
     case 11: //上-上：遥控器测试云台 陀螺仪模式【未完成】
         // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
@@ -176,9 +171,10 @@ void VisionControlExit(){
 const float dbus_rate = -0.00005;
 void ManualShootEnter()
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+//    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+//    CloudEntity.TargetYaw = CloudEntity.RealYaw;
+//    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+	CloudEntity.SetCloudMode(hold_cloud);
 }
 void ManualShoot()
 {
@@ -189,7 +185,6 @@ void ManualShoot()
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 	CloudEntity.LazerSwitchCmd(1);
 	CloudEntity.ShooterSwitchCmd(0);   
-
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式
@@ -202,9 +197,10 @@ void ManualShoot_Gyro()
 }
 void ManualShoot_Gyro_Enter()
 {
-    CloudEntity.TargetPitch = CloudEntity.RotatedImuAngle[1]; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    CloudEntity.TargetYaw = CloudEntity.RotatedImuAngle[2];
-    CloudEntity.Mode = absolute_gyro_cloud; //视为绝对角控制
+//    CloudEntity.TargetPitch = CloudEntity.RotatedImuAngle[1]; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+//    CloudEntity.TargetYaw = CloudEntity.RotatedImuAngle[2];
+//    CloudEntity.Mode = absolute_gyro_cloud; //视为绝对角控制
+	CloudEntity.SetAngleTo_Gyro(CloudEntity.RotatedImuAngle[1],CloudEntity.RotatedImuAngle[2]);
 }
 /**
   * @brief  遥控器测试底盘
@@ -243,7 +239,7 @@ void ManualFeed()
     // else
     //     VisionTx.Shoot_mode = 0;
 
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag; //状态信息发送到VisionTx
+    VisionTx.Shoot_mode = CloudEntity.ShootMode; //状态信息发送到VisionTx
     
 }
 /**
@@ -254,7 +250,7 @@ void VisionFeed()
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
 	CloudEntity.LazerSwitchCmd(1);
     CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
+    VisionTx.Shoot_mode = CloudEntity.ShootMode;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
     {

@@ -37,8 +37,8 @@ int i;
 void CloudVisonTxRoutine(void)
 {
     //装载各种信息
-    VisionTx.Cloud_mode = CloudEntity.Mode;
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag;
+    VisionTx.Cloud_mode = CloudEntity.CloudMode;
+    VisionTx.Shoot_mode = CloudEntity.ShootMode;
     VisionTx.Pitch = CloudEntity.RealPitch;
     VisionTx.YawSoft = CloudEntity.RealYaw;
     VisionTx.Yaw = CloudEntity.MechanicYaw;
