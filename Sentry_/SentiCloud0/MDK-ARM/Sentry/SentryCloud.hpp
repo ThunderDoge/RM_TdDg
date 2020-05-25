@@ -35,7 +35,6 @@ typedef enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
 	__cloud_dual_pitch=2U,
 }pitch_enum;
 
-
 /**
  * @brief 云台物理实体类，包含 操纵云台进行物理运动的函数 和 物理信息，以及相关配置信息
  * 
@@ -130,7 +129,7 @@ public:
 //    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< 强制设定控制模式
     void SetAngleTo_Gyro(float pitch, float yaw);   ///<角度设定 陀螺仪控制模式
     void SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode);
-	void Shoot(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode);
+	void Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode, int16_t ext_trig);
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮
@@ -192,6 +191,7 @@ uint8_t is_use_dual_param;
     int RobotHP;    //现在的HP
     //视觉小主机通讯相关
     //板间CAN通讯相关
+    int16_t trig;
 };
 
 extern SentryCloud CloudEntity; ///云台物理实体对象。包含电机激光器等设备。

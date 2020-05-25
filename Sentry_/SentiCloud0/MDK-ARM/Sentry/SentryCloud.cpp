@@ -353,7 +353,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       DualGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
 
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(20, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawPosition(20, 0,-1, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -608,21 +608,28 @@ void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mo
  * @param     fire_freq     发射频率。这个控制。
  * @param     Shoot_mode    射击模式。这个保留备用。
  */
-void SentryCloud::Shoot(float bullet_speed, uint8_t fire_freq, uint8_t Shoot_mode)
+void SentryCloud::Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
 {
-	Shoot_Speed = bullet_speed;     // 设定摩擦轮速率
-
-	ShooterSwitchCmd(1);            // 启动摩擦轮和射击许可
-
-	if(fire_freq!=0)
-    {
-        Feed_Free_Once_Set(60000/fire_freq,1);
-    }
+    Shoot_Speed = fabs(bullet_speed);
+    if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
+        ShooterSwitchCmd(1);
     else
+        ShooterSwitchCmd(0);
+
+    switch (shoot_mode)
     {
-        Feed_Safe_Set();
-    }
-    
+    case ShtStop:
+        Feed2nd.Safe_Set();
+        break;
+    case ShtOnce:
+        trig = ext_trig;
+        Feed2nd.Free_Once_Set(0,&trig);
+        break;
+    case ShtBurst:
+        trig = ext_trig;
+        Feed2nd.Burst_Set(fire_cnt,50,&trig);
+        break;
+    }    
 }
 
 
@@ -838,8 +845,9 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
  * @param     fire_freq     子弹射击频率，单位是RPM。实现上是把云台供弹暂停时间改为 60*1000/fire_freq
  * @param     shoot_mode    子弹射击模式。保留备用。
  */
-void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode){
-	CloudEntity.Shoot(bullet_speed,fire_freq,shoot_mode);
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
+{
+	CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_mode,ext_trig);
 }
 
 

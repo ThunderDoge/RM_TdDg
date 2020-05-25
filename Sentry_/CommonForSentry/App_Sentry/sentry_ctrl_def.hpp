@@ -40,5 +40,14 @@ enum _chassis_mode:uint8_t
     _chassis_location_limit_speed =3,
     _chassis_save =0,
 };
+
+#define __SHOOT_MODE_DEF
+
+typedef enum __sentry_cloud_shoot_mode:uint8_t{
+    ShtStop,
+    ShtOnce,
+    ShtBurst,
+}ShootModeEnum;
+
 #endif // !__SENTRY_CTRL_DEF_HPP_
 

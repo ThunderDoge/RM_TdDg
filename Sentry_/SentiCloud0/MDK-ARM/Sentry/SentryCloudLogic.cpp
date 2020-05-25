@@ -253,7 +253,8 @@ void VisionFeed()
 {
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
 	CloudEntity.LazerSwitchCmd(1);
-    CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
+    // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
+    CloudEntity.Shoot(4000, 1, ShtOnce, bsp_dbus_Data.CH_0);
     VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)

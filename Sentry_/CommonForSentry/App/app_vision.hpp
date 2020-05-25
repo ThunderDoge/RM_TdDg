@@ -122,6 +122,8 @@ typedef struct __vision_data
     uint8_t Shoot_mode; ///<射击模式
     float Shoot_speed;  ///<射击速度
     uint8_t Shoot_freq; ///<射击频率
+	uint8_t Shoot_trig_bit;
+	uint8_t FricSwitch;
     ///数据标志
     uint32_t UpdateTime;
     ///日志系统使用
@@ -172,7 +174,7 @@ void app_vision_dma_tx_cpltcallback(UART_HandleTypeDef *huart);
 #endif
 void app_vision_dma_rx_abort_in_idle(void);
 uint8_t app_vision_analysis_intgrated(void);
-void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode);
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig);
 
 // HAL_StatusTypeDef app_vision_SendData(uint8_t _Functionword);
 
