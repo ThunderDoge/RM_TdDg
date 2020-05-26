@@ -469,7 +469,7 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.FricSwitch, Vision_Rxbuffer + 15, 1); 
         VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
 		
-		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,1U,ShtOnce,(VisionRx.Shoot_trig_bit>0)*400);
+//		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,1U,ShtOnce,(VisionRx.Shoot_trig_bit>0)*400);
 		
         VisionRx.UpdateTime = HAL_GetTick();
     }

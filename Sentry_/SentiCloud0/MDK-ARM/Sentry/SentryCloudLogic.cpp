@@ -50,11 +50,11 @@ void ModeSelect(void)
     case 33: //双中：视觉控制云台转动
         CurrentMode = &ModeVisionControl;
         break;
-//    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-//        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-//        // VisionControl();
-//        // ManualFeed();
-//        CurrentMode = &ModeVisionFeed;
+    case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
+        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
+        // VisionControl();
+        // ManualFeed();
+        CurrentMode = &ModeVisionFeed;
         break;
     case 11: //上-上：遥控器测试云台 陀螺仪模式【未完成】
         // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
@@ -246,15 +246,21 @@ void ManualFeed()
     VisionTx.Shoot_mode = CloudEntity.shoot_flag; //状态信息发送到VisionTx
     
 }
+int16_t last_CH0;
 /**
  * @brief 视觉控制云台，手动拨弹
  */
 void VisionFeed()
 {
+	
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
 	CloudEntity.LazerSwitchCmd(1);
     // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
-    CloudEntity.Shoot(4000, 1, ShtOnce, bsp_dbus_Data.CH_0);
+	if(last_CH0<=200 && bsp_dbus_Data.CH_0 > 200)
+	{
+		CloudEntity.Shoot(4000, 1, ShtOnce, bsp_dbus_Data.CH_0);
+	}
+	last_CH0 = bsp_dbus_Data.CH_0;
     VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
@@ -274,6 +280,7 @@ void VisionFeed()
         break;
     }
     VisionRx.cloud_ctrl_mode = 0; //处理完成标志。因为一个命令只会处理一次，处理后 置0
+	
 }
 /**
   * @brief  全局安全模式
