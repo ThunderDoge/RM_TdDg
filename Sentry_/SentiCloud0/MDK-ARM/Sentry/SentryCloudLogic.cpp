@@ -247,6 +247,7 @@ void ManualFeed()
     
 }
 int16_t last_CH0;
+float v_feed_spd = 4000;
 /**
  * @brief 视觉控制云台，手动拨弹
  */
@@ -258,7 +259,7 @@ void VisionFeed()
     // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
 	if(last_CH0<=200 && bsp_dbus_Data.CH_0 > 200)
 	{
-		CloudEntity.Shoot(4000, 1, ShtOnce, bsp_dbus_Data.CH_0);
+		CloudEntity.Shoot(v_feed_spd, 1, ShtOnce, bsp_dbus_Data.CH_0);
 	}
 	last_CH0 = bsp_dbus_Data.CH_0;
     VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx

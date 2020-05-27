@@ -229,6 +229,12 @@ void SentryCloud::PitchModeCtrl(void)
 	}
 	
 }
+
+static float CloudEntity_FunctionYawToPitchlimit(float yaw)
+{
+    
+}
+
 /**
  * @brief 软件限位控制
  * 
