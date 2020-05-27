@@ -33,6 +33,7 @@
 //#include "stdio.h"
 #include "task_SentiCloud.hpp"
 #include <string.h>
+#include "SEGGER_SYSVIEW.h"
 //#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
@@ -182,6 +183,7 @@ int main(void)
   Cloud_Init();	// Sentinal Cloud Hardware Init 纭欢鍒濆锟??
 //    bsp_can_Init();  //CAN鎬荤嚎鍒濆鍖栧嚱鏁?
 //    manager::CANSelect(&hcan1, &hcan2); //澶х枂can鐢垫満搴撳垵濮嬪寲锛堥?塁AN锛?
+	SEGGER_SYSVIEW_Conf();
 	TaskStarter(); /// 全任务启动器
 
   /* USER CODE END 2 */
