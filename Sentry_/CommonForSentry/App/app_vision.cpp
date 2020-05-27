@@ -464,9 +464,13 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         VisionRx.Function_word = CMD_GIMBAL_RELATIVE_CONTROL;
         memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 2, 4); //云台角度解析
         memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 6, 4);
-        memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1); //云台模式解析
-        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1); //射击模式
+        memcpy(&VisionRx.Shoot_trig_bit, Vision_Rxbuffer + 10, 1); 
+//        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 4); 
+        memcpy(&VisionRx.FricSwitch, Vision_Rxbuffer + 15, 1); 
         VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
+		
+//		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,1U,ShtOnce,(VisionRx.Shoot_trig_bit>0)*400);
+		
         VisionRx.UpdateTime = HAL_GetTick();
     }
 }
@@ -506,12 +510,9 @@ void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
  * @param     fire_freq     子弹射击频率
  * @param     shoot_mode    子弹射击模式。
  */
-__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode)
+__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
 {
 	// 您不应该修改此函数。您应该在另处实现此函数的功能，因为此处的定义是WEAK的
-	UNUSED(bullet_speed);
-	UNUSED(fire_freq);
-	UNUSED(shoot_mode);
 }
 
 void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
@@ -524,7 +525,7 @@ void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + 6, 1);  //射击频率
         memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 7, 1);  //射击模式
         VisionRx.UpdateTime = HAL_GetTick();
-		CMD_SHOOT_ExecuteCallback(VisionRx.Shoot_speed,VisionRx.Shoot_freq,VisionRx.Shoot_mode);
+//		CMD_SHOOT_ExecuteCallback(VisionRx.Shoot_speed,VisionRx.Shoot_freq,VisionRx.Shoot_mode);
     }
 }
 ///底盘运动控制

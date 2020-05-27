@@ -185,6 +185,7 @@ void ManualShoot()
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 	CloudEntity.LazerSwitchCmd(1);
 	CloudEntity.ShooterSwitchCmd(0);   
+
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式
@@ -242,15 +243,23 @@ void ManualFeed()
     VisionTx.Shoot_mode = CloudEntity.ShootMode; //状态信息发送到VisionTx
     
 }
+int16_t last_CH0;
+float v_feed_spd = 4000;
 /**
  * @brief 视觉控制云台，手动拨弹
  */
 void VisionFeed()
 {
+
     CloudEntity.ShooterSwitchCmd(1);                                 //启动射击。
 	CloudEntity.LazerSwitchCmd(1);
-    CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
-    VisionTx.Shoot_mode = CloudEntity.ShootMode;                    //状态信息发送到VisionTx
+    // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
+	if(last_CH0<=200 && bsp_dbus_Data.CH_0 > 200)
+	{
+		CloudEntity.Shoot(v_feed_spd, 1, ShtOnce, bsp_dbus_Data.CH_0);
+	}
+	last_CH0 = bsp_dbus_Data.CH_0;
+    VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
     {
@@ -269,6 +278,7 @@ void VisionFeed()
         break;
     }
     VisionRx.cloud_ctrl_mode = 0; //处理完成标志。因为一个命令只会处理一次，处理后 置0
+
 }
 /**
   * @brief  全局安全模式
