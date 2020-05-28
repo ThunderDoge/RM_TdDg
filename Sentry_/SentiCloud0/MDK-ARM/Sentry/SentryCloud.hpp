@@ -142,6 +142,8 @@ public:
 	uint8_t pitch_exceed_flag[2];
     uint8_t pitch_last_exceed_flag[2];
     float pitch_IMax_save[2];
+        uint32_t trig_cnt;
+
 
 	
 private:

@@ -259,6 +259,7 @@ void VisionFeed()
     // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
 	if(last_CH0<=200 && bsp_dbus_Data.CH_0 > 200)
 	{
+        CloudEntity.trig_cnt++;
 		CloudEntity.Shoot(v_feed_spd, 1, ShtOnce, bsp_dbus_Data.CH_0);
 	}
 	last_CH0 = bsp_dbus_Data.CH_0;
@@ -280,7 +281,7 @@ void VisionFeed()
     default:
         break;
     }
-    VisionRx.cloud_ctrl_mode = 0; //处理完成标志。因为一个命令只会处理一次，处理后 置0
+    VisionRx.cloud_ctrl_mode = hold_cloud; //处理完成标志。因为一个命令只会处理一次，处理后 置0
 	
 }
 /**

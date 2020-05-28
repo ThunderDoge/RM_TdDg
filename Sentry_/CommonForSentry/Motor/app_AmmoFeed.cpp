@@ -71,6 +71,7 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 	{
 		if( !is_block_in_handle )	//堵转，未处理
 		{	//正常堵转处理程序
+            dual_block_cnt ++;
 			soft_target_angle = SoftAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//设定反转角度
 			Angle_Set(soft_target_angle);
 			block->Clear_BlockFlag();	//清楚堵转标志
@@ -78,6 +79,7 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 		}
 		else //在处理，仍堵转
 		{
+            block_cnt ++;
 			is_block_in_handle = 0;	//强制回到正常
 			block->Clear_BlockFlag();
 		}
