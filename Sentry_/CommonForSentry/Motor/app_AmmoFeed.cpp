@@ -4,7 +4,7 @@
 * @details  
 * @author    ThunderDoge, Asn
 * @date      2020.5
-* @version  1.0.7
+* @version  1.0.8
 * @copyright  RM2020电控 
 * @par 日志
 *		v1.0.0  2019/11/29  实现基本功能\n
@@ -15,6 +15,7 @@
 *		v1.0.5  2020/1/21   修正安全模式的bug，并增加专用停止模式，并增加trig宏定义\n
 *		v1.0.6	2020/2/24	增加：在每次trig触发后对触发值清0，Set_Step函数可在外部直接设置步数
 *       v1.0.7  2020/5/22   修正 last_mode错误地使用static使得多个ammofeed对象互相干扰的问题 
+*		v1.0.8  2020/5/26	修正free_once在转换模式中可能出现的问题
 */ 
 #include "app_AmmoFeed.hpp"
 #define SIGN(x) ((x)>0?1:((x)<0?-1:0))
@@ -28,7 +29,7 @@
 */
 void AmmoFeed::Handle(void)
 {
-	if(feed_mode != last_mode)
+	if(feed_mode != last_feed_mode)
 	{
 		soft_target_angle = SoftAngle;//模式切换时角度同步
 	}
@@ -54,7 +55,7 @@ void AmmoFeed::Handle(void)
 			}
 		}
 	}
-	last_mode = feed_mode;
+	last_feed_mode = feed_mode;
 }
 
 
@@ -71,7 +72,6 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 	{
 		if( !is_block_in_handle )	//堵转，未处理
 		{	//正常堵转处理程序
-            dual_block_cnt ++;
 			soft_target_angle = SoftAngle - SIGN(TargetSpeed) * rev_angle_when_blocked ;	//设定反转角度
 			Angle_Set(soft_target_angle);
 			block->Clear_BlockFlag();	//清楚堵转标志
@@ -79,7 +79,6 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 		}
 		else //在处理，仍堵转
 		{
-            block_cnt ++;
 			is_block_in_handle = 0;	//强制回到正常
 			block->Clear_BlockFlag();
 		}
@@ -224,7 +223,11 @@ void AmmoFeed::Free_Once(void)
 #else 
 	static uint16_t trig_set = 200;
 #endif
-
+	if(last_feed_mode != feed_mode)
+	{
+		act_flag = 0;
+		once_flag = 0;
+	}
 	if( *trigger>trig_set )
 	{
 		if( act_flag == 0 )
@@ -238,7 +241,6 @@ void AmmoFeed::Free_Once(void)
 	{	
 		act_flag = 0;	
 	}
-	
 	if(act_flag)
 	{
 		if((HAL_GetTick()-act_time_stamp)>free_once_trig_time)//到达触发时间

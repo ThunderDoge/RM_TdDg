@@ -629,7 +629,7 @@ void SentryCloud::Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum sho
         break;
     case ShtOnce:
         trig = ext_trig;
-        Feed2nd.Free_Once_Set(0,&trig);
+        Feed2nd.Free_Once_Set(50,&trig);
         break;
     case ShtBurst:
         trig = ext_trig;

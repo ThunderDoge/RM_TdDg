@@ -93,14 +93,11 @@ class AmmoFeed : public softmotor
 
 			FeedModeEnum feed_mode;						//拨弹模式指示
 		
-			FeedModeEnum last_mode;
+			FeedModeEnum last_feed_mode;
 
 			int16_t* trigger;						//Free_Once和Burst的触发条件
 
 			uint16_t free_once_trig_time = 150;		//按住切到单步连发切换的延时时间
-
-            uint32_t block_cnt;
-            uint32_t dual_block_cnt;
 };
 
 
