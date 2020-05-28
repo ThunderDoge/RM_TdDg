@@ -835,7 +835,7 @@
             <GroupArmAds>
               <Cads>
                 <interw>2</interw>
-                <Optim>0</Optim>
+                <Optim>4</Optim>
                 <oTime>2</oTime>
                 <SplitLS>2</SplitLS>
                 <OneElfS>2</OneElfS>
