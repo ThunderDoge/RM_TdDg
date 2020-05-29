@@ -49,17 +49,17 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       PitchGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
 	  
 	  Pitch2ndSpeed(-6, 0, -8, 2002, 30000, 10, 10, 500),
-	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
+	  Pitch2ndMotor.PID_Out(-30, -1, 0, 1802, 10000, 10, 10, 120),
 	  Pitch2ndGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroPosition(0, 0, 8, 2000, 30000, 10, 10, 500),
 
-	  DualSpeed(-5, 0, -8, 2001, 30000, 10, 10, 500), 
-	  DualPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+	  DualSpeed(-3, 0, -8, 2001, 30000, 10, 10, 500), 
+	  DualPosition(-30, -1, -0.5, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       DualGyroSpeed(0, 0, 0, 2011, 30000, 10, 10, 500),
       DualGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
 
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
-      YawPosition(20, 0,0.5, 200, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawPosition(20, 2,-0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
       YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -71,7 +71,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
 	  Pitch2ndSpeed(6, 0, 8, 2000, 30000, 10, 10, 500),
-	  Pitch2ndPosition(15, 1, 0, 1800, 10000, 10, 10, 120),
+	  Pitch2ndMotor.PID_Out(15, 1, 0, 1800, 10000, 10, 10, 120),
 	  Pitch2ndGyroPosition(6, 0, 8, 2000, 30000, 10, 10, 500),
 	  Pitch2ndGyroSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
@@ -86,7 +86,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndMotor.PID_Out, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
@@ -96,7 +96,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
     // 设定位置环微分来源为陀螺仪
 	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  
-	Pitch2ndPosition.Custom_Diff = Pitch2ndMotor.Gyro_RealSpeed;
+	Pitch2ndMotor.PID_Out.Custom_Diff = Pitch2ndMotor.Gyro_RealSpeed;
 	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;
 	DualPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;
 
@@ -428,22 +428,22 @@ void SentryCloud::PitchRealAngleLimitCtrl()
     // 回到限内 从保存变量回复 IMAX
 	if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
 	{
-		CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchPosition.IMax;
-		CloudEntity.PitchPosition.IMax = 0;
+		CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchMotor.PID_Out.IMax;
+		CloudEntity.PitchMotor.PID_Out.IMax = 0;
 	}
 	if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
 	{
-		CloudEntity.PitchPosition.IMax = CloudEntity.pitch_IMax_save[0];
+		CloudEntity.PitchMotor.PID_Out.IMax = CloudEntity.pitch_IMax_save[0];
 	}
 	
 	if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
 	{
-		CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndPosition.IMax;
-		CloudEntity.Pitch2ndPosition.IMax = 1;
+		CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndMotor.PID_Out.IMax;
+		CloudEntity.Pitch2ndMotor.PID_Out.IMax = 1;
 	}
 	if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
 	{
-		CloudEntity.Pitch2ndPosition.IMax = CloudEntity.pitch_IMax_save[1];
+		CloudEntity.Pitch2ndMotor.PID_Out.IMax = CloudEntity.pitch_IMax_save[1];
 	}
 
 }
@@ -485,7 +485,7 @@ void SentryCloud::PitchModeCtrl(void)
                 PitchGyroPosition.Iout = DualGyroPosition.Iout*2;
 
                 Pitch2ndSpeed.Iout =  DualSpeed.Iout*2;     // 两边都要装载哦
-                Pitch2ndPosition.Iout = DualPosition.Iout*2;   
+                Pitch2ndMotor.PID_Out.Iout = DualPosition.Iout*2;   
                 Pitch2ndGyroSpeed.Iout =  DualGyroSpeed.Iout*2;     
                 Pitch2ndGyroPosition.Iout = DualGyroPosition.Iout*2;   
                 

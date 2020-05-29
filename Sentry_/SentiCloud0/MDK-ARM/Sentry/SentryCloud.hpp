@@ -38,9 +38,6 @@ typedef enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
 	__cloud_dual_pitch=2U,
 }PitchModeEnum;
 
-typedef enum __sentry_cloud_shoot_mode:uint8_t{
-    
-}ShootModeEnum;
 typedef enum __sentry_cloud_shoot_trigger_source:uint8_t{
 
 }ShootTrigger;

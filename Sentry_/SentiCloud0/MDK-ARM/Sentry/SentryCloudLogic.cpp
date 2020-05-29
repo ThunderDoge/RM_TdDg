@@ -31,8 +31,6 @@ float p=0,y=0;
 void ModeSelect(void)
 {
     int mode = bsp_dbus_Data.S1 * 10 + bsp_dbus_Data.S2;
-    // LastGlobalMode = GlobalMode;
-    LastMode = CurrentMode;
 
     switch (mode)
     {
@@ -46,19 +44,12 @@ void ModeSelect(void)
         CurrentMode = &ModeVisionControl;
         break;
     case 31: //中上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_VIISON_SHOOTING_TEST;
-        // VisionControl();
-        // ManualFeed();
         CurrentMode = &ModeVisionFeed;
         break;
     case 11: //上-上：遥控器测试云台 陀螺仪模式【未完成】
-        // CurrentMode = MODE_MANUAL_SHOOTING_TEST;
-        // ManualShoot_Gyro();
         CurrentMode = &ModeManualShootGyro;
         break;
     case 13: //上-中：手动控云台，手动供弹射击（右摇杆右拨为扳机）
-        // CurrentMode = MODE_FRIC_TEST;
-        // ManualFeed();
         CurrentMode = &ModeManualFeed;
         break;
     case 22: //双下
@@ -104,6 +95,8 @@ void ModeSelect(void)
         CurrentMode->Enter();
     }
     CurrentMode->Run();
+
+    LastMode = CurrentMode;
 }
 
 
@@ -256,10 +249,10 @@ void VisionFeed()
     // CloudEntity.Feed2nd.Free_Once_Set(100, &bsp_dbus_Data.CH_0 ); //供弹指令
 	if(last_CH0<=200 && bsp_dbus_Data.CH_0 > 200)
 	{
-		CloudEntity.Shoot(v_feed_spd, 1, ShtOnce, bsp_dbus_Data.CH_0);
+		CloudEntity.Shoot(v_feed_spd, 1, ShtOnce);
 	}
 	last_CH0 = bsp_dbus_Data.CH_0;
-    VisionTx.Shoot_mode = CloudEntity.shoot_flag;                    //状态信息发送到VisionTx
+    VisionTx.Shoot_mode = CloudEntity.ShootMode;                    //状态信息发送到VisionTx
 
     switch (VisionRx.cloud_ctrl_mode)
     {
