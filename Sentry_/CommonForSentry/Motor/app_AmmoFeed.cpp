@@ -4,7 +4,7 @@
 * @details  
 * @author    ThunderDoge, Asn
 * @date      2020.5
-* @version  1.0.8
+* @version  1.0.9
 * @copyright  RM2020电控 
 * @par 日志
 *		v1.0.0  2019/11/29  实现基本功能\n
@@ -16,6 +16,7 @@
 *		v1.0.6	2020/2/24	增加：在每次trig触发后对触发值清0，Set_Step函数可在外部直接设置步数
 *       v1.0.7  2020/5/22   修正 last_mode错误地使用static使得多个ammofeed对象互相干扰的问题 
 *		v1.0.8  2020/5/26	修正free_once在转换模式中可能出现的问题
+*       v1.0.9  2020/5/29   去除了所有函数内使用的的static变量，变为对象private变量
 */ 
 #include "app_AmmoFeed.hpp"
 #define SIGN(x) ((x)>0?1:((x)<0?-1:0))
@@ -107,8 +108,6 @@ uint8_t AmmoFeed::Blocked_Reaction(void)
 */
 void AmmoFeed::Step_Run(void)
 {
-	static int16_t Step_Overflow;
-	static uint32_t rammerStepTime = 0;
 	if(( (HAL_GetTick() - rammerStepTime) > ramming_discrete_delay ) ) 
 	{
 		if(rammer_step_left > 0)//如果存在步数
@@ -182,6 +181,20 @@ void AmmoFeed::Angle_Set(float Target_Angle)
 	Soft_TargetPosition=(int32_t)Target_Angle;//整数部分 即减速前圈数
 }
 /**
+ * @brief 拨弹电机专用安全模式
+ * 
+ */
+void AmmoFeed::Safe_Set()
+{
+	if(block!=NULL)block->IsBlock=0;//去除堵转标志，避免在逻辑中依然认为是堵转
+	feed_mode = AMMOFEED_STOP;
+	RunState = Stop;
+	rammer_step_left = 0;
+	soft_target_angle = SoftAngle;
+	Angle_Set(soft_target_angle);
+    softmotor::Safe_Set();
+}
+/**
 * @brief 专用停止模式
 */
 void AmmoFeed::Stop_Set(void)
@@ -214,34 +227,25 @@ void AmmoFeed::Free_Fire(void)
 */
 void AmmoFeed::Free_Once(void)
 {
-	static uint8_t act_flag=0;
-	static uint32_t act_time_stamp;
-	static uint8_t once_flag = 0;
-
-#if DBUS_RANGE
-	static uint16_t trig_set = 1224;
-#else 
-	static uint16_t trig_set = 200;
-#endif
 	if(last_feed_mode != feed_mode)
 	{
-		act_flag = 0;
+		activated_flag = 0;
 		once_flag = 0;
 	}
 	if( *trigger>trig_set )
 	{
-		if( act_flag == 0 )
+		if( activated_flag == 0 )
 		{
-			act_flag= 1;
+			activated_flag= 1;
 			act_time_stamp = HAL_GetTick();//用于判断单发还是连发
 		}
 		*trigger = 0;		//清除触发
 	}
 	else
 	{	
-		act_flag = 0;	
+		activated_flag = 0;	
 	}
-	if(act_flag)
+	if(activated_flag)
 	{
 		if((HAL_GetTick()-act_time_stamp)>free_once_trig_time)//到达触发时间
 		{
@@ -276,26 +280,23 @@ void AmmoFeed::Free_Once(void)
 */
 void AmmoFeed::Burst(void)
 {
-	static uint8_t burst_flag =0;	//单次burst标志位
-
-#if DBUS_RANGE
-	static uint16_t trig_set = 1224;
-#else 
-	static uint16_t trig_set = 200;
-#endif
+    if(last_feed_mode != feed_mode)
+	{
+		activated_flag = 0;
+	}
 
 	if( *trigger>trig_set )	//当扳机触发
 	{
-		if(burst_flag == 0)	//若标志位未立
+		if(activated_flag == 0)	//若标志位未立
 		{	
 			rammer_step_left = burst_shoot_cnt;
-			burst_flag = 1;	//立标志，开启burst
+			activated_flag = 1;	//立标志，开启burst
 		}
 		*trigger = 0;		//清除触发
 	}
 	else
 	{
-		burst_flag = 0;
+		activated_flag = 0;
 	}
 	Step_Run();
 }

@@ -232,7 +232,7 @@ void SentryCloud::PitchModeCtrl(void)
 
 static float CloudEntity_FunctionYawToPitchlimit(float yaw)
 {
-    
+    return 0;
 }
 
 /**
