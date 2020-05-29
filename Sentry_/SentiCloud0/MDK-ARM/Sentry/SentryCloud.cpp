@@ -289,23 +289,26 @@ void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
  */
 void SentryCloud::Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t shoot_mode)
 {
-	Shoot_Speed = bullet_speed;     // 设定摩擦轮速率
-
-    ShootMode = shoot_mode;         
-
-	ShooterSwitchCmd(1);            // 启动摩擦轮和射击许可
-
-    feed_trig = 1;
-
-	if(fire_freq!=0)
-    {
-        Feed2nd.Free_Once_Set((uint32_t)(60000/fire_freq),&feed_trig);
-    }
+    Shoot_Speed = fabs(bullet_speed);
+    if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
+        ShooterSwitchCmd(1);
     else
+        ShooterSwitchCmd(0);
+
+    switch (shoot_mode)
     {
+    case ShtStop:
         Feed2nd.Safe_Set();
-    }
-    
+        break;
+    case ShtOnce:
+        trig = ext_trig;
+        Feed2nd.Free_Once_Set(50,&trig);
+        break;
+    case ShtBurst:
+        trig = ext_trig;
+        Feed2nd.Burst_Set(fire_cnt,50,&trig);
+        break;
+    }    
 }
 
 /**
