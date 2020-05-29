@@ -510,7 +510,7 @@ void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
  * @param     fire_freq     子弹射击频率
  * @param     shoot_mode    子弹射击模式。
  */
-__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
+__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum_t shoot_mode,int16_t ext_trig)
 {
 	// 您不应该修改此函数。您应该在另处实现此函数的功能，因为此处的定义是WEAK的
 }

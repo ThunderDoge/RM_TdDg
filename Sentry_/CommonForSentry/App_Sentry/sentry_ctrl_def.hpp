@@ -13,8 +13,6 @@
 
 #include "stm32f4xx_hal.h"
 
-#define __CLOUD_MODE_DEF
-
 ///云台模式取值枚举型
 typedef enum _cloud_ctrl_mode:uint8_t
 {
@@ -27,24 +25,36 @@ typedef enum _cloud_ctrl_mode:uint8_t
 	// relative_gyro_cloud,
     // absolute_auto_cloud,
 	// relative_auto_cloud,
-	// auto_cloud,
+	auto_cloud,
     default_cloud_mode,
 }CloudMode_t;
-
-#define __CHASSIS_MODE_DEF
-
 ///底盘模式取值枚举型
 typedef enum _chassis_mode:uint8_t
 {
+    _chassis_save =0,
     _chassis_speed =1,
     _chassis_location =2,
     _chassis_location_limit_speed =3,
-    _chassis_save =0,
 }ChassisMode_t;
 
 typedef enum __sentry_cloud_shoot_mode:uint8_t{
+    ShtStop,
     ShtOnce,
-}ShootModeEnum;
+    ShtBurst,
+    ShtFree,
+}ShootModeEnum_t;
+
+typedef enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
+	__cloud_main_pitch=0U,
+	__cloud_second_pitch=1U,
+	__cloud_dual_pitch=2U,
+}PitchModeEnum_t;
+
+typedef enum __sentry_cloud_mech_gyro_mode:uint8_t{
+    MechCtrl,
+    GyroCtrl,
+    NoneCtrl,
+}MechGyroMode_t;
 
 #endif // !__SENTRY_CTRL_DEF_HPP_
 

@@ -14,7 +14,7 @@ app_Mode ModeManualChassis(NULL, ManualChassis, NULL);
 app_Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
 app_Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
 app_Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
-app_Mode ModeVisionControl(VisionControlEnter, VisionControl, VisionControlExit);
+app_Mode ModeVisionControl(nullptr, VisionControl, nullptr);
 app_Mode ModeAutoMove(nullptr, nullptr, nullptr);
 app_Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
 app_Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
@@ -92,6 +92,7 @@ void ModeSelect(void)
     if (LastMode != CurrentMode)
     {
         LastMode->Exit();
+        CloudEntity.SetAngleTo(CloudEntity.RealPitch, CloudEntity.RealYaw);
         CurrentMode->Enter();
     }
     CurrentMode->Run();
@@ -152,12 +153,6 @@ void VisionControl(void)
     // GlobalMode = MODE_VIISON_SHOOTING_TEST;
     // VisionRxHandle();
 }
-void VisionControlEnter(){
-    IS_SUPERIOR_VISION_CTRL =1;
-}
-void VisionControlExit(){
-    IS_SUPERIOR_VISION_CTRL =0;
-}
 /**
   * @brief  遥控器测试云台
   */
@@ -167,6 +162,7 @@ void ManualShootEnter()
 //    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
 //    CloudEntity.TargetYaw = CloudEntity.RealYaw;
 //    CloudEntity.Mode = absolute_cloud; //视为绝对角控制
+    CloudEntity.SetAngleTo(CloudEntity.RealPitch, CloudEntity.RealYaw);
 	CloudEntity.SetCloudMode(hold_cloud);
 }
 void ManualShoot()
@@ -194,6 +190,7 @@ void ManualShoot_Gyro_Enter()
 //    CloudEntity.TargetPitch = CloudEntity.RotatedImuAngle[1]; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
 //    CloudEntity.TargetYaw = CloudEntity.RotatedImuAngle[2];
 //    CloudEntity.Mode = absolute_gyro_cloud; //视为绝对角控制
+    CloudEntity.SetAngleTo(CloudEntity.RealPitch, CloudEntity.RealYaw);
 	CloudEntity.SetAngleTo_Gyro(CloudEntity.RotatedImuAngle[1],CloudEntity.RotatedImuAngle[2]);
 }
 /**
@@ -201,6 +198,7 @@ void ManualShoot_Gyro_Enter()
   */
 void ManualChassis() //手动底盘
 {
+    CloudEntity.SetCloudMode(hold_cloud);
 	CloudEntity.ShooterSwitchCmd(0);   
 	CloudEntity.LazerSwitchCmd(0);
 

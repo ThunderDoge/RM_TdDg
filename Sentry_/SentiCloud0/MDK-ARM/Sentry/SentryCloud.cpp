@@ -201,6 +201,32 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Gyro_Angle_Set(TargetYaw);
 }
+/**
+ * @brief 设定角度 - 自动选择控制
+ * 
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo_Auto(float pitch, float yaw)
+{
+	CloudMode = auto_cloud;         // 设定模式为自动选择控制模式
+    LastControlTick = HAL_GetTick();    // 更新时间戳
+	
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+
+    // 如果是使用auto的话控制模式将会在 Handle() 中进行
+
+    PitchMotor.Gyro_Angle_Set(-TargetPitch);
+	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    // YAW电机在此不进行设定，在YawMeGyModeCtrl()中会进行设定
+    // YawMotor.Gyro_Angle_Set(TargetYaw);
+}
 
 /**
  * @brief 仅设定陀螺仪控制角度 - 仅供内部调用
@@ -261,7 +287,7 @@ void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
  * @param     fire_freq     发射频率。这个控制。
  * @param     Shoot_mode    射击模式。这个保留备用。
  */
-void SentryCloud::Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum shoot_mode)
+void SentryCloud::Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t shoot_mode)
 {
 	Shoot_Speed = bullet_speed;     // 设定摩擦轮速率
 
@@ -326,7 +352,15 @@ void SentryCloud::CloudModeCtrl()
 {
     switch (CloudMode)
     {
+    case absolute_cloud:
+    case absolute_gyro_cloud:
+    case relative_cloud:
+    case speed_cloud:
+        // 正常控制模式的现在不需过此处理
+        break;
+
     case hold_cloud:  
+        // 设定角度为当前角度
         SetAngleTo_NoMode(TargetPitch, TargetYaw);
         break;
 
@@ -531,6 +565,39 @@ void SentryCloud::PitchModeCtrl(void)
 
     last_pitch_ctrl_mode = pitch_ctrl_mode;	// 记录旧的 PITCH模式
 
+}
+/**
+ * @brief 更新YAW轴控制模式建议
+ * 即更新 Yaw_MeGy_Advice变量。在auto模式下这变量会影响控制模式
+ * 为了使用auto模式你应当使用SetAngleTo_Auto函数
+ */
+void SentryCloud::YawMeGyModeCtrl(void)
+{
+    if(MechanicYaw == 180.0f)
+    {
+        Yaw_MeGy_Advice = GyroCtrl;
+    }
+    else
+    {
+        Yaw_MeGy_Advice = MechCtrl;
+    }
+    
+    if(CloudMode = auto_cloud)
+    {
+        switch (Yaw_MeGy_Advice)
+        {
+        case GyroCtrl:
+            YawMotor.Gyro_Angle_Set(TargetYaw);
+            break;
+        case MechCtrl:
+            break;
+            YawMotor.Angle_Set(TargetYaw);
+        default:
+            Yaw_MeGy_Advice = NoneCtrl;
+            YawMotor.Safe_Set();
+            break;
+        }
+    }
 }
 /**
  * @brief 云台内部 射击控制逻辑

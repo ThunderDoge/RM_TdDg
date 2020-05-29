@@ -25,23 +25,6 @@
 
 #define MINIMAL_FRIC_SPD_BAN_FEED 3000
 
-// extern app_Mode ModeCloudCtrlMech;  // 机械角位置环，陀螺仪速度环
-// extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
-
-//extern app_Mode ModeDualPitch;
-//extern app_Mode ModeSinglePitch;
-
-
-typedef enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
-	__cloud_main_pitch=0U,
-	__cloud_second_pitch=1U,
-	__cloud_dual_pitch=2U,
-}PitchModeEnum;
-
-typedef enum __sentry_cloud_shoot_trigger_source:uint8_t{
-
-}ShootTrigger;
-
 typedef enum __sentry_cloud_error_type:uint8_t{
     CLOUD_OK,
     SLOW_FRIC_BAN_FEED,
@@ -94,8 +77,8 @@ public:
     /*---------------------------------逻辑控制相关信息----------------------------------*/
 
     
-    CloudMode_t CloudMode;      ///< 云台状态指示
-    ShootModeEnum ShootMode;
+    CloudMode_t CloudMode;      ///< 云台状态指示。别直接更改这个
+    ShootModeEnum_t ShootMode;    ///< 射击模式指示。别直接更改这个
 
     uint8_t MotorOnlineList[6];     ///< 六个电机在线列表，依声明序
     uint32_t LastControlTick;       ///< 标记最后受外界控制时间。便于观察视觉离线
@@ -106,9 +89,12 @@ public:
 
     uint32_t FeedBlockCnt;          ///< 堵转触发次数
 
-    uint8_t IsSlowFricBanFeed;
+    uint8_t IsSlowFricBanFeed;      ///< 低射速阻止了拨弹-标志位
 
-	PitchModeEnum pitch_ctrl_mode = __cloud_main_pitch;         ///< 云台单pitch/双pitch模式
+    MechGyroMode_t MeGyCtrlOverrideYawAs;    ///< 机械/陀螺仪模式函数越权
+
+	PitchModeEnum_t pitch_ctrl_mode = __cloud_main_pitch;         ///< 云台单pitch/双pitch模式
+    MechGyroMode_t Yaw_MeGy_Advice;     ///< 建议的Yaw的机械角/陀螺仪模式。如果是auto_cloud模式它将影响控制模式
 
     uint8_t pitch_exceed_flag[2];       ///< pitch超过软件限位的标志位
 
@@ -161,11 +147,12 @@ public:
     void Handle();      ///< 【重要】云台自动控制托管，包含着所有数据的获取、处理和例行执行。应当在主逻辑任务中调用。
 
     void Safe_Set();                                ///< 安全模式
-    void SetAngleTo(float pitch, float yaw);        ///< 机械角度设定
+    void SetAngleTo(float pitch, float yaw);        ///< 角度设定 编码器控制模式
     void SetAngleTo_Gyro(float pitch, float yaw);   ///< 角度设定 陀螺仪控制模式
+    void SetAngleTo_Auto(float pitch, float yaw);   ///< 角度设定 自动选择编码器/陀螺仪模式
     void SetCloudMode(CloudMode_t newCloudMode);    ///< 设定云台模式
 
-	void Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum shoot_mode);  ///< 设定射击模式
+	void Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t shoot_mode);  ///< 设定射击模式
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关摩擦轮
@@ -180,8 +167,9 @@ private:
 	float pitch_limit_max;  ///< 云台软限位上限
 	float pitch_limit_min;  ///< 云台软限位上限
 
-    PitchModeEnum last_pitch_ctrl_mode = __cloud_main_pitch;    ///< 云台单pitch/双pitch模式，历史
+    PitchModeEnum_t last_pitch_ctrl_mode = __cloud_main_pitch;    ///< 云台单pitch/双pitch模式，历史
     
+
     uint8_t pitch_last_exceed_flag[2];  ///< pitch超过软件限位的标志位,上一次数值
     
     float pitch_IMax_save[2];           ///< pitch超过软件限位时关闭IMAX，IMAX保存到这里
@@ -198,6 +186,7 @@ private:
 	void PitchModeCtrl(void);           ///< 双PITCH/单PITCH切换逻辑
     void ShootCtrl(void);               ///< 射击控制逻辑执行函数，在Handle中调用
     void RedButtonEffectCtrl(void);     ///< 实现紧急开关的功能
+    void YawMeGyModeCtrl(void);         ///< 更新YAW轴控制模式建议
 	void ImuDataProcessHandle(void);    ///< 陀螺仪数据处理
     void ErrorReportHandle(void);       ///< 错误信息输出
 
