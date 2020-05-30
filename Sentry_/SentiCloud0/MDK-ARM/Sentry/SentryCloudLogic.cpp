@@ -244,6 +244,14 @@ void ManualFeed()
     //     VisionTx.Shoot_mode = 0;
 
     VisionTx.Shoot_mode = CloudEntity.shoot_flag; //状态信息发送到VisionTx
+
+    CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_2 * 10000.0f / 660.0f;
+    SUPERIOR_CHASSIS_MOVE_CanTx();
+
+    // SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
+    //             (float)(bsp_dbus_Data.CH_2 * 10000.0f / 660.0f),
+    //             0);
+
     
 }
 int16_t last_CH0;
@@ -283,6 +291,8 @@ void VisionFeed()
     }
     VisionRx.cloud_ctrl_mode = hold_cloud; //处理完成标志。因为一个命令只会处理一次，处理后 置0
 	
+    CanTx.SuperCon_ChassisSpeedLocation[0] = bsp_dbus_Data.CH_2 * 10000.0f / 660.0f;
+    SUPERIOR_CHASSIS_MOVE_CanTx();
 }
 /**
   * @brief  全局安全模式
