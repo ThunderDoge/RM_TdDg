@@ -614,13 +614,15 @@ void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mo
  * @param     fire_freq     发射频率。这个控制。
  * @param     Shoot_mode    射击模式。这个保留备用。
  */
-void SentryCloud::Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
+void SentryCloud::Shoot(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum shoot_mode,int16_t ext_trig)
 {
     Shoot_Speed = fabs(bullet_speed);
     if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
         ShooterSwitchCmd(1);
     else
         ShooterSwitchCmd(0);
+
+    if(shoot_gap<20)    shoot_gap = 20;
 
     switch (shoot_mode)
     {
@@ -629,11 +631,11 @@ void SentryCloud::Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum sho
         break;
     case ShtOnce:
         trig = ext_trig;
-        Feed2nd.Free_Once_Set(50,&trig);
+        Feed2nd.Free_Once_Set(shoot_gap,&trig);
         break;
     case ShtBurst:
         trig = ext_trig;
-        Feed2nd.Burst_Set(fire_cnt,50,&trig);
+        Feed2nd.Burst_Set(fire_cnt,shoot_gap,&trig);
         break;
     }    
 }
@@ -851,9 +853,9 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
  * @param     fire_freq     子弹射击频率，单位是RPM。实现上是把云台供弹暂停时间改为 60*1000/fire_freq
  * @param     shoot_mode    子弹射击模式。保留备用。
  */
-void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum shoot_mode,int16_t ext_trig)
 {
-	CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_mode,ext_trig);
+	CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_gap,shoot_mode,ext_trig);
 }
 
 

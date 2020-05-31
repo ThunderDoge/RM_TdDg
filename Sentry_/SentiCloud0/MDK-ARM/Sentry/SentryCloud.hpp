@@ -129,7 +129,7 @@ public:
 //    void SetCtrlMode_Force(enum _cloud_ctrl_mode);  ///< 强制设定控制模式
     void SetAngleTo_Gyro(float pitch, float yaw);   ///<角度设定 陀螺仪控制模式
     void SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode);
-	void Shoot(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode, int16_t ext_trig);
+	void Shoot(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum shoot_mode,int16_t ext_trig);
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关射击许可位和摩擦轮

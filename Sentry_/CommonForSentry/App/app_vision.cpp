@@ -465,12 +465,13 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 2, 4); //云台角度解析
         memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 6, 4);
         memcpy(&VisionRx.Shoot_trig_bit, Vision_Rxbuffer + 10, 1); 
-//        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 4); 
-        memcpy(&VisionRx.FricSwitch, Vision_Rxbuffer + 15, 1); 
+        memcpy(&VisionRx.Shoot_gap, Vision_Rxbuffer + 11, 4); 
+        memcpy(&VisionRx.FricSwitch, Vision_Rxbuffer + 15, 1);
+        VisionRx.FricSwitch = !VisionRx.FricSwitch; // 摩擦轮开关取反
         VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
 		
 //		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,1U,ShtOnce,(VisionRx.Shoot_trig_bit>0)*400);
-		
+		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,10,VisionRx.Shoot_gap,ShtBurst,(VisionRx.Shoot_trig_bit>0)*400);
         VisionRx.UpdateTime = HAL_GetTick();
     }
 }
@@ -510,7 +511,7 @@ void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
  * @param     fire_freq     子弹射击频率
  * @param     shoot_mode    子弹射击模式。
  */
-__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt, ShootModeEnum shoot_mode,int16_t ext_trig)
+__weak void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum shoot_mode,int16_t ext_trig)
 {
 	// 您不应该修改此函数。您应该在另处实现此函数的功能，因为此处的定义是WEAK的
 }
