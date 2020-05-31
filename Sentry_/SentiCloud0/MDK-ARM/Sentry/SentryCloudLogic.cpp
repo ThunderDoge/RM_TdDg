@@ -189,7 +189,9 @@ void ManualShoot()
     CloudEntity.SetAngleTo(up_pitch, up_yaw);
 	CloudEntity.LazerSwitchCmd(1);
 	CloudEntity.ShooterSwitchCmd(0);   
-
+    SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
+                  (float)(bsp_dbus_Data.CH_2 * 10000.0f / 660.0f),
+                  0);
 }
 /**
   * @brief  遥控器测试云台，陀螺仪模式
