@@ -40,8 +40,8 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
     {
         case CMD_GET_MCU_STATE:
 		
-		    VisionTx.Cloud_mode = CloudEntity.Mode;
-			VisionTx.Shoot_mode = CloudEntity.shoot_flag;
+		    VisionTx.Cloud_mode = CloudEntity.CloudMode;
+			VisionTx.Shoot_mode = CloudEntity.ShootMode;
 			VisionTx.Pitch = CloudEntity.RealPitch;
 			VisionTx.YawSoft = CloudEntity.RealYaw;
 			VisionTx.Yaw = CloudEntity.MechanicYaw;

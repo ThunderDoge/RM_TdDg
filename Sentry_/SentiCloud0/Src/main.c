@@ -180,11 +180,11 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   
-  Cloud_Init();	// Sentinal Cloud Hardware Init 纭欢鍒濆锟??
-//    bsp_can_Init();  //CAN鎬荤嚎鍒濆鍖栧嚱鏁?
-//    manager::CANSelect(&hcan1, &hcan2); //澶х枂can鐢垫満搴撳垵濮嬪寲锛堥?塁AN锛?
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始???
+//    bsp_can_Init();  //CAN总线初始化函??
+//    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（???CAN??
 	SEGGER_SYSVIEW_Conf();
-	TaskStarter(); /// 全任务启动器
+	TaskStarter(); /// ???????????
 
   /* USER CODE END 2 */
 

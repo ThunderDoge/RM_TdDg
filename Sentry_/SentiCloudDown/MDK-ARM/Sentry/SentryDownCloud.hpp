@@ -75,7 +75,7 @@ public:
 
     softcloud YawMotor;     ///<Yaw轴电机对象_CAN1上
     softcloud PitchMotor;   ///<Pitch轴电机对象_CAN1上
-	softcloud PitchSecondMotor;		///<从动Pitch轴电机对象_CAN2上
+	softcloud Pitch2ndMotor;		///<从动Pitch轴电机对象_CAN2上
 
     motor FricLeftMotor;    ///< 左边摩擦轮
     motor FricRightMotor;   ///< 右边摩擦轮
