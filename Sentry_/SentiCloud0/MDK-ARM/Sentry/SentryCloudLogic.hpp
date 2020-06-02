@@ -45,6 +45,7 @@ void VisionControlEnter();
 void VisionControlExit();
 void AutoMove();      ///全自动移动
 void GlobalSafe();    ///安全模式
+void HardCalibration();	///运行时陀螺仪零漂校准
 
 /** @} */
 #endif // __SENTRY_CLOUD_LOGIC_HPP

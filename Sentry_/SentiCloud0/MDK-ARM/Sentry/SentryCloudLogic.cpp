@@ -82,6 +82,7 @@ void ModeSelect(void)
             {
                 trig_calibration = 1;
                 CurrentMode = & ModeCalibration;
+				break;
             }
         }
         last_joystick = inside_joystick;
@@ -295,6 +296,7 @@ void GlobalSafe()
     uint8_t data[8] = {0};                          //发送空字节。之后会改掉的
     SentryCanSend(&hcan2, SUPERIOR_SAFE, &data[0]); //通过CAN向其他的MCU发送安全模式指令
 }
+uint32_t hard_calib_trig_cnt;
 /**
  * @brief 硬件校准模式
  * 
@@ -304,7 +306,7 @@ void HardCalibration()
     taskENTER_CRITICAL();
     app_imu_Init();
     taskEXIT_CRITICAL();
-
+    hard_calib_trig_cnt ++;
     CurrentMode = &ModeGlobalSafe;
 }
 
