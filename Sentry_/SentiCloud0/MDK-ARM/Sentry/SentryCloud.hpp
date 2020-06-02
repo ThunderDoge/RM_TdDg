@@ -152,7 +152,7 @@ public:
     void SetAngleTo_Auto(float pitch, float yaw);   ///< 角度设定 自动选择编码器/陀螺仪模式
     void SetCloudMode(CloudMode_t newCloudMode);    ///< 设定云台模式
 
-	void Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t shoot_mode);  ///< 设定射击模式
+	void Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap, ShootModeEnum_t shoot_mode, int16_t ext_trig);  ///< 设定射击模式
 
 	void LazerSwitchCmd(int OnOrOff);   ///<开关激光灯
     void ShooterSwitchCmd(int OnOrOff); ///<开关摩擦轮
@@ -174,7 +174,11 @@ private:
     
     float pitch_IMax_save[2];           ///< pitch超过软件限位时关闭IMAX，IMAX保存到这里
 
-    int16_t feed_trig;
+    int16_t feed_trig;  ///< 给Feed用的触发信号变量。外界触发置200，Feed使用后清零。
+
+    public:
+    uint8_t trig_cnt;   ///< 手动射击触发次数
+    private:
     
 	/*----------------------------------- 内部运行函数 -----------------------------------*/
 

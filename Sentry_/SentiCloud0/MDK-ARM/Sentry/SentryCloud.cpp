@@ -55,13 +55,14 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
 	  DualSpeed(-3, 0, -8, 2001, 30000, 10, 10, 500), 
 	  DualPosition(-30, -1, -0.5, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      DualGyroSpeed(0, 0, 0, 2011, 30000, 10, 10, 500),
-      DualGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
+      DualGyroSpeed(-11.5, 0, 0, 2011, 30000, 10, 10, 500),
+      DualGyroPosition(300, 0, 0, 2011, 10000, 10, 10, 3000),
 
       YawSpeed(20, 0, 0, 2000, 30000, 10, 10, 500),
       YawPosition(20, 2,-0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
-      YawGyroSpeed(-15, 0, 0, 2000, 30000, 10, 10, 500),
-      YawGyroPosition(0, 0, 0, 2000, 10000, 10, 10, 3000),
+      YawGyroSpeed(40, 0, 0, 2000, 30000, 10, 10, 500),
+      YawGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
+	  
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       FricRightSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
@@ -84,7 +85,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
 */
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
+	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
@@ -197,8 +198,8 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
     TargetPitch = pitch;
     TargetYaw = yaw;
 
-    PitchMotor.Gyro_Angle_Set(-TargetPitch);
-	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    PitchMotor.Gyro_Angle_Set(TargetPitch);
+	Pitch2ndMotor.Gyro_Angle_Set(TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     YawMotor.Gyro_Angle_Set(TargetYaw);
 }
 /**
@@ -287,7 +288,7 @@ void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
  * @param     fire_freq     发射频率。这个控制。
  * @param     Shoot_mode    射击模式。这个保留备用。
  */
-void SentryCloud::Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t shoot_mode)
+void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap, ShootModeEnum_t shoot_mode, int16_t ext_trig)
 {
     Shoot_Speed = fabs(bullet_speed);
     if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
@@ -301,12 +302,12 @@ void SentryCloud::Shoot(float bullet_speed, uint32_t fire_freq, ShootModeEnum_t 
         Feed2nd.Safe_Set();
         break;
     case ShtOnce:
-        trig = ext_trig;
-        Feed2nd.Free_Once_Set(50,&trig);
+        feed_trig = ext_trig;
+        Feed2nd.Free_Once_Set(50,&feed_trig);
         break;
     case ShtBurst:
-        trig = ext_trig;
-        Feed2nd.Burst_Set(fire_cnt,50,&trig);
+        feed_trig = ext_trig;
+        Feed2nd.Burst_Set(fire_cnt,50,&feed_trig);
         break;
     }    
 }
@@ -591,7 +592,7 @@ void SentryCloud::YawMeGyModeCtrl(void)
         Yaw_MeGy_Advice = MechCtrl;
     }
     
-    if(CloudMode = auto_cloud)
+    if(CloudMode == auto_cloud)
     {
         switch (Yaw_MeGy_Advice)
         {
@@ -659,8 +660,8 @@ void SentryCloud::ImuDataProcessHandle()
 {
 	if(CloudMode != absolute_gyro_cloud)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
-		app_imu_data.integral.Pitch = -CloudEntity.PitchMotor.RealAngle;//注意负号。
-		app_imu_data.integral.Yaw = -CloudEntity.YawMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Roll = -CloudEntity.PitchMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Yaw = CloudEntity.YawMotor.RealAngle;//注意负号。
 	}
 	//↓↓↓陀螺仪角度旋转到枪口方向↓↓↓
 	RotatedImuAngle[0] = -app_imu_data.integral.Pitch;
@@ -740,7 +741,7 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
  * @param     fire_freq     子弹射击频率，单位是RPM。实现上是把云台供弹暂停时间改为 60*1000/fire_freq
  * @param     shoot_mode    子弹射击模式。保留备用。
  */
-void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum shoot_mode,int16_t ext_trig)
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum_t shoot_mode,int16_t ext_trig)
 {
 	CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_gap,shoot_mode,ext_trig);
 }
