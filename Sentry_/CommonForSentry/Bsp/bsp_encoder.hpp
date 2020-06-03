@@ -13,7 +13,7 @@
 #include "tim.h"
 
 //外设宏定义
-#define BSP_ENCODER_TIM htim8
+#define BSP_ENCODER_TIM htim3
 
 
 

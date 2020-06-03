@@ -114,20 +114,20 @@ HAL_StatusTypeDef bsp_GY53L1_Object_SendCommand(bsp_GY53L1_Object* object,enum G
 void bsp_GY53L1_Object_Idle_RxCpltCallback(bsp_GY53L1_Object* object)
 {
 //	HAL_UART_AbortReceive_IT(object->uart_interface);
-	
-	if (bsp_GY53L1_Object_DataAnalyze(object) == HAL_OK) // 解析数据
+	if(__HAL_UART_GET_FLAG(object->uart_interface,UART_FLAG_IDLE))
 	{
-	
-	}
-	else
-	{
-		// 你在对该程序DEBUG时可以
-		// while(1);
-	}
+		if (bsp_GY53L1_Object_DataAnalyze(object) == HAL_OK) // 解析数据
+		{
+		
+		}
+		else
+		{
+			// 你在对该程序DEBUG时可以
+			// while(1);
+		}
 		memset(object->RxBuffer, 0, 8); //清空缓存
-		HAL_UART_Receive_DMA(object->uart_interface, object->RxBuffer,
-							8); //重启接收
-
+		HAL_UART_Receive_DMA(object->uart_interface, object->RxBuffer,8); //重启接收
+	}
 }
 
 

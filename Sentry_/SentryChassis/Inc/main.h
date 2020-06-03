@@ -61,28 +61,18 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
-#define IMU_SPI_SCK_Pin GPIO_PIN_5
-#define IMU_SPI_SCK_GPIO_Port GPIOA
-#define IMU_SPI_MISO_Pin GPIO_PIN_6
-#define IMU_SPI_MISO_GPIO_Port GPIOA
-#define IMU_SPI_MOSI_Pin GPIO_PIN_7
-#define IMU_SPI_MOSI_GPIO_Port GPIOA
-#define RGB3_Pin GPIO_PIN_13
-#define RGB3_GPIO_Port GPIOB
+#define RGB1_Pin GPIO_PIN_13
+#define RGB1_GPIO_Port GPIOB
 #define RGB2_Pin GPIO_PIN_14
 #define RGB2_GPIO_Port GPIOB
-#define RGB1_Pin GPIO_PIN_15
-#define RGB1_GPIO_Port GPIOB
+#define RGB3_Pin GPIO_PIN_15
+#define RGB3_GPIO_Port GPIOB
 #define ENCODER_A_Pin GPIO_PIN_6
 #define ENCODER_A_GPIO_Port GPIOC
 #define ENCODER_B_Pin GPIO_PIN_7
 #define ENCODER_B_GPIO_Port GPIOC
 #define ENCODER_Z_Pin GPIO_PIN_8
 #define ENCODER_Z_GPIO_Port GPIOC
-#define SAMPLING_I2C_SDA_Pin GPIO_PIN_9
-#define SAMPLING_I2C_SDA_GPIO_Port GPIOC
-#define SAMPLING_I2C_SCL_Pin GPIO_PIN_8
-#define SAMPLING_I2C_SCL_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
