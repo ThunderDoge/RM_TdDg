@@ -116,6 +116,8 @@ void SentryCloud::Handle()
     ImuDataProcessHandle();
     // 单/双PITCH模式控制逻辑
     PitchModeCtrl();
+    // YAW自动-机械/陀螺仪控制模式切换逻辑
+    YawMeGyModeCtrl();
 
     // 云台模式控制逻辑
     CloudModeCtrl();
@@ -225,8 +227,8 @@ void SentryCloud::SetAngleTo_Auto(float pitch, float yaw)
 
     // 如果是使用auto的话控制模式将会在 Handle() 中进行
 
-    PitchMotor.Gyro_Angle_Set(-TargetPitch);
-	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    PitchMotor.Angle_Set(-TargetPitch);	//注意负号
+	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
     // YAW电机在此不进行设定，在YawMeGyModeCtrl()中会进行设定
     // YawMotor.Gyro_Angle_Set(TargetYaw);
 }
@@ -311,6 +313,9 @@ void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap,
         feed_trig = ext_trig;
         Feed2nd.Burst_Set(fire_cnt,50,&feed_trig);
         break;
+	case ShtFree:
+		Feed2nd.Stop_Set();
+		break;
     }    
 }
 
@@ -362,6 +367,7 @@ void SentryCloud::CloudModeCtrl()
     case absolute_gyro_cloud:
     case relative_cloud:
     case speed_cloud:
+    case auto_cloud:
         // 正常控制模式的现在不需过此处理
         break;
 
@@ -666,7 +672,7 @@ void SentryCloud::RedButtonEffectCtrl(void)
  */
 void SentryCloud::ImuDataProcessHandle()
 {
-	if(CloudMode != absolute_gyro_cloud)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
+	if(CloudMode != absolute_gyro_cloud && Yaw_MeGy_Advice != GyroCtrl)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
 		app_imu_data.integral.Roll = -CloudEntity.PitchMotor.RealAngle;//注意负号。
 		app_imu_data.integral.Yaw = CloudEntity.YawMotor.RealAngle;//注意负号。

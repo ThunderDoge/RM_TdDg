@@ -139,11 +139,11 @@ void VisionControl(void)
     switch (VisionRx.cloud_ctrl_mode)
     {
     case relative_cloud:
-        CloudEntity.SetAngleTo(CloudEntity.RealPitch + VisionRx.Pitch,
+        CloudEntity.SetAngleTo_Auto(CloudEntity.RealPitch + VisionRx.Pitch,
                                CloudEntity.RealYaw + VisionRx.Yaw);
         break;
     case absolute_cloud:
-        CloudEntity.SetAngleTo(VisionRx.Pitch, VisionRx.Yaw);
+        CloudEntity.SetAngleTo_Auto(VisionRx.Pitch, VisionRx.Yaw);
         break;
     case speed_cloud:
         CloudEntity.PitchMotor.Angle_Set(CloudEntity.RealPitch + VisionRx.Pitch);
@@ -166,13 +166,21 @@ void ManualShootEnter()
     CloudEntity.TargetYaw = CloudEntity.RealYaw;
     CloudEntity.CloudMode = absolute_cloud; //视为绝对角控制
 }
+uint8_t test_use_auto=1;    /// 使用SetAngleTo_Auto标志位
 void ManualShoot()
 {
     //在这之前应当已调用ManualShootEnter()函数
     //目标pitch和yaw受灵敏度dbus_rate*摇杆值控制
     float up_pitch = CloudEntity.TargetPitch - bsp_dbus_Data.CH_3 * dbus_rate; //很多负号。这些都是调出来的。
     float up_yaw = CloudEntity.TargetYaw + bsp_dbus_Data.CH_2 * dbus_rate;
-    CloudEntity.SetAngleTo(up_pitch, up_yaw);
+	if(test_use_auto)
+	{
+		CloudEntity.SetAngleTo_Auto(up_pitch, up_yaw);
+	}
+	else
+	{
+		CloudEntity.SetAngleTo(up_pitch, up_yaw);
+	}
 	CloudEntity.LazerSwitchCmd(1);
 	CloudEntity.ShooterSwitchCmd(0);   
 //    SentryCanSend(&CAN_INTERBOARD, SUPERIOR_CHASSIS_MOVE,
