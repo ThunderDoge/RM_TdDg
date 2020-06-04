@@ -295,6 +295,10 @@ void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
 void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap, ShootModeEnum_t shoot_mode, int16_t ext_trig)
 {
     Shoot_Speed = fabs(bullet_speed);
+    if(fire_gap<20)
+    {
+        fire_gap = 20;
+    }
     if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
         ShooterSwitchCmd(1);
     else
@@ -307,11 +311,11 @@ void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap,
         break;
     case ShtOnce:
         feed_trig = ext_trig;
-        Feed2nd.Free_Once_Set(50,&feed_trig);
+        Feed2nd.Free_Once_Set(fire_gap,&feed_trig);
         break;
     case ShtBurst:
         feed_trig = ext_trig;
-        Feed2nd.Burst_Set(fire_cnt,50,&feed_trig);
+        Feed2nd.Burst_Set(fire_cnt,fire_gap,&feed_trig);
         break;
 	case ShtFree:
 		Feed2nd.Stop_Set();
@@ -757,6 +761,10 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
  */
 void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum_t shoot_mode,int16_t ext_trig)
 {
-	CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_gap,shoot_mode,ext_trig);
+		CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_gap,shoot_mode,ext_trig);
 }
 
+int32_t get_CloudEntity_Feed_step_left()
+{
+    return CloudEntity.Feed2nd.get_rammer_step_left();
+}

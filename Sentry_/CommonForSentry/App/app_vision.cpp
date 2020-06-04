@@ -470,25 +470,24 @@ void CMD_GIMBAL_RELATIVE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
         VisionRx.FricSwitch = !VisionRx.FricSwitch; // 摩擦轮开关取反
         VisionRx.cloud_ctrl_mode = relative_cloud;                  //数据就绪
 		
-//		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,1U,ShtOnce,(VisionRx.Shoot_trig_bit>0)*400);
-		CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,10,VisionRx.Shoot_gap,ShtBurst,(VisionRx.Shoot_trig_bit>0)*400);
+		// CMD_SHOOT_ExecuteCallback((VisionRx.FricSwitch>0)*4000,10,VisionRx.Shoot_gap,ShtBurst,(VisionRx.Shoot_trig_bit>0)*400);
         VisionRx.UpdateTime = HAL_GetTick();
     }
 }
 ///云台绝对角度控制
-void CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
-{
-    if (Vision_Rxbuffer[Function_word] == CMD_GIMBAL_ABSOLUTE_CONTROL)
-    {
-        VisionRx.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
-        memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 2, 4);
-        memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 6, 4);
-        memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
-        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
-        VisionRx.cloud_ctrl_mode = absolute_cloud; //数据就绪
-        VisionRx.UpdateTime = HAL_GetTick();
-    }
-}
+//void CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
+//{
+//    if (Vision_Rxbuffer[Function_word] == CMD_GIMBAL_ABSOLUTE_CONTROL)
+//    {
+//        VisionRx.Function_word = CMD_GIMBAL_ABSOLUTE_CONTROL;
+//        memcpy(&VisionRx.Yaw, Vision_Rxbuffer + 2, 4);
+//        memcpy(&VisionRx.Pitch, Vision_Rxbuffer + 6, 4);
+//        memcpy(&VisionRx.Cloud_mode, Vision_Rxbuffer + 10, 1);
+//        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 11, 1);
+//        VisionRx.cloud_ctrl_mode = absolute_cloud; //数据就绪
+//        VisionRx.UpdateTime = HAL_GetTick();
+//    }
+//}
 ///云台速度控制
 void CMD_GIMBAL_SPEED_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
 {
@@ -521,12 +520,22 @@ void CMD_SHOOT_Rx(uint8_t *Vision_Rxbuffer)
     if (Vision_Rxbuffer[Function_word] == CMD_SHOOT)
     {
         VisionRx.Function_word = CMD_SHOOT;
-        VisionRx.Shoot_mode = 1;                               //射击指令就绪
-        memcpy(&VisionRx.Shoot_speed, Vision_Rxbuffer + 2, 4); //射击速度
-        memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + 6, 1);  //射击频率
-        memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 7, 1);  //射击模式
+        // VisionRx.Shoot_mode = 1;                               //射击指令就绪
+        // memcpy(&VisionRx.Shoot_speed, Vision_Rxbuffer + 2, 4); //射击速度
+        // memcpy(&VisionRx.Shoot_freq, Vision_Rxbuffer + 6, 1);  //射击频率
+        // memcpy(&VisionRx.Shoot_mode, Vision_Rxbuffer + 7, 1);  //射击模式
+        if(Vision_Rxbuffer[2] == 0)
+        {
+            VisionRx.Shoot_mode = ShtStop;
+        }
+        else
+        {
+            VisionRx.Shoot_mode = ShtBurst;
+        }
+             
         VisionRx.UpdateTime = HAL_GetTick();
 //		CMD_SHOOT_ExecuteCallback(VisionRx.Shoot_speed,VisionRx.Shoot_freq,VisionRx.Shoot_mode);
+        CMD_SHOOT_ExecuteCallback(4000,get_CloudEntity_Feed_step_left()+1,50,(ShootModeEnum_t )VisionRx.Shoot_mode,4000);
     }
 }
 ///底盘运动控制
@@ -653,7 +662,7 @@ void CMD_READ_PID_Rx(uint8_t *Vision_Rxbuffer)
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer)
 {
     CMD_GIMBAL_RELATIVE_CONTROL_Rx(Vision_Rxbuffer);
-    CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(Vision_Rxbuffer);
+//    CMD_GIMBAL_ABSOLUTE_CONTROL_Rx(Vision_Rxbuffer);
     CMD_SHOOT_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_CONTROL_Rx(Vision_Rxbuffer);
     CMD_CHASSIS_LOACTION_CONTROL_Rx(Vision_Rxbuffer);

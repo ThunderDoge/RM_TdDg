@@ -69,8 +69,8 @@ enum __app_vision_Functionwords
 {
     //视觉发给电控的
     CMD_GIMBAL_RELATIVE_CONTROL = 0x01,      //控制云台相对角度
-    CMD_GIMBAL_ABSOLUTE_CONTROL = 0x02,      //控制云台绝对角度
-    CMD_SHOOT = 0x03,                        //射击指令
+    // CMD_GIMBAL_ABSOLUTE_CONTROL = 0x02,      //控制云台绝对角度
+    CMD_SHOOT = 0x02,                        //射击指令
     CMD_CHASSIS_CONTROL = 0X04,              //底盘控制
     CMD_CHASSIS_LOACTION_CONTROL = 0X05,     //底盘控制路程
     CMD_CHASSIS_LOCATION_LIMIT_SPEED = 0X06, //底盘控制路程带限速
@@ -230,6 +230,8 @@ void JUD_AMMO_LEFT_Tx(uint16_t bulelt_left);
 void JUD_USER_Tx();
 
 void SentryVisionUartRxAll(uint8_t *Vision_Rxbuffer);
+
+int32_t get_CloudEntity_Feed_step_left(void);
 
 
 uint8_t app_vision_Analysis(void);
