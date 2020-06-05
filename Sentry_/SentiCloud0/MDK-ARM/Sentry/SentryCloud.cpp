@@ -47,13 +47,13 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
     : PitchSpeed(-6, 0, -8, 0, 30000, 10, 10, 500), 
 	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      PitchGyroSpeed(0, 0, 0, 0, 30000, 10, 10, 500),
-      PitchGyroPosition(0, 0, 0, 2011, 10000, 10, 10, 3000),
+      PitchGyroSpeed(-8, 0, 0, 30000, 10, 10, 500),
+      PitchGyroPosition(300, 30, 0, 2011, 10000, 10, 10, 5),
 	  
 	  Pitch2ndSpeed(-6, 0, -8, 0, 30000, 10, 10, 500),
 	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
-	  Pitch2ndGyroSpeed(0, 0, 0, 2000, 30000, 10, 10, 500),
-	  Pitch2ndGyroPosition(0, 0, 8, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroSpeed(-8, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroPosition(300, 30, 0, 2000, 10000, 10, 10, 5),
 
 	  DualSpeed(-6, 0, 0, 0, 30000, 10, 10, 500), 
 	  DualPosition(-20, -1, 0, 1400, 10000, 10, 10, 100),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
@@ -63,7 +63,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       YawSpeed(20, 0, 0, 0, 30000, 10, 10, 500),
       YawPosition(20, 2,-0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(40, 0, 0, 0, 30000, 10, 10, 500),
-      YawGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
+      YawGyroPosition(200, 5, 0, 2000, 10000, 10, 10, 3000),
 	  
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       FricRightSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -596,11 +596,11 @@ void SentryCloud::PitchModeCtrl(void)
 void SentryCloud::YawMeGyModeCtrl(void)
 {
     if((-95.0f>=MechanicYaw && MechanicYaw>=-106.8f)
-    ||(-57.78f>=MechanicYaw && MechanicYaw>=-68.95f)
-    ||(-21.5f>=MechanicYaw && MechanicYaw>=-33.0f)
-    ||(102.56f>=MechanicYaw && MechanicYaw>=97.77f)
-    ||(139.9f>=MechanicYaw && MechanicYaw>=129.0f)
-    ||(176.7f>=MechanicYaw && MechanicYaw>=166.0f)
+    ||(-55.78f>=MechanicYaw && MechanicYaw>=-70.95f)
+    ||(-19.5f>=MechanicYaw && MechanicYaw>=-35.0f)
+    ||(104.56f>=MechanicYaw && MechanicYaw>=95.77f)
+    ||(141.9f>=MechanicYaw && MechanicYaw>=127.0f)
+    ||(178.7f>=MechanicYaw && MechanicYaw>=164.0f)
     )
     {
         Yaw_MeGy_Advice = GyroCtrl;
