@@ -37,7 +37,7 @@ float so3_comp_params_Kp = 3.0f ;            //四元数校正PI参数
 float so3_comp_params_Ki = 0.05f; 
 #endif
 uint16_t Zero_Threshold[3] = {200,200,200};  //用于零点校正，判断数据是否为静止数据------------------------> 100足够大了，最好看一下原始数据，看看够不够（其实有点大）<--------------------建议更改，提升自检要求
-float  Dynamic_Zero_Thre = 4.0f;             //动态校正的零点阈值
+float  Dynamic_Zero_Thre = 1.5f;             //动态校正的零点阈值
 float Offset_Coeff[3] = {1.0f,1.0f,1.0f};    //对量程进行校正，角速度校正系数           ！！！！！！在此标准化量程，即转一个直角，显示90度的效果！！！！！！！！！！！！！！
 float manualOffsetGyro[3] = {0,0,0};         //手动添加校正值，解决零点误差在+-1之间的问题，因为原始数据是int16_t类型，这个参数能解决有规律的漂移,追求完美的可以试试
 
@@ -224,7 +224,7 @@ static void MPU_Read_Raw(void)
 #endif	
 #ifdef DYNAMIC_OFFSET		
 		/*静止时，更新零点*/
-		if (APP_MATH_ABS(app_imu_data.Angle_Rate[i]) < Dynamic_Zero_Thre && APP_MATH_ABS(app_imu_data.offset.Gyro[i] - app_imu_data.original.lastGyro[i]) < 3){
+		if (APP_MATH_ABS(app_imu_data.Angle_Rate[i]) < Dynamic_Zero_Thre && APP_MATH_ABS(app_imu_data.offset.Gyro[i] - app_imu_data.original.lastGyro[i]) < 1.5f){
 			dynamicFlag[i]++;
 			if(dynamicFlag[i] >= 200)  dynamicFlag[i] = 200; //限位
 	  }

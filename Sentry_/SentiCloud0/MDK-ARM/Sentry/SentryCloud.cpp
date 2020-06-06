@@ -294,20 +294,23 @@ void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
  */
 void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap, ShootModeEnum_t shoot_mode, int16_t ext_trig)
 {
+    ShootMode = shoot_mode;
     Shoot_Speed = fabs(bullet_speed);
     if(fire_gap<20)
     {
         fire_gap = 20;
     }
-    if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
-        ShooterSwitchCmd(1);
-    else
-        ShooterSwitchCmd(0);
+    // if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
+    //     ShooterSwitchCmd(1);
+    // else
+    //     ShooterSwitchCmd(0);
 
+        ShooterSwitchCmd(1);
+        
     switch (shoot_mode)
     {
     case ShtStop:
-        Feed2nd.Safe_Set();
+        Feed2nd.Stop_Set();
         break;
     case ShtOnce:
         feed_trig = ext_trig;
