@@ -37,10 +37,13 @@
 //#include "bsp_adc_deal.h"
 #include "bsp_encoder.hpp"
 #include "bsp_gy53l1.h"
+#include "bsp_judgement.h"
 #include "app_math.h"
 #include "app_imu.h"
 #include "app_mode.hpp"
 #include "app_check.h"
+
+
 
 // 测距模块连接的串口
 #define RANGING_LEFT_UART	huart3
@@ -144,13 +147,14 @@ private:
     float PowerOutput = 0;
     uint32_t PwrUpdateTime = 0;
 
-    LPF2 lpf;
-	kalman_filter LocationFilter;
-	kalman_filter SpeedFilter;
-    kalman_filter AccelRailFilter;
+    // LPF2 lpf;
+	// kalman_filter LocationFilter;
+	// kalman_filter SpeedFilter;
+    // kalman_filter AccelRailFilter;
 
     void CanSendHandle(); //托管到CANSend的操作函数
     float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//柴小龙式功率闭环
+    float PowerCtrMot_CascadePidRegular(float TargetSpeedInput);
 	
 	void LocationSpeedDataFusion();	// 使用轨上编码器和对柱测距仪的结果
 	void LocationSpeedDataMultiplexer();	///< 数据多选一 

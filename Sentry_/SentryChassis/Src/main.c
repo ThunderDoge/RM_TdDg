@@ -64,7 +64,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
-static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -127,12 +126,9 @@ int main(void)
   MX_UART5_Init();
   MX_USART3_UART_Init();
   MX_I2C3_Init();
-
-  /* Initialize interrupts */
-  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 		RoboInit();	// 机器人硬件初始化 ロボットハードウェアの初期化
-		SEGGER_SYSVIEW_SendSysDesc("N=SentryChassis,O=FreeRTOS,D=STM32F405RG");
+//		SEGGER_SYSVIEW_SendSysDesc("N=SentryChassis,O=FreeRTOS,D=STM32F405RG");
 		SEGGER_SYSVIEW_Conf();
   /* USER CODE END 2 */
 
@@ -178,7 +174,7 @@ void SystemClock_Config(void)
   /** Initializes the CPU, AHB and APB busses clocks 
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
@@ -202,29 +198,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-}
-
-/**
-  * @brief NVIC Configuration.
-  * @retval None
-  */
-static void MX_NVIC_Init(void)
-{
-  /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-  /* USART3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART3_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(USART3_IRQn);
-  /* UART4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(UART4_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(UART4_IRQn);
-  /* UART5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(UART5_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(UART5_IRQn);
-  /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 2, 0);
-  HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 }
 
 /* USER CODE BEGIN 4 */

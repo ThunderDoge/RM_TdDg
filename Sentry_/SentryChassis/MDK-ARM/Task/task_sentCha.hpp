@@ -12,6 +12,8 @@
 
 #include "cmsis_os.h"
 #include "bsp_spi.h"
+#include "bsp_judgement.h"
+#include "bsp_tof10120.h"
 #include "app_imu.h"
 #include "app_math.h"
 #include "Sentry.hpp"

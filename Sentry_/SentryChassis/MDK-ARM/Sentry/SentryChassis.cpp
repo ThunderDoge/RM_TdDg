@@ -76,23 +76,11 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //                             uint8_t up_fric_can_num, uint16_t up_fric_can_id)
     : pidDriveSpeed(1, 0, 0, 1000, 16000, 100, 300),
       pidDriveLocation(0.035, 0, 0, 1000, SpeedMax, 10, 200),
-//      FricSpeed(20, 0, 1, 1000, 7000),
-//      FricLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-//      FeedUpSpeed(20, 0, 1, 1000, 7000),
-//      FeedUpLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
-//      FeedDownSpeed(20, 0, 1, 1000, 7000),
-//      FeedDownLocation(0.5, 0.01, 0, 1000, 20000, 0, 200),
       pidDriveCurrent(2,0.1, 0, 2500, 10000, 10, 10),
       pidPowerFeedback(0,0,0,1000,10000,10,10),
       DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation)
-//      ,Fric(up_fric_can_num, up_fric_can_id, &DJI_2006, &FricSpeed, &FricLocation),
-//      FeedUp(up_feed_can_num, up_feed_can_id, &DJI_2006, 7, -1, &FeedUpSpeed, &FeedUpLocation),
-//      FeedDown(down_feed_can_num, down_feed_can_id, &DJI_2006, 7, -1, &FeedDownSpeed, &FeedDownLocation)
 {
-//    FeedUp.Enable_Block(4000, 200, 5);
-//    FeedDown.Enable_Block(4000, 200, 5);
     pointer = this; //初始化全局底盘指针
-    app_math_LPF2pSetCutoffFreq(&lpf , 1000.0f, 10.0f);
 };
 
 void SentryChassis::Handle()
@@ -101,8 +89,19 @@ void SentryChassis::Handle()
     MotorSoftLocation = DriveWheel.SoftAngle;
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
-	
-    DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
+
+    #ifdef defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
+        if(app_check_IsEnabled(id_Judge) && !app_check_IsOffline(id_Judge))
+        {
+            DrivePower = power_heat_data.chassis_power;
+        }
+        else
+        {
+            DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
+        }
+    #else
+        DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
+    #endif // defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
 
     if(Accel_Railward_UseKalman)
     {
@@ -119,8 +118,10 @@ void SentryChassis::Handle()
     PillarFlag = PILLAR_NOT_DETECTED;
     
     // 陀螺仪超过阈值指示撞柱
-    if(!app_check_IsOffline(id_ChassisImu)) // 先检查数据是不是有效的
+    #if defined (__APP_CHECK_H)
+    if(app_check_IsEnabled(id_ChassisImu) && !app_check_IsOffline(id_ChassisImu)) // 先检查数据是不是有效的
     {
+    #endif // defined (__APP_CHECK_H)
         if(Accel_Railward < -imuAccelHitPillarThreshold[0])     // Accel_Railward是 面对敌方时的左侧为正方向，而imuAccelHitPillarThreshold只有绝对值
         {
             PillarFlag = PILLAR_HIT_LEFT;
@@ -131,10 +132,16 @@ void SentryChassis::Handle()
             PillarFlag = PILLAR_HIT_RIGHT;
             DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
         }
+    #if defined (__APP_CHECK_H)
     }
+    #endif // defined (__APP_CHECK_H)
+
     // 激光测距结果小于阈值->指示 接近柱 或 撞柱. 这是左侧的
-    if(!app_check_IsOffline(id_ChassisLazerRangingLeft))
+    #if defined (__APP_CHECK_H)
+    if(app_check_IsEnabled(id_ChassisLazerRangingLeft) && !app_check_IsOffline(id_ChassisLazerRangingLeft))
     {
+    #endif // defined (__APP_CHECK_H)
+
         if(LazerRanging[0]<LAZER_LEFT_RANGE)    // LAZER_LEFT_RANGE 超过此值认为是无效的
         {
             if(LazerRanging[0]<LAZER_TOUCH_LEFT)    // LAZER_TOUCH_LEFT 是测试得到的 底盘贴着柱子时的距离值
@@ -143,9 +150,12 @@ void SentryChassis::Handle()
             }
             PillarFlag = PILLAR_LEFT;
         }
+    #if defined (__APP_CHECK_H)
     }
+    #endif // defined (__APP_CHECK_H)
+
     // 激光测距结果小于阈值 指示 接近柱 或 撞柱. 右侧同理.
-    if(!app_check_IsOffline(id_ChassisLazerRangingRight))
+    if(app_check_IsEnabled(id_ChassisLazerRangingRight) && !app_check_IsOffline(id_ChassisLazerRangingRight))
     {
         if(LazerRanging[0]<LAZER_RIGHT_RANGE)   
         {
@@ -219,21 +229,8 @@ void SentryChassis::MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, 
     DriveWheel.Angle_Set(location_motor_soft);
     Mode = _chassis_location_limit_speed;
 }
-//#define DEBUG1
-//#define DEBUG2
-//#define DEBUG3
-//#define DEBUG4
 #define DEBUG5
 
-#ifdef DEBUG1   
-float unfilted_pwr_in;
-#endif // DEBUG1    
-#ifdef DEBUG3
-float P1,P2,P_IdlePower,P_OverPower;
-float VeP1,P_Idle;
-#endif
-#ifdef DEBUG4
-#endif
 float pwr_exceed,pwr_idle,ft,et,ct;
 /**
   * @brief  柴小龙式功率闭环
@@ -242,6 +239,8 @@ float pwr_exceed,pwr_idle,ft,et,ct;
   *     Targ    (+) -> Cur(s) -> C(s) -> Motor
   *             ^                 |
   *             |--- Pfd(s) ------+
+  * 
+  * @param 
   * 
   */
 float pwr_idle_I=-1;
@@ -262,6 +261,23 @@ float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCur
     return ct;
 }
 
+
+
+
+
+
+/**
+ * @brief 2019柴小龙英雄功率控制复刻
+ * 
+ */
+float SentryChassis::PowerCtrMot_CascadePidRegular(float TargetSpeedInput)
+{
+    DriveWheel.PID_In->IMax = pidPowerFeedback.pid_inc_run(LimitPower - DrivePower);
+    DriveWheel.TargetCurrent = DriveWheel.PID_In->pid_run(TargetSpeedInput - DriveWheel.RealSpeed);
+    return pidDriveCurrent.pid_run(DriveWheel.TargetCurrent-bsp_CurrentRead[1]/1000.0f);
+}
+
+uint8_t use_system_;
 /**
   * @brief  底盘功率限制
   * @details  
@@ -273,66 +289,23 @@ void SentryChassis::CanSendHandle()
 	if(Mode != _chassis_save)
     if (LimitPower > 0)
     {   //只有大于0才会启动
-#ifdef DEBUG1
-        if(HAL_GetTick() - PwrUpdateTime > 0){
-        unfilted_pwr_in = (((float)DriveWheel.TargetCurrent) /819.2f) //目标电流
-                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //检测电压
-        TargetPowerInput = app_math_Lpf2apply(&lpf , unfilted_pwr_in);  //低通滤波防抖
-        }
-        if (fabs(TargetPowerInput) > LimitPower)    //功率限幅
+        switch (use_system_)
         {
-            TargetPowerInput = LimitPower* SIGN(TargetPowerInput);
+        case 1:
+            PowerOutput = PowerFeedbackSystem (DriveWheel.TargetSpeed,DriveWheel.TargetCurrent,DrivePower);
+            DriveWheel.InsertCurrentBy(PowerOutput);
+            break;
+        case 2:
+            PowerOutput = PowerCtrMot_CascadePidRegular(DriveWheel.TargetSpeed);
+            DriveWheel.InsertCurrentBy(PowerOutput);
+        default:
+            DriveWheel.InsertCurrent();
+            break;
         }
-//        if(SIGN(TargetPowerInput) * SIGN(PowerOutput) == -1)    //功率防反向
-//        {
-//            PowerOutput = 0;
-//        }
-        if(HAL_GetTick() - PwrUpdateTime > 0){      //防止积分频率不稳定
-            PowerOutput += pidDriveCurrent.pid_run(TargetPowerInput - DrivePower);
-            PwrUpdateTime = HAL_GetTick();
-        }
-        DriveWheel.TargetCurrent = PowerOutput;
-#endif
-#ifdef DEBUG2
-        TargetPowerInput = (((float)DriveWheel.TargetCurrent) /819.2f) //目标电流
-                            *(((float)bsp_VoltageRead[1]) / 1000.0f);   //检测电压
-		if (fabs(TargetPowerInput) > LimitPower)    //功率限幅
-		{
-			DriveWheel.TargetCurrent *= (LimitPower/TargetPowerInput);
-		}
-#endif
-#ifdef DEBUG3
-    VeP1 = (DriveWheel.TargetSpeed - DriveWheel.RealSpeed)*P1;
-    P_Idle = LimitPower - DrivePower;
-    if(P_Idle>0){
-        P2 = P_Idle * P_IdlePower;
-        PowerOutput += VeP1 * P2;
-    }
-    else{
-        PowerOutput += P_Idle*P_OverPower;
-    }
-    DriveWheel.TargetCurrent = PowerOutput;
-#endif // DEBUG3
-#ifdef DEBUG4
-	TargetPowerInput = DriveWheel.TargetCurrent - DriveWheel.RealCurrent;
-	TargetPowerInput = app_math_Lpf2apply(&lpf,TargetPowerInput);
-	PowerOutput = pidDriveCurrent.pid_run(TargetPowerInput);
-	if(fabs(DrivePower) > LimitPower)
-	{
-		PowerOutput *= LimitPower/fabs(DrivePower); 
-	}
-    DriveWheel.TargetCurrent = PowerOutput;
-#endif	//DEBUG4
-#ifdef DEBUG5
-	PowerOutput = PowerFeedbackSystem (DriveWheel.TargetSpeed,DriveWheel.TargetCurrent,DrivePower);
-#endif	//DEBUG5
-    DriveWheel.InsertCurrentBy(PowerOutput);
     }
 	else
 	{
-	DriveWheel.InsertCurrent();
+        DriveWheel.InsertCurrent();
 	}
 }
-#undef DEBUG1
-#undef DEBUG2
 

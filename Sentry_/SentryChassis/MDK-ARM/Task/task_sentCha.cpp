@@ -15,9 +15,9 @@
 void TaskStarter(void)
 {
 	xTaskCreate(task_Main,"task_Main",1024,NULL,4,NULL);
-	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
-	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
-	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
+//	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
+//	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
+//	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
 }
 /**
   * @brief  统一初始化程序
@@ -29,16 +29,11 @@ void RoboInit()
 	bsp_spi_Icm20602Init();
 	app_imu_Init();
 	taskEXIT_CRITICAL();
-//	bsp_dbus_Init();
-#ifndef	MIGRATE_F407ZG
     bsp_can_Init();  //CAN总线初始化函数
-#endif //MIGRATE_F407ZG
 	bsp_Current_Init();
-	bsp_Current_StartRead_IT(1);
 	bsp_encoder_Init(2048);
-//	bsp_ADC_Sensor_Init();
-	bsp_GY53L1_Object_Init( &ChassisEntity.RangingLeft, &RANGING_LEFT_UART );
-	bsp_GY53L1_Object_Init( &ChassisEntity.RangingRight, &RANGING_RIGHT_UART );
+	bsp_judgement_Init();
+	
 	
 	manager::CANSelect(&hcan1,&hcan2);
 	
@@ -127,10 +122,13 @@ void task_OfflineCheck(void *param)
     app_check_EnableDevice(id_ChassisRailEncoder,100);
 	app_check_SignDeviceTickTo(id_ChassisRailEncoder,&bsp_encoder_UpdateTime);
 	
-    app_check_EnableDevice(id_ChassisLazerRangingLeft,150);
-	app_check_SignDeviceTickTo(id_ChassisLazerRangingLeft,&ChassisEntity.RangingLeft.data.update_time);
-    app_check_EnableDevice(id_ChassisLazerRangingRight,150);
-	app_check_SignDeviceTickTo(id_ChassisLazerRangingRight,&ChassisEntity.RangingRight.data.update_time);
+//    app_check_EnableDevice(id_ChassisLazerRangingLeft,150);
+//	app_check_SignDeviceTickTo(id_ChassisLazerRangingLeft,&ChassisEntity.RangingLeft.data.update_time);
+//    app_check_EnableDevice(id_ChassisLazerRangingRight,150);
+//	app_check_SignDeviceTickTo(id_ChassisLazerRangingRight,&ChassisEntity.RangingRight.data.update_time);
+
+	app_check_EnableDevice(id_Judge,500);
+	app_check_SignDeviceTickTo(id_Judge,&JudgeMsgRxTick);
 
 //	app_check_EnableDevice(id_Test,1000);
 //	app_check_SignDeviceTickTo(id_Test,&test_tick);
