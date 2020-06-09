@@ -88,7 +88,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 */
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchMotor(pitch_can_num, pitch_can_id, 4000, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),

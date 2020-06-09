@@ -14,6 +14,7 @@
 #ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
 #define __PROJECT_SENTRY_CLOUD_
 
+#endif // __PROJECT_SENTRY_CLOUD_
 
 #include "bsp_motor.hpp"
 #include "bsp_can.hpp"
@@ -31,6 +32,5 @@ extern uint32_t mark1, mark2, mark3;
 void Cloud_Init(void);	/// 硬件初始化
 void TaskStarter(void); /// 全任务启动器
 
-#endif // __PROJECT_SENTRY_CLOUD_
 
 #endif // __TASK_SENTI_CLOUD_H_
