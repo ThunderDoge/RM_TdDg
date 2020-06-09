@@ -12,7 +12,7 @@
 
 //依赖的文件
 #include "SentryChassisCan.hpp"
-#include "SentryChassisUart.hpp"
+// #include "SentryChassisUart.hpp"
 
 extern CanCommuRecv_t CanRx, CanTx;
 

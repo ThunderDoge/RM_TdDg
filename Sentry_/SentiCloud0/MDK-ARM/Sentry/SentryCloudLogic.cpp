@@ -9,28 +9,26 @@
   */
 #include "SentryCloudLogic.hpp"
 
-//模式标志变量定义
-// GlobalModeName GlobalMode;
-// GlobalModeName LastGlobalMode;
-// CommandSourceName CommandSource;
 
-//模式定义
-app_Mode ModeManualChassis(NULL, ManualChassis, NULL);
-app_Mode ModeManualShoot(ManualShootEnter, ManualShoot, nullptr);
-app_Mode ModeManualFeed(nullptr, ManualFeed, nullptr);
-app_Mode ModeManualShootGyro(ManualShoot_Gyro_Enter, ManualShoot_Gyro, nullptr);
-app_Mode ModeVisionControl(nullptr, VisionControl, nullptr);
-app_Mode ModeAutoMove(nullptr, nullptr, nullptr);
-app_Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
-app_Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
-app_Mode ModeCalibration(nullptr,HardCalibration,nullptr);
+//模式定义                      进入函数                   运行时函数           退出函数
+app_Mode ModeManualChassis      (NULL,                  ManualChassis,      NULL);
+app_Mode ModeManualShoot        (ManualShootEnter,      ManualShoot,        nullptr);
+app_Mode ModeManualFeed         (nullptr,               ManualFeed,         nullptr);
+app_Mode ModeManualShootGyro    (ManualShoot_Gyro_Enter,ManualShoot_Gyro,   nullptr);
+app_Mode ModeVisionControl      (nullptr,               VisionControl,      nullptr);
+app_Mode ModeAutoMove           (nullptr,               nullptr,            nullptr);
+app_Mode ModeGlobalSafe         (nullptr,               GlobalSafe,         nullptr);
+app_Mode ModeVisionFeed         (nullptr,               VisionFeed,         nullptr);
+app_Mode ModeCalibration        (nullptr,               HardCalibration,    nullptr);
 
+// 初始化模式指针
 app_Mode *LastMode = &ModeGlobalSafe;
 app_Mode *CurrentMode = &ModeGlobalSafe;
 
-extern sentry_vision_data VisionRx, VisionTx;
+extern sentry_vision_data VisionRx, VisionTx;   // 视觉接收/发送缓存
 int t=4;
 float p=0,y=0;
+// 硬件校准模式控制变量
 uint8_t inside_joystick,last_joystick,trig_calibration;
 uint32_t inside_time;
 /**
@@ -62,7 +60,7 @@ void ModeSelect(void)
     case 13: //上-中：手动控云台，手动供弹射击（右摇杆右拨为扳机）
         CurrentMode = &ModeManualFeed;
         break;
-    case 22: //双下
+    case 22: //双下：安全。双杆朝内可进入陀螺仪校准
         if(bsp_dbus_Data.CH_0 < -500 && bsp_dbus_Data.CH_2>500 && !app_check_IsOffline(id_Dbus))
         {
             inside_joystick = 1;

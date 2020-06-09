@@ -30,6 +30,7 @@
 // #include "app_AmmoFeed.hpp"  // 2020-1 之后不再需要拨弹
 #include <cmath>
 #include <cstring>
+#include "sentry_chassis_config.h"
 #include "sentry_ctrl_def.hpp"
 #include "bsp_stddef.h"
 #include "bsp_motor.hpp"

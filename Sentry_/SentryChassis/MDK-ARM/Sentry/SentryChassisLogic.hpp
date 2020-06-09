@@ -12,6 +12,7 @@
 #ifndef __SENTRY_CHASSIS_LOGIC_H_
 #define __SENTRY_CHASSIS_LOGIC_H_
 
+#include "sentry_chassis_config.h"
 #include "sentry_ctrl_def.hpp"
 #include "SentryChassis.hpp"
 #include "SentryChassisCommu.hpp"

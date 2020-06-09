@@ -11,10 +11,7 @@
 #ifndef __SENTRY_CLOUD_VISION_HPP_
 #define __SENTRY_CLOUD_VISION_HPP_
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
-#define __PROJECT_SENTRY_CLOUD_
-#endif // __PROJECT_SENTRY_CLOUD_
-
+#include "sentry_cloud_config.h"
 
 ///依赖的文件
 #include "stm32f4xx.h"
@@ -32,16 +29,16 @@
 
 extern sentry_vision_data VisionTx,VisionRx;    ///储存用结构体
 
-extern QueueHandle_t CloudVision_QueueOfMsgToSend;   /// 待发送消息的队列
+// extern QueueHandle_t CloudVision_QueueOfMsgToSend;   /// 待发送消息的队列
 
-void CloudVision_TaskTransmit_Init(void);
-void CloudVision_TaskTransmit_Handle(void);
+// void CloudVision_TaskTransmit_Init(void);
+// void CloudVision_TaskTransmit_Handle(void);
 
-void CloudVision_Transmit(uint8_t _Functionword);
-void CloudVision_Transmit_Emergency(uint8_t _Functionword);
+// void CloudVision_Transmit(uint8_t _Functionword);
+// void CloudVision_Transmit_Emergency(uint8_t _Functionword);
 
 extern void CloudVisonTxRoutine(void);  ///主逻辑回调函数。向小主机发送一次VisionTx的全部信息。
-void CloudVision_SendFrame(uint8_t funcword,uint8_t* pData); ///阻塞式UART发送，立即向小主机发送一个数据帧。
+// void CloudVision_SendFrame(uint8_t funcword,uint8_t* pData); ///阻塞式UART发送，立即向小主机发送一个数据帧。
 
 #endif // __SENTRY_CLOUD_VISION_HPP_
 

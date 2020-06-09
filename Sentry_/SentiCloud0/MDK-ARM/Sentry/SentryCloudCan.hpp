@@ -12,9 +12,7 @@
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
-#define __PROJECT_SENTRY_CLOUD_
-#endif // __PROJECT_SENTRY_CLOUD_
+#include "sentry_cloud_config.h"
 
 //CAN板间通信定义，如果修CAN口请修改此处宏定义
 #define CAN_INTERBOARD hcan2

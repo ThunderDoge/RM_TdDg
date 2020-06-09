@@ -14,6 +14,7 @@
 #define __SENTRY_CLOUD_HPP_
 
 // 依赖的文件
+#include "sentry_cloud_config.h"
 #include "sentry_ctrl_def.hpp"
 #include "bsp_motor.hpp"
 #include "app_vision.hpp"

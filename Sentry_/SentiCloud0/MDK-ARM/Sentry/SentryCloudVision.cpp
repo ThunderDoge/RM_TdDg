@@ -10,59 +10,59 @@
   */
 #include "SentryCloudVision.hpp"
 
-static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word);
+// static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word);
 
 
-QueueHandle_t CloudVision_QueueOfMsgToSend;  /// 待发送消息的队列
+// QueueHandle_t CloudVision_QueueOfMsgToSend;  /// 待发送消息的队列
 
-void CloudVision_TaskTransmit_Init(void)
-{
-    CloudVision_QueueOfMsgToSend = xQueueCreate(20,sizeof(uint8_t));
-}
+// void CloudVision_TaskTransmit_Init(void)
+// {
+//     CloudVision_QueueOfMsgToSend = xQueueCreate(20,sizeof(uint8_t));
+// }
 
-void CloudVision_TaskTransmit_Handle(void)
-{
-    uint8_t _func_word;
+// void CloudVision_TaskTransmit_Handle(void)
+// {
+//     uint8_t _func_word;
 
-    if(xQueueReceive(CloudVision_QueueOfMsgToSend,&_func_word,portMAX_DELAY)==pdTRUE)	// 设定为阻塞容许时间为 portMAX_DELAY 来允许空队列时无限阻塞。
-    {
-        CloudVision_HandleFunctionWordTransmit(_func_word);
-    }
+//     if(xQueueReceive(CloudVision_QueueOfMsgToSend,&_func_word,portMAX_DELAY)==pdTRUE)	// 设定为阻塞容许时间为 portMAX_DELAY 来允许空队列时无限阻塞。
+//     {
+//         CloudVision_HandleFunctionWordTransmit(_func_word);
+//     }
 
-    return;    
-}
-void CloudVision_Transmit_ISR(uint8_t _Functionword);
-void CloudVision_Transmit_Emergency_ISR(uint8_t _Functionword);
+//     return;    
+// }
+// void CloudVision_Transmit_ISR(uint8_t _Functionword);
+// void CloudVision_Transmit_Emergency_ISR(uint8_t _Functionword);
 
-static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
-{
-    switch (func_word) 
-    {
-        case CMD_GET_MCU_STATE:
+// static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
+// {
+//     switch (func_word) 
+//     {
+//         case CMD_GET_MCU_STATE:
 		
-		    VisionTx.Cloud_mode = CloudEntity.CloudMode;
-			VisionTx.Shoot_mode = CloudEntity.ShootMode;
-			VisionTx.Pitch = CloudEntity.RealPitch;
-			VisionTx.YawSoft = CloudEntity.RealYaw;
-			VisionTx.Yaw = CloudEntity.MechanicYaw;
-			VisionTx.Shoot_speed = 0;	// 未实现
-			CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
-			break;
+// 		    VisionTx.Cloud_mode = CloudEntity.CloudMode;
+// 			VisionTx.Shoot_mode = CloudEntity.ShootMode;
+// 			VisionTx.Pitch = CloudEntity.RealPitch;
+// 			VisionTx.YawSoft = CloudEntity.RealYaw;
+// 			VisionTx.Yaw = CloudEntity.MechanicYaw;
+// 			VisionTx.Shoot_speed = 0;	// 未实现
+// 			CMD_GET_MCU_STATE_Tx(VisionTx.Pitch, VisionTx.Yaw, VisionTx.YawSoft, VisionTx.Cloud_mode, VisionTx.Shoot_mode);
+// 			break;
 			
-		case ROBOT_ERR:
+// 		case ROBOT_ERR:
 		
-			VisionTx.Error_code = 0;	// 未实现
-			ROBOT_ERR_Tx(VisionTx.Error_code);
-			break;
+// 			VisionTx.Error_code = 0;	// 未实现
+// 			ROBOT_ERR_Tx(VisionTx.Error_code);
+// 			break;
 			
-		case STA_CHASSIS:
+// 		case STA_CHASSIS:
 		
-			VisionTx.chassis_mode = VisionRx.chassis_mode;
-			VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
-			VisionTx.pillar_flag = CanRx.Pillar_flag;
-			VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
-			STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);
-			break;
+// 			VisionTx.chassis_mode = VisionRx.chassis_mode;
+// 			VisionTx.Vx = CanRx.Chassis_SpeedLocation[0];
+// 			VisionTx.pillar_flag = CanRx.Pillar_flag;
+// 			VisionTx.Px = CanRx.Chassis_SpeedLocation[1];
+// 			STA_CHASSIS_Tx(VisionTx.chassis_mode, VisionTx.pillar_flag, VisionTx.Vx, VisionTx.Px);
+// 			break;
 		
 /*
         case JUD_GAME_STATUS:
@@ -106,8 +106,8 @@ static void CloudVision_HandleFunctionWordTransmit(uint8_t func_word)
             JUD_USER_Tx();
 			break;
 */
-	}
-}
+// 	}
+// }
 
 
 

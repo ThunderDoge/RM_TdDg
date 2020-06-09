@@ -14,8 +14,8 @@
 #define CAN_INTERBOARD hcan2
 
 //依赖的文件
+#include "sentry_chassis_config.h"
 #include "sentry_can_commom.hpp"
-#include "sentry_config.hpp"
 
 
 

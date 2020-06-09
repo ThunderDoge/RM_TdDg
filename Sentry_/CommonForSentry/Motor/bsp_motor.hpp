@@ -12,7 +12,7 @@
 #ifndef __BSP_MOTOR_HPP
 #define __BSP_MOTOR_HPP
 
-#include "sentry_config.hpp"
+//#include "sentry_config.hpp"
 
 #include "bsp_car_config.hpp"
 using namespace std;

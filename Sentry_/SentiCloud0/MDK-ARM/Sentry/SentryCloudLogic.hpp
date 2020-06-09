@@ -10,24 +10,18 @@
 #ifndef __SENTRY_CLOUD_LOGIC_HPP
 #define __SENTRY_CLOUD_LOGIC_HPP
 
-#ifndef __PROJECT_SENTRY_CLOUD_     //定义工程标识符__PROJECT_SENTRY_CLOUD_
-#define __PROJECT_SENTRY_CLOUD_
-#endif // __PROJECT_SENTRY_CLOUD_
 
-#include "bsp_dbus.h"
-#include "SentryCloud.hpp"
-#include "SentryCloudCommu.hpp"
-#include "app_mode.hpp"
+#include "sentry_cloud_config.h"    // 工程标识宏定义
 
-extern SentryCloud CloudEntity;
+#include "bsp_dbus.h"               // 遥控器支持包
+#include "SentryCloud.hpp"          // 云台
+#include "SentryCloudCommu.hpp"     // 云台通讯
+#include "app_mode.hpp"             // class【模式】
 
-extern app_Mode* CurrentMode,*LastMode;
+extern SentryCloud CloudEntity;     // 云台实体
 
-/**
- * @defgroup RemoteDebugModes
- * @addtogroup RemoteDebugModes
- * @{
- */
+extern app_Mode* CurrentMode,*LastMode; // 模式指针，指示目前的模式
+
 extern app_Mode ModeManualChassis, ModeManualChassis, ModeManualShoot, ModeVisionControl, ModeAutoMove, ModeGlobalSafe; ///模式对象列表
 
 void ModeSelect(); ///主逻辑-模式选择
@@ -47,9 +41,4 @@ void AutoMove();      ///全自动移动
 void GlobalSafe();    ///安全模式
 void HardCalibration();	///运行时陀螺仪零漂校准
 
-/** @} */
 #endif // __SENTRY_CLOUD_LOGIC_HPP
-
-/**
-  * @brief  废案 Abandonded Code
-  */
