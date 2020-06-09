@@ -18,7 +18,6 @@
   <project>
     <PathAndName>.\SentiCloudDown\MDK-ARM\SentiCloudDown.uvprojx</PathAndName>
     <NodeIsActive>1</NodeIsActive>
-    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
 </ProjectWorkspace>
