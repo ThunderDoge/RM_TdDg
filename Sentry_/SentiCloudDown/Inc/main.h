@@ -58,12 +58,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define RGB1_Pin GPIO_PIN_0
-#define RGB1_GPIO_Port GPIOC
-#define RGB2_Pin GPIO_PIN_1
-#define RGB2_GPIO_Port GPIOC
-#define RGB3_Pin GPIO_PIN_2
-#define RGB3_GPIO_Port GPIOC
 #define ICM_CS_Pin GPIO_PIN_4
 #define ICM_CS_GPIO_Port GPIOA
 #define OLED_CS_Pin GPIO_PIN_4
@@ -74,14 +68,8 @@ void Error_Handler(void);
 #define OLED_RES_GPIO_Port GPIOB
 #define LAZER_Pin GPIO_PIN_1
 #define LAZER_GPIO_Port GPIOB
-#define UART_JUDG_TX_Pin GPIO_PIN_10
-#define UART_JUDG_TX_GPIO_Port GPIOB
-#define UART_JUDG_Pin GPIO_PIN_11
-#define UART_JUDG_GPIO_Port GPIOB
-#define UART_SUPER_TX_Pin GPIO_PIN_12
-#define UART_SUPER_TX_GPIO_Port GPIOC
-#define UART_SUPER_RX_Pin GPIO_PIN_2
-#define UART_SUPER_RX_GPIO_Port GPIOD
+#define DBUS_Pin GPIO_PIN_10
+#define DBUS_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

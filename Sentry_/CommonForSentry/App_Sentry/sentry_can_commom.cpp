@@ -266,8 +266,8 @@ void UpCloudCanCommuRoutine(void)
  */
 void DownCloudCanCommuRoutine(void)
 {
-    CanTx.UpCloudPitchYaw[0] = DownCloudEntity.RealPitch;   //装载数据
-    CanTx.UpCloudPitchYaw[1] = DownCloudEntity.RealYaw;
+    CanTx.UpCloudPitchYaw[0] = CloudEntity.RealPitch;   //装载数据
+    CanTx.UpCloudPitchYaw[1] = CloudEntity.RealYaw;
     DOWN_CLOUD_STATES_CanTx();  //发送数据帧
 }
 #endif // __PROJECT_SENTRY_DOWN_CLOUD_

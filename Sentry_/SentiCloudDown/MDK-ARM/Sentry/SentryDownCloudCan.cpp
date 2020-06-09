@@ -2,7 +2,7 @@
 /**
   * @file SentryCloudCan.cpp
   * @brief    哨兵云台CAN通信
-  * @details  
+  * @details  包含 哨兵云台CAN接收中断回调
   * @author   ThunderDoge
   * @date     2019/12/7
   * @version  v0.0.1
@@ -27,6 +27,7 @@ void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTy
     // UP_CLOUD_STATES_CanRx();
     DOWN_CLOUD_STATES_CanRx(RxHead->StdId, Data);
     CHASSIS_STATES_CanRx(RxHead->StdId, Data);
+	CHASSIS_PILLAR_CanRx(RxHead->StdId, Data);
 }
 
 
@@ -48,6 +49,7 @@ void CloudCanFilterConfig()
 * @param  NULL
 * @retval  NULL
 */
+#ifndef __MAIN_DEBUG
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 {
 	static CAN_RxHeaderTypeDef bsp_can_Rx;
@@ -56,8 +58,14 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 	if(HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0)!=0) //判断中断产生
 	{
 		HAL_CAN_GetRxMessage(hcan, 0, &bsp_can_Rx, CAN_RxData);	//获取CAN报文
-		motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//电机信息更新
-		CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
+		if(bsp_can_Rx.StdId >= 0x201 && bsp_can_Rx.StdId <= 0x20f)	//在电机CAN_ID范围内
+		{
+			motor::CANUpdate(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//电机信息更新
+		}
+		else
+		{
+			CanRxCpltCallBack_CloudCommuUpdata(hcan, &bsp_can_Rx, (uint8_t*)CAN_RxData);	//板间CAN通信信息更新
+		}
 	}
 }
-
+#endif

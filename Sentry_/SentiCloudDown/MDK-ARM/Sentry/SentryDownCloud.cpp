@@ -1,275 +1,41 @@
 /**
- * 
- * @file SentryDownCloud.cpp
- * @brief    哨兵下云台
- * @details     Encoding - UTF8
+ * @file SentryCloud.hpp
+ * @brief    哨兵上云台
+ * @details     Encoding - UTF-8
  * @author   ThunderDoge
- * @date     2020-4-15
+ * @date     2020-5-23
  * @version  v2.0
  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020
+ * 
+ * v1.0 2020-4-15   发布1.0可用版本
+ * v2.0 2020-5-23   重构计划"Clean Cloud"
  */
 #include "SentryDownCloud.hpp"
 
-// ---------------------------------云台 机械角控制&陀螺仪控制 相关---------------------------
-app_Mode ModeCloudCtrlMech(EnterModeCloudCtrlMech,RunModeCloudCtrlMech,NULL);
-app_Mode ModeCloudCtrlGyro(EnterModeCloudCtrlGyro,RunModeCloudCtrlGyro,NULL);
-
-// ---------------------------------云台 双PITCH相关
-//app_Mode ModeDualPitch(EnterModeDualPitch,RunModeDualPitch,NULL);
-//app_Mode ModeSinglePitch(EnterModeSinglePitch,RunModeSinglePitch,NULL);
-
-/**
- * @brief 进入机械角
- * 避免突变
- */
-void EnterModeCloudCtrlMech(void)
-{
-    DownCloudEntity.TargetPitch = DownCloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    DownCloudEntity.TargetYaw = DownCloudEntity.RealYaw;
-    DownCloudEntity.Mode = absolute_cloud; //视为绝对角控制
-}
-/**
- * @brief 运行机械角时，数据持续维护 逻辑。
- * 陀螺仪跟随机械角数据
- */
-void RunModeCloudCtrlMech(void)
-{
-    // 平时依赖陀螺仪积分数据。但是有机械角的时候强制陀螺仪跟随机械角数据
-    app_imu_data.integral.Pitch = -DownCloudEntity.PitchMotor.RealAngle;//注意负号。
-    app_imu_data.integral.Yaw = -DownCloudEntity.YawMotor.RealAngle;//注意负号。
-}
-/**
- * @brief 
- * 
- */
-void EnterModeCloudCtrlGyro(void)
-{
-    DownCloudEntity.TargetPitch = DownCloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    DownCloudEntity.TargetYaw = DownCloudEntity.RealYaw;
-    DownCloudEntity.Mode = absolute_cloud; //视为绝对角控制
-
-}
-/**
- * @brief 运行云台陀螺仪控制模式
- * 
- */
-void RunModeCloudCtrlGyro(void)
-{
-
-}
-
-
-                                                                                                              
-                                                                                                              
-                                                                                                              
-                                                                                                              
-//    .@@@@@@@@@@]`                              =@@@^   /@@@@@@@@@O]`   =@@@^                      .@@@O        
-//    .@@@@@@@@@@@@@`                            =@@@^   @@@@@@@@@@@@@^  =@@@^  =@@@.               .@@@@        
-//    .@@@@.    =@@@^ =@@@^   =@@@^  @@@@@@@@@\  =@@@^   @@@@^    ,@@@@.]]]]]`.@@@@@@@@  ./@@@@@@@@^.@@@@@@@@@@\.
-//    .@@@@.    =@@@^ =@@@^   =@@@^  @@@@O/@@@@\ =@@@^   @@@@^    .@@@@.@@@@@^.@@@@@@@@ ,@@@@@@@@@@^.@@@@@@@@@@@@
-//    .@@@@.    =@@@^ =@@@^   =@@@^  ,/@@@@@@@@O =@@@^   @@@@@@@@@@@@@/  =@@@^  @@@@.   =@@@^       .@@@@   .@@@@
-//    .@@@@.    =@@@^ =@@@^   =@@@^ @@@@@@@@@@@O =@@@^   @@@@@@@@@@@@/   =@@@^  @@@@.   =@@@^       .@@@@   .@@@@
-//    .@@@@]]]]/@@@@^ =@@@\]]]@@@@^.@@@@]]]/@@@O =@@@\]` @@@@^           =@@@^  @@@@\]]`=@@@@`]]]]]`.@@@@   .@@@@
-//    .@@@@@@@@@@@@`  .@@@@@@@@@@@^ =@@@@@@@@@@O .@@@@@^ @@@@^           =@@@^  ,@@@@@@@ \@@@@@@@@@^.@@@@   .@@@@
-                                                                                                              
-                                                                                                              
-                                                                                                              
-
-//------------------------双PITCH模式相关-----------------------------------------
-float pid_param_backup[24];     // 单PITCH参数备份存在此。在初始化时备份
-float dual_pitch_pid_param[24]=     //双PITCH参数在此调节
-{-3, 0, -8, 2000, 30000, 500,
--15, -1, 0, 1800, 10000,120,
-100, 0, 0, 2000, 10000,3000,
--10, 0, 0, 2000, 30000,500};
-// 参照一下参数设定
-//   PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
-//   PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-//   PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
-//   PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
-
-static void copy_pid_param_to_array(float* destination,pid* source)
-{
-	destination[0] = source->P;
-	destination[1] = source->I;
-	destination[2] = source->D;
-	destination[3] = source->IMax;
-	destination[4] = source->PIDMax;
-	destination[5] = source->I_Limited;
-}
-static void copy_array_to_pid_param(pid* desti,float* src)
-{
-	desti->P = src[0];
-	desti->I = src[1];
-	desti->D = src[2];
-	desti->IMax = src[3];
-	desti->PIDMax = src[4];
-	desti->I_Limited = src[5];
-}
-
-///备份单PITCH参数到 pid_param_backup. BackupSingleMotorParam
-static void copy_cloud_param_to_backup(softcloud* src)
-{
-    copy_pid_param_to_array(&pid_param_backup[0],src->PID_In);
-	copy_pid_param_to_array(&pid_param_backup[6],src->PID_Out);
-	copy_pid_param_to_array(&pid_param_backup[12],src->Gyro_PID_In);
-    copy_pid_param_to_array(&pid_param_backup[18],src->Gyro_PID_Out);
-}
-///复制数组中的参数到云台电机PID
-static void copy_array_to_cloud_param(softcloud* desti,float* src)
-{
-    copy_array_to_pid_param(desti->PID_In,&src[0]);
-    copy_array_to_pid_param(desti->PID_Out,&src[6]);
-    copy_array_to_pid_param(desti->Gyro_PID_In,&src[12]);
-    copy_array_to_pid_param(desti->Gyro_PID_Out,&src[18]);
-}
-/**
- * @brief 进入双PITCH模式
- * 
- */
-void SentryCloud::EnterModeDualPitch(void)
-{
-    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
-
-    Pitch2ndMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
-    // 它的输出值电流值会在运行时复制PitchMotor的电流输出值
-}
-/**
- * @brief 退出双PITCH模式，恢复单PITCH模式
- * 
- */
-void SentryCloud::ExitModeDualPitch(void)
-{
-    copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入单PITCH参数 WriteDualMotorParam();
-
-    Pitch2ndMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的PID运算。
-    // 但是此函数在某一PITCH掉线时才会调用。
-}
-/**
- * @brief 运行双PITCH模式
- * 从动PITCH电机的输出值电流值会在运行时复制PitchMotor的电流输出值
- */
-void SentryCloud::RunModeDualPitch()
-{
-    Pitch2ndMotor.TargetCurrent = PitchMotor.TargetCurrent;  // 复制电流值
-    Pitch2ndMotor.InsertCurrent();   // 写入电流值
-}
-/**
- * @brief PITCH模式控制。在Handle()中调用
- * 
- */
-void SentryCloud::PitchModeCtrl(void)
-{
-	last_pitch_ctrl_mode = pitch_ctrl_mode;
-	
-	// 更新模式PITCH的规则
-	if(PitchMotor.Is_Offline() == 0 && Pitch2ndMotor.Is_Offline() ==0)
-	{
-		pitch_ctrl_mode = __cloud_dual_pitch;
-	}
-	else 
-	{
-		pitch_ctrl_mode = __cloud_main_pitch;
-	}
-	
-	// 进行模式切换及运行
-	switch( (pitch_ctrl_mode*10)+(last_pitch_ctrl_mode) )
-	{
-	case __cloud_dual_pitch*10 + __cloud_dual_pitch:
-		{			RunModeDualPitch();		}
-		break;
-		
-	case __cloud_main_pitch*10 + __cloud_main_pitch:
-		{/*DO NOTHING*/}
-		break;
-		
-	case __cloud_dual_pitch*10 + __cloud_main_pitch:
-	default:
-		{			ExitModeDualPitch();		}
-		break;
-		
-	case __cloud_main_pitch*10 + __cloud_dual_pitch:
-		{			EnterModeDualPitch();		}
-		break;
-	}
-}
-//  `...*...............................................................................................................................
-//  ^,`.,\`..`O[\/=/./O\[**************************************************************************************************[******[*****
-//  \`/^=O*^^^O`]^==,`],@@@`,*******************************,[**************************************************************************
-//  ,OO\/OoO@@\OoOO/[OoOO@@@@`\`*************************************************,]*****,`****************]*****************************
-// .///=o`O/O@@@\\`OOo\\\^\@@@@/************************************=^***,**************************************************************
-//  *]``*,,[,,@@@@`,o,*`*=\^\@@@\***********************************=^******************************************************************
-// .***********,@@@@``]**[*`,*\@@@\*,***************************************************************************************************
-// .*,,********,\,@@@O^******,**\@@@\*`*************************************************************************************************
-// .****************@@@@*,******\*O@@@``************************************************************************************************
-// .*****************,@@@@`*`****,``\@@@`***********************************************************************************************
-// .*****************`*,@@@@********\,@@@@/`********************************************************************************************
-// .********************`,@@@@`********,@@@@********************************************************************************************
-// .**=********************,@@@@]\,****`*\@@@\**************************************************************************]***************
-// .***********************`,,@@@@`****,*,*\@@@O*,**********************************************************************]***************
-// .***************************/@@@\/]*****]*@@@@\`*************************************************************************************
-// .***************************`\\@@@@`****^*`,\@@@\*\**********************************************************************************
-// .**=****************************/@@@\`,,^***`,@@@@``/,*******************************************************************************
-// .*******************************/`/@@@@/*******[@@@@`*`,****************************************************************]`***********
-// .`**********************************=@@@\`\,****`\@@@@`*`*,\*************************************************************************
-// .*************************************,@@@@/*****=*\@@@@`,***************************************************************************
-// .***************************************\@@@@*\,*,`*`\@@@\,*=*]**********************************************************************
-// .***************************************,*\@@@@*****`*,@@@@\*************************************************************************
-// .*******************************************\@@@@*/,,***,@@@@\*`/*[,*****************************************************************
-// .*******************************************\.\@@@@``***=*[@@@@\[`*^*****************************************************************
-// .***********************************************\@@@@`//`,``\@@@@^,\,/*\*****************************`,,`,***************************
-// .******,****************************************,`\@@@@``]O/``[@@@@O]O\,********`*******************,`   \*,*************************
-// .**************************=**********************\`\@@@@@@^    =@@@@@@^***`*,***`=^********^*****. ,      `*,^,*********************
-// .************************[[*****************/^******[@@@@@@  @^ =@@@@@@ .`*`******`*************``   ,.   @^ ************************
-// .***************************************************=O@@@`  ..   @@@@^\@@@`[/*\,*`*[],,]****,\*,.  /]]]]@/@@].*`*****,***************
-// .**************[*`*,**********************************.  ,@@@OOO@@/[`\@@@@@^    .``]*]*,***,**   =@^        @@..*********************
-// .*****************************************************`    ,@@@@@@OO*..@@@@@@\         `**,`   ,@/         /O,@`.,*/****************`
-// .*****************************************************       =@@@@@OOOO^=@@@@^     ]` . `    /@@`           O@^\\./,*****************
-// .***********************************************,****.      ]/@@@@@@@@@]/@@@@.  . .. ..\@@@@@@@             ,OOO/@*******************
-// .*************************************************,`` ....,     =\/=@@@@`         /`       @@@^              ,[``*,******************
-// .************************************************/           /@@@@@@@@@@^  .     @@@.  ,,\  == ,^             ,]*********************
-// .************************************************@@@@@]]\] @@. ,@@@@@@@@[     .\\@@/  =@@@^.=` @           ,^..**********************
-// .*******************************************.          ,/@@@`   @\/@@@@@      .\OO@@@O..=`[\@ =@@@@@@@@@@@@@@\.[*=*******************
-// .*******************************.******,.           ]@@@@@@@@@@@@@@@@@@@@^@@@@@@@@@@O^,*O^./@`           ..@@@@`^**]***]*************
-// .***********************************`.          ]/\/O@@/    /@@@@@@@@@@@@`/@@@@@@@OOO^.oO/`            *...=@@@@^          ]]]^******
-// .********************************.            .,]]]O@@`   ,@@@@@@@@@@@@@@@@@@OO@@@Oo^]@[            .*......\@@/]/o[[.........*******
-// .*****************************`           =@``=oOOO@@    =@@@@@@@@@@@@@@@@@@@@@@@@OO`             *..........=@^...........   .******
-// .***************************.              =`,]]OO@@@/[@ @@@@@@@@@@@@@@@@@@OOOOO@/             .*...............    .,]]/o[[`..******
-// .****************************         [[[[...\oOOO@@@*/^=@@@@@@@@@@@@@@@@@*o.*.              *......      .]]/O[[[...    ,]`[[`******
-// .***************************.         ....*      ,[[` ,@@@@@@@@@@@@@@@@@@^.,..                 ..]]/O[[....    .]]o/[`........*.*****
-// .****************************         ...,oOOO@@@@OOO]],]]]                = .`           ,[`....     ,]]oO/o`*******...........*****
-// .****************************           ...oOO@@@@/OO/.=@@@@@@@@@@@@@@@@@@@@]\`             .]]/O[[[[**o****************...**..******
-// .****************************         ...`=@      .OO/@=@@@@@@@@@@@@@@@@@@@@@@^           .....*****=`**`****`,***,]]@@@/************
-// .**********************************....,**..           =OO@@@@@@@@@@@@@@@@@@@@^           ....**`**\**\``*.]]@@@O/[`*,***************
-// .**`*************************************..            .OO@@@@@@@@@@@@@@@@@@@@^           .*.**,***,]]@@@@@@*************************
-// .****************************************.         . ...@@/@@@@@@/[[O@@O*\@@@@....,`      ..,]/@@@@@@@@@@OoO*************************
-// .****************************************.       /^    .]`          /@@@OOoo\.    @@@@@@@@@@@@@@@@@@@@@@@\[\*************************
-// .***************************************,        @^ .. .O\\/=..    .\. =@@@O^    ..@@@@@@@@@@@@@@@@@@@@@@\//*************************
-// .*******************************************\]]]/@     `@\@@@@@   .OOO@@@@@@.     =/[[[@@@@@@@@@@@@@@[[`*****************************
-// .*********************************************[O^     .`=O@@@@@@/]@@@@@@@@@\...,. =**..,****.**=@@@@O*,******************************
-// .**`*****************************************`....[OOOO[\OO@@@@@@@@@\@@.//@O.,.=. O............/@@@/*,*******************************
-// .**`****o*******^*\***************************[*@@@\[[`..        .,[\\` [O[.....==O.....    .,.@@@@^*,o`*****************************
-// .*/**********************************************.[`.             ...`.. O]`.....=^....  .. ...@@OO\\oo******************************
-// .**,***********************************************`.       .  ^     ./OOO[O@@\]]@@@@\]]`. ...,//************************************
-// .^*********************=***,********************************`........... ......*oOOOOO[[[`*,***//`*****[**,*********o`**************,
-// .^*****,********************************************************[[*,]]`*****]`***[[[***]**,[************^****************************
-// .****************************\`****************************/*`*******************oo*************************************/************
-// .****o**************************************************************************/oo*****//\]`*[***********************[[\]***********
-// .**]**************************************************************************=^****/**,*********************************************
-// .*,*****************oooo******************************************,[`***[[`*****************************************`****************
-// ]]]]]]]]]]]]]]]]]]]]`]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-// @\\@/@//@O/@@=@/^O*OO.\@@@\`@/O@@@O=^@O`@@,\\@/O/=@/`O/\O@O/=@@=,=^//.=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-// 电机型号类
+// 电机型号
 Motor_t DJI_2006(8192, 36);
 Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
-// 电机实体定义 >>>>>>>>>>>>>>>>重要<<<<<<<<<<<<<
-SentryCloud DownCloudEntity(1, 0x206, 1, 0x205, 2, 0x207, 1, 0x202, 1, 0x203, 1, 0x204);
+// 电机实体定义 
+SentryCloud CloudEntity(1, 0x206, 1, 0x205, 2, 0x206, 1, 0x204, 1, 0x203, 1, 0x201);
 
-
-/// 云台物理实体类 构造与删除函数
+/**
+ * @brief 云台物理实体类 构造 Construct a new Sentry Cloud:: Sentry Cloud object
+ * 
+ * @param     yaw_can_num           CAN号,1或2,对应CAN1和CAN2
+ * @param     yaw_can_id            电机CAN上ID. 大疆电机编码从0x201~0x20B, 下同
+ * @param     pitch_can_num         
+ * @param     pitch_can_id 
+ * @param     pitch2nd_can_num 
+ * @param     pitch2nd_can_id 
+ * @param     fric_l_can_num 
+ * @param     fric_l_can_id 
+ * @param     fric_r_can_num 
+ * @param     fric_r_can_id 
+ * @param     feed_can_num 
+ * @param     feed_can_id 
+ */
 SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t pitch_can_num, uint16_t pitch_can_id,
 						 uint8_t pitch2nd_can_num, uint16_t pitch2nd_can_id,
@@ -277,7 +43,33 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
                          uint8_t fric_r_can_num, uint16_t fric_r_can_id,
                          uint8_t feed_can_num, uint16_t feed_can_id)
         // 初始化各项PID参数
-    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
+// pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //传统pid构造函数
+
+    : PitchSpeed(-6, 0, -8, 0, 30000, 10, 10, 500), 
+	  PitchPosition(-30, -1, 0, 3001, 10000, 10, 10, 200),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+      PitchGyroSpeed(-8, 0, 0, 30000, 10, 10, 500),
+      PitchGyroPosition(300, 30, 0, 2011, 10000, 10, 10, 5),
+	  
+	  Pitch2ndSpeed(-6, 0, -8, 0, 30000, 10, 10, 500),
+	  Pitch2ndPosition(-30, -1, 0, 1802, 10000, 10, 10, 120),
+	  Pitch2ndGyroSpeed(-8, 0, 0, 2000, 30000, 10, 10, 500),
+	  Pitch2ndGyroPosition(300, 30, 0, 2000, 10000, 10, 10, 5),
+
+	  DualSpeed(-6, 0, 0, 0, 30000, 10, 10, 500), 
+	  DualPosition(-20, -1, 0, 1400, 10000, 10, 10, 100),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+      DualGyroSpeed(-8, 0, 0, 0, 30000, 10, 10, 500),
+      DualGyroPosition(300, 30, 0, 1100, 10000, 10, 10, 5),
+
+      YawSpeed(20, 0, 0, 0, 30000, 10, 10, 500),
+      YawPosition(20, 2,-0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawGyroSpeed(40, 0, 0, 0, 30000, 10, 10, 500),
+      YawGyroPosition(200, 5, 0, 2000, 10000, 10, 10, 3000),
+	  
+      FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+      FricRightSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+      FeedSpeed(20, 0, 1, 1000, 7000),
+      FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
+/*    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
 	  PitchPosition(-15, -1, 0, 1800, 10000, 10, 10, 120),//(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       PitchGyroPosition(200, 0, 0, 2000, 10000, 10, 10, 3000),
       PitchGyroSpeed(-10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -293,81 +85,593 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FricRightSpeed(1, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
-
-        //!!!!!!!!!!!>>>>>>>>>>>>>要调节双PITCH参数请到 dual_pitch_pid_param
-
+*/
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 4920, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &BaseImuAngleRate[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 0, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 0, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition),
+	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
+      PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
 {
-	Feed2nd.Enable_Block(4000,200,5);                       // 初始化堵转检测
-	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  // 设定微分来源为陀螺仪
-	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;      // 设定微分来源为陀螺仪
-    PitchPosition.pid_run_CallBack = pidPitchCallBack;  // 位置环PID的用户自定义回调函数。加入重力前馈函数。
-    PitchGyroPosition.pid_run_CallBack = pidPitchCallBack;  //位置环PID的用户自定义回调函数。加入重力前馈函数。
-	copy_cloud_param_to_backup(&PitchMotor);				// 复制云台PITCH轴参数到备份数组。以待运行时使用。
+    // 初始化堵转检测
+	Feed2nd.Enable_Block(5000,200,5);     
+
+    // 设定位置环微分来源为陀螺仪
+	PitchPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;  
+	Pitch2ndPosition.Custom_Diff = Pitch2ndMotor.Gyro_RealSpeed;
+	YawPosition.Custom_Diff = YawMotor.Gyro_RealSpeed;
+	DualPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;
+
+    // 设定软件限位
+	SetPitchRealAngleLimit(35,-60);
 };
-
-
-
-
-
-
-
-
-
+/**
+ * @brief 云台自动控制托管
+ * 
+ */
 void SentryCloud::Handle()
-{
-    //------------------------安全模式激光灯自动关闭-------------------------
-	if(Mode != save_cloud)
-		LazerSwitchCmd(1);  
-    else
-        LazerSwitchCmd(0);  
-	
-    // 陀螺仪数据处理
+{	
+    /* 陀螺仪数据处理 */
     ImuDataProcessHandle();
-    //--------------------------单/双PITCH模式控制逻辑--------------------------
-    PitchModeCtrl();    
-    //--------------------------------射击控制逻辑-----------------------------------
+    // 单/双PITCH模式控制逻辑
+    PitchModeCtrl();
+    // YAW自动-机械/陀螺仪控制模式切换逻辑
+    YawMeGyModeCtrl();
+
+    // 云台模式控制逻辑
+    CloudModeCtrl();
+
+    // 射击控制逻辑
     ShootCtrl();
+    // PITCH软件限位
+    PitchRealAngleLimitCtrl();
 
-    // -------------------------------分模式逻辑-------------------------------
+// CANSend会在主逻辑统一调用
+    // manager::CANSend(); 
+}
+
+/**
+ * @brief 安全模式
+ * 
+ */
+void SentryCloud::Safe_Set()
+{
+	CloudMode = save_cloud;
+    YawMotor.Speed_Set(0);
+	PitchMotor.Speed_Set(0);
+    Pitch2ndMotor.Speed_Set(0);
+    FricLeftMotor.Safe_Set();
+    FricRightMotor.Safe_Set();
+    Feed2nd.Safe_Set();
+	LazerSwitchCmd(0);
+    ShooterSwitchCmd(0);
+}
+void SentryCloud::Safe_Set_NoMode()
+{
+    YawMotor.Speed_Set(0);
+	PitchMotor.Speed_Set(0);
+    Pitch2ndMotor.Speed_Set(0);
+    FricLeftMotor.Safe_Set();
+    FricRightMotor.Safe_Set();
+    Feed2nd.Safe_Set();
+	LazerSwitchCmd(0);
+    ShooterSwitchCmd(0);
+}
+/**
+ * @brief 设定机械角控制角度
+ * 这个函数会自动把云台模式设定成绝对角度-陀螺仪控制
+ * 如果你没有别的需求推荐直接使用这个函数
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo(float pitch, float yaw)
+{
+	CloudMode = absolute_cloud;              // 设定模式
+    LastControlTick = HAL_GetTick();    // 更新时间戳
+	
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+	
+    PitchMotor.Angle_Set(-TargetPitch);	//注意负号
+	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    YawMotor.Angle_Set(TargetYaw);
+}
+/**
+ * @brief 设定陀螺仪控制角度，并且设定模式
+ * 这个函数会自动把云台模式设定成绝对角度-陀螺仪控制
+ * 如果你没有别的需求推荐直接使用这个函数
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
+{
+	CloudMode = absolute_gyro_cloud;         // 设定模式
+    LastControlTick = HAL_GetTick();    // 更新时间戳
+	
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+
+    PitchMotor.Gyro_Angle_Set(TargetPitch);
+	Pitch2ndMotor.Gyro_Angle_Set(TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    YawMotor.Gyro_Angle_Set(TargetYaw);
+}
+/**
+ * @brief 设定角度 - 自动选择控制
+ * 
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo_Auto(float pitch, float yaw)
+{
+	CloudMode = auto_cloud;         // 设定模式为自动选择控制模式
+    LastControlTick = HAL_GetTick();    // 更新时间戳
+	
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+
+    // 如果是使用auto的话控制模式将会在 Handle() 中进行
+
+    PitchMotor.Angle_Set(-TargetPitch);	//注意负号
+	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    // YAW电机在此不进行设定，在YawMeGyModeCtrl()中会进行设定
+    // YawMotor.Gyro_Angle_Set(TargetYaw);
+}
+
+/**
+ * @brief 仅设定陀螺仪控制角度 - 仅供内部调用
+ * 不会更改模式
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo_NoMode(float pitch, float yaw)
+{
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+	
+    PitchMotor.Angle_Set(-TargetPitch);	//注意负号
+	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    YawMotor.Angle_Set(TargetYaw);
+}
+/**
+ * @brief 设定机械角控制角度 - 仅供内部调用
+ * 不会更改模式
+ * @param     pitch 
+ * @param     yaw 
+ */
+void SentryCloud::SetAngleTo_Gyro_NoMode(float pitch, float yaw)
+{
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+    TargetYaw = yaw;
+
+    PitchMotor.Gyro_Angle_Set(-TargetPitch);
+	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
+    YawMotor.Gyro_Angle_Set(TargetYaw);
+}
+
+/**
+ * @brief 
+ * 
+ * @param     newCloudMode 
+ */
+void SentryCloud::SetCloudMode(CloudMode_t newCloudMode)
+{
+    CloudMode = newCloudMode;
+}
+
+
+/**
+ * @brief 启动射击
+ * 
+ * @param     bullet_speed  出趟弹速。目前此参数控制的是摩擦轮电机的转速
+ * @param     fire_freq     发射频率。这个控制。
+ * @param     Shoot_mode    射击模式。这个保留备用。
+ */
+void SentryCloud::Shoot(float bullet_speed, uint16_t fire_cnt,uint32_t fire_gap, ShootModeEnum_t shoot_mode, int16_t ext_trig)
+{
+    ShootMode = shoot_mode;
+    Shoot_Speed = fabs(bullet_speed);
+    if(fire_gap<20)
     {
-        switch (Mode)   // 根据 Mode 选择模式
+        fire_gap = 20;
+    }
+    // if(bullet_speed!=0 && fire_cnt!=0 && shoot_mode!=ShtStop)
+    //     ShooterSwitchCmd(1);
+    // else
+    //     ShooterSwitchCmd(0);
+
+        ShooterSwitchCmd(1);
+        
+    switch (shoot_mode)
+    {
+    case ShtStop:
+        Feed2nd.Stop_Set();
+        break;
+    case ShtOnce:
+        feed_trig = ext_trig;
+        Feed2nd.Free_Once_Set(fire_gap,&feed_trig);
+        break;
+    case ShtBurst:
+        feed_trig = ext_trig;
+        Feed2nd.Burst_Set(fire_cnt,fire_gap,&feed_trig);
+        break;
+	case ShtFree:
+		Feed2nd.Stop_Set();
+		break;
+    }    
+}
+
+/**
+ * @brief 激光灯开关
+ * 
+ * @param     NewState 
+ */
+void SentryCloud::LazerSwitchCmd( int NewState )
+{
+	if(NewState == 0)
+	{
+		HAL_GPIO_WritePin(LAZER_GPIO_Port,LAZER_Pin,GPIO_PIN_RESET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(LAZER_GPIO_Port,LAZER_Pin,GPIO_PIN_SET);
+	}
+}
+
+/**
+ * @brief 摩擦轮开关
+ * 
+ * @param     NewState 
+ */
+void SentryCloud::ShooterSwitchCmd(int NewState )
+{
+	if(NewState == 0)
+	{
+        FricLeftMotor.Safe_Set();
+        FricRightMotor.Safe_Set();
+        CloudEntity.Feed2nd.Safe_Set();
+	}
+	else
+	{
+        FricLeftMotor.Speed_Set(-Shoot_Speed);
+        FricRightMotor.Speed_Set(Shoot_Speed);
+	}
+}
+/**
+ * @brief 云台模式控制逻辑
+ * 
+ */
+void SentryCloud::CloudModeCtrl()
+{
+    switch (CloudMode)
+    {
+    case absolute_cloud:
+    case absolute_gyro_cloud:
+    case relative_cloud:
+    case speed_cloud:
+    case auto_cloud:
+        // 正常控制模式的现在不需过此处理
+        break;
+
+    case hold_cloud:  
+        // 设定角度为当前角度
+        SetAngleTo_NoMode(TargetPitch, TargetYaw);
+        break;
+
+    case save_cloud:
+        Safe_Set_NoMode();
+    
+    case default_cloud_mode:
+    default:
+        CloudMode = default_cloud_mode;
+        Safe_Set_NoMode();
+        break;
+    }
+}
+/**
+ * @brief 设定云台pitch软件限位
+ * 
+ * @param     max 
+ * @param     min 
+ */
+void SentryCloud::SetPitchRealAngleLimit(float max, float min)
+{
+    if(max < min)
+    {
+        pitch_limit_max = min;
+        pitch_limit_min = max;
+    }
+    else
+    {
+        pitch_limit_max = max;
+        pitch_limit_min = min;
+    }
+}
+
+float UpCloudEntity_FunctionYawToPitchlimit(float yaw)
+{
+    return 0;
+}
+
+/**
+ * @brief 软件限位控制
+ * 
+ */
+void SentryCloud::PitchRealAngleLimitCtrl()
+{
+    // 复制旧的pitch_exceed_flag
+    memcpy(pitch_last_exceed_flag,pitch_exceed_flag,sizeof(pitch_last_exceed_flag));
+
+    // 速度控制情况下，只要 RealAngle 超过软件限，直接 Angle_Set(Position_Ctl事模式)到软件限
+    // 并且设定 pitch_exceed_flag[xx] = 1; 这会导致IMAX置零 见下面。
+    if(PitchMotor.RunState == Speed_Ctl || PitchMotor.RunState == Gyro_Speed_Ctl)
+    {
+        if(PitchMotor.RealAngle > pitch_limit_max)
         {
-
-            case absolute_gyro_cloud:
-            case relative_gyro_cloud:
-                CurrentCloudMode = &ModeCloudCtrlGyro;
-                break;
-
-            case absolute_cloud:
-            case relative_cloud:
-            default:
-                CurrentCloudMode = &ModeCloudCtrlMech;
-                break;
-
+            PitchMotor.Angle_Set(pitch_limit_max);
+            pitch_exceed_flag[0] = 1;
         }
-
-        if(LastCloudMode != CurrentCloudMode)   // 如果模式更新
+        else if(PitchMotor.RealAngle < pitch_limit_min)
         {
-            LastCloudMode->Exit();              // 使用模式切换用函数
-            CurrentCloudMode->Enter();
+            PitchMotor.Angle_Set(pitch_limit_min);
+            pitch_exceed_flag[0] = 1;
         }
-        CurrentCloudMode->Run();            // 正常执行模式内逻辑
-
-        LastCloudMode = CurrentCloudMode;   //  检查模式更新
+        else
+        {
+            pitch_exceed_flag[0] = 0;
+        }
+    }
+    // 位置控制情况下，仅在 RealAngle 和 TargetAngle 都超过软件限 会 设定 pitch_exceed_flag
+    else if(PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
+    {
+        if(PitchMotor.RealAngle > pitch_limit_max && PitchMotor.TargetAngle > pitch_limit_max)
+        {
+            PitchMotor.Angle_Set(pitch_limit_max);
+            pitch_exceed_flag[0] = 1;
+        }
+        else if(PitchMotor.RealAngle < pitch_limit_min && PitchMotor.TargetAngle < pitch_limit_min)
+        {
+            PitchMotor.Angle_Set(pitch_limit_min);
+            pitch_exceed_flag[0] = 1;
+        }
+        else
+        {
+            pitch_exceed_flag[0] = 0;
+        }
     }
 
-//CANSend会在主逻辑统一调用
-//    manager::CANSend();
+    if(Pitch2ndMotor.cooperative == 0)
+    {
+        if(Pitch2ndMotor.RealAngle >= pitch_limit_max)
+        {
+            Pitch2ndMotor.Angle_Set(pitch_limit_max);
+            pitch_exceed_flag[1] = 1;
+        }
+        else if(Pitch2ndMotor.RealAngle <= pitch_limit_min)
+        {
+            Pitch2ndMotor.Angle_Set(pitch_limit_min);
+            pitch_exceed_flag[1] = 1;
+        }
+        else
+        {
+            pitch_exceed_flag[1] = 0;
+        }
+    }
+	
+    // 超限保存 IMAX，并且写入IMAX=0，关闭积分作用以避免抖动
+    // 回到限内 从保存变量回复 IMAX
+	if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
+	{
+		CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchMotor.PID_Out->IMax;
+		CloudEntity.PitchMotor.PID_Out->IMax = 0;
+	}
+	if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
+	{
+		CloudEntity.PitchMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[0];
+	}
+	
+	if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
+	{
+		CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndMotor.PID_Out->IMax;
+		CloudEntity.Pitch2ndMotor.PID_Out->IMax = 1;
+	}
+	if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
+	{
+		CloudEntity.Pitch2ndMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[1];
+	}
 
+}
 
+/**
+ * @brief PITCH模式控制。在Handle()中调用
+ */
+void SentryCloud::PitchModeCtrl(void)
+{	
+	// PITCH 模式切换
+	if(PitchMotor.Is_Offline() == 0 && Pitch2ndMotor.Is_Offline() == 0)
+	{
+		// 仅当 两个PITCH在线时采用 双PITCH模式。采用合作模式。主PITCH参数写入双PITCH模式的参数
+		pitch_ctrl_mode = __cloud_dual_pitch;	
+	}
+	else
+	{
+		// 当某一PITCH离线 使用副PITCH模式，即关闭合作模式。
+		// 主PITCH参数写入独立模式的参数。两PITCH的PID独立运行。
+		// 由于一个PITCH离线。
+		pitch_ctrl_mode = __cloud_second_pitch;
+	}
+	
+	// 进行模式切换及运行
+	
+	if(last_pitch_ctrl_mode != pitch_ctrl_mode)
+	{
+		switch(last_pitch_ctrl_mode)
+		{
+			case __cloud_dual_pitch:
+                /* 退出双PITCH模式 */
+                
+                PitchMotor.Pid_Select(&PitchSpeed,&PitchPosition);  // PID切回单pitch PID
+                PitchMotor.Gyro_Pid_Select(&PitchGyroSpeed,&PitchGyroPosition);
+
+                PitchSpeed.Iout =  DualSpeed.Iout*2;        // 装载双pitch的Iout以避免突变
+                PitchPosition.Iout = DualPosition.Iout*2;   // *2是因为单pitch输出减少一半
+                PitchGyroSpeed.Iout =  DualGyroSpeed.Iout*2;
+                PitchGyroPosition.Iout = DualGyroPosition.Iout*2;
+
+                Pitch2ndSpeed.Iout =  DualSpeed.Iout*2;     // 两边都要装载哦
+                Pitch2ndPosition.Iout = DualPosition.Iout*2;   
+                Pitch2ndGyroSpeed.Iout =  DualGyroSpeed.Iout*2;     
+                Pitch2ndGyroPosition.Iout = DualGyroPosition.Iout*2;   
+                
+                Pitch2ndMotor.cooperative = 0;       //关闭副PITCH为合作模式，恢复它的独立PID运算和执行。
+                // 这样不会导致两个pitch冲突，因为只有一个电机失效时会切到单pitch 模式
+				break;
+			default:
+				break;
+		}
+		switch(pitch_ctrl_mode)
+		{
+			case __cloud_dual_pitch:
+                /* 载入双pitch模式 */
+                // copy_array_to_cloud_param(&PitchMotor,dual_pitch_pid_param);    //写入双PITCH参数 WriteDualMotorParam();
+                // is_use_dual_param = 1;
+                PitchMotor.Pid_Select(&DualSpeed,&DualPosition);  // PID切回到双pitch PID
+                PitchMotor.Gyro_Pid_Select(&DualGyroSpeed,&DualGyroPosition);
+
+                // 装载双pitch的Iout以避免突变
+                // *2是因为单pitch输出减少一半
+                DualSpeed.Iout =  PitchSpeed.Iout/2;
+                DualPosition.Iout = PitchPosition.Iout/2;
+                DualGyroSpeed.Iout =  PitchGyroSpeed.Iout/2;
+                DualGyroPosition.Iout = PitchGyroPosition.Iout/2;
+
+                Pitch2ndMotor.cooperative = 1;       //设定副PITCH为合作模式，这样会禁用它的PID运算。
+				break;
+			default:
+				break;
+		}
+	}
+	
+    // 运行pitch模式
+	switch(pitch_ctrl_mode) //
+	{
+		case __cloud_dual_pitch:
+            Pitch2ndMotor.cooperative =1;
+			break;
+		default:
+			Pitch2ndMotor.cooperative = 0;
+			break;
+	}
+
+    last_pitch_ctrl_mode = pitch_ctrl_mode;	// 记录旧的 PITCH模式
+
+}
+/**
+ * @brief 更新YAW轴控制模式建议
+ * 即更新 Yaw_MeGy_Advice变量。在auto模式下这变量会影响控制模式
+ * 为了使用auto模式你应当使用SetAngleTo_Auto函数
+ */
+void SentryCloud::YawMeGyModeCtrl(void)
+{
+    if((-95.0f>=MechanicYaw && MechanicYaw>=-106.8f)
+    ||(-55.78f>=MechanicYaw && MechanicYaw>=-70.95f)
+    ||(-19.5f>=MechanicYaw && MechanicYaw>=-35.0f)
+    ||(104.56f>=MechanicYaw && MechanicYaw>=95.77f)
+    ||(141.9f>=MechanicYaw && MechanicYaw>=127.0f)
+    ||(178.7f>=MechanicYaw && MechanicYaw>=164.0f)
+    )
+    {
+        Yaw_MeGy_Advice = GyroCtrl;
+    }
+    else
+    {
+        Yaw_MeGy_Advice = MechCtrl;
+    }
     
+    if(CloudMode == auto_cloud)
+    {
+        switch (Yaw_MeGy_Advice)
+        {
+        case GyroCtrl:
+            YawMotor.Gyro_Angle_Set(TargetYaw);
+            break;
+        case MechCtrl:
+            YawMotor.Angle_Set(TargetYaw);
+            break;
+        default:
+            Yaw_MeGy_Advice = NoneCtrl;
+            YawMotor.Safe_Set();
+            break;
+        }
+    }
+}
+/**
+ * @brief 云台内部 射击控制逻辑
+ */
+void SentryCloud::ShootCtrl()
+{
+    if( !FricLeftMotor.Is_Offline() && !FricLeftMotor.Is_Offline() )
+    {
+        if(fabs((float)FricLeftMotor.RealSpeed) > MINIMAL_FRIC_SPD_BAN_FEED && fabs((float)FricRightMotor.RealSpeed) > MINIMAL_FRIC_SPD_BAN_FEED)
+            IsSlowFricBanFeed = 0;
+        else
+            IsSlowFricBanFeed = 1;
+    }
+    else
+        IsSlowFricBanFeed = 1;
+
+    if(IsSlowFricBanFeed)   
+	{
+		Feed2nd.Safe_Set();
+	}
+}
+/**
+ * @brief 实现紧急开关的功能
+ * 
+ */
+void SentryCloud::RedButtonEffectCtrl(void)
+{
+    if(RED_BUTTON_HaltAllPids)  // 停止所有PID
+    {
+        YawSpeed.PIDMax = 0;
+        YawGyroSpeed.PIDMax = 0;
+        PitchSpeed.PIDMax = 0;
+        PitchGyroSpeed.PIDMax = 0;
+        Pitch2ndSpeed.PIDMax = 0;
+        Pitch2ndGyroSpeed.PIDMax = 0;
+        DualSpeed.PIDMax = 0;
+        DualGyroSpeed.PIDMax = 0;
+        FricLeftSpeed.PIDMax = 0;
+        FricRightSpeed.PIDMax = 0;
+        FeedSpeed.PIDMax = 0;
+
+        RED_BUTTON_HaltAllPids = 0;
+    }
 }
 /**
  * @brief 陀螺仪数据处理
@@ -375,19 +679,19 @@ void SentryCloud::Handle()
  */
 void SentryCloud::ImuDataProcessHandle()
 {
-	if(Mode != relative_gyro_cloud && Mode != absolute_gyro_cloud)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
+	if(CloudMode != absolute_gyro_cloud && Yaw_MeGy_Advice != GyroCtrl)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
-		app_imu_data.integral.Pitch = -DownCloudEntity.PitchMotor.RealAngle;//注意负号。
-		app_imu_data.integral.Yaw = -DownCloudEntity.YawMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Roll = -CloudEntity.PitchMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Yaw = CloudEntity.YawMotor.RealAngle;//注意负号。
 	}
 	//↓↓↓陀螺仪角度旋转到枪口方向↓↓↓
-	RotatedImuAngle[0] = -app_imu_data.integral.Roll;
-    RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
-	RotatedImuAngle[2] = -app_imu_data.integral.Yaw;
+	RotatedImuAngle[0] = -app_imu_data.integral.Pitch;
+    RotatedImuAngle[1] = app_imu_data.integral.Roll;
+	RotatedImuAngle[2] = app_imu_data.integral.Yaw;
 	//↓↓↓陀螺仪加速度旋转到枪口方向↓↓↓
-	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[0];
-    RotatedImuAngleRate[1] = -app_imu_data.Angle_Rate[1];
-	RotatedImuAngleRate[2] = -app_imu_data.Angle_Rate[2];
+	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[1];
+    RotatedImuAngleRate[1] = app_imu_data.Angle_Rate[0];
+	RotatedImuAngleRate[2] = app_imu_data.Angle_Rate[2];
     //↓↓↓陀螺仪角速度旋转到炮塔方向，即Roll,Pitch水平，Yaw随枪口Yaw↓↓↓
     float Cp = cosf(RealPitch), Sp = sinf(RealPitch);
 
@@ -401,258 +705,16 @@ void SentryCloud::ImuDataProcessHandle()
 }
 
 
-///设定机械角控制角度
-void SentryCloud::SetAngleTo(float pitch, float yaw)
+/// 覆写 UserProc定义用于操作电流值
+void manager::UserProcess(void)
 {
-	Mode = absolute_cloud;
-    TargetPitch = pitch;
-    TargetYaw = yaw;
-    PitchMotor.Angle_Set(-TargetPitch);	//注意负号
-    YawMotor.Angle_Set(TargetYaw);
-}
-///设定陀螺仪控制角度
-void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
-{
-	Mode = absolute_gyro_cloud;
-    TargetPitch = pitch;
-    TargetYaw = yaw;
-    PitchMotor.Gyro_Angle_Set(-TargetPitch);
-    YawMotor.Gyro_Angle_Set(TargetYaw);
-}
-
-
-/**
- * @brief 根据所在角度，切换角度控制位置环反馈源的逻辑。
- * 
- * @param     current_pitch     现在的俯仰角
- * @param     current_yaw       现在的航向角
- * @return enum _cloud_ctrl_mode 
- */
-static enum _cloud_ctrl_mode decide_mode_by_angle(float current_pitch, float current_yaw)
-{
-    float mechanic_pitch,mechanic_yaw;
-
-    mechanic_pitch = app_math_fLimitPeriod(current_pitch,180.0f,-180.0f);
-    mechanic_yaw = app_math_fLimitPeriod(current_yaw,180.0f,-180.0f);
-
-    // if  // 转换为陀螺仪模式的条件：YAW行至会抖动的角度
-    // ( 
-    //     IS_IN_INTERVAL(mechanic_yaw,30,40)
-    // )
-    // {return absolute_gyro_cloud;}
-
-    return absolute_cloud;
-}
-
-
-/**
- * @brief 通用的，可调模式的控制角度。包含【自适应选择反馈】逻辑，已解决抖动问题
- * 
- * @param     pitch 输入的俯仰角
- * @param     yaw   输入的航向角
- * @param     mode  选中的反馈模式，取值见 @see enum _cloud_ctrl_mode
- */
-void SentryCloud::SenAngleTo_Generic(float pitch, float yaw, enum _cloud_ctrl_mode mode)
-{
-    switch(mode)
+	if(CloudEntity.Pitch2ndMotor.cooperative == 1)
 	{
-		case relative_auto_cloud:	// xx_auto 模式下会自动切换 机械/陀螺仪 获取最佳控制方式
-			pitch	+=	RealPitch;
-			yaw		+=	RealYaw;
-		case absolute_auto_cloud:
-			{
-
-                _cloud_ctrl_mode auto_decided_mode = decide_mode_by_angle(RealPitch, RealYaw);
-                
-                SenAngleTo_Generic(pitch,yaw,auto_decided_mode);
-
-            }
-			break;
-		
-		case save_cloud:
-			Safe_Set();
-			break;
-			
-		case absolute_cloud:
-			SetAngleTo(pitch,yaw);
-			break;
-			
-		case relative_cloud:
-			SetAngleTo(pitch+RealPitch, yaw+RealYaw);
-			break;
-			
-		case absolute_gyro_cloud:
-			SetAngleTo_Gyro(pitch,yaw);
-			break;
-			
-		case relative_gyro_cloud:
-			SetAngleTo_Gyro(pitch+RealPitch, yaw+RealYaw);
-			
-		default:
-			Safe_Set();
-			break;
+		CloudEntity.Pitch2ndMotor.TargetCurrent = CloudEntity.PitchMotor.TargetCurrent;  // 复制电流值
+		CloudEntity.Pitch2ndMotor.InsertCurrent();   // 写入电流值
 	}
 }
 
-
-/**
- * @brief 启动射击
- * 
- * @param     bullet_speed  出趟弹速。目前此参数控制的是摩擦轮电机的转速
- * @param     fire_freq     发射频率。这个控制。
- * @param     Shoot_mode    射击模式。这个保留备用。
- */
-void SentryCloud::Shoot(float bullet_speed, uint8_t fire_freq, uint8_t Shoot_mode)
-{
-	Shoot_Speed = bullet_speed;     // 设定摩擦轮速率
-
-	ShooterSwitchCmd(1);            // 启动摩擦轮和射击许可
-
-	if(fire_freq!=0)
-    {
-        Feed_Free_Once_Set(60000/fire_freq,1);
-    }
-    else
-    {
-        Feed_Safe_Set();
-    }
-    
-}
-
-
-///安全模式
-void SentryCloud::Safe_Set()
-{
-	Mode = save_cloud;
-    YawMotor.Safe_Set();
-//    PitchMotor.Safe_Set();
-	PitchMotor.Speed_Set(0);
-    FricLeftMotor.Safe_Set();
-    FricRightMotor.Safe_Set();
-    Feed2nd.Safe_Set();
-    manager::CANSend();
-	LazerSwitchCmd(0);
-}
-
-
-//下面三个函数为拨弹电机函数的包装。需要feed_is_permitted==1才能运行供弹电机
- /**
-  * @brief      经包装的连续拨弹函数
-  * @param     FreeSpeed 设定拨弹轮速度
-  */
-void SentryCloud::Feed_Free_Fire_Set(int32_t FreeSpeed){
-    if(feed_is_permitted)
-    Feed2nd.Free_Fire_Set(FreeSpeed);
-}
-void SentryCloud::Feed_Burst_Set(uint8_t ShootCnt,int32_t	DiscreDelay,int16_t trig){
-    if(feed_is_permitted)
-    Feed2nd.Burst_Set(ShootCnt,DiscreDelay,trig);
-}
-void SentryCloud::Feed_Free_Once_Set(int32_t	DiscreDelay,int16_t trig){
-    if(feed_is_permitted)
-    Feed2nd.Free_Once_Set(DiscreDelay,trig);
-}
-void SentryCloud::Feed_Safe_Set(){
-    Feed2nd.Safe_Set();
-}
-
-
-///激光灯开关
-void SentryCloud::LazerSwitchCmd( int NewState )
-{
-	if(NewState == 0)
-	{
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
-	}
-}
-
-
-
-///射击许可开关，摩擦轮开关
-void SentryCloud::ShooterSwitchCmd(int NewState )
-{
-	if(NewState == 0)
-	{
-		feed_is_permitted=0;    //不允许射击
-        FricLeftMotor.Safe_Set();
-        FricRightMotor.Safe_Set();
-        DownCloudEntity.Feed2nd.Safe_Set();
-	}
-	else
-	{
-		feed_is_permitted=1;
-        FricLeftMotor.Speed_Set(-Shoot_Speed);
-        FricRightMotor.Speed_Set(Shoot_Speed);
-	}
-}
-
-
-/**
- * @brief PITCH运行回调函数。重力前馈。
- * 
- */
-void pidPitchCallBack(pid* self)
-{
-    self->PIDout+=DownCloudEntity.gravity_feedforward(DownCloudEntity.RealPitch);
-}
-
-
-
-
-
-
-
-
-                                                                                                                                                                                                                                                                                 
-//                           *** **********]]]]************                ***     ****************                                     
-//                           *** **    * **@@@@****     ***                *           ** *=@@@^***                                     
-// * * *** ****        ****   ******* *****@@@@@@****************** * ** **** *************=@@@^****  *                                 
-//  *  ********        **********=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^***                                     
-//    */@@@^**************@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^*****        * *** ******             
-//  * *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO@@@@@@@@@@@@@@@@@^************************************
-//     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^*,*@@@@@@@@@@@@@@@@@@@@@****************
-//     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@****************
-//     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@^**************************************
-//     @@@@@@@@@@@@@@[\[[[[[[[[[[[[[[[[[[[\@@@@@@@@@@@@@@@@@@@[\/[[[[[[[[[[[[[[[[[[[[[[[/[[[********************************************
-//     @@@@@@@@@@@@@@********************@@@@@@@@@@@@@@@@@@@@@**  *********             ************************************************
-//     @@@@@@@@@@@@[`******************@@@@@@@@@@@@@@@@@@@@@@@*****                     ************************************************
-// *  *@@@@@@@@@@@@******************=@@@@@@@@@@@***@@@@@@@@@@**************************************************************************
-//    *@@@@@@@@@@******************=@@@@@@@@@*********@@@@@@@@@@************************************************************************
-//  * *@@@@@@@@^*****************=@@@@@@@@@^**********@@@@@@@@@@,***********************************************************************
-//    *\@@@@@^*****  **********=@@@@@@@@@@@^************@@@@@@@@@@**********************************************************************
-//     **    ****    ************=@@@@@@@^*********** **@@@@@@@@************************************************************************
-//        *          **********************  ************,@@`******      ***************************************************************
-
-//------------------------------------射击控制相关-------------------------------------------
-/**
- * @brief 云台内部 射击控制逻辑
- */
-void SentryCloud::ShootCtrl()
-{
-	// if(REMAIN_HEAT<ONE_SHOT_HEAT)
-    // {
-    //     feed_is_permitted =0;
-    // }
-
-
-// --------------------------------射击许可开关----------------------------
-    if(feed_is_permitted != 1)   //检查射击许可，不许可 则回到安全
-	{
-		Feed2nd.Safe_Set();
-	}
-    if(!fric_power_permitted != 1)   // 检车摩擦轮许可
-    {
-        FricLeftMotor.Safe_Set();
-		FricRightMotor.Safe_Set();
-    }
-
-    shoot_flag = Feed2nd.feed_mode; //写入射击状态为拨弹电机状态
-
-}
 
 /**
  * @brief       读取PID参数的回调函数。由外面实现
@@ -668,24 +730,24 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
     switch (pid_id)
     {
     case __cloud_pitch_position_pid:
-        *p = DownCloudEntity.PitchPosition.P;
-		*i = DownCloudEntity.PitchPosition.I;
-		*d = DownCloudEntity.PitchPosition.D;
+        *p = CloudEntity.PitchPosition.P;
+		*i = CloudEntity.PitchPosition.I;
+		*d = CloudEntity.PitchPosition.D;
         break;
     case __cloud_yaw_position_pid:
-        *p = DownCloudEntity.YawPosition.P;
-		*i = DownCloudEntity.YawPosition.I;
-		*d = DownCloudEntity.YawPosition.D;
+        *p = CloudEntity.YawPosition.P;
+		*i = CloudEntity.YawPosition.I;
+		*d = CloudEntity.YawPosition.D;
         break;
     case __cloud_pitch_speed_pid:
-        *p = DownCloudEntity.PitchSpeed.P;
-		*i = DownCloudEntity.PitchSpeed.I;
-		*d = DownCloudEntity.PitchSpeed.D;
+        *p = CloudEntity.PitchSpeed.P;
+		*i = CloudEntity.PitchSpeed.I;
+		*d = CloudEntity.PitchSpeed.D;
         break;
     case __cloud_yaw_speed_pid:
-        *p = DownCloudEntity.YawSpeed.P;
-		*i = DownCloudEntity.YawSpeed.I;
-		*d = DownCloudEntity.YawSpeed.D;	
+        *p = CloudEntity.YawSpeed.P;
+		*i = CloudEntity.YawSpeed.I;
+		*d = CloudEntity.YawSpeed.D;	
         break;
     default:
         break;
@@ -700,77 +762,12 @@ HAL_StatusTypeDef CMD_READ_PID_Rx_GetPidCallback(uint8_t pid_id,float* p,float* 
  * @param     fire_freq     子弹射击频率，单位是RPM。实现上是把云台供弹暂停时间改为 60*1000/fire_freq
  * @param     shoot_mode    子弹射击模式。保留备用。
  */
-void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint8_t fire_freq, uint8_t shoot_mode){
-	DownCloudEntity.Shoot(bullet_speed,fire_freq,shoot_mode);
+void CMD_SHOOT_ExecuteCallback(float bullet_speed, uint32_t fire_cnt,uint32_t shoot_gap, ShootModeEnum_t shoot_mode,int16_t ext_trig)
+{
+		CloudEntity.Shoot(bullet_speed,fire_cnt,shoot_gap,shoot_mode,ext_trig);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
+int32_t get_CloudEntity_Feed_step_left()
+{
+    return CloudEntity.Feed2nd.get_rammer_step_left();
+}

@@ -1,5 +1,5 @@
-#ifndef __SENTRY_CLOUD_CAN_COMMU_HPP_
-#define __SENTRY_CLOUD_CAN_COMMU_HPP_
+#ifndef __SENTRY_DOWN_CLOUD_CAN_COMMU_HPP_
+#define __SENTRY_DOWN_CLOUD_CAN_COMMU_HPP_
 
 
 /** 
@@ -12,9 +12,7 @@
   * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
   */
 
-#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //定义工程标识符__PROJECT_SENTRY_DOWN_CLOUD_
-#define __PROJECT_SENTRY_DOWN_CLOUD_
-#endif // __PROJECT_SENTRY_DOWN_CLOUD_
+#include "sentry_dwncld_config.h"
 
 //CAN板间通信定义，如果修CAN口请修改此处宏定义
 #define CAN_INTERBOARD hcan2
@@ -32,4 +30,4 @@ void CanRxCpltCallBack_CloudCommuUpdata(CAN_HandleTypeDef *_hcan, CAN_RxHeaderTy
 // void ChassisCanRxHandle(void);
 
 
-#endif // __SENTRY_CLOUD_CAN_COMMU_HPP_
+#endif // __SENTRY_DOWN_CLOUD_CAN_COMMU_HPP_

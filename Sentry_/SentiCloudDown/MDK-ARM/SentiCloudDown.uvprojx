@@ -52,9 +52,9 @@
           <OutputName>SentiCloudDown</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -313,7 +313,7 @@
           <Cads>
             <interw>1</interw>
             <Optim>1</Optim>
-            <oTime>0</oTime>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--cpp11</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F405xx,MIGRATE_F407ZG</Define>
+              <Define>USE_HAL_DRIVER,STM32F405xx,__PROJECT_SENTRY_DOWN_CLOUD_</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;..\..\CommonForSentry\App;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;..\..\CommonForSentry\App_Sentry;.\Sentry</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;.\Task;.\Sentry;..\..\CommonForSentry\App;..\..\CommonForSentry\Bsp;..\..\CommonForSentry\Motor;..\..\CommonForSentry\Task;..\..\CommonForSentry\App_Sentry;.\SEGGER_SYSVIEW\Config;.\SEGGER_SYSVIEW\Sample\FreeRTOSV10;.\SEGGER_SYSVIEW\SEGGER</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -674,7 +674,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Bsp</GroupName>
+          <GroupName>User-Bsp</GroupName>
           <Files>
             <File>
               <FileName>bsp_can.cpp</FileName>
@@ -696,10 +696,20 @@
               <FileType>1</FileType>
               <FilePath>..\..\CommonForSentry\Bsp\bsp_icm20602.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_dbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_dbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_judgement.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CommonForSentry\Bsp\bsp_judgement.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>App</GroupName>
+          <GroupName>User-App</GroupName>
           <Files>
             <File>
               <FileName>app_imu.c</FileName>
@@ -729,7 +739,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Sentry</GroupName>
+          <GroupName>User-Sentry</GroupName>
           <Files>
             <File>
               <FileName>sentry_can_commom.cpp</FileName>
@@ -740,6 +750,16 @@
               <FileName>Sentry.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\Sentry\Sentry.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudLogic.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudLogic.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SentryCloudVision.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Sentry\SentryCloudVision.cpp</FilePath>
             </File>
             <File>
               <FileName>SentryDownCloud.cpp</FileName>
@@ -756,25 +776,20 @@
               <FileType>8</FileType>
               <FilePath>.\Sentry\SentryDownCloudCommu.cpp</FilePath>
             </File>
-            <File>
-              <FileName>SentryDownCloudLogic.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\Sentry\SentryDownCloudLogic.cpp</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Task</GroupName>
+          <GroupName>User-Task</GroupName>
           <Files>
             <File>
-              <FileName>task_SentryDownCloud.cpp</FileName>
+              <FileName>task_SentiCloud.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\Task\task_SentryDownCloud.cpp</FilePath>
+              <FilePath>.\Task\task_SentiCloud.cpp</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Motor</GroupName>
+          <GroupName>User-Motor</GroupName>
           <Files>
             <File>
               <FileName>app_AmmoFeed.cpp</FileName>

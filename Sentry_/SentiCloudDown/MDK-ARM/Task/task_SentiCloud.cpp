@@ -1,22 +1,20 @@
 /**
- * @file task_SentryDownCloud.cpp
- * @author ThunderDoge (thunderdoge@qq.com)
- * @brief Tasks of SentryCloud
- * @version 0.1
- * @date 2020-02-18
+ * @file      task_SentiCloud.cpp
+ * @brief     哨兵云台RTOS任务
+ * @details   
+ * @author   ThunderDoge
+ * @date      2020-4-15
+ * @version   v1.0
+ * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+ * Using encoding: gb2312
  * 
- * @copyright Copyright (c) 2020
- * 
+ * v1.0 2020-4-15   标准版本发布. 已添加离线检测
  */
-
-#include "task_SentryDownCloud.hpp"
-
-TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle,task_Check_Handle;
-uint32_t mark1, mark2;
-uint32_t mark3;
+#include "task_SentiCloud.hpp"
+#include "bsp_gy53l1.h"
 
 
-static uint8_t is_cloud_inited=0;   // 哨兵初始化标志位
+
 
 /**
   * @brief  云台总初始化函数
@@ -24,21 +22,22 @@ static uint8_t is_cloud_inited=0;   // 哨兵初始化标志位
   * @param[in]
   * @retval  
   */
-void DownCloud_Init(void)
+void Cloud_Init(void)
 {
     bsp_spi_Icm20602Init(); //陀螺仪Icm20602初始化，在SPI上
-	
     app_imu_Init();         //陀螺仪数据处理app_imu初始化
-	
-#ifndef	MIGRATE_F407ZG
+	#ifndef	MIGRATE_F407ZG	// 在个人的开发板上测试时的宏定义
     bsp_can_Init();  //CAN总线初始化函数
 #endif //MIGRATE_F407ZG
-
+    bsp_dbus_Init(); //DBUS初始化
+	Dbus_CHx_StaticOffset[1] = -4;	//这是遥控器摇杆静态误差。跟特定遥控器相关，换遥控器请更改此值。
+	app_vision_Init();              //视觉串口接收初始化
     manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（选CAN）
-	
-
-	// 初始化标识变量
-    is_cloud_inited = 1;
+	HAL_Delay(500);
+	Dbus_CHx_StaticOffset[0] = 11;
+	Dbus_CHx_StaticOffset[1] = 0;
+	Dbus_CHx_StaticOffset[2] = -16;
+	Dbus_CHx_StaticOffset[3] = 0;
 }
 /**
   * @brief  主任务
@@ -46,26 +45,24 @@ void DownCloud_Init(void)
   * @param[in]  
   * @retval  
   */
-    void
-    task_Main(void *param)
+void task_Main(void *param)
 {
 
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
         app_imu_So3thread();    //获取陀螺仪数据
-		DownCloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         ModeSelect();           //手柄遥控模式初始化
+		CloudEntity.Handle();	//云台数据处理，电机动作。必须在app_imu_So3thread之后调用。
         manager::CANSend();     //统一的CAN电机控制
         vTaskDelayUntil(&LastTick, 1 / portTICK_PERIOD_MS );  //延时1ms
-		
-		
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark(task_Main_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
     }
 }
+char s_u5[]="superior_uart5_tx_test\r\n";
 /**
   * @brief  视觉串口周期性发送任务+CAN通信周期性发送任务
   * @details  因为执行周期不同所以和主任务分开。100HZ运行。
@@ -77,16 +74,16 @@ void task_CommuRoutine(void *param)
     TickType_t LastTick = xTaskGetTickCount();
     while (1)
     {
-		// CloudVisonTxRoutine();  //云台视觉串口发送
+		CloudVisonTxRoutine();  //云台视觉串口发送
 		DownCloudCanCommuRoutine(); //上云台CAN发送
-		vTaskDelayUntil(&LastTick,2 / portTICK_PERIOD_MS);   //延时2ms
 		
 		#ifdef INCLUDE_uxTaskGetStackHighWaterMark
 		mark2 = uxTaskGetStackHighWaterMark(task_CommuRoutine_Handle);  //占用堆栈水位线。备用于DEBUG
 		#endif
+//		vTaskDelayUntil(&LastTick,10 / portTICK_PERIOD_MS);
+		vTaskDelay( 1 / portTICK_PERIOD_MS );
 	}
 }
-
 
 /**
  * @brief 设备离线检测任务
@@ -98,30 +95,29 @@ void task_Check(void* param)
 	app_check_Init();
 
     // 与云台的连接
-	app_check_EnableDevice(id_UpCloudConnect,500);
-    app_check_SignDeviceTickTo(id_UpCloudConnect,&CanRx.CanUpdateTime[tUpCloud_Info]);
+	app_check_EnableDevice(id_DownCloudConnect,500);
+    app_check_SignDeviceTickTo(id_DownCloudConnect,&CanRx.CanUpdateTime[tDownCloud_Info]);
     app_check_EnableDevice(id_ChassisConnect,500);
     app_check_SignDeviceTickTo(id_ChassisConnect,&CanRx.CanUpdateTime[tChassis_Info]);
+    // DBUS
+    app_check_EnableDevice(id_Dbus,50);
+    app_check_SignDeviceTickTo(id_Dbus,&bsp_dbus_Data.UpdateTick);
     // 电机设定
-    app_check_EnableDevice(id_DownCloudPitchMotor,50);
-    app_check_SignDeviceTickTo(id_DownCloudPitchMotor,&DownCloudEntity.PitchMotor.LastUpdateTime);
-    app_check_EnableDevice(id_DownCloudYawMotor,50);
-    app_check_SignDeviceTickTo(id_DownCloudYawMotor,&DownCloudEntity.YawMotor.LastUpdateTime);
-    app_check_EnableDevice(id_DownCloudLeftFric,50);
-    app_check_SignDeviceTickTo(id_DownCloudLeftFric,&DownCloudEntity.FricLeftMotor.LastUpdateTime);
-    app_check_EnableDevice(id_DownCloudRightFric,50);
-    app_check_SignDeviceTickTo(id_DownCloudRightFric,&DownCloudEntity.FricRightMotor.LastUpdateTime);
-    app_check_EnableDevice(id_DownCloudFeedMotor,50);
-    app_check_SignDeviceTickTo(id_DownCloudFeedMotor,&DownCloudEntity.Feed2nd.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudPitchMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudPitchMotor,&CloudEntity.PitchMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudYawMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudYawMotor,&CloudEntity.YawMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudLeftFric,50);
+    app_check_SignDeviceTickTo(id_UpCloudLeftFric,&CloudEntity.FricLeftMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudRightFric,50);
+    app_check_SignDeviceTickTo(id_UpCloudRightFric,&CloudEntity.FricRightMotor.LastUpdateTime);
+    app_check_EnableDevice(id_UpCloudFeedMotor,50);
+    app_check_SignDeviceTickTo(id_UpCloudFeedMotor,&CloudEntity.Feed2nd.LastUpdateTime);
 
     
     while (1)
     {
         app_check_RefreshList();    // 刷新离线列表
-        #ifdef INCLUDE_uxTaskGetStackHighWaterMark
-		mark3 = uxTaskGetStackHighWaterMark(task_Check_Handle);  //占用堆栈水位线。备用于DEBUG
-		#endif
-
         vTaskDelay(10/portTICK_PERIOD_MS);  
     }
     
@@ -129,6 +125,12 @@ void task_Check(void* param)
 
 
 
+
+
+TaskHandle_t task_Main_Handle,task_CommuRoutine_Handle;
+uint32_t mark1, mark2;
+TaskHandle_t task_Check_Handle;
+uint32_t mark3;
 
 /**
   * @brief  任务启动器
@@ -138,9 +140,6 @@ void task_Check(void* param)
   */
 void TaskStarter(void)
 {
-    if(!is_cloud_inited){   // 确认初始化
-        DownCloud_Init();
-    }
     xTaskCreate((TaskFunction_t)	task_Main,		//任务代码
 				(char*)				"task_Main",	//任务名
 				(uint16_t)			1024,			//堆栈深度
@@ -152,15 +151,16 @@ void TaskStarter(void)
 				(char*)				"task_CommuRoutine",
 				(uint16_t)			1024,
 				(void*)				NULL,
-				(UBaseType_t)		4,
+				(UBaseType_t)		2,
 				(TaskHandle_t*)		&task_CommuRoutine_Handle);
-				
+
 	xTaskCreate((TaskFunction_t)	task_Check,
 				(char*)				"task_Check",
 				(uint16_t)			1024,
 				(void*)				NULL,
-				(UBaseType_t)		4,
+				(UBaseType_t)		3,
 				(TaskHandle_t*)		&task_Check_Handle);
+							
 }
 //CAN线测试
 // int16_t test_data[4];

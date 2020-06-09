@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -29,7 +29,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "task_SentryDownCloud.hpp"
+//#include "stdio.h"	// stdio.h may cause CAN RX error
+//#include "stdio.h"
+#include "task_SentiCloud.hpp"
+#include <string.h>
+//#include "SEGGER_SYSVIEW.h"
+//#include "app_AmmoFeed.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,7 +44,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,6 +67,80 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+#ifdef __MAIN_DEBUG
+uint8_t buf[100];
+uint8_t s[] = "uart-test";
+
+#ifdef __VISION_TEST
+
+int v_case;
+
+uint8_t str_normal[] = {0xff,0x13,0x9a,0x99,0x99,0x3f,0x9a,0x99,0x59,0x40,0x1,0x98,0x0,0x0,0x0,0x0,0x8f,0xd};
+uint8_t s1[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0 ,0x0 ,0x0 ,0x0 ,0xf1 ,0xd};
+uint8_t trush[] = {0x13, 0x9a ,0x99,0x99, 0x3f};
+uint8_t s2[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfb ,0x0 ,0x0 ,0x0 ,0x0 ,0xf2 ,0xd };
+	
+uint8_t s3_a[] = {0x13, 0x9a ,0x99,0x99, 0x3f,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
+uint8_t s3_b_s[] = {0x0 ,0x0 ,0x0 ,0xf1 ,0xd,0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfb ,0x0 ,0x0 ,0x0 ,0x0 ,0xf2 ,0xd };
+
+uint8_t trush4[]={0x54 ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x20 ,0xa0 ,0x0 ,0x0 ,0x41 ,0x6d};
+uint8_t s4_a[]={0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59 ,0x40,0x1 ,0xfa ,0x0};
+uint8_t s4_b[]={0x0 ,0x0 ,0x0 ,0xf1 ,0xd};	
+
+uint8_t s5[] = {0xff ,0x13 ,0x9a ,0x99 ,0x99 ,0x3f ,0x9a ,0x99 ,0x59,0x40,0x1,0xfa,0x0,0xff,
+0x13,0x0,0xf1,0xd,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xa,0xb,0x5f,0xd};
+
+void v_buf_insert(uint8_t* pdata, int size)
+{
+    memcpy(Vision_Rxbuffer+not_analysed_index,  pdata, size);
+    not_analysed_index += size;
+    if(not_analysed_index>120)
+        not_analysed_index = 120;
+}
+void v_buf_clr()
+{
+    not_analysed_index = 0;
+    memset(Vision_Rxbuffer,0,sizeof(Vision_Rxbuffer));
+}
+
+#endif // __VISION_TEST
+
+#endif // __MAIN_DEBUG
+
+
+
+//#ifdef __stdio_h
+
+//#ifdef __GNUC__
+//  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+//#else
+//  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+//#endif
+
+//PUTCHAR_PROTOTYPE
+//{
+//	if(HAL_UART_Transmit(&huart5,(uint8_t*)&ch,1,0xff) == HAL_OK)
+//		return ch;
+//	else
+//		return EOF;
+//}
+
+//#undef PUTCHAR_PROTOTYPE
+
+//#endif
+//extern Motor_t DJI_2006;
+//pid FeedSpeed(20, 0, 1, 1000, 7000);
+//pid FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200);
+//AmmoFeed ttt(1,0x201,&DJI_2006,7, -1, &FeedSpeed, &FeedPositon);
+
+//int k;
+
+//int32_t ttt_free_spd=-3000;
+//int16_t ttt_d_time=100;
+//int16_t ttt_trig;
+
+extern float p,y;
+
 /* USER CODE END 0 */
 
 /**
@@ -82,7 +160,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -95,14 +172,19 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_CAN1_Init();
-  MX_CAN2_Init();
   MX_SPI1_Init();
   MX_UART5_Init();
-  MX_USART3_UART_Init();
   MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
-	DownCloud_Init();    // 哨兵硬件初始化
+  
+  Cloud_Init();	// Sentinal Cloud Hardware Init 硬件初始???
+//    bsp_can_Init();  //CAN总线初始化函??
+//    manager::CANSelect(&hcan1, &hcan2); //大疆can电机库初始化（???CAN??
+//	SEGGER_SYSVIEW_Conf();
+	TaskStarter(); /// 
 
   /* USER CODE END 2 */
 
@@ -116,8 +198,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
+//  ttt.Enable_Block(6000,200,5);
+//  ttt.Burst_Set(3,100,&ttt_trig);
   while (1)
   {
+//	  ttt.Burst_Set(3,100,&ttt_trig);
+//	  manager::CANSend();
+	  HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -200,7 +288,10 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+	while(1U)
+	{
+		HAL_Delay(1);	// Error waiting debug.
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -217,6 +308,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	printf("Wrong parameters value: file %s on line %d\r\n", file, line);
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

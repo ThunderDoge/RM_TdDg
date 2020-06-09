@@ -1,30 +1,31 @@
 /**
  * @file Sentry.hpp
- * @brief    ÉÚ±øÖ§³Ö°ü
- * @details  
- * @author   ThunderDoge
- * @date     
- * @version  
- * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
- */
+  * @brief    哨兵总头文件
+  * @details  
+  * @author   ThunderDoge
+  * @date     2020-4-15
+  * @version  v1.0
+  * @par Copyright (c):  OnePointFive, the UESTC RoboMaster Team. 2019~2020 
+  * 
+  * v1.0    2020-4-15   
+  */
 /**
  * @mainpage
  */
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
-#ifndef __PROJECT_SENTRY_DOWN_CLOUD_     //定义工程标识符__PROJECT_SENTRY_DOWN_CLOUD_
-#define __PROJECT_SENTRY_DOWN_CLOUD_
-#endif // __PROJECT_SENTRY_DOWN_CLOUD_
 
-#include "SentryDownCloudLogic.hpp"
+#include "sentry_dwncld_config.h"
+#include "SentryCloudLogic.hpp"
 #include "SentryDownCloudCommu.hpp"
-#include "sentry_config.hpp"
 
-// #include "SentryCommu.hpp"
-// #include "SentryDownCloud.hpp"
-// #include "SentryCanCommu.hpp"
-// #include "SentryDownCloudVision.hpp"
-// #include "SentryTroubleShooter.hpp"
+#if ((defined(__PROJECT_SENTRY_CLOUD_) + defined (__PROJECT_SENTRY_DOWN_CLOUD_) + defined (__PROJECT_SENTRY_CHASSIS_))>1)
+    #warning "Multiple sentry project identifier macro defined."
+    #endif // SENTRY ID MULTI DEF
+
+#if (!defined (__PROJECT_SENTRY_CLOUD_) && !defined (__PROJECT_SENTRY_DOWN_CLOUD_) && !defined (__PROJECT_SENTRY_CHASSIS_))
+    #warning "None of sentry project identifier macro found."
+    #endif // SENTRY ID NOT FOUND
 
 #endif // __SENTRY_HPP_
