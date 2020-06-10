@@ -18,7 +18,7 @@ Motor_t DJI_6020(8192, 1);
 Motor_t DJI_3508_Fric(8192, 1);
 
 // 电机实体定义 
-SentryCloud CloudEntity(1, 0x205, 1, 0x206, 1, 0x207, 1, 0x204, 1, 0x203, 1, 0x201);
+SentryCloud CloudEntity(1, 0x205, 1, 0x206, 1, 0x207, 1, 0x203, 1, 0x204, 1, 0x201);
 
 /**
  * @brief 云台物理实体类 构造 Construct a new Sentry Cloud:: Sentry Cloud object
@@ -55,8 +55,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	  Pitch2ndGyroSpeed(-8, 0, 0, 2000, 0, 10, 10, 500),
 	  Pitch2ndGyroPosition(300, 30, 0, 2000, 0, 10, 10, 5),
 
-	  DualSpeed(-6, 0, 0, 0, 0, 10, 10, 500), 
-	  DualPosition(-20, -1, 0, 1400, 0, 10, 10, 100),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
+	  DualSpeed(-6, 0, 0, 0, 30000, 10, 10, 500), 
+	  DualPosition(-20, -1, 0, 1400, 10000, 10, 10, 100),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
       DualGyroSpeed(-8, 0, 0, 0, 0, 10, 10, 500),
       DualGyroPosition(300, 30, 0, 1100, 0, 10, 10, 5),
 
@@ -88,8 +88,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 */
         // 初始化各电机参数
 	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
-      PitchMotor(pitch_can_num, pitch_can_id, 8188, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
-      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 4085, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      PitchMotor(pitch_can_num, pitch_can_id, 4082, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
+      Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 5483, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
       FricRightMotor(fric_r_can_num, fric_r_can_id, &DJI_3508_Fric, &FricRightSpeed),
       Feed2nd(feed_can_num, feed_can_id, &DJI_2006, 7, -1, &FeedSpeed, &FeedPositon)
@@ -104,7 +104,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 	DualPosition.Custom_Diff = PitchMotor.Gyro_RealSpeed;
 
     // 设定软件限位
-	SetPitchRealAngleLimit(35,-60);
+	SetPitchRealAngleLimit(15,-40);
 };
 /**
  * @brief 云台自动控制托管
@@ -395,6 +395,7 @@ void SentryCloud::CloudModeCtrl()
 }
 /**
  * @brief 设定云台pitch软件限位
+ * 水平位置为pitch 0 度位置
  * 
  * @param     max 
  * @param     min 
@@ -494,16 +495,18 @@ void SentryCloud::PitchRealAngleLimitCtrl()
 	{
 		CloudEntity.PitchMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[0];
 	}
-	
-	if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
-	{
-		CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndMotor.PID_Out->IMax;
-		CloudEntity.Pitch2ndMotor.PID_Out->IMax = 1;
-	}
-	if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
-	{
-		CloudEntity.Pitch2ndMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[1];
-	}
+	if(Pitch2ndMotor.cooperative == 0)
+    {
+        if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
+        {
+            CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndMotor.PID_Out->IMax;
+            CloudEntity.Pitch2ndMotor.PID_Out->IMax = 1;
+        }
+        if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
+        {
+            CloudEntity.Pitch2ndMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[1];
+        }
+    }
 
 }
 
@@ -598,20 +601,20 @@ void SentryCloud::PitchModeCtrl(void)
  */
 void SentryCloud::YawMeGyModeCtrl(void)
 {
-    if((-95.0f>=MechanicYaw && MechanicYaw>=-106.8f)
-    ||(-55.78f>=MechanicYaw && MechanicYaw>=-70.95f)
-    ||(-19.5f>=MechanicYaw && MechanicYaw>=-35.0f)
-    ||(104.56f>=MechanicYaw && MechanicYaw>=95.77f)
-    ||(141.9f>=MechanicYaw && MechanicYaw>=127.0f)
-    ||(178.7f>=MechanicYaw && MechanicYaw>=164.0f)
-    )
-    {
-        Yaw_MeGy_Advice = GyroCtrl;
-    }
-    else
-    {
+    // if((-95.0f>=MechanicYaw && MechanicYaw>=-106.8f)
+    // ||(-55.78f>=MechanicYaw && MechanicYaw>=-70.95f)
+    // ||(-19.5f>=MechanicYaw && MechanicYaw>=-35.0f)
+    // ||(104.56f>=MechanicYaw && MechanicYaw>=95.77f)
+    // ||(141.9f>=MechanicYaw && MechanicYaw>=127.0f)
+    // ||(178.7f>=MechanicYaw && MechanicYaw>=164.0f)
+    // )
+    // {
+    //     Yaw_MeGy_Advice = GyroCtrl;
+    // }
+    // else
+    // {
         Yaw_MeGy_Advice = MechCtrl;
-    }
+    // }
     
     if(CloudMode == auto_cloud)
     {
@@ -679,18 +682,22 @@ void SentryCloud::RedButtonEffectCtrl(void)
  */
 void SentryCloud::ImuDataProcessHandle()
 {
+    //更新云台的Yaw,Pitch角度
+	RealYaw = YawMotor.RealAngle;   //就是电机的角度
+	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
+	RealPitch = - PitchMotor.RealAngle;	//注意负号
 	if(CloudMode != absolute_gyro_cloud && Yaw_MeGy_Advice != GyroCtrl)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
 	{
-		app_imu_data.integral.Roll = -CloudEntity.PitchMotor.RealAngle;//注意负号。
-		app_imu_data.integral.Yaw = CloudEntity.YawMotor.RealAngle;//注意负号。
+		app_imu_data.integral.Pitch = - RealPitch;//注意负号。
+		app_imu_data.integral.Yaw = RealYaw;//注意负号。
 	}
 	//↓↓↓陀螺仪角度旋转到枪口方向↓↓↓
-	RotatedImuAngle[0] = -app_imu_data.integral.Pitch;
-    RotatedImuAngle[1] = app_imu_data.integral.Roll;
+	RotatedImuAngle[0] = app_imu_data.integral.Roll;
+    RotatedImuAngle[1] = -app_imu_data.integral.Pitch;
 	RotatedImuAngle[2] = app_imu_data.integral.Yaw;
 	//↓↓↓陀螺仪加速度旋转到枪口方向↓↓↓
-	RotatedImuAngleRate[0] = -app_imu_data.Angle_Rate[1];
-    RotatedImuAngleRate[1] = app_imu_data.Angle_Rate[0];
+	RotatedImuAngleRate[0] = app_imu_data.Angle_Rate[0];
+    RotatedImuAngleRate[1] = -app_imu_data.Angle_Rate[1];   // dwncld modified
 	RotatedImuAngleRate[2] = app_imu_data.Angle_Rate[2];
     //↓↓↓陀螺仪角速度旋转到炮塔方向，即Roll,Pitch水平，Yaw随枪口Yaw↓↓↓
     float Cp = cosf(RealPitch), Sp = sinf(RealPitch);
@@ -698,10 +705,6 @@ void SentryCloud::ImuDataProcessHandle()
     BaseImuAngleRate[0] = Cp*RotatedImuAngleRate[0] + Sp*RotatedImuAngleRate[2];
     BaseImuAngleRate[1] = RotatedImuAngleRate[1];
     BaseImuAngleRate[2] = -Sp*RotatedImuAngleRate[0] + Cp*RotatedImuAngleRate[2];
-    //更新云台的Yaw,Pitch角度
-	RealYaw = YawMotor.RealAngle;   //就是电机的角度
-	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
-	RealPitch = - PitchMotor.RealAngle;	//注意负号
 }
 
 
