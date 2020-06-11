@@ -97,7 +97,7 @@ public:
 	PitchModeEnum_t pitch_ctrl_mode = __cloud_main_pitch;         ///< 云台单pitch/双pitch模式
     MechGyroMode_t Yaw_MeGy_Advice;     ///< 建议的Yaw的机械角/陀螺仪模式。如果是auto_cloud模式它将影响控制模式
 
-    uint8_t pitch_exceed_flag[2];       ///< pitch超过软件限位的标志位
+    int8_t pitch_exceed_flag;       ///< pitch超过软件限位的标志位
 
     /*-------------------------------------电机用PID---------------------------------------*/
 
@@ -171,7 +171,7 @@ private:
     PitchModeEnum_t last_pitch_ctrl_mode = __cloud_main_pitch;    ///< 云台单pitch/双pitch模式，历史
     
 
-    uint8_t pitch_last_exceed_flag[2];  ///< pitch超过软件限位的标志位,上一次数值
+    uint8_t pitch_last_exceed_flag;  ///< pitch超过软件限位的标志位,上一次数值
     
     float pitch_IMax_save[2];           ///< pitch超过软件限位时关闭IMAX，IMAX保存到这里
 
@@ -199,7 +199,8 @@ private:
 
     void SetAngleTo_NoMode(float pitch, float yaw);        ///< 机械角度设定，不改变控制模式
     void SetAngleTo_Gyro_NoMode(float pitch, float yaw);   ///< 角度设定 陀螺仪控制模式，不改变控制模式
-    void Safe_Set_NoMode(void);
+    void SetAnglePitchTo_NoMode(float pitch);   ///< 单独设定pitch机械角度，不改变控制模式
+    void Safe_Set_NoMode(void); ///< 安全模式不改变控制模式
 	
     //废案 5-23
 	// void EnterModeDualPitch(void);      

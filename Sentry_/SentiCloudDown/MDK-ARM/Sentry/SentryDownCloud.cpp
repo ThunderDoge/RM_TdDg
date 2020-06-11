@@ -60,13 +60,13 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       DualGyroSpeed(-8, 0, 0, 0, 0, 10, 10, 500),
       DualGyroPosition(300, 30, 0, 1100, 0, 10, 10, 5),
 
-      YawSpeed(20, 0, 0, 0, 0, 10, 10, 500),
-      YawPosition(20, 2,-0.5, 300, 0, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawSpeed(-20, 0, 0, 0, 30000, 10, 10, 500),
+      YawPosition(-20, -2,0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
       YawGyroSpeed(40, 0, 0, 0, 0, 10, 10, 500),
       YawGyroPosition(200, 5, 0, 2000, 0, 10, 10, 3000),
 	  
-      FricLeftSpeed(10, 0, 0, 2000, 0, 10, 10, 500),
-      FricRightSpeed(10, 0, 0, 2000, 0, 10, 10, 500),
+      FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
+      FricRightSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
       FeedSpeed(20, 0, 1, 1000, 7000),
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
 /*    : PitchSpeed(-6, 0, -8, 2000, 30000, 10, 10, 500), 
@@ -87,7 +87,7 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
       FeedPositon(0.5, 0.01, 0, 1000, 20000, 0, 200),
 */
         // 初始化各电机参数
-	  YawMotor(yaw_can_num, yaw_can_id, 4086, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
+	  YawMotor(yaw_can_num, yaw_can_id, 1366, &DJI_6020, &YawSpeed, &YawPosition, &YawGyroSpeed, &YawGyroPosition, &RotatedImuAngleRate[2], &RotatedImuAngle[2]),      // 请注意YAW轴位置环直接采取的是底座的朝向
       PitchMotor(pitch_can_num, pitch_can_id, 4082, &DJI_6020, &PitchSpeed, &PitchPosition, &PitchGyroSpeed, &PitchGyroPosition, &RotatedImuAngleRate[1], &RotatedImuAngle[1]),
       Pitch2ndMotor(pitch2nd_can_num, pitch2nd_can_id, 5483, &DJI_6020, &Pitch2ndSpeed, &Pitch2ndPosition, &Pitch2ndGyroSpeed, &Pitch2ndGyroPosition,&RotatedImuAngleRate[1], &RotatedImuAngle[1]),
 	  FricLeftMotor(fric_l_can_num, fric_l_can_id, &DJI_3508_Fric, &FricLeftSpeed),
@@ -180,7 +180,7 @@ void SentryCloud::SetAngleTo(float pitch, float yaw)
 	
     PitchMotor.Angle_Set(-TargetPitch);	//注意负号
 	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Angle_Set(TargetYaw);
+    YawMotor.Angle_Set(-TargetYaw);
 }
 /**
  * @brief 设定陀螺仪控制角度，并且设定模式
@@ -204,7 +204,7 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 
     PitchMotor.Gyro_Angle_Set(TargetPitch);
 	Pitch2ndMotor.Gyro_Angle_Set(TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Gyro_Angle_Set(TargetYaw);
+    YawMotor.Gyro_Angle_Set(-TargetYaw);
 }
 /**
  * @brief 设定角度 - 自动选择控制
@@ -251,7 +251,7 @@ void SentryCloud::SetAngleTo_NoMode(float pitch, float yaw)
 	
     PitchMotor.Angle_Set(-TargetPitch);	//注意负号
 	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Angle_Set(TargetYaw);
+    YawMotor.Angle_Set(-TargetYaw);
 }
 /**
  * @brief 设定机械角控制角度 - 仅供内部调用
@@ -271,7 +271,24 @@ void SentryCloud::SetAngleTo_Gyro_NoMode(float pitch, float yaw)
 
     PitchMotor.Gyro_Angle_Set(-TargetPitch);
 	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Gyro_Angle_Set(TargetYaw);
+    YawMotor.Gyro_Angle_Set(-TargetYaw);
+}
+/**
+ * @brief 单独设定pitch机械角度，不改变控制模式
+ * 
+ * @param     pitch 
+ */
+void SentryCloud::SetAnglePitchTo_NoMode(float pitch)
+{
+	if(pitch > pitch_limit_max)
+		pitch = pitch_limit_max;
+	if(pitch < pitch_limit_min)
+		pitch = pitch_limit_min;
+
+    TargetPitch = pitch;
+
+    PitchMotor.Angle_Set(-TargetPitch);
+	Pitch2ndMotor.Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
 }
 
 /**
@@ -385,7 +402,7 @@ void SentryCloud::CloudModeCtrl()
 
     case save_cloud:
         Safe_Set_NoMode();
-    
+		break;
     case default_cloud_mode:
     default:
         CloudMode = default_cloud_mode;
@@ -395,8 +412,8 @@ void SentryCloud::CloudModeCtrl()
 }
 /**
  * @brief 设定云台pitch软件限位
- * 水平位置为pitch 0 度位置
- * 
+ * 水平位置为pitch 0 度位置，向上为正
+ * 向敌方向为yaw 0 度位置，向左为正
  * @param     max 
  * @param     min 
  */
@@ -425,89 +442,68 @@ float UpCloudEntity_FunctionYawToPitchlimit(float yaw)
  */
 void SentryCloud::PitchRealAngleLimitCtrl()
 {
+    switch (CloudMode)
+    {
+        // pitch 位置控制模式下
+        case hold_cloud:
+        case speed_cloud:
+        case absolute_cloud:
+        case relative_cloud:
+        case absolute_gyro_cloud:
+        case auto_cloud:
+            // 位置控制情况下，仅在 RealPitch 和 TargetPitch 都超过软件限 会 设定 pitch_exceed_flag
+            if(RealPitch > pitch_limit_max && TargetPitch > pitch_limit_max)
+            {
+                SetAnglePitchTo_NoMode(pitch_limit_max);
+                pitch_exceed_flag = 1;
+            }
+            else if(RealPitch < pitch_limit_min && TargetPitch < pitch_limit_min)
+            {
+                SetAnglePitchTo_NoMode(pitch_limit_min);
+                pitch_exceed_flag = -1;
+            }
+            else{
+                pitch_exceed_flag = 0;
+            }
+            break;
+        // pitch 速度控制模式下
+        case save_cloud:
+        case default_cloud_mode:
+            // 速度控制情况下，只要 RealPitch 超过软件限，直接 Set_AnglePitch到软件限
+            if(RealPitch > pitch_limit_max)
+            {
+                SetAnglePitchTo_NoMode(pitch_limit_max);
+                pitch_exceed_flag = 1;
+            }
+            else if(RealPitch < pitch_limit_min)
+            {
+                SetAnglePitchTo_NoMode(pitch_limit_min);
+                pitch_exceed_flag = -1;
+            }
+            else{
+                pitch_exceed_flag = 0;
+            }
+            break;
+    default:
+        break;
+    }
+
+    if((pitch_exceed_flag == 0) && (pitch_last_exceed_flag !=0))    // 进入超限模式
+    {   // 保存IMAX，关闭I
+		pitch_IMax_save[0] = PitchMotor.PID_Out->IMax;
+        pitch_IMax_save[1] = Pitch2ndMotor.PID_Out->IMax;
+		PitchMotor.PID_Out->IMax = 0;
+        Pitch2ndMotor.PID_Out->IMax = 0;
+    }
+    if((pitch_exceed_flag != 0) && (pitch_last_exceed_flag == 0))
+    {   // 回复IMAX以开启I
+		PitchMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[0];
+		Pitch2ndMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[1];
+    }
+
+
     // 复制旧的pitch_exceed_flag
-    memcpy(pitch_last_exceed_flag,pitch_exceed_flag,sizeof(pitch_last_exceed_flag));
-
-    // 速度控制情况下，只要 RealAngle 超过软件限，直接 Angle_Set(Position_Ctl事模式)到软件限
-    // 并且设定 pitch_exceed_flag[xx] = 1; 这会导致IMAX置零 见下面。
-    if(PitchMotor.RunState == Speed_Ctl || PitchMotor.RunState == Gyro_Speed_Ctl)
-    {
-        if(PitchMotor.RealAngle > pitch_limit_max)
-        {
-            PitchMotor.Angle_Set(pitch_limit_max);
-            pitch_exceed_flag[0] = 1;
-        }
-        else if(PitchMotor.RealAngle < pitch_limit_min)
-        {
-            PitchMotor.Angle_Set(pitch_limit_min);
-            pitch_exceed_flag[0] = 1;
-        }
-        else
-        {
-            pitch_exceed_flag[0] = 0;
-        }
-    }
-    // 位置控制情况下，仅在 RealAngle 和 TargetAngle 都超过软件限 会 设定 pitch_exceed_flag
-    else if(PitchMotor.RunState == Position_Ctl || PitchMotor.RunState == Gyro_Position_Ctl)
-    {
-        if(PitchMotor.RealAngle > pitch_limit_max && PitchMotor.TargetAngle > pitch_limit_max)
-        {
-            PitchMotor.Angle_Set(pitch_limit_max);
-            pitch_exceed_flag[0] = 1;
-        }
-        else if(PitchMotor.RealAngle < pitch_limit_min && PitchMotor.TargetAngle < pitch_limit_min)
-        {
-            PitchMotor.Angle_Set(pitch_limit_min);
-            pitch_exceed_flag[0] = 1;
-        }
-        else
-        {
-            pitch_exceed_flag[0] = 0;
-        }
-    }
-
-    if(Pitch2ndMotor.cooperative == 0)
-    {
-        if(Pitch2ndMotor.RealAngle >= pitch_limit_max)
-        {
-            Pitch2ndMotor.Angle_Set(pitch_limit_max);
-            pitch_exceed_flag[1] = 1;
-        }
-        else if(Pitch2ndMotor.RealAngle <= pitch_limit_min)
-        {
-            Pitch2ndMotor.Angle_Set(pitch_limit_min);
-            pitch_exceed_flag[1] = 1;
-        }
-        else
-        {
-            pitch_exceed_flag[1] = 0;
-        }
-    }
-	
-    // 超限保存 IMAX，并且写入IMAX=0，关闭积分作用以避免抖动
-    // 回到限内 从保存变量回复 IMAX
-	if(CloudEntity.pitch_exceed_flag[0] && !CloudEntity.pitch_last_exceed_flag[0])
-	{
-		CloudEntity.pitch_IMax_save[0] = CloudEntity.PitchMotor.PID_Out->IMax;
-		CloudEntity.PitchMotor.PID_Out->IMax = 0;
-	}
-	if(!CloudEntity.pitch_exceed_flag[0] && CloudEntity.pitch_last_exceed_flag[0])
-	{
-		CloudEntity.PitchMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[0];
-	}
-	if(Pitch2ndMotor.cooperative == 0)
-    {
-        if(CloudEntity.pitch_exceed_flag[1] && !CloudEntity.pitch_last_exceed_flag[1])
-        {
-            CloudEntity.pitch_IMax_save[1] = CloudEntity.Pitch2ndMotor.PID_Out->IMax;
-            CloudEntity.Pitch2ndMotor.PID_Out->IMax = 1;
-        }
-        if(!CloudEntity.pitch_exceed_flag[1] && CloudEntity.pitch_last_exceed_flag[1])
-        {
-            CloudEntity.Pitch2ndMotor.PID_Out->IMax = CloudEntity.pitch_IMax_save[1];
-        }
-    }
-
+    pitch_last_exceed_flag = pitch_exceed_flag;
 }
 
 /**
@@ -621,10 +617,10 @@ void SentryCloud::YawMeGyModeCtrl(void)
         switch (Yaw_MeGy_Advice)
         {
         case GyroCtrl:
-            YawMotor.Gyro_Angle_Set(TargetYaw);
+            YawMotor.Gyro_Angle_Set(-TargetYaw);
             break;
         case MechCtrl:
-            YawMotor.Angle_Set(TargetYaw);
+            YawMotor.Angle_Set(-TargetYaw);
             break;
         default:
             Yaw_MeGy_Advice = NoneCtrl;
@@ -683,7 +679,7 @@ void SentryCloud::RedButtonEffectCtrl(void)
 void SentryCloud::ImuDataProcessHandle()
 {
     //更新云台的Yaw,Pitch角度
-	RealYaw = YawMotor.RealAngle;   //就是电机的角度
+	RealYaw = -YawMotor.RealAngle;   //就是电机的角度
 	MechanicYaw = YawMotor.RealPosition*360.f/YawMotor.MotorType->max_mechanical_position;//根据机械角计算出的真实角度
 	RealPitch = - PitchMotor.RealAngle;	//注意负号
 	if(CloudMode != absolute_gyro_cloud && Yaw_MeGy_Advice != GyroCtrl)  //不在陀螺仪控制模式中时，陀螺仪角度始终跟随机械角角度（但是要旋转回陀螺仪角度）
