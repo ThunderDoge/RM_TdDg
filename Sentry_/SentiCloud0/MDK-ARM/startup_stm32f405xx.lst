@@ -830,11 +830,11 @@ ARM Macro Assembler    Page 13
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=senticloud0\startup_stm32f405xx.d -osenticloud0\startup_stm32f4
-05xx.o -I..\Inc -I..\\Inc -I.\RTE\_SentiCloud0 -I"D:\Program Files\Keil_MDK5\AR
-M\PACK\ARM\CMSIS\5.5.1\CMSIS\Core\Include" -I"D:\Program Files\Keil_MDK5\ARM\PA
-CK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include" --prede
-fine="__UVISION_VERSION SETA 528" --predefine="_RTE_ SETA 1" --predefine="STM32
-F405xx SETA 1" --list=startup_stm32f405xx.lst startup_stm32f405xx.s
+05xx.o -I..\Inc -I..\\Inc -I"D:\Program Files\Keil_MDK5\ARM\RV31\INC" -I"D:\Pro
+gram Files\Keil_MDK5\ARM\CMSIS\Include" -I"D:\Program Files\Keil_MDK5\ARM\PACK\
+Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include" --predefin
+e="__UVISION_VERSION SETA 528" --list=startup_stm32f405xx.lst startup_stm32f405
+xx.s
 
 
 
@@ -1905,4 +1905,4 @@ Symbol: __use_two_region_memory
       None
 Comment: __use_two_region_memory unused
 3 symbols
-445 symbols in table
+443 symbols in table

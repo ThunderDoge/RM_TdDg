@@ -15,9 +15,9 @@
 void TaskStarter(void)
 {
 	xTaskCreate(task_Main,"task_Main",1024,NULL,4,NULL);
-//	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
-//	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
-//	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
+	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
+	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
+	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
 }
 /**
   * @brief  统一初始化程序
@@ -48,24 +48,17 @@ void task_Main(void* param)
 	TickType_t LastTick = xTaskGetTickCount();
 	while (1)
 	{
-		SEGGER_SYSVIEW_Print("taskMain_Enter");
 		
-		SEGGER_SYSVIEW_Print("taskMain_PowerRead");
 		bsp_Current_Read();
 		
-		SEGGER_SYSVIEW_Print("taskMain_Encoder");
 		bsp_encoder_Handle();
 		
-		SEGGER_SYSVIEW_Print("taskMain_Imu");
 		app_imu_So3thread();
 		
-		SEGGER_SYSVIEW_Print("taskMain_ChassisHandle");
         ChassisEntity.Handle();
 		
-		SEGGER_SYSVIEW_Print("taskMain_ModeSelect");
 		ModeSelect();
 //		manager::CANSend();	
-		SEGGER_SYSVIEW_Print("taskMain_EXit");
 		vTaskDelayUntil(&LastTick,10/portTICK_PERIOD_MS);
 	}
 }

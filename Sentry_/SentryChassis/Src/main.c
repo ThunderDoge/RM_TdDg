@@ -31,7 +31,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SEGGER_SYSVIEW.h"
 #include "bsp_stddef.h"
 #include "task_sentCha.hpp"
 
@@ -128,8 +127,6 @@ int main(void)
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
 		RoboInit();	// 机器人硬件初始化 ロボットハードウェアの初期化
-//		SEGGER_SYSVIEW_SendSysDesc("N=SentryChassis,O=FreeRTOS,D=STM32F405RG");
-		SEGGER_SYSVIEW_Conf();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
