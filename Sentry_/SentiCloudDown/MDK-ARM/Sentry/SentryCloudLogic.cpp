@@ -198,9 +198,10 @@ void ManualShoot_Gyro()
 }
 void ManualShoot_Gyro_Enter()
 {
-    CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
-    CloudEntity.TargetYaw = CloudEntity.RealYaw;
-    CloudEntity.CloudMode = absolute_gyro_cloud; //视为绝对角控制
+    // CloudEntity.TargetPitch = CloudEntity.RealPitch; //重置 目标角度为当前角度。用以防止模式切换时角度突变。
+    // CloudEntity.TargetYaw = CloudEntity.RealYaw;
+    // CloudEntity.CloudMode = absolute_gyro_cloud; //视为绝对角控制
+    CloudEntity.SetAngleTo_Gyro(CloudEntity.RealPitch,CloudEntity.RealYaw);
 }
 /**
   * @brief  遥控器测试底盘

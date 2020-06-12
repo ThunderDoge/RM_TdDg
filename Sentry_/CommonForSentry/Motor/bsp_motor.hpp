@@ -158,11 +158,11 @@ public:
     void Angle_Set(float);                                                        //!<设定位置，其实可以直?????定TargetPosition
     virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<到时候写??? 注意负数 ???坑了
     virtual void Safe_Set(void);                                                  //!<设定电机进入安全模式，即发送电????0
+    int16_t LastPosition; //!<??????????
+    int16_t LastSpeed;    //!<?????速度
 protected:
     class pid *PID_In;    //!<PID内环
     class pid *PID_Out;   //!<PID外环
-    int16_t LastPosition; //!<??????????
-    int16_t LastSpeed;    //!<?????速度
 
     virtual void update(uint8_t Data[]); //!<直接Data数组的update函数
     virtual void Handle(void);           //!<数据处理函数，用于判???状态，?????PID

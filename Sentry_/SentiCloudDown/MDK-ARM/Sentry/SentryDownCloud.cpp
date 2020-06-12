@@ -57,12 +57,12 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
 
 	  DualSpeed(-6, 0, 0, 0, 30000, 10, 10, 500), 
 	  DualPosition(-20, -1, 0, 1400, 10000, 10, 10, 100),//(15, 1, 0, 1800, 10000, 10, 10, 120)(-15, -3, -40, 1500, 10000, 10, 10, 80)	(-20, -8, 0, 1200, 10000, 10, 10, 80)
-      DualGyroSpeed(-8, 0, 0, 0, 0, 10, 10, 500),
-      DualGyroPosition(300, 30, 0, 1100, 0, 10, 10, 5),
+      DualGyroSpeed(-8, 0, 0, 0, 30000, 10, 10, 500),
+      DualGyroPosition(300, 30, 0, 1100, 10000, 10, 10, 5),
 
       YawSpeed(-20, 0, 0, 0, 30000, 10, 10, 500),
-      YawPosition(-20, -2,0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
-      YawGyroSpeed(40, 0, 0, 0, 0, 10, 10, 500),
+      YawPosition(-20, -2,-0.5, 300, 10000, 10, 2, 100),//(10, 1,0.5, 200, 10000, 10, 2, 100) (10, 0, 0, 2000, 10000, 10, 10, 3000)
+      YawGyroSpeed(-40, 0, 0, 0, 30000, 10, 10, 500),
       YawGyroPosition(200, 5, 0, 2000, 0, 10, 10, 3000),
 	  
       FricLeftSpeed(10, 0, 0, 2000, 30000, 10, 10, 500),
@@ -112,6 +112,8 @@ SentryCloud::SentryCloud(uint8_t yaw_can_num, uint16_t yaw_can_id,
  */
 void SentryCloud::Handle()
 {	
+    FeedAccel = Feed2nd.RealSpeed - Feed2nd.LastSpeed;
+
     /* 陀螺仪数据处理 */
     ImuDataProcessHandle();
     // 单/双PITCH模式控制逻辑
@@ -204,7 +206,7 @@ void SentryCloud::SetAngleTo_Gyro(float pitch, float yaw)
 
     PitchMotor.Gyro_Angle_Set(TargetPitch);
 	Pitch2ndMotor.Gyro_Angle_Set(TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Gyro_Angle_Set(-TargetYaw);
+    YawMotor.Gyro_Angle_Set(TargetYaw);
 }
 /**
  * @brief 设定角度 - 自动选择控制
@@ -271,7 +273,7 @@ void SentryCloud::SetAngleTo_Gyro_NoMode(float pitch, float yaw)
 
     PitchMotor.Gyro_Angle_Set(-TargetPitch);
 	Pitch2ndMotor.Gyro_Angle_Set(-TargetPitch);	// 为副PITCH电机设置相同的。如果是双PITCH模式会自动覆盖。
-    YawMotor.Gyro_Angle_Set(-TargetYaw);
+    YawMotor.Gyro_Angle_Set(TargetYaw);
 }
 /**
  * @brief 单独设定pitch机械角度，不改变控制模式
