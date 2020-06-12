@@ -47,7 +47,7 @@ void bsp_Current_Read(void) //为了方便非4个轮子的兵种，循环与执�
 	
 		Current_Read_Assistant(1); //实际读取数据`
 	
-//	bsp_current_CycleID = 1; //一个循环之后ID号归位
+	bsp_current_CycleID = 1; //一个循环之后ID号归位
 }
 
 void bsp_Current_Init(void) //初始化，为了方便非4个轮子的兵种，循环与执行分开。
@@ -98,48 +98,48 @@ static void Current_Read_Assistant(uint8_t ID)
 	bsp_VoltageRead[ID] = bsp_current_TempVoltage; //把临时量存入读取数组中
 }
 
-static int IT_Rx_States=0;
+// static int IT_Rx_States=0;
 
-void bsp_Current_StartRead_IT(uint8_t ID)
-{
-	bsp_Current_Read_IT_RxCplt(ID);
-}
+// void bsp_Current_StartRead_IT(uint8_t ID)
+// {
+// 	bsp_Current_Read_IT_RxCplt(ID);
+// }
 
 
-void bsp_Current_Read_IT_RxCplt(uint8_t ID)
-{
-	if(HAL_I2C_GetState(&INA226I2C) != HAL_I2C_STATE_READY)
-		HAL_I2C_Master_Abort_IT(&INA226I2C,INA226_ID[ID]);
+// void bsp_Current_Read_IT_RxCplt(uint8_t ID)
+// {
+// 	if(HAL_I2C_GetState(&INA226I2C) != HAL_I2C_STATE_READY)
+// 		HAL_I2C_Master_Abort_IT(&INA226I2C,INA226_ID[ID]);
 	
-	switch(IT_Rx_States)
-	{
-		case 0:
-			I2CTx[0] = 0x01; //Current
-			HAL_I2C_Master_Transmit_IT(&INA226I2C, INA226_ID[ID], &I2CTx[0], 1);
-			HAL_I2C_Master_Receive_IT(&INA226I2C, INA226_ID[ID], &I2CRx[0], 2);
-			IT_Rx_States = 1;
-			break;
-		case 1:
-			bsp_current_TempCurrent = (int16_t)(((I2CRx[0] << 8) + I2CRx[1])) * CURRENT_LSB;
+// 	switch(IT_Rx_States)
+// 	{
+// 		case 0:
+// 			I2CTx[0] = 0x01; //Current
+// 			HAL_I2C_Master_Transmit_IT(&INA226I2C, INA226_ID[ID], &I2CTx[0], 1);
+// 			HAL_I2C_Master_Receive_IT(&INA226I2C, INA226_ID[ID], &I2CRx[0], 2);
+// 			IT_Rx_States = 1;
+// 			break;
+// 		case 1:
+// 			bsp_current_TempCurrent = (int16_t)(((I2CRx[0] << 8) + I2CRx[1])) * CURRENT_LSB;
 
-			I2CTx[0] = 0x02; //Voltage
-			HAL_I2C_Master_Transmit_IT(&INA226I2C, INA226_ID[ID], &I2CTx[0], 1);
-			HAL_I2C_Master_Receive_IT(&INA226I2C, INA226_ID[ID], &I2CRx[0], 2);
-			IT_Rx_States = 2;	
-			break;
-		case 2:
-			bsp_current_TempVoltage = (int16_t)(((I2CRx[0] << 8) + I2CRx[1])) * 1.25;
+// 			I2CTx[0] = 0x02; //Voltage
+// 			HAL_I2C_Master_Transmit_IT(&INA226I2C, INA226_ID[ID], &I2CTx[0], 1);
+// 			HAL_I2C_Master_Receive_IT(&INA226I2C, INA226_ID[ID], &I2CRx[0], 2);
+// 			IT_Rx_States = 2;	
+// 			break;
+// 		case 2:
+// 			bsp_current_TempVoltage = (int16_t)(((I2CRx[0] << 8) + I2CRx[1])) * 1.25;
 
-			bsp_CurrentRead[ID] = bsp_current_TempCurrent; //把临时量存入读取数组中
-			bsp_VoltageRead[ID] = bsp_current_TempVoltage; //把临时量存入读取数组中
-			IT_Rx_States = 0;
-			break;
-	}
-}
+// 			bsp_CurrentRead[ID] = bsp_current_TempCurrent; //把临时量存入读取数组中
+// 			bsp_VoltageRead[ID] = bsp_current_TempVoltage; //把临时量存入读取数组中
+// 			IT_Rx_States = 0;
+// 			break;
+// 	}
+// }
 
-void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-	bsp_Current_Read_IT_RxCplt(1);
-}
+// void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
+// {
+// 	bsp_Current_Read_IT_RxCplt(1);
+// }
 
 

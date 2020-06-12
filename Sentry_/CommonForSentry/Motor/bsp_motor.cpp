@@ -189,6 +189,52 @@ WEAK float pid::pid_run(float err)
 	LastError=CurrentError;
 	return PIDout;
 }
+/**
+ * @brief 增量式PID运行
+ * 相当于PID加一个积分器
+ * @param     err 
+ * @return float 
+ */
+float pid::pid_inc_run(float err)
+{
+    //在所有处理之前调用
+    //用户自定义回调 by thunderdoge 2020-5-19
+    PIDUserProcess();
+	CurrentError = err;
+	Pout = CurrentError*P;
+	
+	//积分分离
+	if(HAL_GetTick() - I_start_time >= I_Time)//如果达到了时间区间的话则进行积分输出
+	{
+		if(ABS(CurrentError) < I_Limited)//仅在小于误差区间时进行I积分
+			Iout += I	*	CurrentError;
+		else
+			Iout=  SIGN(CurrentError)* SIGN(P) * IMax;					//误差区间外边积分拉满
+		I_start_time = HAL_GetTick();//重新定义积分开始时间
+	}
+	
+	if(Custom_Diff!=NULL)//存在自定义微分数据
+		Dout_Accumulative=(*Custom_Diff)*D;
+	else
+		Dout_Accumulative=(CurrentError - LastError)*D;
+	
+	if(HAL_GetTick() - D_start_time > D_Time)//如果达到了时间区间的话则进行微分输出
+	{
+		Dout=Dout_Accumulative;
+		Dout_Accumulative = 0;
+		D_start_time = HAL_GetTick();//重新定义微分开始时间
+	}
+	
+	if(Iout	>=	IMax)Iout=IMax;
+	if((Iout)	<=	-(IMax))Iout=-(IMax);	//积分限幅
+	
+	PIDout += Pout + Iout + Dout;				//Pid输出计算，因为是增量式所以累加计算
+	if(PIDout	>=	PIDMax)PIDout = PIDMax;
+	if(PIDout	<=	PIDMin)PIDout = PIDMin; //输出限幅
+	
+	LastError=CurrentError;
+	return PIDout;
+}
 /** 
 	* @brief  非线性pid运行函数
 	* @param [in]   err 传入pid环的误差 

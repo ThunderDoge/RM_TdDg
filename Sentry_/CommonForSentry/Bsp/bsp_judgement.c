@@ -14,6 +14,9 @@
 #include <stdio.h>
 
 
+uint32_t JudgeMsgRxTick;	/// 更新时间戳
+
+
 #define	CRC_Check	//是否要使用CRC校验		反正都是大疆写的那就用咯
 
 #ifdef CRC_Check
@@ -299,7 +302,7 @@ static void bsp_judgement_Calculate(void)
 		&&	(Verify_CRC16_Check_Sum(bsp_judgement_data + Back1PackFlag,Header.DataLength + 9) == 1)	
 	  )			
 	{
-		//JudgeMsgRxTick = HAL_GetTick(); // 更新设备接收时间
+		JudgeMsgRxTick = HAL_GetTick(); // 更新设备接收时间
 
 		while(index  <= 199)
 		{

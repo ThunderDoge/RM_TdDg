@@ -10,9 +10,9 @@ extern int16_t bsp_VoltageRead[5];
 
 void bsp_Current_Init(void);
 void bsp_Current_Read(void);
-void bsp_Current_StartRead_IT(uint8_t ID);
+// void bsp_Current_StartRead_IT(uint8_t ID);
 
-void bsp_Current_Read_IT_RxCplt(uint8_t ID);
+// void bsp_Current_Read_IT_RxCplt(uint8_t ID);
 
 
 #endif 

@@ -47,6 +47,7 @@ public:
     float D;
     float IMax;
     float PIDMax;
+    float PIDMin;
 
     //???共函???
     pid(float P, float I, float D, float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //传统pid构造函???
@@ -55,6 +56,7 @@ public:
         float ad, float bd, float cd, float dd,
         float IMax, float PIDMax, uint16_t I_Time = 1, uint16_t D_Time = 1, uint16_t I_Limited = 9999); //非线???pid构造函???
     float pid_run(float err);
+    float pid_inc_run(float err);
     float nonlinear_pid_run(float err);
     float sech(float in);
 
@@ -158,9 +160,9 @@ public:
     void Angle_Set(float);                                                        //!<设定位置，其实可以直?????定TargetPosition
     virtual int8_t Enable_Block(uint16_t Limit, uint16_t time, uint16_t err_num); //!<到时候写??? 注意负数 ???坑了
     virtual void Safe_Set(void);                                                  //!<设定电机进入安全模式，即发送电????0
-protected:
     class pid *PID_In;    //!<PID内环
     class pid *PID_Out;   //!<PID外环
+protected:
     int16_t LastPosition; //!<??????????
     int16_t LastSpeed;    //!<?????速度
 

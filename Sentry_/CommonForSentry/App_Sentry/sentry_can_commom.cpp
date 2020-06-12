@@ -470,7 +470,7 @@ void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData)
 ///调用全部接收指令的函数
 void CHASSIS_SUPERIOR_ALL_CanRx(uint32_t StdId, uint8_t *ptrData)
 {
-    if (StdId < 0x200)
+    if (StdId < 0x1FF)
     {
 //        UP_FEED_CanRx(StdId, ptrData);
 //        DOWN_FEED_CanRx(StdId, ptrData);

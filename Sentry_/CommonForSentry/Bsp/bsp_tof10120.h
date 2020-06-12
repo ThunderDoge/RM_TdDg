@@ -15,7 +15,7 @@
 
 #include "usart.h"
 
-#define USE_MEAN_UPDATE_TIME // 宏定义：计算平均时间刷新
+//#define USE_MEAN_UPDATE_TIME // 宏定义：计算平均时间刷新
 
 #ifdef USE_MEAN_UPDATE_TIME
 #include "app_math.h"

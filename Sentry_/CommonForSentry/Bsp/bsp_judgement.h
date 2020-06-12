@@ -432,6 +432,8 @@ void Client_Ellipse(char *name, uint8_t operation, uint8_t layer, uint16_t x_sta
 void Client_Arc(char *name, uint8_t operation, uint8_t layer, uint16_t x_start, uint16_t y_start, uint16_t half_axis_length,
 	int16_t start_angle, int16_t end_angle, uint8_t color, uint8_t line_with);
 
+//更新时间戳
+extern uint32_t JudgeMsgRxTick;
 void bsp_judgement_Init(void);
 void bsp_judgement_It(void);//串口中断函数，记得丢到对应的串口中断里面
 

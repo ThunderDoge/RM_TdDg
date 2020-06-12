@@ -44,6 +44,7 @@ typedef enum __app_check_device_id{
     id_ChassisImu,
 
     id_Dbus,
+	id_Judge,
 	
 	id_Test,
 
