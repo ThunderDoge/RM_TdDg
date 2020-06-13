@@ -55,10 +55,10 @@ void task_Main(void* param)
 		
 		app_imu_So3thread();
 		
-        ChassisEntity.Handle();
 		
 		ModeSelect();
-//		manager::CANSend();	
+        ChassisEntity.Handle();
+		manager::CANSend();	
 		vTaskDelayUntil(&LastTick,10/portTICK_PERIOD_MS);
 	}
 }

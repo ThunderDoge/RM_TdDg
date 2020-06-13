@@ -123,7 +123,7 @@ public:
     float RealSpeed;            ///< 真正的速度，单位mm/s；由编码器
     float RealPosition;         ///< 由编码器与激光测距模块 数据融合估计的真正的距离，单位mm
 
-    uint8_t Accel_Railward_UseKalman = 1;
+    uint8_t Accel_Railward_UseKalman = 0;
 	float Accel_Railward;	    ///<  沿轨道的加速度
 	int16_t LazerRanging[2];	///< 激光测距得出的距离，单位mm
 	float imuAccelHitPillarThreshold[2] = {-1300.0f,-400.0f};		///<  判定为撞击立柱的陀螺仪加速度阈值。取绝对值。

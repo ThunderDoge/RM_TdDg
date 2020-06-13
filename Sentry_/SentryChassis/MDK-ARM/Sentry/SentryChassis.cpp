@@ -103,14 +103,14 @@ void SentryChassis::Handle()
         DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
     #endif // defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
 
-    if(Accel_Railward_UseKalman)
-    {
-        Accel_Railward = app_imu_data.kalman.Accel[0]; // Oringin值过Kalman滤波
-    }
-    else
-    {
-        Accel_Railward = app_imu_data.original.Accel[0];    // 此处取Oringin值
-    }
+    // if(Accel_Railward_UseKalman)
+    // {
+    //     Accel_Railward = app_imu_data.kalman.Accel[1]; // Oringin值过Kalman滤波
+    // }
+    // else
+    // {
+        Accel_Railward = app_imu_data.unitized.Accel[1];    // 此处取Oringin值
+    // }
 
     LocationSpeedDataMultiplexer();     // 获取路程和速度。根据设备离线情况.
 
@@ -118,58 +118,58 @@ void SentryChassis::Handle()
     PillarFlag = PILLAR_NOT_DETECTED;
     
     // 陀螺仪超过阈值指示撞柱
-    #if defined (__APP_CHECK_H)
-    if(app_check_IsEnabled(id_ChassisImu) && !app_check_IsOffline(id_ChassisImu)) // 先检查数据是不是有效的
-    {
-    #endif // defined (__APP_CHECK_H)
-        if(Accel_Railward < -imuAccelHitPillarThreshold[0])     // Accel_Railward是 面对敌方时的左侧为正方向，而imuAccelHitPillarThreshold只有绝对值
-        {
-            PillarFlag = PILLAR_HIT_LEFT;
-            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
-        }
-        else if(Accel_Railward > imuAccelHitPillarThreshold[1])
-        {
-            PillarFlag = PILLAR_HIT_RIGHT;
-            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
-        }
-    #if defined (__APP_CHECK_H)
-    }
-    #endif // defined (__APP_CHECK_H)
+//    #if defined (__APP_CHECK_H)
+//    if(app_check_IsEnabled(id_ChassisImu) && !app_check_IsOffline(id_ChassisImu)) // 先检查数据是不是有效的
+//    {
+//    #endif // defined (__APP_CHECK_H)
+//        if(Accel_Railward < -imuAccelHitPillarThreshold[0])     // Accel_Railward是 面对敌方时的左侧为正方向，而imuAccelHitPillarThreshold只有绝对值
+//        {
+//            PillarFlag = PILLAR_HIT_LEFT;
+//            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
+//        }
+//        else if(Accel_Railward > imuAccelHitPillarThreshold[1])
+//        {
+//            PillarFlag = PILLAR_HIT_RIGHT;
+//            DriveWheel.ForceSetSoftAngle(RAIL_RIGHT_END_MM);
+//        }
+//    #if defined (__APP_CHECK_H)
+//    }
+//    #endif // defined (__APP_CHECK_H)
 
     // 激光测距结果小于阈值->指示 接近柱 或 撞柱. 这是左侧的
-    #if defined (__APP_CHECK_H)
-    if(app_check_IsEnabled(id_ChassisLazerRangingLeft) && !app_check_IsOffline(id_ChassisLazerRangingLeft))
-    {
-    #endif // defined (__APP_CHECK_H)
+//    #if defined (__APP_CHECK_H)
+//    if(app_check_IsEnabled(id_ChassisLazerRangingLeft) && !app_check_IsOffline(id_ChassisLazerRangingLeft))
+//    {
+//    #endif // defined (__APP_CHECK_H)
 
-        if(LazerRanging[0]<LAZER_LEFT_RANGE)    // LAZER_LEFT_RANGE 超过此值认为是无效的
-        {
-            if(LazerRanging[0]<LAZER_TOUCH_LEFT)    // LAZER_TOUCH_LEFT 是测试得到的 底盘贴着柱子时的距离值
-            {
-                PillarFlag = PILLAR_HIT_LEFT;
-            }
-            PillarFlag = PILLAR_LEFT;
-        }
-    #if defined (__APP_CHECK_H)
-    }
-    #endif // defined (__APP_CHECK_H)
+//        if(LazerRanging[0]<LAZER_LEFT_RANGE)    // LAZER_LEFT_RANGE 超过此值认为是无效的
+//        {
+//            if(LazerRanging[0]<LAZER_TOUCH_LEFT)    // LAZER_TOUCH_LEFT 是测试得到的 底盘贴着柱子时的距离值
+//            {
+//                PillarFlag = PILLAR_HIT_LEFT;
+//            }
+//            PillarFlag = PILLAR_LEFT;
+//        }
+//    #if defined (__APP_CHECK_H)
+//    }
+//    #endif // defined (__APP_CHECK_H)
 
     // 激光测距结果小于阈值 指示 接近柱 或 撞柱. 右侧同理.
-    if(app_check_IsEnabled(id_ChassisLazerRangingRight) && !app_check_IsOffline(id_ChassisLazerRangingRight))
-    {
-        if(LazerRanging[0]<LAZER_RIGHT_RANGE)   
-        {
-            if(LazerRanging[0]<LAZER_TOUCH_RIGHT)
-            {
-                PillarFlag = PILLAR_HIT_RIGHT;
-            }
-            PillarFlag = PILLAR_RIGHT;
-        }
-    }
+//    if(app_check_IsEnabled(id_ChassisLazerRangingRight) && !app_check_IsOffline(id_ChassisLazerRangingRight))
+//    {
+//        if(LazerRanging[0]<LAZER_RIGHT_RANGE)   
+//        {
+//            if(LazerRanging[0]<LAZER_TOUCH_RIGHT)
+//            {
+//                PillarFlag = PILLAR_HIT_RIGHT;
+//            }
+//            PillarFlag = PILLAR_RIGHT;
+//        }
+//    }
 
 
 	
-	manager::CANSend();
+//	manager::CANSend();
 }
 
 
