@@ -17,7 +17,7 @@ void TaskStarter(void)
 	xTaskCreate(task_Main,"task_Main",1024,NULL,4,NULL);
 	xTaskCreate(task_Commu,"task_Commu",1024,NULL,4,NULL);
 	xTaskCreate(task_OfflineCheck,"task_OfflineCheck",1024,NULL,4,NULL);
-	xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
+	// xTaskCreate(task_Led,"task_Led",512,NULL,5,NULL);
 }
 /**
   * @brief  统一初始化程序
@@ -35,9 +35,10 @@ void RoboInit()
 	bsp_judgement_Init();
 	
 	
-	manager::CANSelect(&hcan1,&hcan2);
+	manager::CANSelect(&hcan1,NULL);
 	
 }
+uint8_t cansend_result;
 /**
  * @brief  主任务,1KHZ
  * @details  
@@ -50,15 +51,11 @@ void task_Main(void* param)
 	{
 		
 		bsp_Current_Read();
-		
 		bsp_encoder_Handle();
-		
 		app_imu_So3thread();
-		
-		
 		ModeSelect();
         ChassisEntity.Handle();
-		manager::CANSend();	
+		cansend_result = manager::CANSend();	
 		vTaskDelayUntil(&LastTick,10/portTICK_PERIOD_MS);
 	}
 }

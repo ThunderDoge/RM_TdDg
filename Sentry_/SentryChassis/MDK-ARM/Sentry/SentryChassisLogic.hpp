@@ -41,6 +41,7 @@ void ModeSelect(void);  ///模式选择逻辑
 void SuperiorControl(); ///上级通讯控制模式
 void GlobalSafe();  ///全局安全模式
 void Automonus();	/// 自主运动模式
+void TestChassis(void); /// 临时设定的测试模式
 int8_t HitPillarCommand();  
 
 extern app_Mode ModeSuperSuperiorControl,ModeGlobalSafe,ModeAutomonus;

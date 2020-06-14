@@ -287,7 +287,7 @@ void ChassisCanCommuRoutine(void)
 //CAN信息底盘托管控制程序
 void ChassisCanRxHandle(void)
 {
-	ChassisEntity.Mode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
+	ChassisEntity.ChassisMode = (_chassis_mode) CanRx.SuperCon_ChassisMode;
 	switch (CanRx.SuperCon_ChassisMode)
 	{
 	case _chassis_speed:
@@ -460,7 +460,7 @@ void SUPERIOR_SAFE_CanRx(uint32_t StdId, uint8_t *ptrData)
     if (StdId == SUPERIOR_SAFE)
     {
         // CanRx.SuperiorControlFlags = 0;
-        CanRx.SuperCon_ChassisMode = _chassis_save;
+        CanRx.SuperCon_ChassisMode = _chassis_safe;
         CanRx.SuperCon_CloudMode = save_cloud;
         CanRx.CanUpdateTime[tSuperiorControl] = CanRx.CanUpdateTime[tCanRecv]=HAL_GetTick();
     }

@@ -467,29 +467,36 @@ uint8_t manager::CANSend(void)
 	uint8_t check=0;
 	uint8_t result=0;
 	//CAN1结算数据
-	if((CAN1_OnlineID&0x0f)!=0)//判断该列中有没有在线电机
-		check=bsp_can_Sendmessage(CanHandle1,0x200,(int16_t*)CAN1CurrentList);
-	if(check)result|=0x01;
-	if((CAN1_OnlineID&0xf0)!=0)//判断该列中有没有在线电机
-		bsp_can_Sendmessage(CanHandle1,0x1ff,(int16_t*)&CAN1CurrentList[4]);
-	if(check)result|=0x02;
-	if((CAN1_OnlineID&0x700)!=0)//判断该列中有没有在线电机
-		bsp_can_Sendmessage(CanHandle1,0x2ff,(int16_t*)&CAN1CurrentList[8]);
-	if(check)result|=0x04;
+    if (CanHandle1!=NULL)
+    {
+        if((CAN1_OnlineID&0x0f)!=0)//判断该列中有没有在线电机
+            check=bsp_can_Sendmessage(CanHandle1,0x200,(int16_t*)CAN1CurrentList);
+        if(check)result|=0x01;
+        if((CAN1_OnlineID&0xf0)!=0)//判断该列中有没有在线电机
+            bsp_can_Sendmessage(CanHandle1,0x1ff,(int16_t*)&CAN1CurrentList[4]);
+        if(check)result|=0x02;
+        if((CAN1_OnlineID&0x700)!=0)//判断该列中有没有在线电机
+            bsp_can_Sendmessage(CanHandle1,0x2ff,(int16_t*)&CAN1CurrentList[8]);
+        if(check)result|=0x04;
+    }
+    
 	
 	//CAN2结算数据
-	if((CAN2_OnlineID&0x0f)!=0)//判断该列中有没有在线电机
-		bsp_can_Sendmessage(CanHandle2,0x200,(int16_t*)CAN2CurrentList);
-	if(check)result|=0x08;
-	if((CAN2_OnlineID&0xf0)!=0)//判断该列中有没有在线电机
-		bsp_can_Sendmessage(CanHandle2,0x1ff,(int16_t*)&CAN2CurrentList[4]);
-	if(check)result|=0x10;
-	if((CAN2_OnlineID&0x700)!=0)//判断该列中有没有在线电机
-		bsp_can_Sendmessage(CanHandle2,0x2ff,(int16_t*)&CAN2CurrentList[8]);
-	if(check)result|=0x20;
-	memset(CAN1CurrentList,0,22);
-	memset(CAN2CurrentList,0,22);
-	return result;
+    if(CanHandle2!=NULL)
+    {
+        if((CAN2_OnlineID&0x0f)!=0)//判断该列中有没有在线电机
+            bsp_can_Sendmessage(CanHandle2,0x200,(int16_t*)CAN2CurrentList);
+        if(check)result|=0x08;
+        if((CAN2_OnlineID&0xf0)!=0)//判断该列中有没有在线电机
+            bsp_can_Sendmessage(CanHandle2,0x1ff,(int16_t*)&CAN2CurrentList[4]);
+        if(check)result|=0x10;
+        if((CAN2_OnlineID&0x700)!=0)//判断该列中有没有在线电机
+            bsp_can_Sendmessage(CanHandle2,0x2ff,(int16_t*)&CAN2CurrentList[8]);
+        if(check)result|=0x20;
+        memset(CAN1CurrentList,0,22);
+        memset(CAN2CurrentList,0,22);
+        return result;
+    }
 }
 WEAK void manager::Speed_F_Set(float f)///设定前馈量
 {

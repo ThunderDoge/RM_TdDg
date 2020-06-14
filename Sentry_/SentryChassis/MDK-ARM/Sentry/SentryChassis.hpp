@@ -88,50 +88,37 @@ class SentryChassis
 
 public:
     SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id);    ///<    构造函数
-//                  uint8_t down_yaw_can_num, uint16_t down_yaw_can_id,
-//                  uint8_t up_feed_can_num, uint16_t up_feed_can_id,
-//                  uint8_t down_feed_can_num, uint16_t down_feed_can_id,
-//                  uint8_t up_fric_can_num, uint16_t up_fric_can_id);
-    //------------------------系统变量
-    static SentryChassis* pointer;
-    //-------------------------PID变量
-    pid pidDriveSpeed;      ///< 底盘主动轮速度环
-    pid pidDriveLocation;   ///< 底盘主动轮位置环
-    // pid FricSpeed;
-    // pid FricLocation;
-    // pid FeedUpSpeed;
-    // pid FeedUpLocation;
-    // pid FeedDownSpeed;
-    // pid FeedDownLocation;
-    pid pidDriveCurrent;    ///< 底盘主动轮功率控制电流环节
-    pid pidPowerFeedback;   ///< 底盘主动轮功率控制电流反馈环节
-    //-------------------------电机变量
-    softmotor DriveWheel;
-//    motor Fric;
-//    AmmoFeed FeedUp;
-//    AmmoFeed FeedDown;
-	//-------------------------激光测距GY-53/VL53L1X
-	bsp_GY53L1_Object RangingLeft;
-	bsp_GY53L1_Object RangingRight;
-
-    //-------------------------运行状态参数
-    _chassis_mode Mode;
+    //运行状态参数
+    _chassis_mode ChassisMode;
+private:
     _chassis_mode LastMode;
+public:
+    uint8_t EnablePowerCtrl;
     //-------------------------物理状态参数，可供查询
+
     float MotorSpeed;           ///< 电机反馈速度，单位rpm
     float MotorSoftLocation;    ///< 电机软路程，单位是角度
     float RealSpeed;            ///< 真正的速度，单位mm/s；由编码器
     float RealPosition;         ///< 由编码器与激光测距模块 数据融合估计的真正的距离，单位mm
 
-    uint8_t Accel_Railward_UseKalman = 0;
 	float Accel_Railward;	    ///<  沿轨道的加速度
 	int16_t LazerRanging[2];	///< 激光测距得出的距离，单位mm
-	float imuAccelHitPillarThreshold[2] = {-1300.0f,-400.0f};		///<  判定为撞击立柱的陀螺仪加速度阈值。取绝对值。
 	enum PillarFlagEnum PillarFlag = PILLAR_NOT_DETECTED;
-	//-------------------------功率计算参数
+    
+    //-------------------------PID变量
+    pid pidDriveSpeed;      ///< 底盘主动轮速度环
+    pid pidDriveLocation;   ///< 底盘主动轮位置环
+    pid pidPwrFdbkDriveSpeed; ///< 功率控制专用速度环
+    pid pidPwrFdbkDriveCurrent;    ///< 底盘主动轮功率控制电流环节
+    pid pidPowerFeedback;   ///< 底盘主动轮功率控制电流反馈环节
+    //-------------------------电机对象
+    softmotor DriveWheel;
 
+	float imuAccelHitPillarThreshold[2] = {-1300.0f,-400.0f};		///<  判定为撞击立柱的陀螺仪加速度阈值。取绝对值。
+	//-------------------------功率计算参数
     float DrivePower;      ///< 驱动轮功率，单位W. 供查询
     float LimitPower = -1; ///<  底盘限制功率, <0 表示不限制
+
     //-------------------------运行托管函数
     void Handle();                                         ///< 运行时数据更新和逻辑功能 函数
     //-------------------------操作函数
@@ -141,16 +128,17 @@ public:
     void MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, float speed_motor_rpm_limit);  ///< 设定电机软路程，限速运行
     // void Speed_Set(float speedBy_mm_s); //设定真实速度
     // void Location_Set(float locationBy_mm); //设定真实位置。
+    //------------------------系统变量
+    static SentryChassis* pointer;
 private:
-    //功率计算用变量
-    float TargetPowerInput = 0; 
-    float PowerOutput = 0;
-    uint32_t PwrUpdateTime = 0;
+    // 模式控制函数
+    void ChassisModeCtrl();  ///< 模式控制函数
+    void Safe_Set_NoMode();
 
-    // LPF2 lpf;
-	// kalman_filter LocationFilter;
-	// kalman_filter SpeedFilter;
-    // kalman_filter AccelRailFilter;
+    //功率控制相关函数
+    uint8_t LastEnablePowerCtrl;
+    uint8_t use_system; ///< 功率控制-选择功率反馈系统（调试用）    
+    float PwrCtrlCurrentOutput;
 
     void CanSendHandle(); //托管到CANSend的操作函数
     float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//柴小龙式功率闭环
@@ -158,8 +146,6 @@ private:
 	
 	void LocationSpeedDataFusion();	// 使用轨上编码器和对柱测距仪的结果
 	void LocationSpeedDataMultiplexer();	///< 数据多选一 
-    // int8_t PillarHit_Check();
-    // int8_t PillarHit_Handle();
 };
 extern SentryChassis ChassisEntity;     // 底盘实体对象
 

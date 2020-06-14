@@ -16,6 +16,7 @@ app_Mode ModeSuperSuperiorControl(NULL, SuperiorControl, NULL);
 //app_Mode ModeAutonomousDrive()
 app_Mode ModeGlobalSafe(NULL, GlobalSafe, NULL);
 app_Mode ModeAutomonus(NULL, Automonus, NULL);
+app_Mode ModeChassisTest(NULL,TestChassis,NULL);
 //模式指针
 app_Mode *CurrentMode = &ModeGlobalSafe;
 app_Mode *LastMode = &ModeGlobalSafe;
@@ -30,6 +31,9 @@ void ModeSelect(void)
     LastMode = CurrentMode;
     switch (force_mode)
     {
+    case 3:
+        CurrentMode = &ModeChassisTest;
+        break;
     case 1:
         CurrentMode = &ModeSuperSuperiorControl;
         break;
@@ -59,7 +63,7 @@ void ModeSelect(void)
 
 void SuperiorControl() //视觉调试
 {
-    ChassisEntity.Mode = (_chassis_mode)CanRx.SuperCon_ChassisMode;
+    ChassisEntity.ChassisMode = (_chassis_mode)CanRx.SuperCon_ChassisMode;
     switch (CanRx.SuperCon_ChassisMode)
     {
     case _chassis_speed: // 底盘单速度环控制
@@ -112,6 +116,14 @@ void Automonus(void)
     //	}
     //	CTRL_TO_LOCATION();
     //	ChassisEntity.Safe_Set();
+}
+float ChassisTestSpeed;
+void TestChassis(void)
+{
+    if(ChassisTestSpeed!=0)
+        ChassisEntity.MotorSpeed_Set(ChassisTestSpeed);
+    else
+        ChassisEntity.Safe_Set();
 }
 
 // 这些是撞柱逻辑的变量

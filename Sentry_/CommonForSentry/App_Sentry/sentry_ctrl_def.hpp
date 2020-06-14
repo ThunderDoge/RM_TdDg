@@ -31,10 +31,11 @@ typedef enum _cloud_ctrl_mode:uint8_t
 ///底盘模式取值枚举型
 typedef enum _chassis_mode:uint8_t
 {
-    _chassis_save =0,
+    _chassis_safe =0,
     _chassis_speed =1,
     _chassis_location =2,
     _chassis_location_limit_speed =3,
+    _chassis_default =4,
 }ChassisMode_t;
 
 typedef enum __sentry_cloud_shoot_mode:uint8_t{
