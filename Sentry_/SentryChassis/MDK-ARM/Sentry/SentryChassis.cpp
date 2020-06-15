@@ -91,18 +91,7 @@ void SentryChassis::Handle()
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
 
-    // #if defined(__APP_CHECK_H) && defined(_JUDGEMENT_H_)
-    //     if(app_check_IsEnabled(id_Judge) && !app_check_IsOffline(id_Judge))
-    //     {
-    //         DrivePower = power_heat_data.chassis_power;
-    //     }
-    //     else
-        // {
-            DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
-        // }
-    // #else
-        DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
-    // #endif // defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
+    DrivePower = fabs(bsp_CurrentRead[0] * bsp_VoltageRead[0] / 1000000.0f);
 
     ChassisModeCtrl();
 
