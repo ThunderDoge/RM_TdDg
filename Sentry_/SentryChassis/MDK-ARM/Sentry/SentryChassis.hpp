@@ -137,7 +137,7 @@ private:
 
     //功率控制相关函数
     uint8_t LastEnablePowerCtrl;
-    uint8_t use_system; ///< 功率控制-选择功率反馈系统（调试用）    
+    uint8_t use_system=2; ///< 功率控制-选择功率反馈系统（调试用）    
     float PwrCtrlCurrentOutput;
 
     void CanSendHandle(); //托管到CANSend的操作函数

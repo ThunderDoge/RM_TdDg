@@ -76,9 +76,9 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 //                             uint8_t up_fric_can_num, uint16_t up_fric_can_id)
     : pidDriveSpeed(1, 0, 0, 0, 5000, 100, 300),
       pidDriveLocation(0.035, 0, 0, 1000, SpeedMax, 10, 200),
-      pidPwrFdbkDriveSpeed(0,0,0,0,1000,10,10),
-      pidPwrFdbkDriveCurrent(2,0.1, 0, 0, 0, 10, 10),
-      pidPowerFeedback(0,0,0,0,1000,10,10),
+      pidPwrFdbkDriveSpeed(5,0,0,0,5000,10,10),
+      pidPwrFdbkDriveCurrent(100,0, 0, 10000, 0, 10, 10),
+      pidPowerFeedback(20,0,0,0,5000,10,10),
       DriveWheel(drive_can_num, drive_can_id, &DJI_3508, &pidDriveSpeed, &pidDriveLocation)
 {
     pointer = this; //初始化全局底盘指针
