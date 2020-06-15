@@ -11,7 +11,7 @@
 	*											  											3.简化逻辑
 	*  V1.5.1	  	2020-1-3	  		KisonHe		  		1.读取总电流
 	*  V1.6.0		2020-05-26			KisonHe				允许改变转换时间
-	*
+	*               2020-6-15           ThunderDoge         适配哨兵
 	**************************(C) COPYRIGHT KisonHe****************************
 	*/
 /*
@@ -26,11 +26,11 @@ RST 	—		—		—		AVG2	AVG1	AVG0	VBUSCT2 VBUSCT1 VBUSCT0 VSHCT2 VSHCT1 VSHCT0	
 #include <stdlib.h>
 #include <string.h>
 
-#define INA226I2C (hi2c2)
+#define INA226I2C (hi2c3)
 #define NUMOFAVG 4   //芯片里面平均的次数，可以取1024，512，256，128，64，16，4，1
 #define TIMEOFSAMPLE 1  //8个Level，0代表140us，1代表204us，2代表332us，3代表588us，4代表1100us，5代表2116us，6代表4156us，7代表8244us
 
-#define OPERATINGMODE 0 //芯片提供8个Level，库提供两种模式——连续电压电流采样（1）与连续电流（0）采样。
+#define OPERATINGMODE 1 //芯片提供8个Level，库提供两种模式——连续电压电流采样（1）与连续电流（0）采样。
 
 //float bsp_CurrentRead[5];									  //采样的结果，bsp_CurrentRead[0] 为1号电机电流，以此类推到4号电机，5为总采样ID
 //float bsp_VoltageRead[5];									  //类似
@@ -42,23 +42,25 @@ int16_t bsp_VoltageRead[5];									  //类似
 float CURRENT_LSB[5] = {0.25f, 0.255f, 0.248f, 0.2483f, 0.248f};	 //建议利用电子负载验证你的公式
 float VOLTAGE_LSB[5] = {1.25f, 1.25f, 1.25f, 1.25f, 1.25f}; //建议利用电子负载验证你的公式
 //uint8_t INA226_ID[5] = {0x9C, 0x82, 0x88, 0x8A, 0x80};		  //几个轮子的ID号码，某一位改为0将会跳过那一位
-uint8_t INA226_ID[5] = {0x88, 0x82, 0x8A, 0x80, 0x9C};		  //几个轮子的ID号码，某一位改为0将会跳过那一位
+uint8_t INA226_ID[5] = {0x80, 0, 0, 0, 0};		  //几个轮子的ID号码，某一位改为0将会跳过那一位
 
 static int16_t bsp_current_TimeOut = 0x00FF; //I2C通讯超时时间
 
 int16_t JSCOPE_INA226_Current = 0;
 
-int8_t bsp_current_CycleID = 1; //ID号，便于循环
+int8_t bsp_current_CycleID = 0; //ID号，便于循环
 
 static uint8_t I2CTx[8];
 static uint8_t I2CRx[8];
 
+
 static void Current_InitAssi(uint8_t ID);
 static void Current_Read_Assistant(uint8_t ID);
 
+
 void bsp_Current_Read(void) //为了方便非4个轮子的兵种，循环与执行分开。这个函数的做法是调用一次读取一个轮子电流。略加修改可以改成你想要的效果
 {
-	while (bsp_current_CycleID <= 4) //此处逻辑为读取四次，退出函数。可根据实际情况修改o(*￣▽￣*)o
+	while (bsp_current_CycleID <= 0) //此处逻辑为读取四次，退出函数。可根据实际情况修改o(*￣▽￣*)o
 	{
 		memset(I2CRx,0,8);
 		I2CTx[0] = 0x01; //Current
