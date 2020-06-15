@@ -91,18 +91,18 @@ void SentryChassis::Handle()
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
 
-    #if defined(__APP_CHECK_H) && defined(_JUDGEMENT_H_)
-        if(app_check_IsEnabled(id_Judge) && !app_check_IsOffline(id_Judge))
-        {
-            DrivePower = power_heat_data.chassis_power;
-        }
-        else
-        {
+    // #if defined(__APP_CHECK_H) && defined(_JUDGEMENT_H_)
+    //     if(app_check_IsEnabled(id_Judge) && !app_check_IsOffline(id_Judge))
+    //     {
+    //         DrivePower = power_heat_data.chassis_power;
+    //     }
+    //     else
+        // {
             DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
-        }
-    #else
+        // }
+    // #else
         DrivePower = fabs(bsp_CurrentRead[1] * bsp_VoltageRead[1] / 1000000.0f);
-    #endif // defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
+    // #endif // defined(__APP_CHECK_H) && _defined(JUDGEMENT_H_)
 
     ChassisModeCtrl();
 
@@ -203,7 +203,7 @@ float SentryChassis::PowerFeedbackSystem(float TargetSpeedInput, float TargetCur
 
 
 
-
+uint8_t max_to_cur;
 float SpdpidMax,SpdOut,CurOut,CurErr;
 /**
  * @brief 2019柴小龙英雄功率控制复刻
@@ -211,7 +211,11 @@ float SpdpidMax,SpdOut,CurOut,CurErr;
  */
 float SentryChassis::PowerCtrMot_CascadePidRegular(float TargetSpeedInput)
 {
-    SpdpidMax = DriveWheel.PID_In->PIDMax = pidPowerFeedback.pid_inc_run(LimitPower - DrivePower);
+    if(max_to_cur){
+        SpdpidMax = pidPwrFdbkDriveCurrent.PIDMax = pidPowerFeedback.pid_inc_run(LimitPower - DrivePower);
+    }else{
+        SpdpidMax = DriveWheel.PID_In->PIDMax = pidPowerFeedback.pid_inc_run(LimitPower - DrivePower);
+    }
     SpdOut = DriveWheel.TargetCurrent = DriveWheel.PID_In->pid_run(TargetSpeedInput - DriveWheel.RealSpeed);
     return CurOut = pidPwrFdbkDriveCurrent.pid_run((CurErr = (DriveWheel.TargetCurrent/819.2f)-(bsp_CurrentRead[1]/1000.0f)));
 }
