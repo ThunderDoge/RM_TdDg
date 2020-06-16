@@ -13,14 +13,16 @@
                 "${workspaceFolder}/SentiCloud0/Drivers/CMSIS/Include/",
                 "${workspaceFolder}/SentiCloud0/MDK-ARM/Task/",
                 "${workspaceFolder}/SentiCloud0/MDK-ARM/Sentry/",
+                "${workspaceFolder}/SentiCloudDown/MDK-ARM/Task/",
+                "${workspaceFolder}/SentiCloudDown/MDK-ARM/Sentry/",
+                "${workspaceFolder}/SentryChassis/MDK-ARM/Task/",
+                "${workspaceFolder}/SentryChassis/MDK-ARM/Sentry/",
                 "${workspaceFolder}/CommonForSentry/App/",
                 "${workspaceFolder}/CommonForSentry/App_Sentry/",
                 "${workspaceFolder}/CommonForSentry/Bsp/",
                 "${workspaceFolder}/CommonForSentry/Motor/"
             ],
             "defines": [
-                "USE_HAL_DRIVER",
-                "STM32F405xx",
                 "USE_HAL_DRIVER",
                 "STM32F405xx"
             ],

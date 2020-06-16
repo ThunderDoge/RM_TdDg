@@ -19,6 +19,7 @@
 #include "bsp_dbus.h"
 #include "bsp_encoder.hpp"
 #include "bsp_judgement.h"
+#include "bsp_tof10120.h"
 #include "SentryChassis.hpp"
 /* USER CODE END Includes */
 
@@ -313,6 +314,7 @@ void DMA1_Stream7_IRQHandler(void)
 void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
+	bsp_tof10120_IT(&ChassisEntity.lazerLeft);
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
@@ -326,7 +328,7 @@ void UART4_IRQHandler(void)
 void UART5_IRQHandler(void)
 {
   /* USER CODE BEGIN UART5_IRQn 0 */
-	
+	bsp_tof10120_IT(&ChassisEntity.lazerRight);
   /* USER CODE END UART5_IRQn 0 */
   HAL_UART_IRQHandler(&huart5);
   /* USER CODE BEGIN UART5_IRQn 1 */

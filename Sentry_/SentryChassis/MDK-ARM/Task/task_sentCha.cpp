@@ -33,7 +33,8 @@ void RoboInit()
 	bsp_Current_Init();
 	bsp_encoder_Init(2048);
 	bsp_judgement_Init();
-	
+	bsp_tof10120_Init(&ChassisEntity.lazerLeft,&huart4);
+	bsp_tof10120_Init(&ChassisEntity.lazerRight,&huart5);
 	
 	manager::CANSelect(&hcan1,NULL);
 	

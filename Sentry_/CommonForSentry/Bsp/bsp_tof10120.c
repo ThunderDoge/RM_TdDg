@@ -85,13 +85,13 @@ HAL_StatusTypeDef bsp_tof10120_WriteParam(bsp_tof10120_TypeDef * module , bsp_to
         if(cmd_value >= 0)
         {
             module->TxXfer[2] = '+';
-            add_i = sprintf(&module->TxXfer[3],"%d",cmd_value);
+            add_i = sprintf((char*)&module->TxXfer[3],"%d",cmd_value);
             module->TxXfer[3+add_i] = '#';
             tx_cnt = 4+add_i;
         }
         else
         {
-            add_i = sprintf(&module->TxXfer[3],"%d",cmd_value);
+            add_i = sprintf((char*)&module->TxXfer[3],"%d",cmd_value);
             module->TxXfer[3+add_i] = '#';
             tx_cnt = 4+add_i;
         }
@@ -99,7 +99,7 @@ HAL_StatusTypeDef bsp_tof10120_WriteParam(bsp_tof10120_TypeDef * module , bsp_to
     else
     {
         module->TxXfer[2] = '-';
-        add_i = sprintf(&module->TxXfer[3],"%d",cmd_value);
+        add_i = sprintf((char*)&module->TxXfer[3],"%d",cmd_value);
         module->TxXfer[3+add_i] = '#';
         tx_cnt = 4+add_i;
     }
@@ -132,34 +132,34 @@ HAL_StatusTypeDef bsp_bsp_tof10120_RxXferAnalysis(bsp_tof10120_TypeDef* module)
 
     module->RxXfer[sizeof(module->RxXfer)-1] = '\0';
 
-    if(strstr(module->RxXfer,"mm")!=NULL)
+    if(strstr((char*)module->RxXfer,"mm")!=NULL)
     {
-        sscanf(module->RxXfer,"%dmm",&module->Distance);
+        sscanf((char*)module->RxXfer,"%dmm",&module->Distance);
         ok = 1;
     }
-    else if(strstr(module->RxXfer,"D"))
+    else if(strstr((char*)module->RxXfer,"D"))
     {
-        sscanf(module->RxXfer,"D=%d",&module->Offset);
+        sscanf((char*)module->RxXfer,"D=%d",&module->Offset);
         ok = 1;
     }
-    else if(strstr(module->RxXfer,"T"))
+    else if(strstr((char*)module->RxXfer,"T"))
     {
-        sscanf(module->RxXfer,"T=%d",&module->TranferGap);
+        sscanf((char*)module->RxXfer,"T=%d",&module->TranferGap);
         ok = 1;
     }
-    else if(strstr(module->RxXfer,"M"))
+    else if(strstr((char*)module->RxXfer,"M"))
     {
-        sscanf(module->RxXfer,"M=%d",&module->FilterMode);
+        sscanf((char*)module->RxXfer,"M=%d",&module->FilterMode);
         ok = 1;
     }
-    else if(strstr(module->RxXfer,"Max"))
+    else if(strstr((char*)module->RxXfer,"Max"))
     {
-        sscanf(module->RxXfer,"Max=%d",&module->MaxDistance);
+        sscanf((char*)module->RxXfer,"Max=%d",&module->MaxDistance);
         ok = 1;
     }
-    else if(strstr(module->RxXfer,"S"))
+    else if(strstr((char*)module->RxXfer,"S"))
     {
-        sscanf(module->RxXfer,"S=%d",&module->TransferMode);
+        sscanf((char*)module->RxXfer,"S=%d",&module->TransferMode);
         ok = 1;
     }
 

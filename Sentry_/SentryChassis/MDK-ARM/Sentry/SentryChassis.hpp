@@ -36,7 +36,7 @@
 #include "bsp_current.h"
 //#include "bsp_adc_deal.h"
 #include "bsp_encoder.hpp"
-#include "bsp_gy53l1.h"
+#include "bsp_tof10120.h"
 #include "bsp_judgement.h"
 #include "app_math.h"
 #include "app_imu.h"
@@ -97,7 +97,7 @@ public:
     //-------------------------物理状态参数，可供查询
 
     float MotorSpeed;           ///< 电机反馈速度，单位rpm
-    float MotorSoftLocation;    ///< 电机软路程，单位是角度
+    float EncoderSoftLocation;    ///< 电机软路程，单位mm
     float RealSpeed;            ///< 真正的速度，单位mm/s；由编码器
     float RealPosition;         ///< 由编码器与激光测距模块 数据融合估计的真正的距离，单位mm
 
@@ -113,6 +113,9 @@ public:
     pid pidPowerFeedback;   ///< 底盘主动轮功率控制电流反馈环节
     //-------------------------电机对象
     softmotor DriveWheel;
+    //激光测距传感器对象
+    bsp_tof10120_TypeDef lazerLeft;
+    bsp_tof10120_TypeDef lazerRight;
 
 	float imuAccelHitPillarThreshold[2] = {-1300.0f,-400.0f};		///<  判定为撞击立柱的陀螺仪加速度阈值。取绝对值。
 	//-------------------------功率计算参数
@@ -126,6 +129,9 @@ public:
     void MotorSpeed_Set(float speed_motor_rpm);            ///< 设定电机速度
     void MotorSoftLocation_Set(float location_motor_soft); ///< 设定电机软路程
     void MotorSoftLocation_LimitSpeed_Set(float location_motor_soft, float speed_motor_rpm_limit);  ///< 设定电机软路程，限速运行
+    
+    void SetEncoderDigit(int32_t);
+    
     // void Speed_Set(float speedBy_mm_s); //设定真实速度
     // void Location_Set(float locationBy_mm); //设定真实位置。
     //------------------------系统变量
@@ -143,8 +149,13 @@ private:
     void CanSendHandle(); //托管到CANSend的操作函数
     float PowerFeedbackSystem(float TargetSpeedInput, float TargetCurInput,float PwrFeedbackInput);//柴小龙式功率闭环
     float PowerCtrMot_CascadePidRegular(float TargetSpeedInput);
+
+    int32_t EncoderSoftDigit;   ///< 哨兵底盘套在编码器外层的软计数
+    int32_t EncoderLastDigit;   ///< 记录上次底盘更新时的编码器值
+    uint32_t EcdrUpdateTime;    ///< 编码器更新时间
+    void RailEncoderUpdate();   ///< 根据轨上编码器更新
 	
-	void LocationSpeedDataFusion();	// 使用轨上编码器和对柱测距仪的结果
+	void LocationSpeedDataFusion();	///<  使用轨上编码器和对柱测距仪的结果
 	void LocationSpeedDataMultiplexer();	///< 数据多选一 
 };
 extern SentryChassis ChassisEntity;     // 底盘实体对象
