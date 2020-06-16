@@ -245,6 +245,13 @@ void SentryChassis::ChassisModeCtrl()
     LastEnablePowerCtrl = EnablePowerCtrl;
 }
 
+void SentryChassis::RailEncoderUpdate()
+{
+    EncoderSoftDigit += bsp_encoder_Value - EncoderLastDigit;
+    EncoderLastDigit = bsp_encoder_Value;
+    EcdrUpdateTime = HAL_GetTick();
+}
+
 
 /**
  * @brief 底盘功率限制
