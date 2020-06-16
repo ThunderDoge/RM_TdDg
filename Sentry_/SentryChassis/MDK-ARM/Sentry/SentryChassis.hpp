@@ -49,18 +49,30 @@
 #define RANGING_LEFT_UART	huart3
 #define RANGING_RIGHT_UART	huart4
 
-extern float RAIL_LEFT_END_MM;
-extern float RAIL_RIGHT_END_MM;
+#define RAIL_LEFT_END_MM    2250
+#define RAIL_RIGHT_END_MM   0
 
-extern float RATIO_ENCODE_PER_MM	    ;
-extern float RATIO_ENCODE_SPD_PER_MM_S 	;
-
-extern float RATIO_MOTOR_MM_PER_ANG		;
-extern float RATIO_MOTOR_MM_S_PER_SPD	;
+#define RATIO_ENCODE_DIGIT_TO_MM    0.01362f
 
 
 
+// float RAIL_LEFT_END_MM = 2250;
+// float RAIL_RIGHT_END_MM = 0;
 
+
+// float RATIO_ENCODE_PER_MM        =(73.4f);
+// float RATIO_ENCODE_SPD_PER_MM_S 	=(10.0f);
+
+#define RATIO_MOTOR_MM_PER_ANG		(0.610f)
+#define RATIO_MOTOR_MM_S_PER_SPD	(0.02f)
+
+// float LAZER_LEFT_RANGE = 2000;
+// float LAZER_RIGHT_RANGE = 2000;
+// float LAZER_TOUCH_LEFT = 300;
+// float LAZER_TOUCH_RIGHT = 300;
+
+// float RATIO_ENCODE_PER_MM        =(73.4f);
+// float RATIO_ENCODE_SPD_PER_MM_S 	=(10.0f);
 
 
 

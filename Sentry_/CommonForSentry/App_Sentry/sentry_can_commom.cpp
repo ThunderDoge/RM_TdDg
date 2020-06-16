@@ -279,7 +279,7 @@ void DownCloudCanCommuRoutine(void)
 void ChassisCanCommuRoutine(void)
 {
     CanTx.Chassis_SpeedLocation[0] = ChassisEntity.MotorSpeed;
-    CanTx.Chassis_SpeedLocation[1] = ChassisEntity.MotorSoftLocation;
+    CanTx.Chassis_SpeedLocation[1] = ChassisEntity.EncoderSoftLocation;
     CHASSIS_STATES_CanTx();
 	CanTx.Pillar_flag = ChassisEntity.PillarFlag;
 	CHASSIS_PILLAR_CanTx();

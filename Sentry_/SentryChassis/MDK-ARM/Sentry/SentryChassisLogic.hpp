@@ -18,8 +18,6 @@
 #include "app_mode.hpp"
 #include "app_check.h"
 
-extern float RAIL_LEFT_END_MM            ;
-extern float RAIL_RIGHT_END_MM           ;
 
 #define LEFT_BOUNCE_READY_LOCATION		200
 #define RIGHT_BOUNCE_READY_LOCATION		200

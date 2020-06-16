@@ -27,25 +27,8 @@
  */
 #include "SentryChassis.hpp"
 
-
-
-float RAIL_LEFT_END_MM = 2250;
-float RAIL_RIGHT_END_MM = 0;
-
-
 float RATIO_ENCODE_PER_MM        =(73.4f);
 float RATIO_ENCODE_SPD_PER_MM_S 	=(10.0f);
-
-float RATIO_MOTOR_MM_PER_ANG		=(0.610f);
-float RATIO_MOTOR_MM_S_PER_SPD	=(0.02f);
-
-float LAZER_LEFT_RANGE = 2000;
-float LAZER_RIGHT_RANGE = 2000;
-float LAZER_TOUCH_LEFT = 300;
-float LAZER_TOUCH_RIGHT = 300;
-
-
-
 
 
 //电机类型
@@ -87,7 +70,7 @@ SentryChassis::SentryChassis(uint8_t drive_can_num, uint16_t drive_can_id)
 void SentryChassis::Handle()
 {
     MotorSpeed = DriveWheel.RealSpeed;
-    MotorSoftLocation = DriveWheel.SoftAngle;
+    EncoderSoftLocation = DriveWheel.SoftAngle;
 	RealPosition = bsp_encoder_Value;
 	RealSpeed = bsp_encoder_Speed;
 
@@ -245,9 +228,14 @@ void SentryChassis::ChassisModeCtrl()
     LastEnablePowerCtrl = EnablePowerCtrl;
 }
 
+/**
+ * @brief 
+ * 
+ */
 void SentryChassis::RailEncoderUpdate()
 {
     EncoderSoftDigit += bsp_encoder_Value - EncoderLastDigit;
+    EncoderSoftLocation = RATIO_ENCODE_DIGIT_TO_MM * EncoderSoftDigit;
     EncoderLastDigit = bsp_encoder_Value;
     EcdrUpdateTime = HAL_GetTick();
 }

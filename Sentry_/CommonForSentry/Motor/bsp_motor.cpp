@@ -497,6 +497,7 @@ uint8_t manager::CANSend(void)
         memset(CAN2CurrentList,0,22);
         return result;
     }
+	return 0xFF;
 }
 WEAK void manager::Speed_F_Set(float f)///设定前馈量
 {
