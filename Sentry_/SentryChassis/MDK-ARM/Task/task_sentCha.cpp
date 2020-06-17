@@ -40,6 +40,7 @@ void RoboInit()
 	
 }
 uint8_t cansend_result;
+uint8_t	pc6,pc7;
 /**
  * @brief  主任务,1KHZ
  * @details  
@@ -50,7 +51,8 @@ void task_Main(void* param)
 	TickType_t LastTick = xTaskGetTickCount();
 	while (1)
 	{
-		
+		pc6 = HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_6);
+		pc7 = HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_7);
 		bsp_Current_Read();
 		bsp_encoder_Handle();
 		app_imu_So3thread();

@@ -67,10 +67,6 @@ void Error_Handler(void);
 #define RGB2_GPIO_Port GPIOB
 #define RGB3_Pin GPIO_PIN_15
 #define RGB3_GPIO_Port GPIOB
-#define ENCODER_A_Pin GPIO_PIN_6
-#define ENCODER_A_GPIO_Port GPIOC
-#define ENCODER_B_Pin GPIO_PIN_7
-#define ENCODER_B_GPIO_Port GPIOC
 #define ENCODER_Z_Pin GPIO_PIN_8
 #define ENCODER_Z_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
