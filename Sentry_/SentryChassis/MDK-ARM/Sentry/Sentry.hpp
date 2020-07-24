@@ -11,7 +11,7 @@
 #ifndef __SENTRY_HPP_
 #define __SENTRY_HPP_
 
-#include "sentry_chassis_config.hpp"
+#include "sentry_chassis_config.h"
 
 #include "SentryChassis.hpp"
 #include "SentryChassisLogic.hpp"

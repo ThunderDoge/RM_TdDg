@@ -1,5 +1,5 @@
 /**
-  * @file   sentry_config.hpp
+  * @file   sentry_chassis_config.h
   * @brief    
   * @details  
   * @author   ThunderDoge
