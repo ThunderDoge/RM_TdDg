@@ -17,6 +17,8 @@
 #include "SentryDownCloud.hpp"          // 云台
 #include "SentryDownCloudCommu.hpp"     // 云台通讯
 #include "app_mode.hpp"             // class【模式】
+#include "bsp_judgement.h"
+
 
 extern SentryCloud CloudEntity;     // 云台实体
 

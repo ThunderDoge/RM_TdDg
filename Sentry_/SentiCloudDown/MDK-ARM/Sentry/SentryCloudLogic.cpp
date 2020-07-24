@@ -31,6 +31,7 @@ float p=0,y=0;
 // 硬件校准模式控制变量
 uint8_t inside_joystick,last_joystick,trig_calibration;
 uint32_t inside_time;
+uint32_t shoot_lag;
 /**
   * @brief  模式选择函数，控制逻辑源于此
   */
@@ -235,6 +236,7 @@ void ManualFeed()
 	//启动射击。
 //    CloudEntity.Feed_Free_Once_Set(feed_gap, (bsp_dbus_Data.CH_0 > 200)); //供弹指令
 	CloudEntity.Feed2nd.Free_Once_Set(100,&bsp_dbus_Data.CH_0);
+	shoot_lag = get_shoot_data_update_time() - CloudEntity.Feed2nd.act_time_stamp;
     // if (bsp_dbus_Data.CH_0 > 200)    //状态信息发送到VisionTx
     //     VisionTx.Shoot_mode = 1;
     // else

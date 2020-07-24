@@ -104,7 +104,9 @@ private:
     int16_t Step_Overflow;
     uint32_t rammerStepTime;
     uint8_t act_flag;
+public:
     uint32_t act_time_stamp;
+private:
     uint8_t once_flag;
     int16_t trig_set = 200;
     uint8_t activated_flag;

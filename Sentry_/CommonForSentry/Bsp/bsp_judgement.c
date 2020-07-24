@@ -371,6 +371,7 @@ static void bsp_judgement_Calculate(void)
 				case ext_shoot_data_id://0x0207//6 实时射击数据，子弹发射后发送
 					memcpy(&shoot_data,bsp_judgement_data+index,sizeof(shoot_data));
 					index+=sizeof(shoot_data);
+                    shoot_data.update_time = HAL_GetTick();
 				break;
 				case ext_bullet_remaining_id://0x0208//2 子弹剩余发射数：0x0208。发送频率：1Hz 周期发送，空中机器人，哨兵机器人以及 ICRA 机器人主控发送，发送范围：单一机器人
 					memcpy(&bullet_remaining,bsp_judgement_data+index,sizeof(bullet_remaining));
@@ -655,4 +656,8 @@ void Client_Arc(char *name, uint8_t operation, uint8_t layer, uint16_t x_start, 
 	client_graphic_dataPack.client_graphic_draw.color = color;
 }
 
+uint32_t get_shoot_data_update_time()
+{
+	return shoot_data.update_time;
+}
 

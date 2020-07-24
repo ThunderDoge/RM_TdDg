@@ -218,6 +218,7 @@ typedef __packed struct
 	uint8_t bullet_type; //子弹类型: 1：17mm 弹丸 2：42mm 弹丸 
 	uint8_t bullet_freq; //子弹射频 单位 Hz 
 	float bullet_speed;  //子弹射速 单位 m/s 
+    uint32_t update_time;
 }ext_shoot_data_t; 
 
 //16 子弹剩余发射数：0x0208。发送频率：1Hz 周期发送，空中机器人，哨兵机器人以及 ICRA 机器人主控发送，发送范围：单一机器人
@@ -434,6 +435,8 @@ void Client_Arc(char *name, uint8_t operation, uint8_t layer, uint16_t x_start, 
 
 void bsp_judgement_Init(void);
 void bsp_judgement_It(void);//串口中断函数，记得丢到对应的串口中断里面
+
+uint32_t get_shoot_data_update_time();
 
 //unsigned char Get_CRC8_Check_Sum(unsigned char *pchMessage,unsigned int dwLength,unsigned char ucCRC8);
 //unsigned int Verify_CRC8_Check_Sum(unsigned char *pchMessage, unsigned int dwLength);
