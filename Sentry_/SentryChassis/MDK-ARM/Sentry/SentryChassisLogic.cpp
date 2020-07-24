@@ -21,7 +21,7 @@ app_Mode ModeChassisTest(NULL,TestChassis,NULL);
 app_Mode *CurrentMode = &ModeGlobalSafe;
 app_Mode *LastMode = &ModeGlobalSafe;
 
-uint8_t force_mode = 3;
+uint8_t force_mode = 1;
 /**
  * @brief 模式选择器。此为所有逻辑起始处
  * 
