@@ -24,6 +24,8 @@ app_Mode ModeAutoMove(nullptr, nullptr, nullptr);
 app_Mode ModeGlobalSafe(nullptr, GlobalSafe, nullptr);
 app_Mode ModeVisionFeed(nullptr, VisionFeed, nullptr);
 app_Mode ModeCalibration(nullptr,HardCalibration,nullptr);
+app_Mode ModeManualShootVisionChassis(ManualShootVisionChassisEnter,ManualShootVisionChassis,nullptr);
+app_Mode ModeManualChassisVisionShoot(nullptr,ManualChassisVisionShoot,nullptr);
 
 app_Mode *LastMode = &ModeGlobalSafe;
 app_Mode *CurrentMode = &ModeGlobalSafe;
@@ -50,8 +52,8 @@ void ModeSelect(void)
     case 12: //上-下：手动控云台
         CurrentMode = &ModeManualShoot;
         break;
-    case 33: //双中：视觉控制云台转动
-        CurrentMode = &ModeVisionControl;
+    case 33: //双中：视觉控制云台转动，手动控制底盘
+        CurrentMode = &ModeManualChassisVisionShoot;
         break;
     case 31: //中-上：视觉控制云台，手动供弹射击（右摇杆右拨为扳机）
         CurrentMode = &ModeVisionFeed;
@@ -316,5 +318,45 @@ void HardCalibration()
     taskEXIT_CRITICAL();
     hard_calib_trig_cnt ++;
     CurrentMode = &ModeGlobalSafe;
+}
+
+void VisionChassis()
+{
+    switch (VisionRx.chassis_mode)
+    {
+        case _chassis_speed:
+            CanTx.SuperCon_ChassisSpeedLocation[0]=VisionRx.Vx;
+            SUPERIOR_CHASSIS_MOVE_CanTx();
+            break;
+        case _chassis_location:
+            CanTx.SuperCon_ChassisSpeedLocation[1]=VisionRx.Px;
+            SUPERIOR_CHASSIS_SET_LOACTION_CanTx();
+            break;
+        case _chassis_location_limit_speed:
+            CanTx.SuperCon_ChassisSpeedLocation[0]=VisionRx.Vx;
+            CanTx.SuperCon_ChassisSpeedLocation[1]=VisionRx.Px;
+            SUPERIOR_CHASSIS_SET_LOACTION_LIMIT_SPEED_CanTx();
+            break;
+        default:
+            SUPERIOR_SAFE_CanTx();
+            break;
+    }
+}
+
+void ManualShootVisionChassisEnter()
+{
+    ManualShootEnter();
+}
+
+void ManualShootVisionChassis()
+{
+    ManualShoot();
+    VisionChassis();
+}
+
+void ManualChassisVisionShoot()
+{
+    VisionControl();
+    ManualChassis();
 }
 

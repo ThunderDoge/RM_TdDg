@@ -28,11 +28,7 @@ extern app_Mode ModeCloudCtrlGyro;  // 陀螺仪 位置环&速度环
 //extern app_Mode ModeSinglePitch;
 
 
-enum __sentry_cloud_dual_single_pitch_ctrl:uint8_t{
-	__cloud_main_pitch,
-	__cloud_second_pitch,
-	__cloud_dual_pitch,
-};
+
 
 
 /**

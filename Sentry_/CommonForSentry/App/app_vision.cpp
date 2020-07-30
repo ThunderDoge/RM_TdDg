@@ -544,6 +544,7 @@ void CMD_CHASSIS_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
     if (Vision_Rxbuffer[Function_word] == CMD_CHASSIS_CONTROL)
     {
         VisionRx.Function_word = CMD_CHASSIS_CONTROL;
+        VisionRx.chassis_mode = _chassis_speed;
         memcpy(&VisionRx.Vx, Vision_Rxbuffer + 2, 4); //底盘速度解析
         memcpy(&VisionRx.Vy, Vision_Rxbuffer + 6, 4);
         VisionRx.UpdateTime = HAL_GetTick();
@@ -555,6 +556,7 @@ void CMD_CHASSIS_LOACTION_CONTROL_Rx(uint8_t *Vision_Rxbuffer)
     if (Vision_Rxbuffer[Function_word] == CMD_CHASSIS_LOACTION_CONTROL)
     {
         VisionRx.Function_word = CMD_CHASSIS_LOACTION_CONTROL;
+        VisionRx.chassis_mode = _chassis_location;
         memcpy(&VisionRx.Px, Vision_Rxbuffer + 2, 4);
         memcpy(&VisionRx.Py, Vision_Rxbuffer + 6, 4);
         VisionRx.chassis_mode = _chassis_location;
@@ -567,6 +569,7 @@ void CMD_CHASSIS_LOCATION_LIMIT_SPEED_Rx(uint8_t *Vision_Rxbuffer)
     if (Vision_Rxbuffer[Function_word] == CMD_CHASSIS_LOCATION_LIMIT_SPEED)
     {
         VisionRx.Function_word = CMD_CHASSIS_LOCATION_LIMIT_SPEED;
+        VisionRx.chassis_mode = _chassis_location_limit_speed;
         memcpy(&VisionRx.Px, Vision_Rxbuffer + 2, 4);
         memcpy(&VisionRx.SpeedLimit, Vision_Rxbuffer + 6, 4);
         VisionRx.chassis_mode = _chassis_location_limit_speed;
